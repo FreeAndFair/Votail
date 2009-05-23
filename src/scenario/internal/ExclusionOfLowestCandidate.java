@@ -1,16 +1,17 @@
-package scenario.events.internal;
+package scenario.internal;
 
-import ie.lero.evoting.tally.test.util.TestBallotBox;
-import election.tally.Ballot;
-import election.tally.BallotBox;
 import election.tally.Candidate;
 import election.tally.ElectionParameters;
 import election.tally.dail.DailBallotCounting;
 
+/**
+ * @author Dermot Cochran
+ *
+ */
 public class ExclusionOfLowestCandidate {
 
 	private DailBallotCounting ballotCounting;
-	private BallotBox ballotBox;
+	private scenario.util.TestBallotBox ballotBox;
 
 	/**
 	 * 
@@ -24,7 +25,7 @@ public class ExclusionOfLowestCandidate {
 
 	protected void setUp() throws Exception {
 		
-		ballotBox = new TestBallotBox();
+		ballotBox = new scenario.util.TestBallotBox();
 		ballotCounting = new DailBallotCounting();
 		ElectionParameters parameters = new ElectionParameters();
 		parameters.totalNumberOfSeats = 4;

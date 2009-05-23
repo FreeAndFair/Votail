@@ -1,8 +1,5 @@
-package scenario.events.internal;
+package scenario.internal;
 
-import ie.lero.evoting.tally.test.util.TestBallot;
-import ie.lero.evoting.tally.test.util.TestBallotBox;
-import election.tally.BallotBox;
 import election.tally.Candidate;
 import election.tally.ElectionParameters;
 import election.tally.dail.DailBallotCounting;
@@ -16,14 +13,14 @@ public class DistributionOfSurplus {
 	protected DailBallotCounting ballotCounting;
 	protected ElectionParameters parameters;
 	protected Candidate candidate;
-	protected BallotBox ballotBox;
+	protected scenario.util.TestBallotBox ballotBox;
 	
 	/**
 	 * Create the scenario data needed
 	 */
 	protected void setUp() throws Exception {
 		ballotCounting = new DailBallotCounting();
-		ballotBox = new TestBallotBox();
+		ballotBox = new scenario.util.TestBallotBox();
 		parameters = new ElectionParameters();
 		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;

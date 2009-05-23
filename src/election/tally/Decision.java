@@ -57,9 +57,9 @@ public class Decision {
 	public byte decisionTaken;
 	
 /** Candidate to which the decision applied */
-//@ public invariant (decisionTaken != NODECISION) ==> 0 < candidateID;
+//@ public invariant (decisionTaken != NO_DECISION) ==> 0 < candidateID;
 //@ public invariant candidateID != Ballot.NONTRANSFERABLE;
-/*@ public constraint (decisionTaken != NODECISION) ==>
+/*@ public constraint (decisionTaken != NO_DECISION) ==>
   @   candidateID == \old(candidateID);
   @*/
 //@ public initially candidateID == 0;	
@@ -68,22 +68,22 @@ public class Decision {
 /** Round of counting at which decision was taken */
 //@ public invariant 0 <= atCountNumber;
 //@ public initially atCountNumber == 0;
-/*@ public constraint (decisionTaken != NODECISION) ==>
+/*@ public constraint (decisionTaken != NO_DECISION) ==>
   @   atCountNumber == \old(atCountNumber);
   @*/
 	public long atCountNumber;
 	
 /** Indicates if lots were drawn to make this decision */
-/*@ public invariant (decisionTaken == ELECTBYQUOTA) ==>
+/*@ public invariant (decisionTaken == ELECT_BY_QUOTA) ==>
   @   chosenByLot == false;
-  @ public constraint (decisionTaken != NODECISION) ==>
+  @ public constraint (decisionTaken != NO_DECISION) ==>
   @   chosenByLot == \old(chosenByLot);  
   @*/
 	public boolean chosenByLot;
 	
 /**	Default constructor */
 /*@ public normal_behavior
-  @   ensures decisionTaken == NODECISION;
+  @   ensures decisionTaken == NO_DECISION;
   @   ensures atCountNumber == 0;
   @   ensures candidateID == 0;
   @   ensures chosenByLot == false;

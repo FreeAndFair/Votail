@@ -2,7 +2,11 @@ package scenario.util;
 
 import election.tally.BallotBox;
 
-final class TestBallotBox extends BallotBox {
+/**
+ * @author Dermot Cochran
+ *
+ */
+public final class TestBallotBox extends BallotBox {
 
 	/**
 	 * Add single preference ballot for testing.

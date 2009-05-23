@@ -1,4 +1,4 @@
-package scenario.events.internal;
+package scenario.internal;
 
 import election.tally.Ballot;
 import election.tally.BallotBox;

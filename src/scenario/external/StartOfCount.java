@@ -1,4 +1,4 @@
-package scenario.events.external;
+package scenario.external;
 
 import election.tally.AbstractBallotCounting;
 import election.tally.Ballot;

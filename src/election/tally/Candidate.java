@@ -369,11 +369,11 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
 /*@ 
   @   public normal_behavior
   @   requires state == UNASSIGNED;
-  @   requires 0 < candidateIDToAssign;
+  @   requires 0 < internalID;
   @   requires (\forall Candidate other; other != null;
-  @     other.candidateID != candidateIDToAssign);
+  @     other.candidateID != internalID);
   @   assignable state, candidateID;
-  @   ensures candidateID == candidateIDToAssign;
+  @   ensures candidateID == internalID;
   @   ensures state == CONTINUING;
   @*/
 	public void setCandidateID(int internalID){
