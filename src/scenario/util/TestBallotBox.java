@@ -1,4 +1,4 @@
-package ie.lero.evoting.tally.test.util;
+package scenario.util;
 
 import election.tally.BallotBox;
 

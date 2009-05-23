@@ -1,18 +1,20 @@
-package internal;
+package scenario.events.internal;
 
-import junit.framework.TestCase;
+import ie.lero.evoting.tally.test.util.TestBallotBox;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.Candidate;
 import election.tally.ElectionParameters;
 import election.tally.dail.DailBallotCounting;
 
-public class ExclusionOfLowestCandidate extends TestCase {
+public class ExclusionOfLowestCandidate {
 
 	private DailBallotCounting ballotCounting;
-	private int nextBallot;
 	private BallotBox ballotBox;
 
+	/**
+	 * 
+	 */
 	public final void testExclusionOfLowestCandidate() {
 	 	
 	 	// Eliminate the lowest candidate
@@ -22,7 +24,7 @@ public class ExclusionOfLowestCandidate extends TestCase {
 
 	protected void setUp() throws Exception {
 		
-		super.setUp();
+		ballotBox = new TestBallotBox();
 		ballotCounting = new DailBallotCounting();
 		ElectionParameters parameters = new ElectionParameters();
 		parameters.totalNumberOfSeats = 4;
@@ -39,7 +41,7 @@ public class ExclusionOfLowestCandidate extends TestCase {
 			// Generate first preference ballots
 			for (int b = 0; b < numberOfVotes; b++) {
 				
-				ballotBox.ballots[nextBallot++] = new Ballot(candidates[i].getCandidateID());
+				ballotBox.addBallot(candidates[i].getCandidateID());
 			}
 		}
 		

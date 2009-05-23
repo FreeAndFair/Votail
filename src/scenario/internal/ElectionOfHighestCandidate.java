@@ -1,14 +1,12 @@
-package external;
+package scenario.events.internal;
 
-import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.Candidate;
 import election.tally.ElectionParameters;
 import election.tally.dail.DailBallotCounting;
 
-
-public class StartOfCount extends TestCase {
+public class ElectionOfHighestCandidate {
 
 	protected DailBallotCounting ballotCounting;
 	protected ElectionParameters parameters;
@@ -16,18 +14,15 @@ public class StartOfCount extends TestCase {
 	protected BallotBox ballotBox;
 
 	/**
-	 * Test that the count process is started correctly.
+	 * 
 	 */
-	public void testStartOfCount () {
-		ballotCounting.setup(parameters);
-		assert ballotCounting.getStatus() == DailBallotCounting.PRECOUNT;
-		ballotCounting.count();
-		assert ballotCounting.getStatus() == DailBallotCounting.FINISHED;
-		
+	public void testElectionOfCandidate() {
+ 		assert candidate.getStatus() == Candidate.CONTINUING;
+		candidate.declareElected();
+ 		assert candidate.getStatus() == Candidate.ELECTED;
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	protected void setUp() {
 		ballotCounting = new DailBallotCounting();
 		parameters = new ElectionParameters();
 		parameters.totalNumberOfSeats = 4;
@@ -43,6 +38,17 @@ public class StartOfCount extends TestCase {
 		Ballot ballot2 = new Ballot();
 		int[] list2 = {3,2};
 		ballot2.load(list2 , list2.length);
-		ballotBox.ballots =  new Ballot[] {ballot1,ballot2};
 	}
+	
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 */
+	public void main () {
+		setUp();
+		testElectionOfCandidate();
+	}
+
 }

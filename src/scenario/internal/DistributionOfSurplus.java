@@ -1,8 +1,7 @@
-package internal;
+package scenario.events.internal;
 
 import ie.lero.evoting.tally.test.util.TestBallot;
 import ie.lero.evoting.tally.test.util.TestBallotBox;
-import junit.framework.TestCase;
 import election.tally.BallotBox;
 import election.tally.Candidate;
 import election.tally.ElectionParameters;
@@ -12,7 +11,7 @@ import election.tally.dail.DailBallotCounting;
  * @author Dermot Cochran
  *
  */
-public class DistributionOfSurplus extends TestCase {
+public class DistributionOfSurplus {
 	
 	protected DailBallotCounting ballotCounting;
 	protected ElectionParameters parameters;
@@ -20,10 +19,9 @@ public class DistributionOfSurplus extends TestCase {
 	protected BallotBox ballotBox;
 	
 	/**
-	 * Create the test data needed
+	 * Create the scenario data needed
 	 */
 	protected void setUp() throws Exception {
-		super.setUp();
 		ballotCounting = new DailBallotCounting();
 		ballotBox = new TestBallotBox();
 		parameters = new ElectionParameters();
