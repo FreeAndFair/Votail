@@ -1,0 +1,85 @@
+--
+-- Votail - Irish Proportional Representation by Single Transferable Vote
+--
+-- Copyright (c) 2009 Dermot Cochran
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+--
+-- The voting security infrastructure (VoteSET) may be the subject or one or more pending patents. 
+--
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+--
+
+-- External (incoming) events
+
+event_chart VOTAIL
+incoming
+part
+  "1/2"
+event
+  "Ballot counting starts"
+involves
+  BALLOT_BOX, BALLOT_COUNTING
+event
+  "Ballots are read into the counting system"
+involves
+  BALLOT_BOX, DATA_INTEGRITY, VOTE_SET
+event
+  "A ballot is cast"
+involves
+  BALLOT, BALLOT_BOX, SECURITY_GUARANTEE, VOTER, VOTE_SET
+end
+
+-- Internal (outgoing) events
+
+event_chart VOTAIL
+outgoing
+part
+  "2/2"
+event
+  "One or more candidates are elected"
+involves
+  CANDIDATE, BALLOT_COUNTING
+event 
+  "One or more candidates are excluded"
+involves
+  CANDIDATE, BALLOT_COUNTING
+event
+  "All seats are filled"
+involves
+  ELECTION_REPORT
+event
+  "A surplus is distributed"
+involves
+  BALLOT_BOX
+event
+  "The transferable votes of an excluded candidate are redistributed"
+involves
+  BALLOT, BALLOT_BOX, BALLOT_COUNTING, CANDIDATE
+event
+  "Two or more elected candidates have the highest surplus"
+involves
+  BALLOT_BOX
+event
+  "Two or more continuing candidates have the lowest vote"
+involves 
+  BALLOT_BOX, CANDIDATE_LIST
+event
+  "Ballot data integrity or security guarantees are waived for testing purposes"
+involves
+  AUDIT_LOG, BALLOT_BOX, DATA_INTEGRITY, SCENARIO_TEST, SECURITY_GUARANTEE, VOTE_SET
+end

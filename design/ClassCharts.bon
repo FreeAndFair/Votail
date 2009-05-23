@@ -1,0 +1,177 @@
+--
+-- VOTAIL - ballot counting system for Irish elections.
+--
+-- Copyright (c) 2009 Dermot Cochran
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+--
+-- This work was supported, in part, by Science Foundation Ireland
+-- grant 03/CE2/I303_1 to Lero - the Irish Software Engineering
+-- Research Centre (www.lero.ie) and, in part, by the European Project Mobius 
+-- (grant 15909) within the IST 6th Framework. This software reflects only the 
+-- authors' views and the Community is not liable for any use that may be made 
+-- of the information contained therein.
+--
+-- Votail is designed to be used with either an optical ballot scan system or 
+-- a remote online voting system that supply a valid set of ballots to be 
+-- counted and take care of system level issues such as security, 
+-- authentication, data storage and verification.
+--
+
+class_chart BALLOT
+explanation
+  "A valid set of preferences such as an ordered list of candidates"
+query
+  "How many preferences are shown on this ballot?",
+  "Who is the first preference for?",
+  "Who is the next preference for?",
+  "Who is the highest preference continuing candidate on this ballot?",
+  "Is there a fractional weight on this ballot?",
+  "What is the fractional weight on this ballot?",
+  "Which elected or continuing candidate benefits from this ballot?"
+command
+  "Divide the weight of this ballot by a transfer factor",
+  "Allocate this ballot to the next preference candidate"
+constraint
+  "The sequence of preferences is unbroken e.g. no candidate is listed twice",
+  "The frcational weight is greater than zero but not greater than one"
+end
+
+class_chart BALLOT_BOX
+explanation 
+  "The set of all ballot papers with at least one valid preference"
+query
+  "How many valid ballot papers?",
+  "How many first preference votes for each candidate?",
+  "How many different piles of ballots?"
+constraint
+  "Every ballot paper has at least one preference",
+  "The total number of first preference votes is equal to the number of ballots",
+  "The sum of the number of ballots in each pile is equal to the number of ballots" 
+end
+
+class_chart BALLOT_PILE
+explanation
+  "A set of ballot papers assigned to one candidate"
+query
+  "Which candidate benefits from this pile of ballots?",
+  "Is this a pile of non-transferable ballots?",
+  "From which elected or excluded candidate were these ballots taken?"
+constraint
+  "Every ballot in this pile is either nontransferable or assigned to the same candidate",
+  "For each ballot in this pile, there is no continuing candidate of higher preference"
+end
+
+class_chart CANDIDATE_LIST
+explanation
+  "The set of all valid candidates for election"
+query
+  "Who are the candidates?",
+  "Which candidates were elected?",
+  "Which candidates were excluded?",
+  "Which candidates were excluded and lost their deposit?",
+  "Who are the continuing candidates?",
+  "How many continuing candidates are there?"
+constraint 
+  "All candidates are either continuing, excluded or elected",
+  "At the beginning of the count all candidates are continuing",
+  "At the end of the count there are no continuing candidates"
+end
+
+class_chart COUNT_PROCESS
+explanation
+  "The algorithm for tallying of the votes"
+query
+  "Which variant of the algorithm is in force e.g. PR-STV, BC-STV or IRV?",
+  "Are fractional transfers (Gregory Method) allowed?",
+  "How many decimal places are used for fractional transfers (zero if not allowed)?"
+command
+  "Start the count",
+  "Begin the next round of counting",
+  "Randomise the order of the ballots" -- section 16
+constraint
+  "Whichever variant is in force, does not change during the count process. All ballots are counted in the same way.",
+  "The order of the ballots must be randomised before counting so that same order is used in each recount"
+end
+
+-- Election Reporting Requirements:
+-- see sections 19-40 of the Count Requirements and Commentary on Count Rules
+-- from the Department of the Environment and Local Government
+-- Available from http://www.cev.ie/htm/tenders/pdf/1_2.pdf
+class_chart ELECTION_REPORT
+explanation
+  ""
+query
+  "Which candidates were elected in each round?",
+  "Which candidates lost their deposit?",
+  "How was the surplus of each elected candidate distributed?", -- section 19
+  "How were the ballots of each excluded candidate distributed?"
+end
+
+class_chart BALLOT_COUNTING
+explanation
+  "Count algorithm for tallying of the votes in Dail and Seanad elections"
+inherit
+  COUNT_PROCESS
+query
+  "How many continuing candidates?",
+  "How many remaining seats?"
+command
+  "Calculate quota",
+  "Find highest continuing candidate with quota",
+  "Calculate surplus",
+  "Calculate weight factor",
+  "Calculate transfer factor",
+  "Calculate non-fractional transfers",
+  "Calculate fractional differences",
+  "Calculate adjustments",
+  "Calculate transfers",
+  "Move ballots",
+  "Weight and transfer ballots",
+  "Select lowest continuing candidates for exclusion",
+  "Declare remaining candidates elected",
+  "Close the count" 
+end
+
+class_chart VOTE_SET
+explanation
+  "Security infrastructure for electronic voting. Patent pending. All rights reserved."
+end
+
+class_chart DATA_INTEGRITY
+end
+
+class_chart SECURITY_GUARANTEE
+end
+
+class_chart CANDIDATE
+explanation
+  "A person eligible and nominated for election"
+end
+
+class_chart VOTER
+explanation
+  "A person who casts a ballot in an election"
+end
+
+class_chart AUDIT_LOG
+end
+
+class_chart SCENARIO_TEST
+end
