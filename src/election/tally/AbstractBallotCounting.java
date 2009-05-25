@@ -1472,10 +1472,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		}
 	}
 	
-	/*@ ensures \result <==> candidate == findLowestCandidate();
+	/*@ ensures \result <==> candidate.equals(findLowestCandidate());
 	  @*/
 	protected /*@ spec_public pure @*/ boolean isLowestCandidate(
 			final /*@ non_null @*/ Candidate candidate) {
-		
+		//@ assert false;
 	}
 }
