@@ -55,9 +55,16 @@ public class BallotBox {
 //@ public invariant 0 <= numberOfBallots;
 //@ public initially numberOfBallots == 0;
 //@ public constraint numberOfBallots >= \old(numberOfBallots);
+	/**
+	 * The total number of ballots in this ballot box.
+	 */
 	public int numberOfBallots;
 	
+	/**
+	 * Create an empty ballot box.
+	 */
 	public /*@ pure @*/ BallotBox(){
 		numberOfBallots = 0;
+		ballots = new Ballot[numberOfBallots];
 	}
 }

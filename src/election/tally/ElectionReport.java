@@ -98,8 +98,8 @@ public class ElectionReport {
 	private /*@ spec_public @*/ int totalNumberOfCounts;
 	
 	//@ requires n == ids.length;
-	//@ requires 0 < c;
-	public ElectionReport(int n, int[] ids, int c){
+	//@ requires 0 <= c;
+	public ElectionReport(final int n, /*@ non_null @*/ final int[] ids, final int c){
 		numberElected = n;
 		electedCandidateIDs = ids;
 		totalNumberOfCounts = c;

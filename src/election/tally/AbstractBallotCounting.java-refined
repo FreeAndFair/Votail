@@ -525,36 +525,36 @@ public abstract class AbstractBallotCounting {
    * @see requirement 10, section 4, item 4, page 16
    * @see requirement 12, section 4, item 4, page 16
    */
-  /*@ requires 1 <= numberToEliminate;
-    @ requires numberToEliminate <= numberOfContinuingCandidates; 
+  /*@ 
+    @ requires 1 <= candidatesToEliminate.length;
+    @ requires candidatesToEliminate.length <= numberOfContinuingCandidates; 
     @ requires (\forall int i;
-    @          0 <= i && i < numberToEliminate;
+    @          0 <= i && i < candidatesToEliminate.length;
     @          candidatesToEliminate[i].getTotalVote() == 0 ||
     @          depositSavingThreshold <= candidatesToEliminate[i].getTotalVote() ||
     @          candidatesToEliminate[i].getTotalVote() + 
     @          sumOfSurpluses + (\sum int j;
-    @            0 <= j && j != i && j < numberToEliminate;
+    @            0 <= j && j != i && j < candidatesToEliminate.length;
     @            candidatesToEliminate[i].getTotalVote()) < depositSavingThreshold);
     @ requires (\forall int i;
-    @          0 <= i && i < numberToEliminate;
+    @          0 <= i && i < candidatesToEliminate.length;
     @          candidatesToEliminate[i].getStatus() == Candidate.CONTINUING);
     @ requires sumOfSurpluses + (\sum int i;
-    @          0 <= i && i < numberToEliminate;
+    @          0 <= i && i < candidatesToEliminate.length;
     @          candidatesToEliminate[i].getTotalVote()) < quota;
     @ requires remainingSeats < numberOfContinuingCandidates;
     @ requires (state == COUNTING);
     @ ensures (\forall int i;
-    @          0 <= i && i < numberToEliminate;
+    @          0 <= i && i < candidatesToEliminate.length;
     @          candidatesToEliminate[i].getStatus() == Candidate.ELIMINATED &&
     @          candidatesToEliminate[i].getTotalVote() == 0);
-    @ ensures numberEliminated == \old (numberEliminated) + numberToEliminate;
+    @ ensures numberEliminated == \old (numberEliminated) + candidatesToEliminate.length;
     @ ensures remainingSeats <= numberOfContinuingCandidates;
     @ ensures numberElected <= seats;
     @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
     @*/
   protected abstract void eliminateCandidates(
-		  /*@ non_null @*/ Candidate[] candidatesToEliminate,
-		  int numberToEliminate);
+		  /*@ non_null @*/ Candidate[] candidatesToEliminate);
 	
 	
   /** 
@@ -1030,5 +1030,5 @@ public abstract class AbstractBallotCounting {
     	@      ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE))
     @   );
     @*/
-  protected abstract void updateDecisions();
+  protected abstract void updateDecisions(Decision decision);
 }

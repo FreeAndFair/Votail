@@ -6,7 +6,7 @@ import election.tally.dail.DailBallotCounting;
 
 /**
  * @author Dermot Cochran
- *
+ * @copyright 2009 Dermot Cochran
  */
 public class DistributionOfSurplus {
 	
@@ -18,7 +18,7 @@ public class DistributionOfSurplus {
 	/**
 	 * Create the scenario data needed
 	 */
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		ballotCounting = new DailBallotCounting();
 		ballotBox = new scenario.util.TestBallotBox();
 		parameters = new ElectionParameters();
@@ -41,9 +41,20 @@ public class DistributionOfSurplus {
 	 	parameters.setCandidateList(candidates);	
 	}
 
+	/**
+	 * Test the distribution of surplus ballots
+	 */
 	public void testDistributionOfSurplus() {
 	 
 	 	ballotCounting.setup(parameters);
 	 	ballotCounting.distributeSurplus(ballotCounting.findHighestCandidate());
+	}
+	
+	/**
+	 * 
+	 */
+	public void main() {
+		setUp();
+		testDistributionOfSurplus();
 	}
 }

@@ -649,7 +649,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  * </BON>
  * 
  * @param candidateWithSurplus The elected candidate whose surplus is to be transferred
- * @see http://www.cev.ie/htm/tenders/pdf/1_2.pdf, section 12, page 47
+ * @see <a href http://www.cev.ie/htm/tenders/pdf/1_2.pdf>CEV Commentary on Count Rules, section 12, page 47</a>
  */
 /*@ also
   @   protected normal_behavior
@@ -693,29 +693,29 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  */
 /*@ also
   @   protected normal_behavior
-  @     requires 1 <= numberToEliminate;
-  @     requires numberToEliminate <= numberOfContinuingCandidates;
+  @     requires 1 <= candidatesToEliminate.length;
+  @     requires candidatesToEliminate.length <= numberOfContinuingCandidates;
   @     requires (\forall int i;
-  @       0 <= i && i < numberToEliminate;
+  @       0 <= i && i < candidatesToEliminate.length;
   @       candidatesToEliminate[i].getTotalVote() == 0 ||
   @       depositSavingThreshold <= candidatesToEliminate[i].getTotalVote() ||
   @       candidatesToEliminate[i].getTotalVote() +
   @       sumOfSurpluses + (\sum int j;
-  @       0 <= j && j != i && j < numberToEliminate;
+  @       0 <= j && j != i && j < candidatesToEliminate.length;
   @       candidatesToEliminate[i].getTotalVote()) < depositSavingThreshold);
   @     requires (\forall int i;
-  @       0 <= i && i < numberToEliminate;
+  @       0 <= i && i < candidatesToEliminate.length;
   @       candidatesToEliminate[i].getStatus() == Candidate.CONTINUING);
   @     requires sumOfSurpluses + (\sum int i;
-  @       0 <= i && i < numberToEliminate;
+  @       0 <= i && i < candidatesToEliminate.length;
   @       candidatesToEliminate[i].getTotalVote()) < quota;
   @     requires remainingSeats < numberOfContinuingCandidates;
   @     requires (state == COUNTING);
   @     ensures (\forall int i;
-  @       0 <= i && i < numberToEliminate;
+  @       0 <= i && i < candidatesToEliminate.length;
   @       candidatesToEliminate[i].getStatus() == Candidate.ELIMINATED &&
   @       candidatesToEliminate[i].getTotalVote() == 0);
-  @     ensures numberEliminated == \old (numberEliminated) + numberToEliminate;
+  @     ensures numberEliminated == \old (numberEliminated) + candidatesToEliminate.length;
   @     ensures remainingSeats <= numberOfContinuingCandidates;
   @     ensures numberElected <= seats;
   @     ensures \old(lowestContinuingVote) <= lowestContinuingVote;
@@ -1334,8 +1334,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
   @     isElected (candidateList[i]) ==> (\exists int k;
   @     0 <= k && k < numberOfDecisions;
   @   (decisionsMade[k].candidateID == candidateList[i].getCandidateID()) &&
-  @   ((decisionsMade[k].decisionTaken == Decision.ELECTBYQUOTA) ||
-  @   (decisionsMade[k].decisionTaken == Decision.DEEMELECTED))) &&
+  @   ((decisionsMade[k].decisionTaken == Decision.ELECT_BY_QUOTA) ||
+  @   (decisionsMade[k].decisionTaken == Decision.DEEM_ELECTED))) &&
   @   (\forall int n; 0 <= n && n < numberOfDecisions;
   @   (decisionsMade[n].candidateID == candidateList[i].getCandidateID())
   @   ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE)));
@@ -1351,7 +1351,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @return The candidate with the most votes
 	 */
 	/*@ ensures (\forall int i; 0 <= i && i < totalCandidates;
-	  @   candidates[i].getTotalVotes() <= \result.getTotalVotes());
+	  @   candidates[i].getTotalVote() <= \result.getTotalVote());
 	  @ ensures (\exists int i; 0 <= i && i < totalCandidates;
 	  @   candidates[i].equals(\result));
 	  @*/
@@ -1372,7 +1372,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 			}
 		}
 		
-		assert highestCandidate.getTotalVote() == mostVotes;
+		//@ assert highestCandidate.getTotalVote() == mostVotes;
 		
 		return highestCandidate;
 	}
@@ -1383,9 +1383,9 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @return The continuing candidate with the least votes
 	 */
 	/*@ requires 1 <= totalCandidates;
-	  @ ensures (\forall int i; 0 <= i && i < totalCandidates && candidates[i].getStatus == Candidate.CONTINUING;
-	  @   candidates[i].getTotalVotes() >= \result.getTotalVotes());
-	  @ ensures (\exists int i; 0 <= i && i < totalCandidates && candidates[i].getStatus == Candidate.CONTINUING;
+	  @ ensures (\forall int i; 0 <= i && i < totalCandidates && candidates[i].getStatus() == Candidate.CONTINUING;
+	  @   candidates[i].getTotalVote() >= \result.getTotalVote());
+	  @ ensures (\exists int i; 0 <= i && i < totalCandidates && candidates[i].getStatus() == Candidate.CONTINUING;
 	  @   candidates[i].equals(\result));
 	  @*/
 	public /*@ pure non_null @*/ Candidate findLowestCandidate() {
@@ -1417,10 +1417,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @param candidateID The candidate to be excluded
 	 */
 	/*@ requires isLowestCandidate (candidate);
-	  @ requires candidate.getStatus == Candidate.CONTINUING;
+	  @ requires candidate.getStatus() == Candidate.CONTINUING;
 	  @ ensures candidate.getStatus() == Candidate.EXCLUDED;
 	  @ ensures (\forall int b; 0 <= b && b < ballots.length;
-	  @   ballots[b].getCandidateID != candidate.getCandidateID());
+	  @   ballots[b].getCandidateID() != candidate.getCandidateID());
 	  @*/
 	public void eliminateCandidate(Candidate candidate) {
 		final int candidateID = candidate.getCandidateID();
@@ -1437,10 +1437,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @param candidateID The candidate about which the decision was made
 	 */
 	/*@ requires (\exists int i; 0 <= i && i < totalCandidates;
-	  @  candidates[i].getCandidateID == candidateID);
+	  @  candidates[i].getCandidateID() == candidateID);
 	  @ requires (decisionType == Decision.EXCLUDE) ||
-	  @   (decisionType == Decision.DEEMELECTED) ||
-	  @   (decisionType == Decision.ELECTBYQUOTA);
+	  @   (decisionType == Decision.DEEM_ELECTED) ||
+	  @   (decisionType == Decision.ELECT_BY_QUOTA);
 	  @ ensures \old(numberOfDecisions) < numberOfDecisions;
 	  @*/
 	protected void auditDecision(final byte decisionType, final int candidateID) {
@@ -1458,10 +1458,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param The unique identifier for the excluded candidate
 	 */
-	/*@ requires candidate.getStatus() == candidate.EXCLUDED;
+	/*@ requires candidate.getStatus() == Candidate.EXCLUDED;
 	  @ requires ballots != null;
 	  @ ensures (\forall int b; 0 <= b && b < ballots.length;
-	  @   ballots[b].getCandidateID != candidateID);
+	  @   ballots[b].getCandidateID() != candidateID);
 	  @*/
 	protected void redistributeBallots(final int candidateID) {
 
@@ -1470,5 +1470,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 				ballots[b].transfer(countNumberValue);
 			}
 		}
+	}
+	
+	/*@ ensures \result <==> candidate == findLowestCandidate();
+	  @*/
+	protected /*@ spec_public pure @*/ boolean isLowestCandidate(
+			final /*@ non_null @*/ Candidate candidate) {
+		
 	}
 }

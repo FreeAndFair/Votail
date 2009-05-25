@@ -28,11 +28,6 @@ package election.tally;
  * @author Dermot Cochran
  */
 
-/*
- * <BON>
- * </BON>
- */
-
 public class ElectionParameters {
 
 /** Number of candidates for election in this constituency */
@@ -66,15 +61,23 @@ public class ElectionParameters {
 	private /*@ spec_public @*/ Candidate[] candidateList;
 	
 	public ElectionParameters(){	
-		candidateIDs = new long[0];
+		totalNumberOfSeats = 1;
+		numberOfCandidates = 1;
+		numberOfSeatsInThisElection = 1;
+		candidateIDs = new long[numberOfCandidates];
 	}
 
-	public void setCandidateList(Candidate[] candidateList) {
+	public void setCandidateList(final Candidate[] candidateList) {
 		this.candidateList = candidateList;
 	}
 
+	/*@ requires 0 < numberOfSeats;
+	  @ ensures this.totalNumberOfSeats == numberOfSeats;
+	  @*/
+	/**
+	 * @param numberOfSeats The total number of seats for election
+	 */
 	public void setNumberOfSeats(int numberOfSeats) {
 		this.totalNumberOfSeats = numberOfSeats;
-		
 	}
 };

@@ -369,7 +369,7 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
 /*@ 
   @   public normal_behavior
   @   requires state == UNASSIGNED;
-  @   requires 0 < internalID;
+  @   requires 0 <= internalID;
   @   requires (\forall Candidate other; other != null;
   @     other.candidateID != internalID);
   @   assignable state, candidateID;
@@ -467,6 +467,8 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @*/
 	public /*@ pure @*/ boolean equals(Candidate other) {
 		if (other == null) {
+			return false;
+		} else if (other.getStatus() == UNASSIGNED) {
 			return false;
 		}
 		return (other.getCandidateID() == this.candidateID);
