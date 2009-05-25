@@ -168,6 +168,23 @@ end
 class_chart VOTER
 explanation
   "A person who casts a ballot in an election"
+query
+  "Did this person vote at least once?",
+  "Was this person's ballot counted and verified correctly, unless reversed?",
+  "Is this person registered to vote?"
+command
+  "Cast a ballot",
+  "Reverse a ballot"
+constraint
+  "Votes may only be revoked while the election is open",
+  "Votes will be sent for counting only if not reserved while the election is open",
+  "Votes will be sent for counting only if the voter has been anonymously authenticated",
+  "If the same voter casts multiple votes, then only the first unrevoked ballot is sent for counting",
+  "It is impossible to reveal how any individual person voted",
+  "It is impossible to reveal how many times a person reversed their ballot",
+  "It is impossible to reveal at what time of day the voter has cast",
+  "A voter may only reverse their most recent ballot",
+  "All ballots are cast with the same initial weight"
 end
 
 class_chart AUDIT_LOG
