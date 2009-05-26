@@ -58,7 +58,7 @@ public class Decision {
 	
 /** Candidate to which the decision applied */
 //@ public invariant (decisionTaken != NO_DECISION) ==> 0 < candidateID;
-//@ public invariant (candidateID != Ballot.NONTRANSFERABLE) || (candidateID = 0);
+//@ public invariant (candidateID != Ballot.NONTRANSFERABLE) || (candidateID == 0);
 /*@ public constraint (decisionTaken != NO_DECISION) ==>
   @   candidateID == \old(candidateID);
   @*/
