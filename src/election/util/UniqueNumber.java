@@ -29,39 +29,24 @@ package election.util;
  * @author Dermot Cochran
  */
 
-/* <BON>
- * class_chart UNIQUE_NUMBER
- * explanation
- *   "Unique internal identifier"
- * query
- *   "What is the value of the next unique number?"
- * constraint
- *   "No two internal identifiers are the same"
- * </BON>
- */
-
 /**
  * Unique internal identifier.
  */
 public class UniqueNumber {
    
-private static final int _INCREMENT = 10;
 private /*@ spec_public @*/ static int uniqueID = 0;
 
 /**
  * Generates a unique ID number
  * 
- * @return A unique ID number
+ * @return A unique non-repeating ID number
  */
    /*@ public normal_behavior
-     @ assignable uniqueID;
-     @ ensures 0 < \result;
-     @ ensures \old(uniqueID) < \result;
+     @   assignable uniqueID;
+     @   ensures 0 < \result;
+     @   ensures \old(uniqueID) < \result;
      @*/ 
    public synchronized static int getUniqueID() {
-	   uniqueID += System.currentTimeMillis() % UniqueNumber._INCREMENT;
        return ++uniqueID;
    }
-
-
 }

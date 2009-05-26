@@ -37,6 +37,7 @@ class CANDIDATE_LIST description "The set of all candidates for election and the
 class COUNT_PROCESS description "The procedure and algorithm for counting of ballots"
 class ELECTION_REPORT description "The number of votes for each candidate at each round of counting"
 class CANDIDATE description "A person eligible and nominated for election"
+class RANDOM_NUMBER description "A hidden random number used for resolving ties or mixing of ballot papers"
 end
 
 cluster_chart SECURITY

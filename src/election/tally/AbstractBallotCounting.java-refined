@@ -1023,8 +1023,8 @@ public abstract class AbstractBallotCounting {
     @   isElected (candidateList[i]) ==> (\exists int k;
     @     0 <= k && k < numberOfDecisions;
     @     (decisionsMade[k].candidateID == candidateList[i].getCandidateID()) &&
-    @     ((decisionsMade[k].decisionTaken == Decision.ELECTBYQUOTA) ||
-    @       (decisionsMade[k].decisionTaken == Decision.DEEMELECTED))) &&
+    @     ((decisionsMade[k].decisionTaken == Decision.ELECT_BY_QUOTA) ||
+    @       (decisionsMade[k].decisionTaken == Decision.DEEM_ELECTED))) &&
     @   (\forall int n; 0 <= n && n < numberOfDecisions;
     	@      (decisionsMade[n].candidateID  == candidateList[i].getCandidateID())
     	@      ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE))

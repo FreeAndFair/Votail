@@ -109,8 +109,10 @@ public class ElectionReport {
 	 * @param ids The list of internal identifiers for the winner candidates
 	 * @param c The number of rounds of counting 
 	 */
-	//@ requires n == ids.length;
-	//@ requires 0 <= c;
+	/*@   requires n == ids.length;
+	  @   requires n <= MAX_SEATS;
+	  @   requires 0 <= c;
+	  @*/
 	public ElectionReport(final int n, /*@ non_null @*/ final int[] ids, final int c){
 		numberElected = n;
 		electedCandidateIDs = ids;

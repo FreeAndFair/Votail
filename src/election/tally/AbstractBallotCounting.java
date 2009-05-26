@@ -547,18 +547,18 @@ public AbstractBallotCounting(){
  * 
  * @param candidate The candidate in question
  * @return True if the candidate has at least a quota of votes
- * @see http://www.cev.ie/htm/tenders/pdf/1_1.pdf, page 79, paragraph 120(2)
+ * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_1.pdf">CEV guidelines, page 79, paragraph 120(2)</a>
  * 
  * <BON>query "Has the candidate at least a quota of votes?"</BON>
  */
 /*@ also
   @   protected normal_behavior
-  @   requires candidate != null;
-  @   requires 1 <= countNumber;
-  @   requires state == COUNTING;
-  @   ensures \result == (candidate.getTotalVote() >= quota);
+  @     requires candidate != null;
+  @     requires 0 <= countNumber;
+  @     requires state == COUNTING;
+  @     ensures \result <==> (candidate.getTotalVote() >= quota);
   @*/
-public /*@ pure @*/ boolean hasQuota(Candidate candidate){
+public /*@ pure @*/ boolean hasQuota(/*@ non_null @*/ Candidate candidate){
 	return (candidate.getTotalVote() >= numberOfVotesRequired); //@ nowarn;
 }
 
@@ -567,8 +567,7 @@ public /*@ pure @*/ boolean hasQuota(Candidate candidate){
  * 
  * <BON>query "Has the candidate been elected?"</BON>
  * 
- * @param candidate  
- * The candidate record
+ * @param candidate The candidate
  * 
  * @return True if the candidate has already been elected
  */
@@ -593,11 +592,11 @@ public /*@ pure @*/ boolean isElected(Candidate candidate){
  * @param candidate The candidate record
  * @return The undistributed surplus for that candidate, or zero if the 
  * candidate has less than a quota of votes
- * @see http://www.cev.ie/htm/tenders/pdf/1_1.pdf, page 79, paragraph 120(2)
+ * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_1.pdf">CEV guidelines, page 79, paragraph 120(2)</a>
  */
 /*@ also
   @   protected normal_behavior
-  @     requires 1 <= countNumber;
+  @     requires 0 <= countNumber;
   @     requires COUNTING == state;
   @     ensures (hasQuota(candidate) == true) ==> \result ==
   @       (candidate.getTotalVote() - quota);
@@ -606,7 +605,7 @@ public /*@ pure @*/ boolean isElected(Candidate candidate){
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 	int surplus = 0;
- 	if (hasQuota(candidate)) {			
+ 	if (candidate.getTotalVote() > numberOfVotesRequired) {			
  		surplus = candidate.getTotalVote() - numberOfVotesRequired;
 	}
 	return surplus;
@@ -620,7 +619,7 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
  * @design The deposit saving threshold is one plus one quarter of the full quota
  * @design This needs to be checked just before the candidate is eliminated to include
  *   all transfers received before the candidate was either elected or eliminated
- * @see http://www.cev.ie/htm/tenders/pdf/1_2.pdf, section 3 page 13, section 4 page 17 and section 14
+ * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV commentary on count rules, section 3 page 13, section 4 page 17 and section 14</a>
  * @param candidate The candidate for which to check
  * @return true if candidate has enough votes to save deposit
  */
@@ -628,7 +627,8 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
   @   protected normal_behavior
   @     requires (state == COUNTING) || (state == FINISHED) || (state == REPORT);
   @     requires candidate != null;
-  @     ensures \result == (candidate.getOriginalVote() >= depositSavingThreshold) ||
+  @     requires candidate.state != Candidate.UNASSIGNED;
+  @     ensures \result <==> (candidate.getOriginalVote() >= depositSavingThreshold) ||
   @       (isElected (candidate) == true);
   @*/
 public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate candidate){
@@ -721,6 +721,8 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
   @     ensures \old(lowestContinuingVote) <= lowestContinuingVote;
   @*/
 public void eliminateCandidates(Candidate[] candidatesToEliminate) {
+	for (int i = 0; i < candidatesToEliminate.length; i++)
+		eliminateCandidate(candidatesToEliminate[i]);
 }
 
 /**
@@ -780,6 +782,37 @@ public /*@ non_null @*/ ElectionReport report(){
   @ ensures numberOfContinuingCandidates == 0;
   @*/
 public void count() {
+	
+	// Proportional representation by single transferable vote
+	countNumberValue = 0;
+	
+	while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
+		
+		// Transfer surplus votes from winning candidates
+		while (totalNumberOfSurpluses > 0) {
+			Candidate winner = findHighestCandidate();
+			winner.declareElected();
+			distributeSurplus(winner);
+			countNumberValue++;
+		}
+		
+		// Exclusion of lowest continuing candidate
+		Candidate loser = findLowestCandidate();
+		loser.declareEliminated();
+		redistributeBallots(loser.getCandidateID());
+		countNumberValue++;
+	}
+	
+	// Filling of last seats
+	if (totalNumberOfContinuingCandidates == totalRemainingSeats) {
+		for (int c = 0; c < totalNumberOfCandidates; c++) {
+			if (isContinuingCandidateID(candidates[c].getCandidateID())) {
+				candidates[c].declareElected();
+			}
+		countNumberValue++;
+		}
+			
+	}
 }
 
 /**
@@ -812,15 +845,16 @@ public void setup(ElectionParameters electionParameters){
  */
 /*@ also
   @   protected normal_behavior
-  @   requires state == PRELOAD;
-  @   assignable state, totalVotes, ballotsToCount, quota,depositSavingThreshold;
-  @   ensures state == PRECOUNT;
-  @   ensures totalVotes == ballotBox.numberOfBallots;
-  @   ensures (\forall int i; 0 <= i && i < totalVotes;
-  @   (\exists int j; 0 <= j && j < totalCandidates;
-  @   ballotsToCount[j].isAssignedTo(candidateList[i].getCandidateID())));
+  @     requires state == PRELOAD;
+  @     assignable state, totalVotes, ballotsToCount, quota,depositSavingThreshold;
+  @     ensures state == PRECOUNT;
+  @     ensures totalVotes == ballotBox.numberOfBallots;
+  @     ensures (\forall int i; 0 <= i && i < totalVotes;
+  @       (\exists int j; 0 <= j && j < totalCandidates;
+  @       ballotsToCount[j].isAssignedTo(candidateList[i].getCandidateID())));
   @*/
-public void load(BallotBox ballotBox) {
+public void load(/*@ non_null @*/ BallotBox ballotBox) {
+ 	ballots = ballotBox.getBallots();
 }
 
 /**
@@ -930,8 +964,7 @@ public /*@ pure @*/ byte getStatus(){
 /**
  * Determine if a candidate ID belongs to a continuing candidate.
  * 
- * @param candidateID
- * The ID of candidate for which to check the status
+ * @param candidateID The ID of candidate for which to check the status
  * 
  * @return <code>true</code> if this candidate ID matches that of a 
  * continuing candidate
@@ -1085,9 +1118,8 @@ protected /*@ pure @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromC
 protected /*@ pure @*/ int randomSelection(/*@ non_null @*/ Candidate firstCandidate, /*@ non_null @*/ Candidate secondCandidate){
  		if(firstCandidate.randomNumber < secondCandidate.randomNumber){
 			return firstCandidate.candidateID;
-		}else {
-			return secondCandidate.candidateID;
 		}
+		return secondCandidate.candidateID;
 	 
 }
 
@@ -1405,8 +1437,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 			}
 		}
 		
-		assert lowestCandidate.getTotalVote() == leastVotes;
-		assert 0 <= leastVotes;
+		//@ assert lowestCandidate.getTotalVote() == leastVotes;
+		//@ assert 0 <= leastVotes;
 		
 		return lowestCandidate;
 	}
@@ -1414,15 +1446,15 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	/**
 	 * Exclude one candidate from the election.
 	 * 
-	 * @param candidateID The candidate to be excluded
+	 * @param candidate The candidate to be excluded
 	 */
 	/*@ requires isLowestCandidate (candidate);
 	  @ requires candidate.getStatus() == Candidate.CONTINUING;
-	  @ ensures candidate.getStatus() == Candidate.EXCLUDED;
+	  @ ensures candidate.getStatus() == Candidate.ELIMINATED;
 	  @ ensures (\forall int b; 0 <= b && b < ballots.length;
 	  @   ballots[b].getCandidateID() != candidate.getCandidateID());
 	  @*/
-	public void eliminateCandidate(Candidate candidate) {
+	public void eliminateCandidate(final Candidate candidate) {
 		final int candidateID = candidate.getCandidateID();
 
 		candidate.declareEliminated();
@@ -1458,9 +1490,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param The unique identifier for the excluded candidate
 	 */
-	/*@ requires ballots != null;
-	  @ ensures (\forall int b; 0 <= b && b < ballots.length;
-	  @   ballots[b].getCandidateID() != candidateID);
+	/*@ public normal_behavior
+	  @   requires ballots != null;
+	  @   ensures (\forall int b; 0 <= b && b < ballots.length;
+	  @     ballots[b].getCandidateID() != candidateID);
 	  @*/
 	protected void redistributeBallots(final int candidateID) {
 

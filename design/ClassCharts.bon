@@ -190,5 +190,23 @@ end
 class_chart AUDIT_LOG
 end
 
+class_chart RANDOM_NUMBER
+explanation
+   "A number chosen so as to simulate the drawing of lots or shuffling of ballot papers.  It should be unbiased and fair so as not to favour any one candidate over another, and it should be repeatable so that each count will give the same results."
+constraint
+   "The random number cannot be changed once it has been assigned",
+   "No two candidates can have the same random number",
+   "The election administrator cannot control the value of the random number"
+end
+
 class_chart SCENARIO_TEST
+end
+
+class_chart UNIQUE_NUMBER
+explanation
+   "Unique internal identifier"
+query
+   "What is the value of the next unique number?"
+constraint
+   "No two internal identifiers are the same"
 end

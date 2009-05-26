@@ -63,8 +63,20 @@ public class BallotBox {
 	/**
 	 * Create an empty ballot box.
 	 */
-	public /*@ pure @*/ BallotBox(){
+	public BallotBox(){
 		numberOfBallots = 0;
 		ballots = new Ballot[numberOfBallots];
+	}
+
+	/**
+	 * Get the full set of ballots cast.
+	 * 
+	 * @return The full set of ballots.
+	 */
+	/*@ public normal_behavior
+	  @   ensures ballots == \result;
+	  @*/
+	public /*@ pure non_null @*/ Ballot[] getBallots() {
+ 		return ballots;
 	}
 }
