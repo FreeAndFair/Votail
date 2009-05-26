@@ -1458,8 +1458,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param The unique identifier for the excluded candidate
 	 */
-	/*@ requires candidate.getStatus() == Candidate.EXCLUDED;
-	  @ requires ballots != null;
+	/*@ requires ballots != null;
 	  @ ensures (\forall int b; 0 <= b && b < ballots.length;
 	  @   ballots[b].getCandidateID() != candidateID);
 	  @*/
@@ -1472,10 +1471,15 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		}
 	}
 	
-	/*@ ensures \result <==> candidate.equals(findLowestCandidate());
-	  @*/
+	/**
+	 * Is this the lowest continuing candidate?
+	 * 
+	 * @param candidate The candidate
+	 * @return <code>true</code> if this candidate is the lowest, <code>false</code> otherwise
+	 */
+	//@ ensures \result <==> candidate.equals(findLowestCandidate());
 	protected /*@ spec_public pure @*/ boolean isLowestCandidate(
 			final /*@ non_null @*/ Candidate candidate) {
-		//@ assert false;
+		return candidate.equals(findLowestCandidate());
 	}
 }

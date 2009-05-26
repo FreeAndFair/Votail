@@ -31,53 +31,96 @@ package election.tally;
 public class ElectionParameters {
 
 /** Number of candidates for election in this constituency */
-//@ public invariant 0 < numberOfCandidates;
+//@ public invariant 0 <= numberOfCandidates;
 	public int numberOfCandidates;
 	
 /** Number of seats to be filled in this election */
-//@ public invariant 0 < numberOfSeatsInThisElection;
+//@ public invariant 0 <= numberOfSeatsInThisElection;
 //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
 	public int numberOfSeatsInThisElection;
 	
 /** Number of seats in this constituency */
-//@ public invariant 0 < totalNumberOfSeats;
+//@ public invariant 0 <= totalNumberOfSeats;
 	public int totalNumberOfSeats;
 	
-/** List of ID values for all candidates in this election */
+/** List of all candidates in this election */
 /*@ public invariant (\forall int i;
   @   0 <= i && i < numberOfCandidates;
-  @   0 < candidateIDs[i] &&
-  @   candidateIDs[i] != Ballot.NONTRANSFERABLE); 
+  @   0 < candidateList[i].getCandidateID() &&
+  @   candidateList[i].getCandidateID() != Ballot.NONTRANSFERABLE); 
   @*/
-// @constraint No duplicate candidate IDs are allowed. 	
+/** @constraint No duplicate candidates are allowed. */
 /*@ public invariant (\forall int i, j;
   @   0 <= i && i < numberOfCandidates &&
   @   0 <= j && j < numberOfCandidates &&
   @   i != j;
-  @   candidateIDs[i] != candidateIDs[j]); 
+  @   !candidateList[i].equals(candidateList[j])); 
   @*/	
-	public /*@ non_null @*/ long[] candidateIDs;
-
-	private /*@ spec_public @*/ Candidate[] candidateList;
+	private /*@ spec_public non_null @*/ Candidate[] candidateList;
 	
-	public ElectionParameters(){	
-		totalNumberOfSeats = 1;
-		numberOfCandidates = 1;
-		numberOfSeatsInThisElection = 1;
-		candidateIDs = new long[numberOfCandidates];
-	}
-
-	public void setCandidateList(final Candidate[] candidateList) {
-		this.candidateList = candidateList;
-	}
-
-	/*@ requires 0 < numberOfSeats;
-	  @ ensures this.totalNumberOfSeats == numberOfSeats;
-	  @*/
 	/**
-	 * @param numberOfSeats The total number of seats for election
+	 * 
 	 */
-	public void setNumberOfSeats(int numberOfSeats) {
-		this.totalNumberOfSeats = numberOfSeats;
+	public ElectionParameters(){	
+		totalNumberOfSeats = 0;
+		numberOfCandidates = 0;
+		numberOfSeatsInThisElection = 0;
+		candidateList = new Candidate[numberOfCandidates];
+	} //@ nowarn;
+
+	/**
+	 * Set the list of candidates.
+	 * 
+	 * @constraint This method may only be called once i.e. the list of candidates cannot be altered once set.
+	 * @constraint No candidate may appear more than once on the list.
+	 * 
+	 * @param listOfCandidates The list of candidates for this election.
+	 */
+	/*@ public normal_behavior 
+	  @   requires numberOfCandidates == 0;
+	  @   requires (\forall int i;
+	  @     0 <= i && i < listOfCandidates.length;
+	  @     listOfCandidates[i] != null &&
+	  @     0 < listOfCandidates[i].getCandidateID() &&
+	  @     listOfCandidates[i].getCandidateID() != Ballot.NONTRANSFERABLE); 
+ 	  @   requires (\forall int i, j;
+	  @     0 <= i && i < listOfCandidates.length &&
+	  @     0 <= j && j < listOfCandidates.length &&
+	  @     i != j;
+	  @     (false == listOfCandidates[i].equals(listOfCandidates[j]))); 
+	  @  assignable candidateList, numberOfCandidates;
+	  @  ensures (\forall int i;
+	  @     0 <= i && i < listOfCandidates.length;
+ 	  @     candidateList[i].equals(listOfCandidates[i]));
+ 	  @  ensures listOfCandidates.length == numberOfCandidates;
+	  @*/	
+	public void setCandidateList(final /*@ non_null @*/ Candidate[] listOfCandidates) {
+		numberOfCandidates = listOfCandidates.length;
+		this.candidateList = listOfCandidates;
+	} //@ nowarn;
+
+	/**
+	 * @return the candidateList
+	 */
+	public /*@ pure non_null @*/ Candidate[] getCandidateList() {
+		return candidateList;
 	}
-};
+
+	/**
+	 * Set the total number of seats in this constituency
+	 * 
+	 * @param numberOfSeats The total number of seats in this constituency
+	 * @param numberToElect The number of seats to be filled in this election
+	 */
+	/*@ public normal_behavior 
+	  @   requires 0 < numberOfSeats;
+	  @   requires 0 < numberToElect;
+	  @   requires numberToElect <= numberOfSeats;
+	  @   assignable totalNumberOfSeats, numberOfSeatsInThisElection;
+	  @   ensures this.totalNumberOfSeats == numberOfSeats;
+	  @*/
+	public void setNumberOfSeats(final int numberOfSeats, final int numberToElect) {
+		this.totalNumberOfSeats = numberOfSeats;
+ 		this.numberOfSeatsInThisElection = numberToElect;
+		}
+	}
