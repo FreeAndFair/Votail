@@ -26,11 +26,7 @@ public class Candidate {
  * 
  * The average number of candidates could be much less.
  */
-public static final int MAX_SEATS = 5;
-public static final int MAX_MAJOR_PARTIES = 7; // Large enough to contest two or more seats
-public static final int MAX_MINOR_PARTIES = 7; // Too small to contest more than one seat
-public static final int MAX_INDEPENDENTS = 7;
-public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_MINOR_PARTIES + MAX_INDEPENDENTS + 1; // Fifty
+public static final int MAX_CANDIDATES = 50;
 
 /** Identifier for the candidate.
  * 
@@ -47,7 +43,7 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @ public invariant (\forall Candidate a, b;
   @   a != null && b != null &&
   @   a.state != UNASSIGNED && b.state != UNASSIGNED;
-  @   (a.candidateID == b.candidateID) <==> (a == b));
+  @   (a.candidateID == b.candidateID) <==> (a.equals(b)));
   @ public constraint ((state != UNASSIGNED) && (\old(state) == state)) ==>
   @   candidateID == \old(candidateID);
   @*/
@@ -103,25 +99,11 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
 	
 /**
  * Unique random number used to simulate drawing of lots between candidates.
- * 
- * <BON>
- * class_chart RANDOM_NUMBER
- * explanation
- *   "A number chosen so as to simulate the drawing of lots or shuffling of \
- *   ballot papers.  It should be unbiased and fair so as not to favour any \
- *   one candidate over another, and it should be repeatable so that each \
- *   count will give the same results."
- * inherit VALUE
- * constraints
- *   "The random number cannot be changed once it has been assigned";
- *   "No two candidates can have the same random number";
- *   "The election administrator cannot control the value of the random number"
- * end
  */
 /*@ public invariant (\forall Candidate a, b;
   @   a != null && b != null &&
   @   a.state != UNASSIGNED && b.state != UNASSIGNED;
-  @   (a.randomNumber == b.randomNumber) <==> (a == b));
+  @   (a.randomNumber == b.randomNumber) <==> (a.equals(b)));
   @ public constraint (state != UNASSIGNED) ==>
   @   randomNumber == \old(randomNumber); 	
   @*/
@@ -171,17 +153,12 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
 
 	
 /**
- * Gets number of votes added or removed in this round count.
+ * Gets number of votes added or removed in this round of counting.
  * 
  * @param count This count number
  * @return A positive number if the candidate received transfers or 
  * a negative number if the candidate's surplus was distributed or 
  * the candidate was eliminated and votes transfered to another. 
- * 
- * <BON>
- * query
- *   How many votes have been added or removed in this count round?
- * </BON>
  */	
 /*@ 
   @   public normal_behavior
@@ -192,41 +169,28 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @   ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
 	public /*@ pure @*/ int getVoteAtCount(int count){
-		int sum = 0;
-		if(state != UNASSIGNED){
-			if(0 <= count && count <= lastCountNumber){
-				sum = (votesAdded[count] - votesRemoved[count]);
-			}
-			return sum;
-		} else {
-		return 0;
-		}
+		return (votesAdded[count] - votesRemoved[count]);
 	}
 	
 /**
- * Total vote recieved by this candidate less transfers to 
+ * Total vote received by this candidate less transfers to 
  * other candidates.
  * 
- * @return Net total of votes recieved
+ * @return Net total of votes received
  */	
-/*@ 
-  @   public normal_behavior
+/*@ public normal_behavior
   @   requires state != UNASSIGNED;
   @   ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
   @     ((votesAdded[i]) - (votesRemoved[i])));
   @*/
 	public /*@ pure @*/ int getTotalVote() {
-		int i = 0;
 		int totalVote = 0;
-		if (state != UNASSIGNED) {
-			while (0 <= i && i <= lastCountNumber) {
-				totalVote += (votesAdded[i] - votesRemoved[i]);
-				i++;
-			}
-			return totalVote;
-		} else {
-			return 0;
+		
+ 		for (int i = 0; i <= lastCountNumber; i++) {
+			totalVote += (votesAdded[i] - votesRemoved[i]);
 		}
+ 		
+		return totalVote;
 	} //@ nowarn Post;
   	
 /**
@@ -243,18 +207,18 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @   ensures 0 <= \result;
   @*/
 	public /*@ pure @*/ int getOriginalVote() {
-		int total = 0;
+		int originalVote = 0;
 		
  		for (int i = 0; i <= lastCountNumber; i++) {
-			total += votesAdded[i];
+			originalVote += votesAdded[i];
 		}
  		 
-		return total;
+		return originalVote;
 	} //@ nowarn Post;
 	
 /**
  * Get status at the current round of counting; {@link #ELECTED}, 
- * {@link #ELIMATED} or {@link #CONTINUING} or {@link #UNASSIGNED}
+ * {@link #ELIMINATED} or {@link #CONTINUING} or {@link #UNASSIGNED}
  * 
  *  @return State value for this candidate
  */
@@ -276,30 +240,21 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @   ensures \result == candidateID;
   @*/	
 	public /*@ pure @*/ int getCandidateID() {
-		if (state != UNASSIGNED) {
-			return candidateID;
-		} else {
-			return 0;
-		}
-
+ 		return candidateID;
 	}
 	
 /**
  * This is the default constructor method for a <code>Candidate</code>
  */	
-/*@	
-  @   public normal_behavior
-  @   requires state != UNASSIGNED;
-  @*/
   public Candidate(){
     state = UNASSIGNED;
     votesAdded = new int [MAXCOUNT];
     //@ set votesAdded.owner = this;
     votesRemoved = new int [MAXCOUNT];
     //@ set votesRemoved.owner = this;
-    randomNumber = UniqueNumber.getUniqueID(); 
+    randomNumber = UniqueNumber.getUniqueID(); //@ nowarn;
     //@ set _randomNumber = randomNumber;
-  }
+  } //@ nowarn;
 
 /**
  * Add a number of votes to the candidate's ballot stack.
@@ -316,7 +271,6 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @   requires lastCountNumber < count;
   @   requires votesAdded[count] == 0;
   @   requires 0 < count & count < MAXCOUNT;
-  @   requires (* new bounds precondition added by Patrick and Joe on 25 Jan 2007 *);
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesAdded[count], lastSetAddedCountNumber;
   @   ensures votesAdded[count] == numberOfVotes;
@@ -324,14 +278,10 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @   ensures lastSetAddedCountNumber == count;
   @*/
   public void addVote(int numberOfVotes, int count){
-    if(state == CONTINUING){
-      if(lastCountNumber < count && votesAdded[count] == 0){
-        votesAdded[count] = numberOfVotes;
-        lastCountNumber = count;
-        lastSetAddedCountNumber = count;
-      }
-    }
-  }
+       votesAdded[count] = numberOfVotes;
+       lastCountNumber = count;
+       lastSetAddedCountNumber = count;
+  } //@ nowarn;
 
 /**
  * Removes a number of votes from a candidates ballot stack.
@@ -356,7 +306,7 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   public void removeVote(final int numberOfVotes, final int count){
         votesRemoved[count] = numberOfVotes;
         lastCountNumber = count;
-    }
+    } //@ nowarn;
 	
 /** 
  * Sets the candidate ID
@@ -369,8 +319,8 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
 /*@ 
   @   public normal_behavior
   @   requires state == UNASSIGNED;
-  @   requires 0 <= internalID;
-  @   requires (\forall Candidate other; other != null;
+  @   requires 0 < internalID;
+  @   requires (\forall Candidate other; other != null && other.state != UNASSIGNED;
   @     other.candidateID != internalID);
   @   assignable state, candidateID;
   @   ensures candidateID == internalID;
@@ -379,7 +329,7 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
 	public void setCandidateID(int internalID){
         this.candidateID = internalID;
         state = CONTINUING;
-	}
+	} //@ nowarn;
 	
 /** Declares the candidate to be elected */
 /*@ public normal_behavior
@@ -389,7 +339,7 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @*/
 	public void declareElected(){
 		state = ELECTED;
-	}
+	} //@ nowarn;
 	
 /** Declares the candidate to be eliminated */
 /*@ public normal_behavior
@@ -399,14 +349,14 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
   @*/
 	public void declareEliminated(){
 		state = ELIMINATED;
-	}
+	} //@ nowarn;
 	
 /**
  * Gets number of votes in last set of votes added
  * 
  * @design In the first round of counting this is the same as
- * the number of first preferences, otherewise it is the most
- * set of votes recieved. The last set of votes recieved are
+ * the number of first preferences, otherwise it is the most
+ * recent set of votes received. The last set of votes received are
  * the only votes considered when a surplus is being distributed.
  * 
  * @return The number of votes in the last set added 
@@ -425,7 +375,7 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
  * @design This is needed to check which ballots are in the last 
  * set added
  * 
- * @see requirement 19, section 7, item 2, page 19
+ * @see "requirement 19, section 7, item 2, page 19"
  * 
  * @return The last count number at which votes were added
  */	
@@ -460,12 +410,15 @@ public static final int MAX_CANDIDATES = (MAX_SEATS * MAX_MAJOR_PARTIES) + MAX_M
 /**
  * Is this the same candidate?
  * 
+ * @param other The candidate to be compared
+ * 
  * @return <code>true</code> if this is the same candidate
  */
-/*@ ensures \result == ((other != null) && 
-  @   (other.getCandidateID() == candidateID));
+/*@ public normal_behavior
+  @   ensures \result <==> ((other != null) && (other.getStatus() != UNASSIGNED) &&
+  @     (other.getCandidateID() == candidateID));
   @*/
-	public /*@ pure @*/ boolean equals(Candidate other) {
+	public /*@ pure @*/ boolean equals(final Candidate other) {
 		if (other == null) {
 			return false;
 		} else if (other.getStatus() == UNASSIGNED) {
