@@ -64,8 +64,13 @@ package election.tally;
 
 public class ElectionReport {
 	
+	/**
+	 * Maximum number of seats in any constituency
+	 */
+	final static int MAX_SEATS = 5;
+	
 //@ public invariant 0 <= numberElected;
-//@ public invariant numberElected <= Candidate.MAX_SEATS;
+//@ public invariant numberElected <= MAX_SEATS;
 	private /*@ spec_public @*/ int numberElected;
 
 /*@ public invariant (\forall int i;
@@ -97,6 +102,13 @@ public class ElectionReport {
 	//@ public invariant 0 <= totalNumberOfCounts;
 	private /*@ spec_public @*/ int totalNumberOfCounts;
 	
+	/**
+	 * Accept the election results for this constituency
+	 * 
+	 * @param n The number of candidates elected
+	 * @param ids The list of internal identifiers for the winner candidates
+	 * @param c The number of rounds of counting 
+	 */
 	//@ requires n == ids.length;
 	//@ requires 0 <= c;
 	public ElectionReport(final int n, /*@ non_null @*/ final int[] ids, final int c){
