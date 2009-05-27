@@ -1,7 +1,8 @@
 /**
  * Votail - PR-STV ballot counting for Irish elections
  * 
- * Copyright (c) 2005-2009 Dermot Cochran, Joseph R. Kiniry and Patrick E. Tierney
+ * Copyright (c) 2005-2007 Dermot Cochran, Joseph R. Kiniry and Patrick E. Tierney
+ * Copyright (c) 2008-2009 Dermot Cochran, Lero Graduate School of Software Engineering
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,12 +58,18 @@ import election.util.UniqueNumber;
    Count Requirements and Commentary on Count Rules,
    section 3-14</a>
  * 
- * @author <a href="http://kind.ucd.ie/products/opensource/KOA/V—t‡il.html">Dermot Cochran</a>
+ * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">Dermot Cochran</a>
  * @copyright 2005-2009
  */
 
 
 public class Ballot {
+  /**
+   * Maximum possible number of ballots based on maximum population size for
+   * a five seat constituency i.e. at most 30,000 people per elected representative.
+   * 
+   * @see "Constitution of Ireland, Article 16, Section 2"
+   */
   public static final int MAX_BALLOTS = 150000;
 
 /**
@@ -153,6 +160,7 @@ public static final int NONTRANSFERABLE = 0;
    * Default constructor
    */
   /*@ also public normal_behavior
+    @	assignable randomNumber, numberOfPreferences, countNumberAtLastTransfer, candidateID, ballotID, positionInList;
     @   ensures numberOfPreferences == 0;
     @   ensures countNumberAtLastTransfer == 0;
     @   ensures positionInList == 0;
@@ -166,15 +174,9 @@ public static final int NONTRANSFERABLE = 0;
     positionInList = 0;
     candidateID = NONTRANSFERABLE; 
     ballotID = NO_ID_YET;
-    assignRandomNumber(); 
-    //@ set _randomNumber = randomNumber;
-  }
-
- 
-
-private void assignRandomNumber() {
 	randomNumber = UniqueNumber.getUniqueID();
-}
+    //@ set _randomNumber = randomNumber;
+  } //@ nowarn;
     
   /**
    * Get the location of the ballot at each count
@@ -224,13 +226,11 @@ private void assignRandomNumber() {
   }
     
   /**
-   * Load the ballot details
+   * Load the ballot details.
    * 
-   * @param candidateIDList
-   *            List of candidate IDs in order from first preference
+   * @param candidateIDList List of candidate IDs in order from first preference
    * 
-   * @param listSize
-   *            Number of candidate IDs in the list
+   * @param listSize Number of candidate IDs in the list
    * 
    * @design There should be at least one preference in the list. Empty or spoilt
    *         votes should neither be loaded nor counted. There should be no
@@ -257,11 +257,10 @@ private void assignRandomNumber() {
     @     (preferenceList[i] == candidateIDList[i]));
     @*/
    public void load(/*@ non_null @*/ int[] candidateIDList, int listSize){
-    numberOfPreferences = listSize;
     
     // Assign a unique internal identifier
     do {
-      ballotID = UniqueNumber.getUniqueID();
+      ballotID = UniqueNumber.getUniqueID(); //@ nowarn;
     } 
     while (ballotID == NO_ID_YET);
     preferenceList = new int [listSize];
@@ -269,6 +268,7 @@ private void assignRandomNumber() {
  		preferenceList[i] = candidateIDList[i];
  	  }
     candidateID = getFirstPreference();
+    numberOfPreferences = preferenceList.length;
   }
     
   /**
@@ -319,9 +319,8 @@ private void assignRandomNumber() {
   public /*@ pure @*/ int getNextPreference(int offset){
         if(positionInList + offset < numberOfPreferences){
           return (preferenceList[positionInList + offset]);
-        }else{
-          return NONTRANSFERABLE;
         }
+		return NONTRANSFERABLE;
   }
  
   /**
@@ -348,7 +347,7 @@ private void assignRandomNumber() {
  			if (countNumberAtLastTransfer <= countNumber) {
 				countNumberAtLastTransfer = countNumber;
 				if (positionInList != numberOfPreferences) {
-					shiftPreferenceList();
+					shiftPreferenceList(); //@ nowarn;
 					positionInList = positionInList + 1;
 				}else if(positionInList == numberOfPreferences) {
 					candidateID = NONTRANSFERABLE;
@@ -379,7 +378,7 @@ private void assignRandomNumber() {
 		preferenceList[positionInList+1] = preferenceList[positionInList];
 		preferenceList[positionInList] = temp;
 	  }
-	}
+	} //@ nowarn;
     
   /**
    * Get ballot ID number
@@ -398,10 +397,9 @@ private void assignRandomNumber() {
    * 
    * @design It is valid to use <code>NONTRANSFERABLE</code> as the ID value 
    * to be checked. This ballot paper can only be assigned to one candidate at 
-   * a time; there is no concept of fractional transfer of votes in the Irish 
-   * electoral system.
+   * a time; there are no fractional transfer of votes in Dail elections.
    * 
-   * @param candidateIDToCheck The unique identifer for this candidate
+   * @param candidateIDToCheck The unique identifier for this candidate
    * 
    * @return <code>true</code> if this ballot paper is assigned to this 
    * candidate ID
@@ -412,12 +410,7 @@ private void assignRandomNumber() {
     @ ensures (\result == true) <==> (candidateID == candidateIDToCheck);
     @*/
   public /*@ pure @*/ boolean isAssignedTo(int candidateIDToCheck){
-    if(0 < candidateIDToCheck || candidateIDToCheck == NONTRANSFERABLE){
-      if(candidateID == candidateIDToCheck){
-        return true;
-      }
-    }
-    return false;
+    return (candidateID == candidateIDToCheck);
   }
     
   /**
@@ -425,17 +418,13 @@ private void assignRandomNumber() {
    * 
    * @return The number of preferences remaining
    */    
-  /*@ also public normal_behavior 
-    @ requires positionInList <= numberOfPreferences;
-    @ ensures \result == numberOfPreferences - positionInList;
+  /*@ also 
+    @   public normal_behavior 
+    @     requires positionInList <= numberOfPreferences;
+    @     ensures \result == numberOfPreferences - positionInList;
     @*/
   public /*@ pure @*/ int remainingPreferences(){
-    int number = 0;
-    if(positionInList <= numberOfPreferences){
-      number = (numberOfPreferences - positionInList);
-      return number;
-    }
-    return 0;
+    return (numberOfPreferences - positionInList);
   }
     
   /**
@@ -445,14 +434,14 @@ private void assignRandomNumber() {
    * revealing the exact value of the random number, so that the random
    * number cannot be manipulated in any way.
    * 
-   * @param other 
-   * Other ballot to compare to this ballot
+   * @param other Other ballot to compare to this ballot
    * 
    * @return <code>true</code> if other ballot has a lower random number                                                               
    */
-  /*@ also public normal_behavior
-    @ requires this.randomNumber != other.randomNumber;
-    @ ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
+  /*@ also 
+    @   public normal_behavior
+    @     requires this.randomNumber != other.randomNumber;
+    @     ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
   */    
   public /*@ pure @*/ boolean isAfter(/*@ non_null @*/Ballot other){
     if(this.randomNumber > other.randomNumber ){
@@ -460,20 +449,4 @@ private void assignRandomNumber() {
     }
     return false;
   }
-  
-  /**
-   * Simple unit test for the Ballot class
-   */
-  public void main () {
-	Ballot ballot = new Ballot();
-	int[] candidateIDList = {1,2,3,4,5,6,7};
-	int listSize = candidateIDList.length;
-	ballot.load(candidateIDList, listSize);
-	//@ assert ballot.getFirstPreference() == 1;
-	//@ assert ballot.remainingPreferences() == listSize - 1;
-	//@ assert ballot.isAssignedTo(1);
-	//@ assert !ballot.isAssignedTo(8);
-  }
-
-  
 }

@@ -527,11 +527,10 @@ public static final byte REPORT = 7;
  * Default Constructor.
  */
 /*@ also
-  @   protected normal_behavior
-  @   ensures state == EMPTY;
-  @   ensures countNumber == 0;
-  @   ensures numberElected == 0;
-  @   ensures numberEliminated == 0;
+  @     ensures state == EMPTY;
+  @     ensures countNumber == 0;
+  @     ensures numberElected == 0;
+  @     ensures numberEliminated == 0;
   @*/
 public AbstractBallotCounting(){
 	status = EMPTY;
@@ -552,7 +551,7 @@ public AbstractBallotCounting(){
  * <BON>query "Has the candidate at least a quota of votes?"</BON>
  */
 /*@ also
-  @   protected normal_behavior
+  @   public normal_behavior
   @     requires candidate != null;
   @     requires 0 <= countNumber;
   @     requires state == COUNTING;
@@ -598,6 +597,7 @@ public /*@ pure @*/ boolean isElected(Candidate candidate){
   @   protected normal_behavior
   @     requires 0 <= countNumber;
   @     requires COUNTING == state;
+  @     requires candidate.state != Candidate.UNASSIGNED;
   @     ensures (hasQuota(candidate) == true) ==> \result ==
   @       (candidate.getTotalVote() - quota);
   @     ensures (hasQuota(candidate) == false) ==> \result == 0;
@@ -605,8 +605,9 @@ public /*@ pure @*/ boolean isElected(Candidate candidate){
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 	int surplus = 0;
- 	if (candidate.getTotalVote() > numberOfVotesRequired) {			
- 		surplus = candidate.getTotalVote() - numberOfVotesRequired;
+ 	final int totalVote = candidate.getTotalVote();
+	if (totalVote > numberOfVotesRequired) {			
+ 		surplus = totalVote - numberOfVotesRequired;
 	}
 	return surplus;
 }
@@ -626,13 +627,13 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 /*@ also
   @   protected normal_behavior
   @     requires (state == COUNTING) || (state == FINISHED) || (state == REPORT);
-  @     requires candidate != null;
   @     requires candidate.state != Candidate.UNASSIGNED;
   @     ensures \result <==> (candidate.getOriginalVote() >= depositSavingThreshold) ||
   @       (isElected (candidate) == true);
   @*/
 public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate candidate){
- 	return ((candidate.getOriginalVote() >= savingThreshold)
+ 	final int originalVote = candidate.getOriginalVote(); //@ nowarn;
+	return ((originalVote >= savingThreshold)
 		|| (isElected (candidate)));
 }
 
@@ -649,7 +650,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  * </BON>
  * 
  * @param candidateWithSurplus The elected candidate whose surplus is to be transferred
- * @see <a href http://www.cev.ie/htm/tenders/pdf/1_2.pdf>CEV Commentary on Count Rules, section 12, page 47</a>
+ * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV Commentary on Count Rules, section 12, page 47</a>
  */
 /*@ also
   @   protected normal_behavior
@@ -722,7 +723,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
   @*/
 public void eliminateCandidates(Candidate[] candidatesToEliminate) {
 	for (int i = 0; i < candidatesToEliminate.length; i++)
-		eliminateCandidate(candidatesToEliminate[i]);
+		eliminateCandidate(candidatesToEliminate[i]); //@ nowarn;
 }
 
 /**
@@ -733,6 +734,7 @@ public void eliminateCandidates(Candidate[] candidatesToEliminate) {
 /*@ also
   @   protected normal_behavior
   @   requires state == FINISHED;
+  @   requires candidates != null;
   @   assignable state;
   @   ensures state == REPORT;
   @   ensures \result != null;

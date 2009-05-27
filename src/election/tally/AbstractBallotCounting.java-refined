@@ -388,7 +388,7 @@ public abstract class AbstractBallotCounting {
     @ requires state == COUNTING;
     @ ensures \result == (candidate.getTotalVote() >= quota);
     @*/
-  protected /*@ pure @*/ boolean hasQuota (election.tally.Candidate candidate);
+  public /*@ pure @*/ boolean hasQuota (election.tally.Candidate candidate);
 
 	
   /** 
@@ -424,7 +424,7 @@ public abstract class AbstractBallotCounting {
     @ ensures (\result == true) <==> 
     @   (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
     @*/
-  protected /*@ pure @*/ boolean isElected (election.tally.Candidate candidate);
+  public /*@ pure @*/ boolean isElected (election.tally.Candidate candidate);
 	
 	
   /** 
@@ -445,7 +445,7 @@ public abstract class AbstractBallotCounting {
     @ ensures (hasQuota(candidate) == false) ==> \result == 0;
     @ ensures \result >= 0;
     @*/
-  protected /*@ pure @*/ int getSurplus (election.tally.Candidate candidate);
+  public /*@ pure @*/ int getSurplus (election.tally.Candidate candidate);
 	
   /** 
    * Determines if a candidate has saved his or her deposit.
@@ -467,7 +467,7 @@ public abstract class AbstractBallotCounting {
     @ ensures \result == (candidate.getOriginalVote() >= depositSavingThreshold) ||
     @   (isElected (candidate) == true);
     @*/
-  protected /*@ pure @*/ boolean isDepositSaved (/*@ non_null @*/ election.tally.Candidate candidate);
+  public /*@ pure @*/ boolean isDepositSaved (/*@ non_null @*/ election.tally.Candidate candidate);
 
 	
   /** 
@@ -509,7 +509,7 @@ public abstract class AbstractBallotCounting {
     @   (\sum int i; 0 <= i && i < totalCandidates; 
     @   candidateList[i].getTotalVote());
     @*/
-    protected abstract void distributeSurplus(/*@ non_null @*/ 
+    public abstract void distributeSurplus(/*@ non_null @*/ 
                                 election.tally.Candidate candidateWithSurplus);
 	
 	
