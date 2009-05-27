@@ -88,7 +88,7 @@ public class Ballot {
 public static final int NONTRANSFERABLE = 0;
 	
   /** Ballot ID number */
-  //@ public invariant (ballotID == 0) | (0 < ballotID);
+  //@ public invariant (ballotID == 0) || (0 < ballotID);
   /*@ public instance invariant (\forall Ballot a,b;
     @                                    a != null && b != null && 0 < a.ballotID && 0 < b.ballotID;
     @                                    a.ballotID == b.ballotID <==> a==b);
@@ -160,7 +160,8 @@ public static final int NONTRANSFERABLE = 0;
    * Default constructor
    */
   /*@ also public normal_behavior
-    @	assignable randomNumber, numberOfPreferences, countNumberAtLastTransfer, candidateID, ballotID, positionInList;
+    @	assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
+    @     candidateID, ballotID, positionInList, randomNumber;
     @   ensures numberOfPreferences == 0;
     @   ensures countNumberAtLastTransfer == 0;
     @   ensures positionInList == 0;
@@ -246,7 +247,7 @@ public static final int NONTRANSFERABLE = 0;
     @   requires (\forall int i; 0 <= i && i < candidateIDList.length;
     @     (candidateIDList[i]) != NONTRANSFERABLE);
     @   requires (\forall int i; 0 <= i && i < candidateIDList.length;
-    @     0 < (candidateIDList[i]);
+    @     0 < candidateIDList[i]);
     @   requires positionInList == 0;
     @	assignable numberOfPreferences, ballotID, preferenceList, candidateID;
     @   ensures numberOfPreferences == candidateIDList.length;
@@ -266,7 +267,7 @@ public static final int NONTRANSFERABLE = 0;
     for(int i = 0; i < candidateIDList.length; i++){
  		preferenceList[i] = candidateIDList[i];
  	  }
-    candidateID = getFirstPreference();
+    candidateID = getFirstPreference(); //@ nowarn;
     numberOfPreferences = preferenceList.length;
   }
     
@@ -349,10 +350,10 @@ public static final int NONTRANSFERABLE = 0;
 					shiftPreferenceList(); //@ nowarn;
 					positionInList = positionInList + 1;
 				}else if(positionInList == numberOfPreferences) {
-					candidateID = NONTRANSFERABLE;
+					candidateID = NONTRANSFERABLE; //@ nowarn;
 				}
 			}
-	}
+	} //@ nowarn;
   
   /**
 	 * Corrects the candidate list after it has been changed.

@@ -115,7 +115,7 @@ public class ElectionReport {
 		numberElected = list.length;
 		electedCandidateIDs = list;
 		totalNumberOfCounts = counts;
-	}
+	} //@ nowarn;
 
 	/**
 	 * @return the totalNumberOfCounts

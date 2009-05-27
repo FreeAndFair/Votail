@@ -169,10 +169,10 @@ public abstract class AbstractBallotCounting {
 	
 	
   /** Number of candidates excluded from election so far */
-  //@ protected model int numberEliminated;
-  //@ protected invariant 0 <= numberEliminated;
-  //@ protected invariant numberEliminated <= totalCandidates - seats;
-  /*@ protected invariant (state == COUNTING || state == FINISHED || state == REPORT)
+  //@ public model int numberEliminated;
+  //@ public invariant 0 <= numberEliminated;
+  //@ public invariant numberEliminated <= totalCandidates - seats;
+  /*@ pubic invariant (state == COUNTING || state == FINISHED || state == REPORT)
     @   ==> numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
     @       candidateList[i].getStatus() == Candidate.ELIMINATED);
     @*/
@@ -375,6 +375,10 @@ public abstract class AbstractBallotCounting {
     @   candidateList[i].getTotalVote() == lowestContinuingVote);
 	@*/
   
+   /**
+    * 
+    */
+   public AbstractBallotCounting();
 	
   /** 
    * Determine if the candidate has received enough votes for election
@@ -589,7 +593,7 @@ public abstract class AbstractBallotCounting {
     @   (\exists int j; 0 <= j && j < totalCandidates;
     @      ballotsToCount[j].isAssignedTo(candidateList[i].getCandidateID())));
     @*/
-  public abstract void load(BallotBox ballotBox);
+  public void load(BallotBox ballotBox);
 	
 	
   /**
