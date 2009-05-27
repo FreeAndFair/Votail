@@ -548,12 +548,11 @@ public abstract class AbstractBallotCounting {
     @          0 <= i && i < candidatesToEliminate.length;
     @          candidatesToEliminate[i].getStatus() == Candidate.ELIMINATED &&
     @          candidatesToEliminate[i].getTotalVote() == 0);
-    @ ensures numberEliminated == \old (numberEliminated) + candidatesToEliminate.length;
     @ ensures remainingSeats <= numberOfContinuingCandidates;
     @ ensures numberElected <= seats;
     @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
     @*/
-  protected abstract void eliminateCandidates(
+  public void eliminateCandidates(
 		  /*@ non_null @*/ Candidate[] candidatesToEliminate);
 	
 	
@@ -564,7 +563,7 @@ public abstract class AbstractBallotCounting {
     @ assignable state;
     @ ensures state == REPORT;
     @*/
-  public ElectionReport report();
+  public /*@ non_null @*/ ElectionReport report();
 
 	
   /**
@@ -622,7 +621,7 @@ public abstract class AbstractBallotCounting {
     @   assignable numberEliminated;
     @   ensures numberEliminated == totalCandidates - numberElected;
     @*/
-  public abstract void count();
+  public void count();
   
   /**
    * Get the status of the algorithm in progress

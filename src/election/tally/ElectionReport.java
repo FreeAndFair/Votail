@@ -103,20 +103,18 @@ public class ElectionReport {
 	private /*@ spec_public @*/ int totalNumberOfCounts;
 	
 	/**
-	 * Accept the election results for this constituency
+	 * Store the election results for this constituency.
 	 * 
-	 * @param n The number of candidates elected
-	 * @param ids The list of internal identifiers for the winner candidates
-	 * @param c The number of rounds of counting 
+	 * @param list The list of internal identifiers for the winner candidates
+	 * @param counts The number of rounds of counting 
 	 */
-	/*@   requires n == ids.length;
-	  @   requires n <= MAX_SEATS;
-	  @   requires 0 <= c;
+	/*@ requires list.length <= MAX_SEATS;
+	  @ requires 0 <= counts;
 	  @*/
-	public ElectionReport(final int n, /*@ non_null @*/ final int[] ids, final int c){
-		numberElected = n;
-		electedCandidateIDs = ids;
-		totalNumberOfCounts = c;
+	public ElectionReport(/*@ non_null @*/ final int[] list, final int counts){
+		numberElected = list.length;
+		electedCandidateIDs = list;
+		totalNumberOfCounts = counts;
 	}
 
 	/**

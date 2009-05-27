@@ -174,7 +174,7 @@ public static final int NONTRANSFERABLE = 0;
     positionInList = 0;
     candidateID = NONTRANSFERABLE; 
     ballotID = NO_ID_YET;
-	randomNumber = UniqueNumber.getUniqueID();
+	randomNumber = UniqueNumber.getUniqueID(); //@ nowarn;
     //@ set _randomNumber = randomNumber;
   } //@ nowarn;
     
@@ -230,8 +230,6 @@ public static final int NONTRANSFERABLE = 0;
    * 
    * @param candidateIDList List of candidate IDs in order from first preference
    * 
-   * @param listSize Number of candidate IDs in the list
-   * 
    * @design There should be at least one preference in the list. Empty or spoilt
    *         votes should neither be loaded nor counted. There should be no
    *         duplicate preferences in the list and none of the candidate ID values
@@ -240,31 +238,32 @@ public static final int NONTRANSFERABLE = 0;
    *         There should be no duplicates in the preference list; but there is no
    *         need to make this a precondition because duplicates will be ignored
    *         and skipped over.
+   *         
+   * @constraint The ballot may only be loaded once; it cannot be overwritten.
    */    
-  /*@ also public normal_behavior
-    @   requires 0 < listSize;
-    @   requires (\forall int i; 0 <= i && i < listSize;
+  /*@ public normal_behavior
+    @   requires 0 < candidateIDList.length;
+    @   requires (\forall int i; 0 <= i && i < candidateIDList.length;
     @     (candidateIDList[i]) != NONTRANSFERABLE);
-    @   requires (\forall int i; 0 <= i && i < listSize;
-    @     (candidateIDList[i]) > 0);
-    @   requires candidateIDList.length == listSize;
-    @   requires positionInList < listSize;
+    @   requires (\forall int i; 0 <= i && i < candidateIDList.length;
+    @     0 < (candidateIDList[i]);
+    @   requires positionInList == 0;
     @	assignable numberOfPreferences, ballotID, preferenceList, candidateID;
-    @   ensures numberOfPreferences == listSize;
+    @   ensures numberOfPreferences == candidateIDList.length;
     @   ensures ballotID != NO_ID_YET;
-    @   ensures preferenceList.length == listSize;
-    @   ensures (\forall int i; 0 <= i && i < listSize;
+    @   ensures preferenceList.length == candidateIDList.length;
+    @   ensures (\forall int i; 0 <= i && i < candidateIDList.length;
     @     (preferenceList[i] == candidateIDList[i]));
     @*/
-   public void load(/*@ non_null @*/ int[] candidateIDList, int listSize){
+   public void load(/*@ non_null @*/ int[] candidateIDList){
     
     // Assign a unique internal identifier
     do {
       ballotID = UniqueNumber.getUniqueID(); //@ nowarn;
     } 
     while (ballotID == NO_ID_YET);
-    preferenceList = new int [listSize];
-    for(int i = 0; i < listSize; i++){
+    preferenceList = new int [candidateIDList.length];
+    for(int i = 0; i < candidateIDList.length; i++){
  		preferenceList[i] = candidateIDList[i];
  	  }
     candidateID = getFirstPreference();

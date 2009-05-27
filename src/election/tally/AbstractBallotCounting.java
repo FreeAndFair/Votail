@@ -187,8 +187,8 @@ public abstract class AbstractBallotCounting {
 	  @   numberElected + numberEliminated;
 	  @ public invariant (state == COUNTING) ==> 1 <= totalCandidates;
 	  @*/
-	protected int totalNumberOfCandidates;
-   //@ protected represents totalCandidates <- totalNumberOfCandidates;
+	protected /*@ spec_public @*/ int totalNumberOfCandidates;
+   //@ public represents totalCandidates <- totalNumberOfCandidates;
 	
 	/** Number of candidates elected so far */
    //@ public model int numberElected;
@@ -205,8 +205,8 @@ public abstract class AbstractBallotCounting {
 	  @   \old(numberElected) <= numberElected;
 	  @*/
 	/** Number of candidates elected so far */
-	protected int numberOfCandidatesElected;
-   //@ protected represents numberElected <- numberOfCandidatesElected;
+	protected /*@ spec_public @*/ int numberOfCandidatesElected;
+   //@ public represents numberElected <- numberOfCandidatesElected;
 	
 	/** Number of candidates excluded from election so far */
    //@ protected model int numberEliminated;
@@ -219,7 +219,7 @@ public abstract class AbstractBallotCounting {
 	  @  candidateList[i].getStatus() == Candidate.ELIMINATED);
 	  @*/
 	/** Number of candidates excluded from election so far */
-	protected int numberOfCandidatesEliminated;
+	protected /*@ spec_public @*/ int numberOfCandidatesEliminated;
    //@ protected represents numberEliminated <- numberOfCandidatesEliminated;
 
 	/** Number of seats to be filled in this election */
@@ -526,11 +526,11 @@ public static final byte REPORT = 7;
 /**
  * Default Constructor.
  */
-/*@ also
+/*@ public normal_behavior
+  @		assignable state, countNumber, numberElected;
   @     ensures state == EMPTY;
   @     ensures countNumber == 0;
   @     ensures numberElected == 0;
-  @     ensures numberEliminated == 0;
   @*/
 public AbstractBallotCounting(){
 	status = EMPTY;
@@ -605,7 +605,7 @@ public /*@ pure @*/ boolean isElected(Candidate candidate){
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 	int surplus = 0;
- 	final int totalVote = candidate.getTotalVote();
+ 	final int totalVote = candidate.getTotalVote(); //@ nowarn;
 	if (totalVote > numberOfVotesRequired) {			
  		surplus = totalVote - numberOfVotesRequired;
 	}
@@ -633,8 +633,9 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
   @*/
 public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate candidate){
  	final int originalVote = candidate.getOriginalVote(); //@ nowarn;
+	final boolean elected = isElected (candidate); //@ nowarn;
 	return ((originalVote >= savingThreshold)
-		|| (isElected (candidate)));
+		|| elected);
 }
 
 /**
@@ -693,7 +694,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  *   election in this count
  */
 /*@ also
-  @   protected normal_behavior
+  @   public normal_behavior
   @     requires 1 <= candidatesToEliminate.length;
   @     requires candidatesToEliminate.length <= numberOfContinuingCandidates;
   @     requires (\forall int i;
@@ -716,7 +717,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
   @       0 <= i && i < candidatesToEliminate.length;
   @       candidatesToEliminate[i].getStatus() == Candidate.ELIMINATED &&
   @       candidatesToEliminate[i].getTotalVote() == 0);
-  @     ensures numberEliminated == \old (numberEliminated) + candidatesToEliminate.length;
+  @     assignable candidateList;
   @     ensures remainingSeats <= numberOfContinuingCandidates;
   @     ensures numberElected <= seats;
   @     ensures \old(lowestContinuingVote) <= lowestContinuingVote;
@@ -766,7 +767,7 @@ public /*@ non_null @*/ ElectionReport report(){
   @   requires numberEliminated == 0;
   @   requires nonTransferableVotes == 0;
   @*/
-/** @see requirement 1, section 3, item 2, page 12 */
+/** @see "requirement 1, section 3, item 2, page 12" */
 //@ requires state == PRECOUNT;
 /*@
   @ requires numberOfContinuingCandidates == totalCandidates;
@@ -1166,7 +1167,7 @@ protected /*@ pure @*/ int getOrder(Candidate candidate){
 
 /**
  * Determine the individuals remainder after integer division by the
- * transfer factor for surpluses
+ * transfer factor for surpluses.
  * 
  * @design This can all be done with integer arithmetic; no need to
  * use floating point numbers, which could introduce rounding errors.
@@ -1178,17 +1179,17 @@ protected /*@ pure @*/ int getOrder(Candidate candidate){
  */
 /*@ also
   @   protected normal_behavior
-  @   requires state == COUNTING;
-  @   requires isElected (fromCandidate);
-  @   requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
-  @   requires getSurplus(fromCandidate) < 
-  @   getTotalTransferableVotes(fromCandidate);
-  @   requires 0 <= getTransferShortfall (fromCandidate);
-  @   ensures \result ==
-  @   getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) -
-  @   ((getActualTransfers(fromCandidate, toCandidate) *
-  @   getTotalTransferableVotes (fromCandidate)) /
-  @   getSurplus(fromCandidate));
+  @     requires state == COUNTING;
+  @     requires isElected (fromCandidate);
+  @     requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
+  @     requires getSurplus(fromCandidate) < 
+  @       getTotalTransferableVotes(fromCandidate);
+  @     requires 0 <= getTransferShortfall (fromCandidate);
+  @     ensures \result ==
+  @       getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) -
+  @       ((getActualTransfers(fromCandidate, toCandidate) *
+  @       getTotalTransferableVotes (fromCandidate)) /
+  @       getSurplus(fromCandidate));
   @*/
 protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromCandidate, /*@ non_null @*/ Candidate toCandidate){
   return getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) 
@@ -1385,9 +1386,9 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @return The candidate with the most votes
 	 */
 	/*@ ensures (\forall int i; 0 <= i && i < totalCandidates;
-	  @   candidates[i].getTotalVote() <= \result.getTotalVote());
+	  @   candidateList[i].getTotalVote() <= \result.getTotalVote());
 	  @ ensures (\exists int i; 0 <= i && i < totalCandidates;
-	  @   candidates[i].equals(\result));
+	  @   candidateList[i].equals(\result));
 	  @*/
 	public /*@ non_null pure @*/ Candidate findHighestCandidate() {
 		
@@ -1417,10 +1418,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @return The continuing candidate with the least votes
 	 */
 	/*@ requires 1 <= totalCandidates;
-	  @ ensures (\forall int i; 0 <= i && i < totalCandidates && candidates[i].getStatus() == Candidate.CONTINUING;
-	  @   candidates[i].getTotalVote() >= \result.getTotalVote());
-	  @ ensures (\exists int i; 0 <= i && i < totalCandidates && candidates[i].getStatus() == Candidate.CONTINUING;
-	  @   candidates[i].equals(\result));
+	  @ ensures (\forall int i; 
+	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
+	  @   candidateList[i].getTotalVote() >= \result.getTotalVote());
+	  @ ensures (\exists int i; 
+	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
+	  @   candidateList[i].equals(\result));
 	  @*/
 	public /*@ pure non_null @*/ Candidate findLowestCandidate() {
 		
@@ -1453,8 +1456,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	/*@ requires isLowestCandidate (candidate);
 	  @ requires candidate.getStatus() == Candidate.CONTINUING;
 	  @ ensures candidate.getStatus() == Candidate.ELIMINATED;
-	  @ ensures (\forall int b; 0 <= b && b < ballots.length;
-	  @   ballots[b].getCandidateID() != candidate.getCandidateID());
+	  @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
+	  @   ballotsToCount[b].getCandidateID() != candidate.getCandidateID());
 	  @*/
 	public void eliminateCandidate(final Candidate candidate) {
 		final int candidateID = candidate.getCandidateID();
@@ -1492,10 +1495,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param The unique identifier for the excluded candidate
 	 */
-	/*@ public normal_behavior
-	  @   requires ballots != null;
-	  @   ensures (\forall int b; 0 <= b && b < ballots.length;
-	  @     ballots[b].getCandidateID() != candidateID);
+	/*@ protected normal_behavior
+	  @   requires ballotsToCount != null;
+	  @   ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
+	  @     ballotsToCount[b].getCandidateID() != candidateID);
 	  @*/
 	protected void redistributeBallots(final int candidateID) {
 
