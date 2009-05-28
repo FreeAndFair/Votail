@@ -249,4 +249,48 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 		}
 		assert (numberOfVotes == ballotsMoved); 
 	}
+
+	/**
+	 * Count the ballots for this constituency using the rules of 
+	 * proportional representation by single transferable vote.
+	 * 
+	 * @see "requirement 1, section 3, item 2, page 12"
+	 */
+	public void count() {
+		
+		status = COUNTING;
+		countNumberValue = 0;
+		
+		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
+			
+			// Transfer surplus votes from winning candidates
+			while (totalNumberOfSurpluses > 0) {
+				status = TRANSFERING_SURPLUS;
+				Candidate winner = findHighestCandidate();
+				winner.declareElected();
+				distributeSurplus(winner);
+				countNumberValue++;
+			}
+			
+			// Exclusion of lowest continuing candidate
+			status = EXCLUDING_LOWEST_CANIDATE;
+			Candidate loser = findLowestCandidate();
+			loser.declareEliminated();
+			redistributeBallots(loser.getCandidateID());
+			countNumberValue++;
+		}
+		
+		// Filling of last seats
+		if (totalNumberOfContinuingCandidates == totalRemainingSeats) {
+			status = FILLING_LAST_SEATS;
+			for (int c = 0; c < totalNumberOfCandidates; c++) {
+				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
+					candidates[c].declareElected();
+				}
+			countNumberValue++;
+			}
+				
+		}
+		status = FINISHED;
+	}
 }

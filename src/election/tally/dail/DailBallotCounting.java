@@ -289,4 +289,65 @@ public class DailBallotCounting extends AbstractBallotCounting {
  		return numberOfVotesRequired;
 	}
 
+
+	/**
+	 * Count the ballots for this constituency using the rules of 
+	 * proportional representation by single transferable vote.
+	 * 
+	 * @see "requirement 1, section 3, item 2, page 12"
+	 */
+	/*@ also
+	  @   normal public_behavior
+	  @     requires state == PRECOUNT;
+	  @     ensures state == FINISHED;
+	  @*/
+	public void count() {
+		
+		status = COUNTING;
+		countNumberValue = 0;
+		
+		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
+			ballotCountingMachine.changeState(BallotCountingModel.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
+
+		
+			// Transfer surplus votes from winning candidates
+			while (totalNumberOfSurpluses > 0) {
+				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATES_HAVE_QUOTA);
+				Candidate winner = findHighestCandidate();
+				
+				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_ELECTED);
+				winner.declareElected();
+
+				ballotCountingMachine.changeState(BallotCountingModel.SURPLUS_AVAILABLE);
+				distributeSurplus(winner);
+				countNumberValue++;
+			}
+			
+			// Exclusion of lowest continuing candidate
+			ballotCountingMachine.changeState(BallotCountingModel.NO_SURPLUS_AVAILABLE);	
+			Candidate loser = findLowestCandidate();
+			
+			ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_EXCLUDED);	
+			loser.declareEliminated();
+			
+			ballotCountingMachine.changeState(BallotCountingModel.READY_TO_MOVE_BALLOTS);	
+			redistributeBallots(loser.getCandidateID());
+			countNumberValue++;
+		}
+		
+		// Filling of last seats
+		if (totalNumberOfContinuingCandidates == totalRemainingSeats) {
+			ballotCountingMachine.changeState(BallotCountingModel.LAST_SEAT_BEING_FILLED);	
+			for (int c = 0; c < totalNumberOfCandidates; c++) {
+				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
+					candidates[c].declareElected();
+				}
+			countNumberValue++;
+			}
+				
+		}
+		ballotCountingMachine.changeState(BallotCountingModel.END_OF_COUNT);	
+		status = FINISHED;
+	}
+
 }

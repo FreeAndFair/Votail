@@ -1,6 +1,5 @@
 package election.tally;
 
-
 /**
  * Ballot counting algorithm for elections to Oireachtas Eireann - the National 
  * Parliament of Ireland.
@@ -35,20 +34,18 @@ package election.tally;
  * authors' views and the European Community is not liable for any use that 
  * may be made of the information contained therein.
  * 
- * @bon class_chart BALLOT_COUNTING
- * 
  * @design
- * 
  * This Java package <code>election.tally</code> is designed to be used with 
  * either an optical ballot scan system or else a remote online voting system 
  * that supplies a valid set of ballots and candidate IDs to be counted by this 
  * algorithm and takes care of system level issues such as security, 
  * authentication and data storage.
  * 
+ * @process
  * This JML specification and associated Java code is intended 
  * to be verifiable using the Extended Static Checking for Java
  * version 2 tool (ESCJava2), the Mobius Program Verification Environment (PVE),
- * JML4 and other JML compliant software engineering tools. The BON specification
+ * JML4 and other JML software engineering tools. The BON specification
  * is intended to be checkable with the BONc tool.
  * 
  * @see <a href="http://www.irishstatuebook.ie/1992_23.html">Part XIX of the 
@@ -56,10 +53,8 @@ package election.tally;
  * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of
    Environment and Local Government: Count Requirements and Commentary on Count
    Rules, sections 3-16</a>
- * @see <a href="http://www.secure.ucd.ie/products/opensource/KOA/">The KOA Remote
-   Voting System</a> 
- * @see <a href="http://www.secure.ucd.ie/products/opensource/ESCJava2/">ESCJava/2
-   Homepage</a>
+ * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">Formal Verification of Remote Voting</a> 
+ * @see <a href="http://kind.ucd.ie/products/opensource/ESCJava2/">ESCJava/2 static checker for Java</a>
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
@@ -520,6 +515,7 @@ public static final byte COUNTING = 5;
 public static final byte FINISHED = 6;
 /** Declare election result */
 public static final byte REPORT = 7;
+protected static final byte FILLING_LAST_SEATS = 0;
 
 /**
  * Default Constructor.
@@ -554,7 +550,6 @@ public AbstractBallotCounting(){
   @   public normal_behavior
   @     requires candidate != null;
   @     requires 0 <= countNumber;
-  @     requires state == COUNTING;
   @     ensures \result <==> (candidate.getTotalVote() >= quota);
   @*/
 public /*@ pure @*/ boolean hasQuota(/*@ non_null @*/ Candidate candidate){
@@ -572,11 +567,9 @@ public /*@ pure @*/ boolean hasQuota(/*@ non_null @*/ Candidate candidate){
  */
 /*@ also
   @   protected normal_behavior
-  @   requires candidate != null;
-  @   requires countNumber >= 1;
-  @   requires state == COUNTING;
-  @   ensures (\result == true) <==>
-  @   (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
+  @     requires candidate != null;
+  @     ensures (\result == true) <==>
+  @       (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
   @*/
 public /*@ pure @*/ boolean isElected(Candidate candidate){
 	return ((candidate.getStatus() == Candidate.ELECTED) || hasQuota(candidate));
@@ -748,9 +741,8 @@ public /*@ non_null @*/ ElectionReport report(){
 	int[] electedCandidateIDs = {};
  	
 	int counter = 0;
-	//@ assume candidates != null;
-	final int length = candidates.length;
-	for (int i = 0; i < length; i ++) {
+ 	final int length = candidates.length;
+	for (int i = 0; i < length; i++) {
 		if (isElected(candidates[i])) {
 			electedCandidateIDs[counter++] = candidates[i].candidateID;
 		}
@@ -760,80 +752,17 @@ public /*@ non_null @*/ ElectionReport report(){
 }
 
 /**
- * Start the counting.
- */
-/*@ also
-  @   protected normal_behavior
-  @   requires remainingSeats == seats;
-  @   requires numberElected == 0;
-  @   requires numberEliminated == 0;
-  @   requires nonTransferableVotes == 0;
-  @*/
-/** @see "requirement 1, section 3, item 2, page 12" */
-//@ requires state == PRECOUNT;
-/*@
-  @ requires numberOfContinuingCandidates == totalCandidates;
-  @ requires countNumber == 0;
-  @ ensures state == FINISHED;
-  @ assignable state, countNumber, numberElected, numberEliminated,
-  @   numberOfContinuingCandidates, remainingSeats, 
-  @   numberOfSurpluses, candidateList,
-  @   sumOfSurpluses, highestContinuingVote, lowestContinuingVote,
-  @   nextHighestVote, nonTransferableVotes, ballotsToCount,
-  @   numberOfContinuingCandidates;
-  @ ensures remainingSeats == 0;
-  @ ensures numberElected == seats;
-  @ ensures numberEliminated == totalCandidates - numberElected;
-  @ ensures numberOfContinuingCandidates == 0;
-  @*/
-public void count() {
-	
-	// Proportional representation by single transferable vote
-	countNumberValue = 0;
-	
-	while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
-		
-		// Transfer surplus votes from winning candidates
-		while (totalNumberOfSurpluses > 0) {
-			Candidate winner = findHighestCandidate();
-			winner.declareElected();
-			distributeSurplus(winner);
-			countNumberValue++;
-		}
-		
-		// Exclusion of lowest continuing candidate
-		Candidate loser = findLowestCandidate();
-		loser.declareEliminated();
-		redistributeBallots(loser.getCandidateID());
-		countNumberValue++;
-	}
-	
-	// Filling of last seats
-	if (totalNumberOfContinuingCandidates == totalRemainingSeats) {
-		for (int c = 0; c < totalNumberOfCandidates; c++) {
-			if (isContinuingCandidateID(candidates[c].getCandidateID())) {
-				candidates[c].declareElected();
-			}
-		countNumberValue++;
-		}
-			
-	}
-}
-
-/**
  * Load candidate details and number of seats.
  * 
  * @param electionParameters The candidate details and number of seats
  */
 /*@ also
   @   protected normal_behavior
-  @   requires state == EMPTY;
-  @   ensures state == PRELOAD;
-  @   ensures totalCandidates == electionParameters.numberOfCandidates;
-  @   ensures seats == electionParameters.numberOfSeatsInThisElection;
-  @   ensures totalSeats == electionParameters.totalNumberOfSeats;
-  @   assignable state, seats, totalSeats, totalCandidates, candidateList, 
-  @     totalNumberOfSeats, totalNumberOfCandidates, numberOfSeats, status;
+  @     requires state == EMPTY;
+  @     ensures state == PRELOAD;
+  @     ensures totalCandidates == electionParameters.numberOfCandidates;
+  @     ensures seats == electionParameters.numberOfSeatsInThisElection;
+  @     ensures totalSeats == electionParameters.totalNumberOfSeats;
   @*/
 public void setup(/*@ non_null @*/ ElectionParameters electionParameters){
 	status = PRELOAD;
@@ -858,7 +787,7 @@ public void setup(/*@ non_null @*/ ElectionParameters electionParameters){
   @       ballotsToCount[j].isAssignedTo(candidateList[i].getCandidateID())));
   @*/
 public void load(/*@ non_null @*/ BallotBox ballotBox) {
- 	ballots = ballotBox.getBallots();
+ 	ballots = ballotBox.getBallots(); //@ nowarn;
 }
 
 /**
@@ -905,6 +834,7 @@ protected /*@ pure @*/ int getNumberOfVotes(int candidateID){
   @     requires (state == COUNTING);
   @     requires 0 < toCandidateID;
   @     requires toCandidateID != Ballot.NONTRANSFERABLE;
+  @     requires ballotsToCount != null;
   @     ensures \result== (\num_of int j; 0 <= j && j < ballotsToCount.length;
   @       (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
   @       (ballotsToCount[j].getCountNumberAtLastTransfer() ==
