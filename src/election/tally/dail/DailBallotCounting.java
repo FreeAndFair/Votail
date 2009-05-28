@@ -38,7 +38,7 @@ import election.tally.Candidate;
  * authors' views and the European Community is not liable for any use that 
  * may be made of the information contained therein.
  * 
- * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">http://kind.ucd.ie/documents/research/lgsse/evoting.html</a>
+ * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">Formal Verification and Risk Analysis for Remote Voting Systems</a>
  *
  */
 public class DailBallotCounting extends AbstractBallotCounting {
@@ -54,7 +54,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
 		 */
 		public BallotCountingMachine() {
 			state = READY_TO_COUNT;
-		}
+		} //@ nowarn;
 
 		//@ public invariant isPossibleState (state);
 		//@ public constraint isTransition(\old(state), state);
@@ -69,7 +69,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
  		//@ also ensures \result == state;
  		public /*@ pure @*/ int getState() {
 			return state;
-		}
+		} //@ nowarn;
 
  		/**
  		 * Move along the next valid transition in state.
@@ -79,7 +79,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
  		//@ also ensures newState == state;
 		public void changeState(final int newState) {
 			state = newState;
-		}
+		} //@ nowarn;
 
 		/**
 		 * Is this a valid state for the count to be in?
@@ -106,7 +106,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
  					(ALL_SEATS_FILLED == value) ||
  					(END_OF_COUNT == value) ||
  					(ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
-		}
+		} //@ nowarn;
 		
 		/**
 		 * Is this a valid transition in the counts state?
@@ -226,14 +226,20 @@ public class DailBallotCounting extends AbstractBallotCounting {
 			
 			// No other state transitions are possible
 			return false;
-		}
+		} //@ nowarn;
 		
 	}
 
-
-
+    // Model of the ballot counting process
 	private BallotCountingModel ballotCountingMachine;
-
+	
+	/**
+	 * Default constructor.
+	 */
+	public DailBallotCounting() {
+		super();
+		ballotCountingMachine = new BallotCountingMachine();
+	}
 	 
     /**
      * Distribute the surplus of an elected Dail candidate.
