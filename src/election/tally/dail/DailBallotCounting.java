@@ -37,6 +37,8 @@ import election.tally.Candidate;
  * IST 15909 within the IST 6th Framework. This software reflects only the 
  * authors' views and the European Community is not liable for any use that 
  * may be made of the information contained therein.
+ * 
+ * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">http://kind.ucd.ie/documents/research/lgsse/evoting.html</a>
  *
  */
 public class DailBallotCounting extends AbstractBallotCounting {
@@ -47,12 +49,16 @@ public class DailBallotCounting extends AbstractBallotCounting {
 	public class BallotCountingMachine implements BallotCountingModel {
 		
 		// Initial state
+		/**
+		 * Inner state machine for counting of Dail election ballots.
+		 */
 		public BallotCountingMachine() {
 			state = READY_TO_COUNT;
 		}
 
 		//@ public invariant isPossibleState (state);
 		//@ public constraint isTransition(\old(state), state);
+		//@ public initially state == READY_TO_COUNT;
  		private /*@ spec_public @*/ int state;
  		
  		/**
@@ -61,12 +67,14 @@ public class DailBallotCounting extends AbstractBallotCounting {
  		 * @return The state of the count.
  		 */
  		//@ also ensures \result == state;
- 		public int getState() {
+ 		public /*@ pure @*/ int getState() {
 			return state;
 		}
 
  		/**
  		 * Move along the next valid transition in state.
+ 		 * 
+ 		 * @param newState The next stage of counting.
  		 */
  		//@ also ensures newState == state;
 		public void changeState(final int newState) {
@@ -75,10 +83,11 @@ public class DailBallotCounting extends AbstractBallotCounting {
 
 		/**
 		 * Is this a valid state for the count to be in?
+		 * @param value The state to be checked.
 		 * 
 		 * @return <code>true</code> if this state exists with the automaton for counting of Dail ballots
 		 */
-		public boolean isPossibleState(final int value) {
+		public /*@ pure @*/ boolean isPossibleState(final int value) {
  			return ((READY_TO_COUNT == value) ||
  					(NO_SEATS_FILLED_YET == value) ||
  					(CANDIDATES_HAVE_QUOTA == value) ||
@@ -101,10 +110,12 @@ public class DailBallotCounting extends AbstractBallotCounting {
 		
 		/**
 		 * Is this a valid transition in the counts state?
+		 * @param fromState The previous status.
+		 * @param toState The next status.
 		 * 
 		 * @return <code>true</code> if this transition exists with the automaton for counting of Dail ballots
 		 */
-		public boolean isTransition(final int fromState, final int toState) {
+		public /*@ pure @*/ boolean isTransition(final int fromState, final int toState) {
 			
 			// Self transitions are allowed
 			if (toState == fromState) {
@@ -230,7 +241,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
      * @param candidate The elected Dail candidate
      */
 	//@ also
-	//@ requires ballotCountingMachine.getState() == BallotCountingModel.SURPLUS_AVAILABLE;
+	//@   requires ballotCountingMachine.getState() == BallotCountingModel.SURPLUS_AVAILABLE;
 	public void distributeSurplus(/*@ non_null @*/ final Candidate candidate) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == Candidate.CONTINUING) {
@@ -274,7 +285,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
 				 
 			}
 		}
-		assert (numberOfVotes == ballotsMoved);
+		//@ assert (numberOfVotes == ballotsMoved);
 	}
 
 	 
@@ -297,7 +308,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
 	 * @see "requirement 1, section 3, item 2, page 12"
 	 */
 	/*@ also
-	  @   normal public_behavior
+	  @   public normal_behavior
 	  @     requires state == PRECOUNT;
 	  @     ensures state == FINISHED;
 	  @*/
@@ -305,6 +316,7 @@ public class DailBallotCounting extends AbstractBallotCounting {
 		
 		status = COUNTING;
 		countNumberValue = 0;
+		ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
 		
 		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
 			ballotCountingMachine.changeState(BallotCountingModel.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
