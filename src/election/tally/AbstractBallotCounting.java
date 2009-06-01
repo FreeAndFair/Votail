@@ -729,6 +729,7 @@ public void eliminateCandidates(Candidate[] candidatesToEliminate) {
   @   protected normal_behavior
   @   requires state == FINISHED;
   @   requires candidateList != null;
+  @   requires candidates != null;
   @   assignable state;
   @   ensures state == REPORT;
   @   ensures \result != null;
@@ -738,17 +739,27 @@ public void eliminateCandidates(Candidate[] candidatesToEliminate) {
 public /*@ non_null @*/ ElectionReport report(){
 	 
 	status = REPORT;
+	
+	return new ElectionReport(getElectedCandidateIDs(), countNumberValue); //@nowarn;
+}
+
+/**
+ * @return The unique identifier of each elected candidate.
+ */
+/*@ requires candidates != null;
+  @*/
+public int[] getElectedCandidateIDs() {
 	int[] electedCandidateIDs = {};
  	
 	int counter = 0;
+	//@ assert candidates != null;
  	final int length = candidates.length;
 	for (int i = 0; i < length; i++) {
 		if (isElected(candidates[i])) {
 			electedCandidateIDs[counter++] = candidates[i].candidateID;
 		}
 	}
-	
-	return new ElectionReport(electedCandidateIDs, countNumberValue);
+	return electedCandidateIDs;
 }
 
 /**
@@ -1434,7 +1445,6 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @param The unique identifier for the excluded candidate
 	 */
 	/*@ protected normal_behavior
-	  @   requires ballotsToCount != null;
 	  @   ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
 	  @     ballotsToCount[b].getCandidateID() != candidateID);
 	  @*/
@@ -1453,6 +1463,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @param candidate The candidate
 	 * @return <code>true</code> if this candidate is the lowest, <code>false</code> otherwise
 	 */
+	//@ requires 1 <= totalCandidates;
 	//@ ensures \result <==> candidate.equals(findLowestCandidate());
 	protected /*@ spec_public pure @*/ boolean isLowestCandidate(
 			final /*@ non_null @*/ Candidate candidate) {
