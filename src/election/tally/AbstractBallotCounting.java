@@ -1186,7 +1186,7 @@ protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromC
   @     ensures \result <==> 
   @       (\exists int i; 0 <= i && i < countNumber;
   @         (firstCandidate.getVoteAtCount(i) > secondCandidate.getVoteAtCount(i)) &&
-  @         (\forall int j; 0 <= j && j < i;
+  @         (\forall int j; i < j && j < countNumber;
   @           firstCandidate.getVoteAtCount(j) == secondCandidate.getVoteAtCount(j))) 
   @      ||
   @      ((randomSelection (firstCandidate, secondCandidate) ==
