@@ -1179,39 +1179,38 @@ protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromC
  * @return <code>true</code> if the first candidate is deemed to have recieved more
  * votes than the second 
  */
-// FIXME check this specification again - then check implementation
 /*@ also
   @   protected normal_behavior
   @     requires firstCandidate.getStatus() == Candidate.CONTINUING;
   @     requires secondCandidate.getStatus() == Candidate.CONTINUING;
-  @     ensures \result == (\exists int i; 0 <= i && i < countNumber;
-  @      (firstCandidate.getVoteAtCount(i) > secondCandidate.getVoteAtCount(i)) &&
-  @      (\forall int j; 0 <= j && j < i;
-  @      firstCandidate.getVoteAtCount(j) == secondCandidate.getVoteAtCount(j))) ||
+  @     ensures \result <==> 
+  @       (\exists int i; 0 <= i && i < countNumber;
+  @         (firstCandidate.getVoteAtCount(i) > secondCandidate.getVoteAtCount(i)) &&
+  @         (\forall int j; 0 <= j && j < i;
+  @           firstCandidate.getVoteAtCount(j) == secondCandidate.getVoteAtCount(j))) 
+  @      ||
   @      ((randomSelection (firstCandidate, secondCandidate) ==
-  @      firstCandidate.getCandidateID()) &&
-  @      (\forall int k; i < k && k < countNumber;
-  @      firstCandidate.getVoteAtCount(k) == secondCandidate.getVoteAtCount(k)));
+  @        firstCandidate.getCandidateID()) &&
+  @        (\forall int k; 0 < k && k < countNumber;
+  @          firstCandidate.getVoteAtCount(k) == secondCandidate.getVoteAtCount(k)));
   @*/
 	protected /*@ pure @*/ boolean isHigherThan(Candidate firstCandidate, Candidate secondCandidate) {
-		 
-			for (int i = 0; i < countNumberValue; i++) {
-				if (firstCandidate.getVoteAtCount(i) > secondCandidate.getVoteAtCount(i)) {
-					for (int j = 0; j < i; j++) {
-						if(firstCandidate.getVoteAtCount(j) == secondCandidate.getVoteAtCount(j) && 
-								randomSelection (firstCandidate, secondCandidate) == firstCandidate.getCandidateID()){
-							for (int k = 0; k < countNumberValue; k++) {
-								if(firstCandidate.getVoteAtCount(k) == secondCandidate.getVoteAtCount(k)){
-									return true;
-								}
-															}
-						}
-
-					}
-				}
-			}
 		
-		return false;
+		int count = countNumberValue;
+		while (0 <= count) {
+			
+			final int firstNumberOfVotes = firstCandidate.getVoteAtCount(count);
+			final int secondNumberOfVotes = secondCandidate.getVoteAtCount(count);
+			if (firstNumberOfVotes > secondNumberOfVotes) {
+				return true;
+			}
+			else if (secondNumberOfVotes > firstNumberOfVotes) {
+				return false;
+			}
+			count--;
+		}
+		
+		return !(firstCandidate.isAfter(secondCandidate));
 	}
 
 /**
