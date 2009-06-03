@@ -115,11 +115,11 @@ public static final int NONTRANSFERABLE = 0;
     @   0 < i && i < numberOfPreferences && 0 <= j && j < i;
     @   preferenceList[i] != preferenceList[j]);
     @*/
-  //@ public invariant preferenceList.length == numberOfPreferences;
-  protected /*@ spec_public non_null@*/ int[] preferenceList = new int [0];
+  //@ public invariant preferenceList.length >= numberOfPreferences;
+  protected /*@ spec_public non_null@*/ int[] preferenceList = new int [Candidate.MAX_CANDIDATES];
 	
   /** Total number of valid preferences on this ballot paper */
-  //@ public invariant (0 == numberOfPreferences) | (0 < numberOfPreferences);
+  //@ public invariant 0 <= numberOfPreferences;
   // @design numberOfPreferences == 0 means an empty ballot.
   // @see #ballotID invariant
   protected /*@ spec_public @*/ int numberOfPreferences;
@@ -138,7 +138,7 @@ public static final int NONTRANSFERABLE = 0;
   private static final int NO_ID_YET = 0;
   
   /** Candidate ID to which the vote is assigned at the end of each count */
-  //@ public invariant candidateIDAtCount.length == MAXIMUM_ROUNDS_OF_COUNTING;
+  //@ public invariant candidateIDAtCount.length <= MAXIMUM_ROUNDS_OF_COUNTING;
   protected /*@ spec_public non_null @*/ int[] candidateIDAtCount = 
     new int [MAXIMUM_ROUNDS_OF_COUNTING];
 
@@ -154,30 +154,44 @@ public static final int NONTRANSFERABLE = 0;
     @ public constraint randomNumber == \old (randomNumber);
     @*/
   protected /*@ spec_public @*/ int randomNumber;
-  //@ ghost int _randomNumber;
+  /**
+ * 
+ */
+//@ public ghost int _randomNumber;
+  
+  public Ballot () {
+	  generateBlankBallot(UniqueNumber.getUniqueID());
+  }
     
   /** 
    * Default constructor
+   * 
+   * @param seed A random number used to distinguish this ballot when simulating a random selection
    */
-  /*@ also public normal_behavior
-    @	assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
-    @     candidateID, ballotID, positionInList, randomNumber;
-    @   ensures numberOfPreferences == 0;
-    @   ensures countNumberAtLastTransfer == 0;
-    @   ensures positionInList == 0;
-    @   ensures candidateID == NONTRANSFERABLE; 
-    @   ensures ballotID == NO_ID_YET;
-    @*/
-  public /*@ pure @*/ Ballot() {
+  
+  public /*@ pure @*/ Ballot(int seed) {
 	  
-    numberOfPreferences = 0;
+    generateBlankBallot(seed);
+  }
+
+/*@ public normal_behavior
+  @	assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
+  @     candidateID, ballotID, positionInList, randomNumber;
+  @   ensures numberOfPreferences == 0;
+  @   ensures countNumberAtLastTransfer == 0;
+  @   ensures positionInList == 0;
+  @   ensures candidateID == NONTRANSFERABLE; 
+  @   ensures ballotID == NO_ID_YET;
+  @*/
+protected void generateBlankBallot(int seed) {
+	numberOfPreferences = 0;
     countNumberAtLastTransfer = 0;
     positionInList = 0;
     candidateID = NONTRANSFERABLE; 
     ballotID = NO_ID_YET;
-	randomNumber = UniqueNumber.getUniqueID(); //@ nowarn;
+	randomNumber = seed;
     //@ set _randomNumber = randomNumber;
-  } //@ nowarn;
+}
     
   /**
    * Get the location of the ballot at each count
@@ -344,8 +358,9 @@ public static final int NONTRANSFERABLE = 0;
     @*/
   public void transfer(int countNumber) {
  		countNumberAtLastTransfer = countNumber;
+		positionInList = positionInList + 1;
+
 		if (positionInList < numberOfPreferences) {
-			positionInList = positionInList + 1;
 			candidateID = preferenceList [positionInList];
 		}
 		else if (positionInList == numberOfPreferences) {

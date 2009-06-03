@@ -1462,6 +1462,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @param The unique identifier for the excluded candidate
 	 */
 	/*@ protected normal_behavior
+	  @   requires candidateID != Ballot.NONTRANSFERABLE;
 	  @   ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
 	  @     ballotsToCount[b].getCandidateID() != candidateID);
 	  @*/
@@ -1470,17 +1471,25 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		for (int b = 0; b < ballots.length; b++) { //@ nowarn;
 			if (ballots[b].getCandidateID() == candidateID) {  //@ nowarn;
 				
-				transferBallot(b);
+				transferBallot(ballots[b]);
 			}
 		}
 	}
 
-	protected void transferBallot(int b) {
-		// Transfer the ballot until non-tranferable or a continuing candidate is found
+	/**
+	 * Transfer the ballot until non-transferable or a continuing candidate is found.
+	 * 
+	 * @param ballot The ballot
+	 */
+	/*@ ensures (ballot.candidateID == Ballot.NONTRANSFERABLE) ||
+	  @   (isContinuingCandidateID(ballot.candidateID));
+	  @*/
+	protected void transferBallot(final /*@ non_null @*/ Ballot ballot) {
+		
 		int nextCandidateID;
 		do {
-		  ballots[b].transfer(countNumberValue);
-		  nextCandidateID = ballots[b].getCandidateID();
+		  ballot.transfer(countNumberValue);
+		  nextCandidateID = ballot.getCandidateID();
 		}
 		while ((nextCandidateID != Ballot.NONTRANSFERABLE) && (!isContinuingCandidateID(nextCandidateID)));
 	}
