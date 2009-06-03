@@ -928,7 +928,8 @@ public /*@ pure @*/ byte getStatus(){
   @*/
 	public /*@ pure @*/ boolean isContinuingCandidateID(int candidateID) {
 		for (int i = 0; i < candidates.length; i++) { //@ nowarn;
-			if ((candidateID == candidates[i].getCandidateID()) && (candidates[i].getStatus() == Candidate.CONTINUING)) {
+			if ((candidateID == candidates[i].getCandidateID()) //@ nowarn;
+					&& (candidates[i].getStatus() == Candidate.CONTINUING)) {
                 return true;
 			}
 		}
@@ -1032,7 +1033,7 @@ protected /*@ pure @*/ int getRoundedFractionalValue(/*@ non_null @*/ Candidate 
  */
 protected /*@ pure @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromCandidate){
 	int shortfall = 0;
- 	for(int i=0; i < candidates.length; i++){
+ 	for(int i=0; i < candidates.length; i++){ //@ nowarn;
 		if(candidates[i].getStatus() == Candidate.CONTINUING) {
 			shortfall += getActualTransfers (fromCandidate, candidates[i]);
 		}
@@ -1041,7 +1042,7 @@ protected /*@ pure @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromC
 }
 
 /**
- * Draw lots to choose between the two continuing candidates
+ * Simulate random selection between two candidates.
  * 
  * @design This needs to be random but consistent, so that same 
  * result is always given for the same pair of candidates.
@@ -1056,22 +1057,19 @@ protected /*@ pure @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromC
  */
 /*@ also 
   @   protected normal_behavior
-  @     requires state == COUNTING;
-  @     requires firstCandidate.getStatus() == Candidate.CONTINUING;
-  @     requires secondCandidate.getStatus() == Candidate.CONTINUING;
-  @     requires firstCandidate.randomNumber != secondCandidate.randomNumber;
-  @     requires firstCandidate.candidateID != secondCandidate.candidateID;
   @     ensures (\result == firstCandidate.candidateID) <==>
   @       (firstCandidate.randomNumber < secondCandidate.randomNumber);
-  @     ensures (\result == secondCandidate.candidateID) <=!=>
+  @     ensures (\result == secondCandidate.candidateID) ||
   @       (\result == firstCandidate.candidateID);
   @*/
-protected /*@ pure @*/ int randomSelection(/*@ non_null @*/ Candidate firstCandidate, /*@ non_null @*/ Candidate secondCandidate){
+protected /*@ pure @*/ int randomSelection(
+		/*@ non_null @*/ Candidate firstCandidate, 
+		/*@ non_null @*/ Candidate secondCandidate) {
+	
  		if (firstCandidate.randomNumber < secondCandidate.randomNumber) {
 			return firstCandidate.candidateID;
 		}
-		return secondCandidate.candidateID;
-	 
+		return secondCandidate.candidateID; 
 }
 
 /**
@@ -1199,8 +1197,8 @@ protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromC
 		int count = countNumberValue;
 		while (0 <= count) {
 			
-			final int firstNumberOfVotes = firstCandidate.getVoteAtCount(count);
-			final int secondNumberOfVotes = secondCandidate.getVoteAtCount(count);
+			final int firstNumberOfVotes = firstCandidate.getVoteAtCount(count); //@ nowarn;
+			final int secondNumberOfVotes = secondCandidate.getVoteAtCount(count); //@ nowarn;
 			if (firstNumberOfVotes > secondNumberOfVotes) {
 				return true;
 			}
@@ -1210,7 +1208,7 @@ protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromC
 			count--;
 		}
 		
-		return !(firstCandidate.isAfter(secondCandidate));
+		return secondCandidate.isAfter(firstCandidate);
 	}
 
 /**
@@ -1295,7 +1293,7 @@ protected /*@ pure @*/ int getCandidateOrderByHighestRemainder(Candidate fromCan
 protected /*@ pure @*/ int getTotalTransferableVotes(/*@ non_null @*/ Candidate fromCandidate){
     int numberOfTransfers = 0;
  		for(int i = 0; i < totalNumberOfCandidates; i++){
- 			if (candidates[i].getStatus() == Candidate.CONTINUING) {
+ 			if (candidates[i].getStatus() == Candidate.CONTINUING) { //@ nowarn;
  				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID());
  			}
 		}
@@ -1470,10 +1468,21 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	protected void redistributeBallots(final int candidateID) {
 
 		for (int b = 0; b < ballots.length; b++) { //@ nowarn;
-			if (ballots[b].getCandidateID() == candidateID) {  //@nowarn;
-				ballots[b].transfer(countNumberValue); //@ nowarn;
+			if (ballots[b].getCandidateID() == candidateID) {  //@ nowarn;
+				
+				transferBallot(b);
 			}
 		}
+	}
+
+	protected void transferBallot(int b) {
+		// Transfer the ballot until non-tranferable or a continuing candidate is found
+		int nextCandidateID;
+		do {
+		  ballots[b].transfer(countNumberValue);
+		  nextCandidateID = ballots[b].getCandidateID();
+		}
+		while ((nextCandidateID != Ballot.NONTRANSFERABLE) && (!isContinuingCandidateID(nextCandidateID)));
 	}
 	
 	/**

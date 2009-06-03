@@ -330,55 +330,28 @@ public static final int NONTRANSFERABLE = 0;
    * until the ballot is non-transferable or a continuing candidate ID is
    * found in the remainder of the preference list.
    * 
-   * @param countNumber the count number at which the ballot was transfered.
+   * @param countNumber The count number at which the ballot was transfered.
    */    
   /*@ also public normal_behavior
     @   requires 0 <= positionInList;
     @   requires positionInList <= numberOfPreferences;
     @   requires countNumberAtLastTransfer <= countNumber;
-    @   requires countNumber < MAXIMUM_ROUNDS_OF_COUNTING;
-    @   assignable countNumberAtLastTransfer, positionInList, preferenceList[*], candidateID;
+    @   assignable countNumberAtLastTransfer, positionInList, candidateID;
     @   ensures countNumberAtLastTransfer == countNumber;
     @   ensures \old(positionInList) <= positionInList;
     @   ensures (positionInList == \old(positionInList) + 1) ||
     @           (positionInList == numberOfPreferences);
     @*/
   public void transfer(int countNumber) {
- 			if (countNumberAtLastTransfer <= countNumber) {
-				countNumberAtLastTransfer = countNumber;
-				if (positionInList != numberOfPreferences) {
-					shiftPreferenceList(); //@ nowarn;
-					positionInList = positionInList + 1;
-				}else if(positionInList == numberOfPreferences) {
-					candidateID = NONTRANSFERABLE; //@ nowarn;
-				}
-			}
-	} //@ nowarn;
-  
-  /**
-	 * Corrects the candidate list after it has been changed.
-	 * 
-	 * @param shiftPosition
-	 *            the position in the list from where the list must be
-    *            
-    * @note Dermot Cochran: The ballot information still needs to be preserved
-    * when publishing the results.  Not all of the ballot can be publicly revealed;
-    * only the current top preference and next preference so that the count can
-    * independently checked at each round.
-	 */
-  /*@ private normal_behavior
-    @ requires 0 < positionInList;
-    @ requires positionInList < preferenceList.length;
-    @ assignable preferenceList[*];
-    @ ensures preferenceList[positionInList+1] == \old(preferenceList[positionInList]);
-    @*/
-  private /*@ helper @*/ void shiftPreferenceList() {
-	  if( 0 < positionInList && positionInList < numberOfPreferences-1){
-		int temp = preferenceList[positionInList+1];
-		preferenceList[positionInList+1] = preferenceList[positionInList];
-		preferenceList[positionInList] = temp;
-	  }
-	} //@ nowarn;
+ 		countNumberAtLastTransfer = countNumber;
+		if (positionInList < numberOfPreferences) {
+			positionInList = positionInList + 1;
+			candidateID = preferenceList [positionInList];
+		}
+		else if (positionInList == numberOfPreferences) {
+			candidateID = NONTRANSFERABLE;
+		}
+	}
     
   /**
    * Get ballot ID number
