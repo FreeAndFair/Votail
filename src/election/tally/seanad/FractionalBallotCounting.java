@@ -265,7 +265,7 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 			
 			// Transfer surplus votes from winning candidates
 			while (totalNumberOfSurpluses > 0) {
-				status = TRANSFERING_SURPLUS;
+				ballotCountMachine.changeState(TRANSFERING_SURPLUS);
 				Candidate winner = findHighestCandidate();
 				winner.declareElected();
 				distributeSurplus(winner);
@@ -273,7 +273,7 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 			}
 			
 			// Exclusion of lowest continuing candidate
-			status = EXCLUDING_LOWEST_CANIDATE;
+			ballotCountingMachine.changeState(EXCLUDING_LOWEST_CANIDATE;
 			Candidate loser = findLowestCandidate();
 			loser.declareEliminated();
 			redistributeBallots(loser.getCandidateID());

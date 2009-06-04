@@ -205,14 +205,3 @@ explanation
 contraint
   "Tests are audited in such a way as tp revent security violations or loss of data integrity"
 end
-
-class_chart UNIQUE_NUMBER
-explanation
-   "Unique internal identifier"
-query
-   "What is the value of the next unique number?"
-command
-   "Generate a unique ID number"
-constraint
-   "No two internal identifiers are the same"
-end

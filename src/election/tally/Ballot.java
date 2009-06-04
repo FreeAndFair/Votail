@@ -149,18 +149,15 @@ public static final int NONTRANSFERABLE = 0;
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
     
   /** Random number used for proportional distribution of surplus votes */
-  /*@ public invariant (\forall Ballot a,b; a != null && b != null;
-    @   (a.randomNumber == b.randomNumber) <==> (a == b));
-    @ public constraint randomNumber == \old (randomNumber);
-    @*/
+  //@ public constraint randomNumber == \old (randomNumber);
   protected /*@ spec_public @*/ int randomNumber;
   /**
  * 
  */
 //@ public ghost int _randomNumber;
   
-  public Ballot () {
-	  generateBlankBallot(UniqueNumber.getUniqueID());
+  public /*@ pure @*/ Ballot () {
+	  generateBlankBallot(System.identityHashCode(this));
   }
     
   /** 

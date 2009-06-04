@@ -172,7 +172,7 @@ public abstract class AbstractBallotCounting {
   //@ public model int numberEliminated;
   //@ public invariant 0 <= numberEliminated;
   //@ public invariant numberEliminated <= totalCandidates - seats;
-  /*@ pubic invariant (state == COUNTING || state == FINISHED || state == REPORT)
+  /*@ public invariant (state == COUNTING || state == FINISHED || state == REPORT)
     @   ==> numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
     @       candidateList[i].getStatus() == Candidate.ELIMINATED);
     @*/
