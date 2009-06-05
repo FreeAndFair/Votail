@@ -53,8 +53,10 @@ package election.tally;
  * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of
    Environment and Local Government: Count Requirements and Commentary on Count
    Rules, sections 3-16</a>
- * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">Formal Verification of Remote Voting</a> 
- * @see <a href="http://kind.ucd.ie/products/opensource/ESCJava2/">ESCJava/2 static checker for Java</a>
+ * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
+ * Formal Verification of Remote Voting</a> 
+ * @see <a href="http://kind.ucd.ie/products/opensource/ESCJava2/">
+ * ESCJava/2 static checker for Java</a>
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
@@ -82,7 +84,8 @@ public abstract class AbstractBallotCounting {
 	protected /*@ spec_public @*/ byte status; //@ in state;
    //@ public represents state <- status;
 	/*@
-	  @ public invariant status == EMPTY ||status == SETUP || status == PRELOAD ||
+	  @ public invariant status == EMPTY ||status == SETUP || 
+	  @   status == PRELOAD ||
 	  @   status == LOADING || status == PRECOUNT || status == COUNTING ||
 	  @   status == FINISHED ||status == REPORT;
 	  @*/
@@ -727,20 +730,16 @@ public void eliminateCandidates(Candidate[] candidatesToEliminate) {
  */
 /*@ also
   @   protected normal_behavior
-  @   requires state == FINISHED;
-  @   requires candidateList != null;
-  @   requires candidates != null;
-  @   assignable state;
-  @   ensures state == REPORT;
-  @   ensures \result != null;
-  @   ensures \result.getNumberElected() == numberOfSeats;
-  @	  ensures \result.getNumberElected() == \result.getElectedCandidateIDs().length;
+  @     requires state == FINISHED;
+  @     assignable state;
+  @     ensures state == REPORT;
+  @     ensures \result.getNumberElected() == numberOfSeats;
+  @	    ensures \result.getNumberElected() == getElectedCandidateIDs().length;
   @*/
 public /*@ non_null @*/ ElectionReport report(){
 	 
 	status = REPORT;
-	
-	return new ElectionReport(getElectedCandidateIDs(), countNumberValue); //@nowarn;
+	return new ElectionReport(getElectedCandidateIDs(), countNumberValue);
 }
 
 /**
@@ -748,7 +747,7 @@ public /*@ non_null @*/ ElectionReport report(){
  * 
  * @return The unique identifier of each elected candidate.
  */
-public /*@ pure helper @*/ final int[] getElectedCandidateIDs() {
+public /*@ pure @*/ final int[] getElectedCandidateIDs() {
 	int[] electedCandidateIDs = {};
  	
 	int counter = 0;
@@ -769,38 +768,39 @@ public /*@ pure helper @*/ final int[] getElectedCandidateIDs() {
 /*@ also
   @   protected normal_behavior
   @     requires state == EMPTY;
-  @     assignable status, totalNumberOfCandidates, numberOfSeats, totalNumberOfSeats;
+  @     assignable status; 
+  @     assignable totalNumberOfCandidates;
+  @     assignable numberOfSeats;
+  @     assignable totalNumberOfSeats;
   @     ensures state == PRELOAD;
   @     ensures totalCandidates == electionParameters.numberOfCandidates;
   @     ensures seats == electionParameters.numberOfSeatsInThisElection;
   @     ensures totalSeats == electionParameters.totalNumberOfSeats;
   @*/
 public void setup(/*@ non_null @*/ ElectionParameters electionParameters){
-	this.totalNumberOfCandidates = electionParameters.numberOfCandidates; //@ nowarn;
-	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection; //@ nowarn;
-	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; //@ nowarn;
+	this.totalNumberOfCandidates = electionParameters.numberOfCandidates;
+	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
+	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; 
 	this.status = PRELOAD;
 }
 
 /**
- * Load all valid vote details.
- * @param ballotBox The complete set of valid votes
- * @design All ballot papers must be assigned to a valid candidate ID
+ * Open the ballot box for counting.
+ * @param ballotBox The ballots to be counted
  */
 /*@ also
   @   protected normal_behavior
   @     requires state == PRELOAD;
-  @     assignable state, totalVotes, ballotsToCount, quota,depositSavingThreshold, ballots;
+  @     assignable state, totalVotes, ballotsToCount;
   @     ensures state == PRECOUNT;
   @     ensures totalVotes == ballotBox.numberOfBallots;
-  @     ensures (\forall int i; 0 <= i && i < totalVotes;
-  @       (\exists int j; 0 <= j && j < totalCandidates;
-  @       ballotsToCount[j].isAssignedTo(candidateList[i].getCandidateID())));
+  @     ensures this.ballots == ballotBox.ballots;
   @*/
 public void load(/*@ non_null @*/ BallotBox ballotBox) {
- 	ballots = ballotBox.getBallots(); //@ nowarn;
+ 	ballots = ballotBox.getBallots();
+ 	totalNumberOfVotes = ballotBox.size();
  	status = PRECOUNT;
-} //@ nowarn Post;
+}
 
 /**
  * Gets the current number of votes for this candidate ID.

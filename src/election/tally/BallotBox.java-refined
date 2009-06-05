@@ -27,7 +27,7 @@ public class BallotBox {
    * @return the number of ballots in this ballot box.
    */
   //@ ensures 0 <= \result;
-  public /*@ pure @*/ long size();
+  public /*@ pure @*/ int size();
 
   // ...and therefore change the visibility of numberOfBallots to private
   // and abstract these invariants to use the pure method.
@@ -35,13 +35,7 @@ public class BallotBox {
   //@ public invariant 0 <= numberOfBallots;
   //@ public initially numberOfBallots == 0;
   //@ public constraint numberOfBallots >= \old (numberOfBallots);
-  public int numberOfBallots;
+  private /*@ spec_public @*/ int numberOfBallots;
     
-  // @review kiniry 1 Mar 2006 - This postcondition is redundant given
-  // your initially assertion above.
-
-  /*@ public normal_behavior
-    @   ensures numberOfBallots == 0;
-    @*/
   public /*@ pure @*/ BallotBox();
 }

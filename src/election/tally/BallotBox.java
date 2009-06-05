@@ -1,7 +1,9 @@
 /**
  * Votail Cuntais - Irish PR-STV ballot counting system
  * 
- * Copyright (c) 2005-2009 Dermot Cochran, Joseph R. Kiniry and Patrick E. Tierney
+ * Copyright (c) 2005 Dermot Cochran and Joseph R. Kiniry
+ * Copyright (c) 2006,2007 Dermot Cochran, Joseph R. Kiniry and Patrick E. Tierney
+ * Copyright (c) 2008,2009 Dermot Cochran
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,9 +31,7 @@ package election.tally;
 public class BallotBox {
 	
 /**
- * List of valid ballot papers
- * 
- * @constraint No two ballots IDs in a ballot box are the same
+ * List of valid ballot papers.
  */
 /*@ public invariant (\forall int i, j;
   @   0 <= i && i <numberOfBallots &&
@@ -42,23 +42,28 @@ public class BallotBox {
 	protected /*@ spec_public non_null @*/ Ballot[] ballots;
 	
 /**
+ * Get the number of ballots in this box.
+ * 
  * @return the number of ballots in this ballot box
  */	
 /*@ also 
   @ public normal_behavior
-  @ ensures 0 <= \result;
+  @   ensures 0 <= \result;
+  @   ensures \result == numberOfBallots;
+  @   ensures \result == ballot.length;
   @*/
-   public /*@ pure @*/ long size(){
+   public /*@ pure @*/ int size(){
 		return numberOfBallots;
 	}
 	
-//@ public invariant 0 <= numberOfBallots;
-//@ public initially numberOfBallots == 0;
-//@ public constraint numberOfBallots >= \old(numberOfBallots);
+    //@ public invariant 0 <= numberOfBallots;
+    //@ public initially numberOfBallots == 0;
+    //@ public constraint numberOfBallots >= \old(numberOfBallots);
 	/**
 	 * The total number of ballots in this ballot box.
 	 */
-	public int numberOfBallots;
+    //@ public invariant numberOfBallots == ballots.length;
+	private /*@ spec_public @*/ int numberOfBallots;
 	
 	/**
 	 * Create an empty ballot box.
@@ -66,6 +71,18 @@ public class BallotBox {
 	public BallotBox(){
 		numberOfBallots = 0;
 		ballots = new Ballot[numberOfBallots];
+	}
+	
+	/**
+	 * Accept a ballot paper.
+	 * @param ballot The ballot paper
+	 */
+	/*@ ensures \old(numberOfBallots) + 1 == numberOfBallots;
+	  @ ensures (\exists int b; 0 <= b && b < numberOfBallots;
+	  @         ballot.equals(ballots[b]));
+	  @*/
+	public void accept (/*@ non_null @*/ Ballot ballot) {
+		ballots[numberOfBallots++] = ballot;
 	}
 
 	/**
