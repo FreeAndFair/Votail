@@ -736,10 +736,10 @@ public void eliminateCandidates(Candidate[] candidatesToEliminate) {
   @     ensures \result.getNumberElected() == numberOfSeats;
   @	    ensures \result.getNumberElected() == getElectedCandidateIDs().length;
   @*/
-public /*@ non_null @*/ ElectionReport report(){
+public /*@ non_null @*/ Report report(){
 	 
 	status = REPORT;
-	return new ElectionReport(getElectedCandidateIDs(), countNumberValue);
+	return new Report(getElectedCandidateIDs(), countNumberValue);
 }
 
 /**
@@ -777,7 +777,7 @@ public /*@ pure @*/ final int[] getElectedCandidateIDs() {
   @     ensures seats == electionParameters.numberOfSeatsInThisElection;
   @     ensures totalSeats == electionParameters.totalNumberOfSeats;
   @*/
-public void setup(/*@ non_null @*/ ElectionParameters electionParameters){
+public void setup(/*@ non_null @*/ Election electionParameters){
 	this.totalNumberOfCandidates = electionParameters.numberOfCandidates;
 	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
 	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; 

@@ -1,7 +1,7 @@
 package ie.lero.evoting.scenario;
 
 import election.tally.Candidate;
-import election.tally.ElectionParameters;
+import election.tally.Election;
 import election.tally.dail.DailBallotCounting;
 
 /**
@@ -11,7 +11,7 @@ import election.tally.dail.DailBallotCounting;
 public class ElectionOfCandidateAndDistributionOfSurplus {
 	
 	protected DailBallotCounting ballotCounting;
-	protected ElectionParameters parameters;
+	protected Election parameters;
 	protected Candidate candidate;
 	protected scenario.util.TestBallotBox ballotBox;
 	
@@ -21,7 +21,7 @@ public class ElectionOfCandidateAndDistributionOfSurplus {
 	protected void setUp() {
 		ballotCounting = new DailBallotCounting();
 		ballotBox = new scenario.util.TestBallotBox();
-		parameters = new ElectionParameters();
+		parameters = new Election();
 		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;
 		parameters.numberOfCandidates = parameters.totalNumberOfSeats + 2;

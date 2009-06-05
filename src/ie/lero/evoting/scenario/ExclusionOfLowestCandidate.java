@@ -1,7 +1,7 @@
 package ie.lero.evoting.scenario;
 
 import election.tally.Candidate;
-import election.tally.ElectionParameters;
+import election.tally.Election;
 import election.tally.dail.DailBallotCounting;
 
 /**
@@ -34,7 +34,7 @@ public class ExclusionOfLowestCandidate {
 		
 		ballotBox = new scenario.util.TestBallotBox();
 		ballotCounting = new DailBallotCounting();
-		ElectionParameters parameters = new ElectionParameters();
+		Election parameters = new Election();
 		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;
 		

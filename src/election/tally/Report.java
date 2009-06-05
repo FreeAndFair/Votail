@@ -62,7 +62,7 @@ package election.tally;
  * </BON>
  */
 
-public class ElectionReport {
+public class Report {
 	
 	/**
 	 * Maximum number of seats in any constituency
@@ -111,7 +111,7 @@ public class ElectionReport {
 	/*@ requires list.length <= MAX_SEATS;
 	  @ requires 0 <= counts;
 	  @*/
-	public ElectionReport(/*@ non_null @*/ final int[] list, final int counts){
+	public Report(/*@ non_null @*/ final int[] list, final int counts){
 		numberElected = list.length;
 		electedCandidateIDs = list;
 		totalNumberOfCounts = counts;

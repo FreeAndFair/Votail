@@ -28,7 +28,7 @@ package election.tally;
  * @author Dermot Cochran
  */
 
-public class ElectionParameters {
+public class Election {
 
 /** Number of candidates for election in this constituency */
 //@ public invariant 0 <= numberOfCandidates;
@@ -61,7 +61,7 @@ public class ElectionParameters {
 	/**
 	 * 
 	 */
-	public ElectionParameters(){	
+	public Election(){	
 		totalNumberOfSeats = 0;
 		numberOfCandidates = 0;
 		numberOfSeatsInThisElection = 0;

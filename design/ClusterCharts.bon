@@ -31,9 +31,10 @@ class BALLOT description "List of some or all candidates in order of preference"
 class BALLOT_BOX description "The set of all valid ballots"
 class BALLOT_COUNTING description "The algorithm used to count the ballots"
 class CANDIDATE description "A person eligible and nominated for election"
-class ELECTION_MANAGEMENT description "The overall conduct of the election"
+class ELECTION description "The overall conduct and management of the election"
 class POLLING_BOOTH description "The security mechanism by which ballots are cast"
 class REGISTRAR description "The list of all authenticated voters"
+class REPORT description "The official statement of the election results"
 class VOTER description "The person casting a vote"
 end
 
