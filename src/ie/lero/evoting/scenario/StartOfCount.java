@@ -1,6 +1,6 @@
 package ie.lero.evoting.scenario;
 
-import election.tally.Ballot;
+import scenario.util.TestBallotBox;
 import election.tally.BallotBox;
 import election.tally.Candidate;
 import election.tally.ElectionParameters;
@@ -14,7 +14,7 @@ import election.tally.dail.DailBallotCounting;
 public class StartOfCount {
 
 	protected DailBallotCounting ballotCounting;
-	protected ElectionParameters parameters;
+	protected /*@ spec_public @*/ ElectionParameters parameters;
 	protected Candidate candidate;
 	protected BallotBox ballotBox;
 
@@ -39,14 +39,7 @@ public class StartOfCount {
 		parameters.numberOfSeatsInThisElection = 4;
 		parameters.numberOfCandidates = 3;
 		candidate = new Candidate();
-		ballotBox = new BallotBox();
-		ballotBox.numberOfBallots = 2;
-		Ballot ballot1 = new Ballot();
-		int[] list1 = {1};
-		ballot1.load(list1);
-		Ballot ballot2 = new Ballot();
-		int[] list2 = {3,2};
-		ballot2.load(list2);
+		ballotBox = new TestBallotBox();
 	}
 	
 	/**

@@ -22,7 +22,7 @@
 -- THE SOFTWARE.
 --
 
-cluster_chart VOTAIL
+cluster_chart MODEL
 indexing
   author: "Dermot Cochran"
 explanation 
@@ -35,4 +35,12 @@ class ELECTION_MANAGEMENT description "The overall conduct of the election"
 class POLLING_BOOTH description "The security mechanism by which ballots are cast"
 class REGISTRAR description "The list of all authenticated voters"
 class VOTER description "The person casting a vote"
+end
+
+cluster_chart MECHANISM
+indexing
+  author: "Dermot Cochran"
+explanation
+  "The handling of information during the election process"
+class WORKFLOW description "The different stages of the counting process"
 end

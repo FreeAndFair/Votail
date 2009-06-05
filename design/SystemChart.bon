@@ -25,6 +25,7 @@
 system_chart VOTAIL
 explanation
   "A verified verifiable open source system for electronic (i.e. computer mediated) voting"
-cluster VOTAIL description "Counting of (Irish) ballots by proportional representation with single transferable vote"
+cluster MODEL description "The counting of ballots by proportional representation with single transferable vote"
+cluster MECHANISM description "The handling of information during the election process"
 end
  

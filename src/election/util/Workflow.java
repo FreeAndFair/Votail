@@ -31,7 +31,7 @@ package election.util;
  * @author Dermot Cochran
  *
  */
-public interface StateMachine {
+public interface Workflow {
 	
 	//@ ensures isPossibleState(\result);
 	public /*@ pure @*/ int getState();

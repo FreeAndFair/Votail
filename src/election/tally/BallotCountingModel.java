@@ -1,6 +1,6 @@
 package election.tally;
 
-public interface BallotCountingModel extends election.util.StateMachine {
+public interface BallotCountingModel extends election.util.Workflow {
 
 	// States within the ballot counting machine
 	public static final int READY_TO_COUNT = 1;
