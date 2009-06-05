@@ -5,8 +5,12 @@ import election.tally.ElectionParameters;
 import election.tally.dail.DailBallotCounting;
 
 /**
+ * This is a test for the behaviour of Votail in the event that the lowest
+ * continuing candidate is excluded from election.
+ * 
+ * @see election.tally.Candidate
+ * 
  * @author Dermot Cochran
- *
  */
 public class ExclusionOfLowestCandidate {
 
@@ -14,7 +18,7 @@ public class ExclusionOfLowestCandidate {
 	private scenario.util.TestBallotBox ballotBox;
 
 	/**
-	 * 
+	 * Exclude the lowest continuing candidate.
 	 */
 	public final void testExclusionOfLowestCandidate() {
 	 	
@@ -23,7 +27,10 @@ public class ExclusionOfLowestCandidate {
 	 	ballotCounting.eliminateCandidate(candidate);
  	}
 
-	protected void setUp() throws Exception {
+	/**
+	 * Create test data for a mock election count.
+	 */
+	protected void setUp() {
 		
 		ballotBox = new scenario.util.TestBallotBox();
 		ballotCounting = new DailBallotCounting();
@@ -50,5 +57,14 @@ public class ExclusionOfLowestCandidate {
 		parameters.setCandidateList(candidates);
  	 	ballotCounting.setup(parameters);
  	 	ballotCounting.load(ballotBox);
+	}
+	
+	/**
+	 * Test the event that the lowest continuing candidate is excluded from 
+	 * election.
+	 */
+	public void main() {
+		setUp();
+		testExclusionOfLowestCandidate();
 	}
 }

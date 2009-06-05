@@ -72,6 +72,9 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 	public class BallotCountingMachine implements BallotCountingModel {
 		
 		// Initial state
+		/**
+		 * 
+		 */
 		public BallotCountingMachine() {
 			state = READY_TO_COUNT;
 		}
@@ -80,16 +83,25 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 		//@ public constraint isTransition(\old(state), state);
  		private int state;
  		
+ 		/**
+ 		 * 
+ 		 */
  		//@ also ensures \result == state;
  		public int getState() {
 			return state;
 		}
 
+ 		/**
+ 		 * 
+ 		 */
  		//@ also ensures newState == state;
 		public void changeState(int newState) {
 			state = newState;
 		}
 
+		/**
+		 * 
+		 */
 		public boolean isPossibleState(final int value) {
  			return ((READY_TO_COUNT == value) ||
  					(NO_SEATS_FILLED_YET == value) ||
@@ -214,7 +226,11 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 
 	private BallotCountingModel ballotCountingMachine;
 
-	public void distributeSurplus(Candidate candidateWithSurplus) {
+	
+    /**
+     * 
+     */
+	public void distributeSurplus(final Candidate candidateWithSurplus) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == Candidate.CONTINUING) {
 				int numberOfTransfers = getActualTransfers (candidateWithSurplus, candidates[i]);
@@ -228,8 +244,16 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 		
 	}
 
-	public void transferVotes(Candidate fromCandidate,
-			Candidate toCandidate, int numberOfVotes) {
+	/**
+	 * Transfer surplus votes from an elected candidate
+	 * 
+	 * @param fromCandidate The elected candidate
+	 * @param toCandidate A continuing candidate
+	 * @param numberOfVotes The number of votes to be transferred
+	 * 
+	 */
+	public void transferVotes(final /*@ non_null @*/ Candidate fromCandidate,
+			final /*@ non_null @*/ Candidate toCandidate, final int numberOfVotes) {
 		// Update the totals for each candidate
 		fromCandidate.removeVote(numberOfVotes, countNumberValue);
 		toCandidate.addVote(numberOfVotes, countNumberValue);
@@ -238,16 +262,20 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 		int fromCandidateID = fromCandidate.getCandidateID();
 		int toCandidateID = toCandidate.getCandidateID();
 		int ballotsMoved = 0;
-		for (int b = 0; b < totalNumberOfVotes && ballotsMoved < numberOfVotes; b++) {
+		int distance = 1; // number of preferences to look ahead
+		do {
+		  for (int b = 0; b < totalNumberOfVotes && ballotsMoved < numberOfVotes; b++) {
 			if ((ballots[b].getCandidateID() == fromCandidateID) &&
-				(ballots[b].getNextPreference(1) == toCandidateID)) {
+				(ballots[b].getNextPreference(distance) == toCandidateID)) {
 				 
-						ballots[b].transfer(countNumberValue);
+						transferBallot(ballots[b]);
 						ballotsMoved++;
 				 
 			}
+		  }
+		  distance++; // look ahead to the next continuing preference
 		}
-		assert (numberOfVotes == ballotsMoved); 
+		while (numberOfVotes > ballotsMoved); 
 	}
 
 	/**
@@ -265,17 +293,25 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 			
 			// Transfer surplus votes from winning candidates
 			while (totalNumberOfSurpluses > 0) {
-				ballotCountMachine.changeState(TRANSFERING_SURPLUS);
+				ballotCountingMachine.changeState(BallotCountingModel.SURPLUS_AVAILABLE);
 				Candidate winner = findHighestCandidate();
+				
+				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_ELECTED);
 				winner.declareElected();
+				
+				ballotCountingMachine.changeState(BallotCountingModel.READY_TO_ALLOCATE_SURPLUS);
 				distributeSurplus(winner);
 				countNumberValue++;
 			}
 			
 			// Exclusion of lowest continuing candidate
-			ballotCountingMachine.changeState(EXCLUDING_LOWEST_CANIDATE;
+			ballotCountingMachine.changeState(BallotCountingModel.NO_SURPLUS_AVAILABLE);
 			Candidate loser = findLowestCandidate();
+			
+			ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_EXCLUDED);
 			loser.declareEliminated();
+			
+			ballotCountingMachine.changeState(BallotCountingModel.READY_TO_MOVE_BALLOTS);
 			redistributeBallots(loser.getCandidateID());
 			countNumberValue++;
 		}
@@ -283,6 +319,7 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 		// Filling of last seats
 		if (totalNumberOfContinuingCandidates == totalRemainingSeats) {
 			status = FILLING_LAST_SEATS;
+			ballotCountingMachine.changeState(BallotCountingModel.LAST_SEAT_BEING_FILLED);
 			for (int c = 0; c < totalNumberOfCandidates; c++) {
 				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
 					candidates[c].declareElected();
