@@ -35,13 +35,9 @@ event
 involves
   BALLOT_BOX, BALLOT_COUNTING
 event
-  "Ballots are read into the counting system"
-involves
-  BALLOT_BOX, DATA_INTEGRITY, VOTE_SET
-event
   "A ballot is cast"
 involves
-  BALLOT, BALLOT_BOX, SECURITY_GUARANTEE, VOTER, VOTE_SET
+  BALLOT, BALLOT_BOX, POLLING_BOOTH, VOTER
 end
 
 -- Internal (outgoing) events
@@ -53,33 +49,9 @@ part
 event
   "One or more candidates are elected"
 involves
-  CANDIDATE, BALLOT_COUNTING
+  CANDIDATE, BALLOT_BOX, BALLOT_COUNTING
 event 
   "One or more candidates are excluded"
 involves
-  CANDIDATE, BALLOT_COUNTING
-event
-  "All seats are filled"
-involves
-  ELECTION_REPORT
-event
-  "A surplus is distributed"
-involves
-  BALLOT_BOX
-event
-  "The transferable votes of an excluded candidate are redistributed"
-involves
-  BALLOT, BALLOT_BOX, BALLOT_COUNTING, CANDIDATE
-event
-  "Two or more elected candidates have the highest surplus"
-involves
-  BALLOT_BOX
-event
-  "Two or more continuing candidates have the lowest vote"
-involves 
-  BALLOT_BOX, CANDIDATE_LIST
-event
-  "Ballot data integrity or security guarantees are waived for testing purposes"
-involves
-  AUDIT_LOG, BALLOT_BOX, DATA_INTEGRITY, SCENARIO_TEST, SECURITY_GUARANTEE, VOTE_SET
+  CANDIDATE, BALLOT_BOX, BALLOT_COUNTING
 end

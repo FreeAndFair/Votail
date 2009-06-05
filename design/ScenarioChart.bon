@@ -45,4 +45,8 @@ scenario
   "CONTINUING_CANDIATES_EQUAL_REMAINING_SEATS"
 description
   "The number of continuing candidates equals the number of remaining seats; all continuing candidates are deemed elected"
+scenario
+  "CASTING_A_VOTE"
+description
+  "A voter generates a ballot and adds it to the ballot box via a polling booth"
 end

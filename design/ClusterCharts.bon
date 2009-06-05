@@ -24,27 +24,15 @@
 
 cluster_chart VOTAIL
 indexing
-  author: "Dermot Cochran";
-  created: "2009-02-19-dc";
-  revised: "2009-02-25-dc"
- explanation 
-  "The PR-STV counting of Irish ballot papers"
+  author: "Dermot Cochran"
+explanation 
+  "Counting of electronic ballots"
 class BALLOT description "List of some or all candidates in order of preference"
 class BALLOT_BOX description "The set of all valid ballots"
 class BALLOT_COUNTING description "The algorithm used to count the ballots"
-class BALLOT_PILE description "The set of all ballots assigned to one candidate"
-class CANDIDATE_LIST description "The set of all candidates for election and the status of each candidate"
-class COUNT_PROCESS description "The procedure and algorithm for counting of ballots"
-class ELECTION_REPORT description "The number of votes for each candidate at each round of counting"
 class CANDIDATE description "A person eligible and nominated for election"
-class RANDOM_NUMBER description "A hidden random number used for resolving ties or mixing of ballot papers"
-end
-
-cluster_chart SECURITY
-class DATA_INTEGRITY description ""
-class SECURITY_GUARANTEE description ""
-class VOTE_SET description ""
+class ELECTION_MANAGEMENT description "The overall conduct of the election"
+class POLLING_BOOTH description "The security mechanism by which ballots are cast"
+class REGISTRAR description "The list of all authenticated voters"
 class VOTER description "The person casting a vote"
-class AUDIT_LOG description ""
-class SCENARIO_TEST description ""
 end

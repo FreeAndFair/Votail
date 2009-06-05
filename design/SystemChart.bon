@@ -21,13 +21,10 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 --
--- Methodology: allocate a BON cluster for each major subsystem
---
 
 system_chart VOTAIL
 explanation
   "A verified verifiable open source system for electronic (i.e. computer mediated) voting"
 cluster VOTAIL description "Counting of (Irish) ballots by proportional representation with single transferable vote"
-cluster SECURITY description ""
 end
  

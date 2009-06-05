@@ -8,7 +8,7 @@ import election.tally.dail.DailBallotCounting;
  * @author Dermot Cochran
  * @copyright 2009 Dermot Cochran
  */
-public class DistributionOfSurplus {
+public class ElectionOfCandidateAndDistributionOfSurplus {
 	
 	protected DailBallotCounting ballotCounting;
 	protected ElectionParameters parameters;
@@ -47,7 +47,11 @@ public class DistributionOfSurplus {
 	public void testDistributionOfSurplus() {
 	 
 	 	ballotCounting.setup(parameters);
-	 	ballotCounting.distributeSurplus(ballotCounting.findHighestCandidate());
+	 	candidate = ballotCounting.findHighestCandidate();
+	 	//@ assert candidate.getStatus() == Candidate.CONTINUING;
+		candidate.declareElected();
+ 		//@ assert candidate.getStatus() == Candidate.ELECTED;
+	 	ballotCounting.distributeSurplus(candidate);
 	}
 	
 	/**
