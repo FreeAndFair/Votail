@@ -1,7 +1,9 @@
 package ie.lero.evoting.scenario;
 
+import election.tally.Ballot;
 import election.tally.Candidate;
 import election.tally.Election;
+import election.tally.Report;
 import election.tally.dail.DailBallotCounting;
 
 /**
@@ -22,25 +24,25 @@ public class ElectionOfCandidateAndDistributionOfSurplus {
 		ballotCounting = new DailBallotCounting();
 		ballotBox = new scenario.util.TestBallotBox();
 		parameters = new Election();
-		parameters.totalNumberOfSeats = 4;
-		parameters.numberOfSeatsInThisElection = 4;
-		parameters.numberOfCandidates = parameters.totalNumberOfSeats + 2;
+		parameters.totalNumberOfSeats = 5;
+		parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
+		parameters.numberOfCandidates = Candidate.MAX_CANDIDATES;
 		
 		// Generate sample candidates
 	 	Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
 		for (int i = 0; i < parameters.numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
-			int numberOfVotes = i*1000;
+			int numberOfVotes = i+100;
 			candidates[i].addVote(numberOfVotes, 1);
 			
 			// Generate first preference ballots to match
-			for (int b = 0; b < numberOfVotes; b++) {
+			for (int b = 0; b < numberOfVotes && ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
 				ballotBox.addBallot(candidates[i].getCandidateID());
 			}
 		}
 	 	parameters.setCandidateList(candidates);	
 	}
-
+	 
 	/**
 	 * Test the distribution of surplus ballots
 	 */
@@ -52,13 +54,15 @@ public class ElectionOfCandidateAndDistributionOfSurplus {
 		candidate.declareElected();
  		//@ assert candidate.getStatus() == Candidate.ELECTED;
 	 	ballotCounting.distributeSurplus(candidate);
+	 	Report report = ballotCounting.report();
 	}
 	
 	/**
-	 * 
+	 * Election of the highest candidate and distribution of their surplus ballots.
 	 */
-	public void main() {
-		setUp();
-		testDistributionOfSurplus();
+	public static void main(String[] args) {
+		ElectionOfCandidateAndDistributionOfSurplus scenario = new ElectionOfCandidateAndDistributionOfSurplus();
+		scenario.setUp();
+		scenario.testDistributionOfSurplus();
 	}
 }

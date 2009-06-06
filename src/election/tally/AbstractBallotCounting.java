@@ -782,6 +782,7 @@ public void setup(/*@ non_null @*/ Election electionParameters){
 	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
 	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; 
 	this.status = PRELOAD;
+	this.candidates = electionParameters.getCandidateList();
 }
 
 /**

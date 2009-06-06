@@ -70,7 +70,7 @@ public class BallotBox {
 	 */
 	public BallotBox(){
 		numberOfBallots = 0;
-		ballots = new Ballot[numberOfBallots];
+		ballots = new Ballot[Ballot.MAX_BALLOTS];
 	}
 	
 	/**

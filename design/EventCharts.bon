@@ -10,8 +10,6 @@
 -- copies of the Software, and to permit persons to whom the Software is
 -- furnished to do so, subject to the following conditions:
 --
--- The voting security infrastructure (VoteSET) may be the subject or one or more pending patents. 
---
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Software.
 --
@@ -35,13 +33,17 @@ event
 involves
   BALLOT_BOX, BALLOT_COUNTING
 event
-  "A ballot is cast"
+  "A ballot is cast by a voter"
 involves
   BALLOT, BALLOT_BOX, POLLING_BOOTH, VOTER
 event
   "A voter is registered and authenticated to a polling booth"
 involves
   REGISTRAR, VOTER, POLLING_BOOTH
+event
+  "The list of candidates is shown to the voter"
+involves
+  ELECTION, VOTER
 end
 
 -- Internal (outgoing) events
@@ -58,4 +60,8 @@ event
   "One or more candidates are excluded and their ballots are redistributed"
 involves
   CANDIDATE, BALLOT_BOX, BALLOT_COUNTING
+ event
+  "Election results are available"
+ involves
+   BALLOT_COUNTING, REPORT, ELECTION
 end
