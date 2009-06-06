@@ -11,7 +11,7 @@ import election.tally.dail.DailBallotCounting;
  * @author Dermot Cochran
  *
  */
-public class StartOfCount {
+public class StartOfCount implements Scenario {
 
 	protected DailBallotCounting ballotCounting;
 	protected /*@ spec_public @*/ Election parameters;
@@ -22,7 +22,7 @@ public class StartOfCount {
 	 * Test that the count process is started correctly.
 	 */
 	//@ requires parameters != null;
-	public void testStartOfCount () {
+	public void run () {
 		ballotCounting.setup(parameters);
 		//@ assert ballotCounting.getStatus() == AbstractBallotCounting.PRECOUNT;
 		ballotCounting.count();
@@ -32,7 +32,7 @@ public class StartOfCount {
 	}
 
 	//@ ensures parameters != null;
-	protected void setUp() {
+	public StartOfCount() {
 		ballotCounting = new DailBallotCounting();
 		parameters = new Election();
 		parameters.totalNumberOfSeats = 4;
@@ -45,8 +45,8 @@ public class StartOfCount {
 	/**
 	 * 
 	 */
-	public void main() {
-		setUp();
-		testStartOfCount();
+	public static void main(String[] args) {
+		Scenario scenario = new StartOfCount();
+		scenario.run();
 	}
 }

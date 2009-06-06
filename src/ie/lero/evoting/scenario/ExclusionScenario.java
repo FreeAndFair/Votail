@@ -13,13 +13,14 @@ import election.tally.dail.DailBallotCounting;
  * 
  * @see election.tally.Candidate
  */
-public class ExclusionOfLowestCandidate {
+public class ExclusionScenario implements Scenario {
 
 	private DailBallotCounting ballotCounting;
 	private scenario.util.TestBallotBox ballotBox;
 
+	
 	/**
-	 * Exclude the lowest continuing candidate.
+	 * Execute this scenario.
 	 */
 	public final void run() {
 	 	
@@ -28,9 +29,9 @@ public class ExclusionOfLowestCandidate {
  	}
 
 	/**
-	 * Create test data for a mock election count.
+	 * Create test data for a mock election.
 	 */
-	protected void setUp() {
+	public ExclusionScenario() {
 		
 		ballotBox = new scenario.util.TestBallotBox();
 		ballotCounting = new DailBallotCounting();
@@ -63,8 +64,7 @@ public class ExclusionOfLowestCandidate {
 	 * election.
 	 */
 	public static void main(String[] args) {
-		ExclusionOfLowestCandidate scenario = new ExclusionOfLowestCandidate();
-		scenario.setUp();
+		Scenario scenario = new ExclusionScenario();
 		scenario.run();
 	}
 }

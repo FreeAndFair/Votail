@@ -10,7 +10,7 @@ import election.tally.dail.DailBallotCounting;
  * @author Dermot Cochran
  * @copyright 2009 Dermot Cochran
  */
-public class ElectionOfCandidateAndDistributionOfSurplus {
+public class SurplusScenario {
 	
 	protected DailBallotCounting ballotCounting;
 	protected Election parameters;
@@ -61,7 +61,7 @@ public class ElectionOfCandidateAndDistributionOfSurplus {
 	 * Election of the highest candidate and distribution of their surplus ballots.
 	 */
 	public static void main(String[] args) {
-		ElectionOfCandidateAndDistributionOfSurplus scenario = new ElectionOfCandidateAndDistributionOfSurplus();
+		SurplusScenario scenario = new SurplusScenario();
 		scenario.setUp();
 		scenario.testDistributionOfSurplus();
 	}
