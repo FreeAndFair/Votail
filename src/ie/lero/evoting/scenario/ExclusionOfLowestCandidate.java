@@ -21,7 +21,7 @@ public class ExclusionOfLowestCandidate {
 	/**
 	 * Exclude the lowest continuing candidate.
 	 */
-	public final void testExclusionOfLowestCandidate() {
+	public final void run() {
 	 	
  	 	Candidate candidate = ballotCounting.findLowestCandidate();
 	 	ballotCounting.eliminateCandidate(candidate);
@@ -62,8 +62,9 @@ public class ExclusionOfLowestCandidate {
 	 * Test the event that the lowest continuing candidate is excluded from 
 	 * election.
 	 */
-	public void main() {
-		setUp();
-		testExclusionOfLowestCandidate();
+	public static void main(String[] args) {
+		ExclusionOfLowestCandidate scenario = new ExclusionOfLowestCandidate();
+		scenario.setUp();
+		scenario.run();
 	}
 }

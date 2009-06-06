@@ -44,6 +44,11 @@ public class Decision {
  * of the highest continuing candidates for the last remaining seats 
  */	
 	public final static byte DEEM_ELECTED = 5;
+
+	/**
+	 * Maximum number of decision points 
+	 */
+public static final int MAX_DECISIONS = 100;
 	
 /** Type of decision taken */
 //@ public initially decisionTaken == NO_DECISION;

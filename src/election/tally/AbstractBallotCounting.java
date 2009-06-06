@@ -1,5 +1,7 @@
 package election.tally;
 
+import java.util.ArrayList;
+
 /**
  * Ballot counting algorithm for elections to Oireachtas Eireann - the National 
  * Parliament of Ireland.
@@ -748,11 +750,11 @@ public /*@ non_null @*/ Report report(){
  * @return The unique identifier of each elected candidate.
  */
 public /*@ pure @*/ final int[] getElectedCandidateIDs() {
-	int[] electedCandidateIDs = {};
+	int[] electedCandidateIDs = new int [numberOfCandidatesElected]; 
  	
 	int counter = 0;
- 	final int length = candidates.length; //@ nowarn;
-	for (int i = 0; i < length; i++) {
+ 	for (int i = 0; (i < totalNumberOfCandidates) && 
+ 	    (counter < numberOfCandidatesElected); i++) {
 		if (isElected(candidates[i])) { //@ nowarn;
 			electedCandidateIDs[counter++] = candidates[i].candidateID;
 		}
@@ -783,6 +785,7 @@ public void setup(/*@ non_null @*/ Election electionParameters){
 	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; 
 	this.status = PRELOAD;
 	this.candidates = electionParameters.getCandidateList();
+	decisions = new Decision[Decision.MAX_DECISIONS];
 }
 
 /**
@@ -1469,8 +1472,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @*/
 	protected void redistributeBallots(final int candidateID) {
 
-		for (int b = 0; b < ballots.length; b++) { //@ nowarn;
-			if (ballots[b].getCandidateID() == candidateID) {  //@ nowarn;
+		for (int b = 0; b < totalNumberOfVotes; b++) {
+			if (ballots[b].getCandidateID() == candidateID) {
 				
 				transferBallot(ballots[b]);
 			}
