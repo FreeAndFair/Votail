@@ -38,6 +38,10 @@ event
   "A ballot is cast"
 involves
   BALLOT, BALLOT_BOX, POLLING_BOOTH, VOTER
+event
+  "A voter is registered and authenticated to a polling booth"
+involves
+  REGISTRAR, VOTER, POLLING_BOOTH
 end
 
 -- Internal (outgoing) events
@@ -47,11 +51,11 @@ outgoing
 part
   "2/2"
 event
-  "One or more candidates are elected"
+  "One or more candidates are elected and surplus votes are transferred"
 involves
   CANDIDATE, BALLOT_BOX, BALLOT_COUNTING
 event 
-  "One or more candidates are excluded"
+  "One or more candidates are excluded and their ballots are redistributed"
 involves
   CANDIDATE, BALLOT_BOX, BALLOT_COUNTING
 end
