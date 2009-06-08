@@ -50,7 +50,6 @@ public class BallotBox {
   @ public normal_behavior
   @   ensures 0 <= \result;
   @   ensures \result == numberOfBallots;
-  @   ensures \result == ballot.length;
   @*/
    public /*@ pure @*/ int size(){
 		return numberOfBallots;
@@ -68,7 +67,7 @@ public class BallotBox {
 	/**
 	 * Create an empty ballot box.
 	 */
-	public BallotBox(){
+	public /*@ pure @*/ BallotBox(){
 		numberOfBallots = 0;
 		ballots = new Ballot[Ballot.MAX_BALLOTS];
 	}

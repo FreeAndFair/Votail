@@ -1,7 +1,5 @@
 package election.tally;
 
-import java.util.ArrayList;
-
 /**
  * Ballot counting algorithm for elections to Oireachtas Eireann - the National 
  * Parliament of Ireland.
@@ -1336,7 +1334,6 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
  * @param The decision to be added.
  */
 /*@ also
-  @   protected normal_behavior
   @   requires state == COUNTING;
   @   ensures (\forall int i; 0 <= i && i < totalCandidates;
   @     isElected (candidateList[i]) ==> (\exists int k;
@@ -1468,10 +1465,9 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param The unique identifier for the excluded candidate
 	 */
-	/*@ protected normal_behavior
-	  @   requires candidateID != Ballot.NONTRANSFERABLE;
-	  @   ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
-	  @     ballotsToCount[b].getCandidateID() != candidateID);
+	/*@ requires candidateID != Ballot.NONTRANSFERABLE;
+	  @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
+	  @   ballotsToCount[b].getCandidateID() != candidateID);
 	  @*/
 	protected void redistributeBallots(final int candidateID) {
 

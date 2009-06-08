@@ -567,7 +567,7 @@ public abstract class AbstractBallotCounting {
     @ assignable state;
     @ ensures state == REPORT;
     @*/
-  public /*@ non_null @*/ ElectionReport report();
+  public /*@ non_null @*/ Report report();
 
 	
   /**
@@ -580,7 +580,7 @@ public abstract class AbstractBallotCounting {
     @ ensures totalSeats == electionParameters.totalNumberOfSeats;
     @ assignable state, seats, totalSeats, totalCandidates, candidateList;
     @*/
-  public void setup (ElectionParameters electionParameters);
+  public void setup (Election electionParameters);
 	
 	
   /** Loads all valid ballot papers */
@@ -1029,9 +1029,9 @@ public abstract class AbstractBallotCounting {
     @     ((decisionsMade[k].decisionTaken == Decision.ELECT_BY_QUOTA) ||
     @       (decisionsMade[k].decisionTaken == Decision.DEEM_ELECTED))) &&
     @   (\forall int n; 0 <= n && n < numberOfDecisions;
-    	@      (decisionsMade[n].candidateID  == candidateList[i].getCandidateID())
-    	@      ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE))
+    @      (decisionsMade[n].candidateID  == candidateList[i].getCandidateID())
+    @      ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE))
     @   );
     @*/
-  protected abstract void updateDecisions(Decision decision);
+  protected void updateDecisions(Decision decision);
 }

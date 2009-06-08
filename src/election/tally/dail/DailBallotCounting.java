@@ -315,14 +315,17 @@ public class DailBallotCounting extends AbstractBallotCounting {
 	 */
 	/*@ also
 	  @   public normal_behavior
-	  @     requires state == PRECOUNT;
+	  @     requires state == PRECOUNT || state == COUNTING;
 	  @     ensures state == FINISHED;
 	  @*/
 	public void count() {
 		
-		status = COUNTING;
-		countNumberValue = 0;
-		ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
+		// Start or else resume the counting of ballots
+		if (status == PRECOUNT) {
+			status = COUNTING;
+			countNumberValue = 0;
+			ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
+		}
 		
 		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
 			ballotCountingMachine.changeState(BallotCountingModel.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);

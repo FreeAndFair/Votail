@@ -171,8 +171,8 @@ public static final int NONTRANSFERABLE = 0;
     generateBlankBallot(seed);
   }
 
-/*@ public normal_behavior
-  @	assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
+/*@ protected normal_behavior
+  @	  assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
   @     candidateID, ballotID, positionInList, randomNumber;
   @   ensures numberOfPreferences == 0;
   @   ensures countNumberAtLastTransfer == 0;

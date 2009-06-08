@@ -1,5 +1,6 @@
 package ie.lero.evoting.scenario;
 
+import scenario.util.TestBallot;
 import election.tally.Ballot;
 import election.tally.Candidate;
 import election.tally.Election;
@@ -26,21 +27,36 @@ public class SurplusScenario {
 		parameters = new Election();
 		parameters.totalNumberOfSeats = 5;
 		parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
-		parameters.numberOfCandidates = Candidate.MAX_CANDIDATES;
+		parameters.numberOfCandidates = Candidate.MAX_CANDIDATES / 2;
 		
 		// Generate sample candidates
 	 	Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
+	 	int[] candidateIDList = new int[parameters.numberOfCandidates];
+	 	int numberOfPreferences = 1;
+	 	
 		for (int i = 0; i < parameters.numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
-			int numberOfVotes = i+100;
+			int numberOfVotes = 10*i+100;
 			candidates[i].addVote(numberOfVotes, 1);
+			
+			// Use an arbitrary number of preferences, less than the full list
+			numberOfPreferences = 1 + i / 3;
+			candidateIDList[i] = candidates[i].getCandidateID();
 			
 			// Generate first preference ballots to match
 			for (int b = 0; b < numberOfVotes && ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
-				ballotBox.addBallot(candidates[i].getCandidateID());
+				if (i == 0) {
+					ballotBox.addBallot(candidates[i].getCandidateID());
+				}
+				else {
+					Ballot testBallot = new TestBallot(candidateIDList,numberOfPreferences);
+					ballotBox.accept(testBallot);
+				}
 			}
 		}
-	 	parameters.setCandidateList(candidates);	
+	 	parameters.setCandidateList(candidates);
+	 	System.out.println("Generated " + ballotBox.size() + " ballot papers for " +
+	 			parameters.numberOfCandidates + " candidates.");
 	}
 	 
 	/**
@@ -49,18 +65,29 @@ public class SurplusScenario {
 	public void testDistributionOfSurplus() {
 	 
 	 	ballotCounting.setup(parameters);
+	 	ballotCounting.load(ballotBox);
+	 	
+	 	// Find and distribute the first surplus
 	 	candidate = ballotCounting.findHighestCandidate();
 	 	//@ assert candidate.getStatus() == Candidate.CONTINUING;
 		candidate.declareElected();
  		//@ assert candidate.getStatus() == Candidate.ELECTED;
 	 	ballotCounting.distributeSurplus(candidate);
 	 	Report report = ballotCounting.report();
+	 	//@ assert 0 < report.getNumberElected();
+	 	
+	 	// Continue with the ballot counting
+	 	ballotCounting.count();
+	 	
+	 	// Declare the results
 	 	System.out.println(report.getResults());
 	 	System.out.println(ballotCounting.getDecisionLog());
 	}
 	
 	/**
 	 * Election of the highest candidate and distribution of their surplus ballots.
+	 * 
+	 * @param args Optional parameters to use when running this scenario
 	 */
 	public static void main(String[] args) {
 		SurplusScenario scenario = new SurplusScenario();
