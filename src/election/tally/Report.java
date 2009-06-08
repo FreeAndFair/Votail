@@ -124,4 +124,21 @@ public class Report {
 	int getTotalNumberOfCounts() {
 		return totalNumberOfCounts;
 	}
+
+	/**
+	 * List the results for auditing.
+	 * 
+	 * @return The list of candidate IDs and number of rounds
+	 */
+	public /*@ pure @*/ StringBuffer getResults() {
+		StringBuffer results = new StringBuffer();
+		results.append("Number of rounds of counting: " + totalNumberOfCounts + "\n");
+		results.append("Number of candidates elected: " + numberElected + "\n");
+		results.append("List of candidates elected:");
+		for (int c = 0; c < numberElected; c++) {
+			results.append(" ");
+			results.append(electedCandidateIDs[c]);
+		}
+		return results;
+	}
 }

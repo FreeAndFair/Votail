@@ -55,6 +55,8 @@ public class SurplusScenario {
  		//@ assert candidate.getStatus() == Candidate.ELECTED;
 	 	ballotCounting.distributeSurplus(candidate);
 	 	Report report = ballotCounting.report();
+	 	System.out.println(report.getResults());
+	 	System.out.println(ballotCounting.getDecisionLog());
 	}
 	
 	/**

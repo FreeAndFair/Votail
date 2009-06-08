@@ -99,4 +99,17 @@ public static final int MAX_DECISIONS = 100;
 		candidateID = 0;
 		chosenByLot = false;	
 	}
+
+public String getDescription() {
+	switch (decisionTaken) {
+	  case ELECT_BY_QUOTA: return "elected by reaching quota";
+	  case EXCLUDE: return "excluded from election"; 
+	  case NO_DECISION: return "was unchanged";
+	  case ROUND_UP_FRACTION: return "given an extra vote due to rounding up of ballot transfers";
+	  case DISTRIBUTE_SURPLUS: return "had their surplus votes distributed";
+	  case DEEM_ELECTED: return "was deemed elected"; 
+	
+	  default:  return "was unchanged";
+	}
+}
 }

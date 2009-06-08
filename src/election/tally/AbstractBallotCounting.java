@@ -490,13 +490,16 @@ public abstract class AbstractBallotCounting {
 	  @*/
 	/**  Number of candidates with equal lowest non-zero votes */
 	protected int totalNumberOfEqualLowestContinuing;
-private int nextDecision;
    //@ protected represents numberOfEqualLowestContinuing <- totalNumberOfEqualLowestContinuing;
 	
+	/**
+	 * Number of decisions taken.
+	 */
+	protected /*@ spec_public @*/ int decisionsTaken;
 	
 /**
  * @design The election count algorithm is modeled as a two tier abstract state
- * machine with states and transistions between those states:
+ * machine with states and transitions between those states:
  * 
  *  <p> The normal path for the outer tier is:
  *  <p> Empty --> SETUP --> PRELOAD --> LOADING -->
@@ -1346,8 +1349,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
   @   ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE)));
   @*/
 	protected void updateDecisions(Decision decision) {
-		decisions[nextDecision] = decision;
-		nextDecision++;
+		decisions[decisionsTaken] = decision;
+		decisionsTaken++;
 }
 
 	/**

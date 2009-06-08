@@ -368,4 +368,23 @@ public class DailBallotCounting extends AbstractBallotCounting {
 		status = FINISHED;
 	}
 
+	/**
+	 * Get the list of decisions taken
+	 * 
+	 * @return The list of decisions
+	 */
+	public /*@ pure @*/ StringBuffer getDecisionLog() {
+		StringBuffer log = new StringBuffer();
+		for (int d = 0; d < decisionsTaken; d++) {
+			log.append("At count number " + decisions[d].atCountNumber);
+			log.append(", candidate " + decisions[d].candidateID);
+			log.append(" was " + decisions[d].getDescription());
+			if (decisions[d].chosenByLot) {
+				log.append(" by random selection");
+			}
+			log.append(".\n");
+		}
+		return log;
+	}
+
 }
