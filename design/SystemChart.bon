@@ -26,6 +26,6 @@ system_chart VOTAIL
 explanation
   "A verified verifiable open source system for remote electronic (i.e. computer internet mediated but not web based) voting"
 cluster ELECTION description "The casting and counting of ballots by proportional representation with single transferable vote"
-cluster WORKLOW description "The handling of information during the election process"
+cluster WORKFLOW description "The handling of information during the election process"
 end
  

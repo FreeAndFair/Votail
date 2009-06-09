@@ -27,8 +27,6 @@ package election.tally;
 
 //@ refine "Ballot.java-refined";
 
-import election.util.UniqueNumber;
-
 /* <BON>
  * class_chart BALLOT
  * indexing
@@ -240,7 +238,7 @@ protected void generateBlankBallot(int seed) {
   /**
    * Load the ballot details.
    * 
-   * @param candidateIDList List of candidate IDs in order from first preference
+   * @param list List of candidate IDs in order from first preference
    * 
    * @design There should be at least one preference in the list. Empty or spoilt
    *         votes should neither be loaded nor counted. There should be no
@@ -253,32 +251,29 @@ protected void generateBlankBallot(int seed) {
    *         
    * @constraint The ballot may only be loaded once; it cannot be overwritten.
    */    
-  /*@ public normal_behavior
-    @   requires 0 < candidateIDList.length;
-    @   requires (\forall int i; 0 <= i && i < candidateIDList.length;
-    @     (candidateIDList[i]) != NONTRANSFERABLE);
-    @   requires (\forall int i; 0 <= i && i < candidateIDList.length;
-    @     0 < candidateIDList[i]);
+  /*@ also public normal_behavior
+    @   requires (\forall int i; 0 <= i && i < list.length;
+    @     (list[i]) != NONTRANSFERABLE);
+    @   requires (\forall int i; 0 <= i && i < list.length;
+    @     0 < list[i]);
     @   requires positionInList == 0;
     @	assignable numberOfPreferences, ballotID, preferenceList, candidateID;
-    @   ensures numberOfPreferences == candidateIDList.length;
-    @   ensures ballotID != NO_ID_YET;
-    @   ensures preferenceList.length == candidateIDList.length;
-    @   ensures (\forall int i; 0 <= i && i < candidateIDList.length;
-    @     (preferenceList[i] == candidateIDList[i]));
+    @   ensures numberOfPreferences == list.length;
+    @   ensures preferenceList.length == list.length;
+    @   ensures (\forall int i; 0 <= i && i < list.length;
+    @     (preferenceList[i] == list[i]));
     @*/
-   public void load(/*@ non_null @*/ int[] candidateIDList){
+   public void load(/*@ non_null @*/ int[] list){
     
-    // Assign a unique internal identifier
-    do {
-      ballotID = UniqueNumber.getUniqueID(); //@ nowarn;
-    } 
-    while (ballotID == NO_ID_YET);
-    preferenceList = new int [candidateIDList.length];
-    for(int i = 0; i < candidateIDList.length; i++){
- 		preferenceList[i] = candidateIDList[i];
+    // Assign an internal identifier
+    ballotID = this.hashCode();
+    
+    preferenceList = new int [list.length];
+    for(int i = 0; i < list.length; i++){
+ 		preferenceList[i] = list[i];
  	  }
-    candidateID = getFirstPreference(); //@ nowarn;
+    
+    candidateID = list[positionInList]; // first preference
     numberOfPreferences = preferenceList.length;
   }
     

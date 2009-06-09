@@ -66,57 +66,13 @@ constraint
   "The sum of the number of ballots in each pile is equal to the number of ballots" 
 end
 
-class_chart BALLOT_PILE
-explanation
-  "A set of ballot papers assigned to one candidate"
-query
-  "Which candidate benefits from this pile of ballots?",
-  "Is this a pile of non-transferable ballots?",
-  "From which elected or excluded candidate were these ballots taken?"
-constraint
-  "Every ballot in this pile is either nontransferable or assigned to the same candidate",
-  "For each ballot in this pile, there is no continuing candidate of higher preference"
-end
-
-class_chart CANDIDATE_LIST
-explanation
-  "The set of all valid candidates for election"
-query
-  "Who are the candidates?",
-  "Which candidates were elected?",
-  "Which candidates were excluded?",
-  "Which candidates were excluded and lost their deposit?",
-  "Who are the continuing candidates?",
-  "How many continuing candidates are there?"
-constraint 
-  "All candidates are either continuing, excluded or elected",
-  "At the beginning of the count all candidates are continuing",
-  "At the end of the count there are no continuing candidates"
-end
-
-class_chart COUNT_PROCESS
-explanation
-  "The algorithm for tallying of the votes"
-query
-  "Which variant of the algorithm is in force e.g. PR-STV, BC-STV or IRV?",
-  "Are fractional transfers (Gregory Method) allowed?",
-  "How many decimal places are used for fractional transfers (zero if not allowed)?"
-command
-  "Start the count",
-  "Begin the next round of counting",
-  "Randomise the order of the ballots" -- section 16
-constraint
-  "Whichever variant is in force, does not change during the count process. All ballots are counted in the same way.",
-  "The order of the ballots must be randomised before counting so that same order is used in each recount"
-end
-
 -- Election Reporting Requirements:
 -- see sections 19-40 of the Count Requirements and Commentary on Count Rules
 -- from the Department of the Environment and Local Government
 -- Available from http://www.cev.ie/htm/tenders/pdf/1_2.pdf
-class_chart ELECTION_REPORT
+class_chart REPORT
 explanation
-  ""
+  "Statement of election results"
 query
   "Which candidates were elected in each round?",
   "Which candidates lost their deposit?",
@@ -179,33 +135,3 @@ constraint
   "A voter may only reverse their most recent ballot",
   "All ballots are cast with the same initial weight"
 end
-
-class_chart AUDIT_LOG
-end
-
-class_chart RANDOM_NUMBER
-explanation
-   "A number chosen so as to simulate the drawing of lots or shuffling of ballot papers.  It should be unbiased and fair so as not to favour any one candidate over another, and it should be repeatable so that each count will give the same results."
-constraint
-   "The random number cannot be changed once it has been assigned",
-   "No two candidates can have the same random number",
-   "The election administrator cannot control the value of the random number"
-end
-
-class_chart SCENARIO_TEST
-explanation
-  "A functional test which must be satisfied during implemenatation and testing."
-contraint
-  "Tests are audited in such a way as tp revent security violations or loss of data integrity"
-end
-
-class_chart UNIQUE_NUMBER
-explanation
-   "Unique internal identifier"
-query
-   "What is the value of the next unique number?"
-command
-   "Generate a unique ID number"
-constraint
-   "No two internal identifiers are the same"
-end>>>>>>> .merge-right.r643

@@ -160,7 +160,7 @@ public abstract class AbstractBallotCounting {
 	  @*/
 
 	/** List of candidates for election */
-	protected Candidate[] candidates;
+	protected /*@ spec_public @*/ Candidate[] candidates;
    //@ protected represents candidateList <- candidates;
 	
 
@@ -776,6 +776,7 @@ public /*@ pure @*/ final int[] getElectedCandidateIDs() {
   @     assignable totalNumberOfCandidates;
   @     assignable numberOfSeats;
   @     assignable totalNumberOfSeats;
+  @     assignable candidates, decisions;
   @     ensures state == PRELOAD;
   @     ensures totalCandidates == electionParameters.numberOfCandidates;
   @     ensures seats == electionParameters.numberOfSeatsInThisElection;
@@ -797,7 +798,8 @@ public void setup(/*@ non_null @*/ Election electionParameters){
 /*@ also
   @   protected normal_behavior
   @     requires state == PRELOAD;
-  @     assignable state, totalVotes, ballotsToCount;
+  @     assignable state, totalVotes, ballotsToCount, ballots;
+  @     assignable totalNumberOfVotes;
   @     ensures state == PRECOUNT;
   @     ensures totalVotes == ballotBox.numberOfBallots;
   @     ensures this.ballots == ballotBox.ballots;
@@ -859,7 +861,7 @@ protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
   @       fromCandidate.getLastSetAddedCountNumber()) &&
   @       (getNextContinuingPreference(ballotsToCount[j]) == toCandidateID));
   @*/
-	protected /*@ pure @*/ int getPotentialTransfers(Candidate fromCandidate,int toCandidateID) {
+	protected /*@ pure spec_public @*/ int getPotentialTransfers(Candidate fromCandidate,int toCandidateID) {
 		int numberOfBallots = 0;
  		for (int j = 0; j < ballots.length; j++) { //@ nowarn;
 			final int candidateID = fromCandidate.getCandidateID(); //@ nowarn;
@@ -903,7 +905,7 @@ public /*@ pure @*/ byte getStatus(){
   @   (\forall int i; 1 <= i && i < k;
   @   isContinuingCandidateID(ballot.getNextPreference(i)) == false));
   @*/
-	protected /*@ pure @*/ int getNextContinuingPreference(Ballot ballot) {
+	protected /*@ pure spec_public @*/ int getNextContinuingPreference(Ballot ballot) {
 		if (status == COUNTING) {
 			for (int k = 1; k < ballot.remainingPreferences(); k++) {
 				for (int i = 1; i < k; i++) {
@@ -975,7 +977,7 @@ public /*@ pure @*/ byte getStatus(){
   @     getNextContinuingPreference(ballotsToCount[j]) ==
   @     toCandidate.getCandidateID()));
   @*/
-	protected /*@ pure @*/ int getActualTransfers(Candidate fromCandidate, Candidate toCandidate) {
+	protected /*@ pure spec_public @*/ int getActualTransfers(Candidate fromCandidate, Candidate toCandidate) {
 		int numberOfVotes =0;
 		if (status == COUNTING && toCandidate.getStatus() == Candidate.CONTINUING) {
 			if (fromCandidate.getStatus() == Candidate.ELECTED && (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate))) {
@@ -1023,7 +1025,7 @@ public /*@ pure @*/ byte getStatus(){
   @   getTransferShortfall (fromCandidate))
   @   ==> \result == 0;
   @*/
-protected /*@ pure @*/ int getRoundedFractionalValue(/*@ non_null @*/ Candidate fromCandidate, /*@ non_null @*/ Candidate toCandidate){
+protected /*@ pure spec_public @*/ int getRoundedFractionalValue(/*@ non_null @*/ Candidate fromCandidate, /*@ non_null @*/ Candidate toCandidate){
  		return (getCandidateOrderByHighestRemainder (fromCandidate,toCandidate) <= getTransferShortfall (fromCandidate)) ? 1 : 0;
  }
 
@@ -1037,7 +1039,7 @@ protected /*@ pure @*/ int getRoundedFractionalValue(/*@ non_null @*/ Candidate 
  * @return The shortfall between the sum of the transfers and the size
  * of surplus
  */
-protected /*@ pure @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromCandidate){
+protected /*@ pure spec_public @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromCandidate){
 	int shortfall = 0;
  	for(int i=0; i < candidates.length; i++){ //@ nowarn;
 		if(candidates[i].getStatus() == Candidate.CONTINUING) {
@@ -1068,7 +1070,7 @@ protected /*@ pure @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromC
   @     ensures (\result == secondCandidate.candidateID) ||
   @       (\result == firstCandidate.candidateID);
   @*/
-protected /*@ pure @*/ int randomSelection(
+protected /*@ pure spec_public @*/ int randomSelection(
 		/*@ non_null @*/ Candidate firstCandidate, 
 		/*@ non_null @*/ Candidate secondCandidate) {
 	
@@ -1156,7 +1158,7 @@ protected /*@ pure @*/ int getOrder(Candidate candidate){
   @       getTotalTransferableVotes (fromCandidate)) /
   @       getSurplus(fromCandidate));
   @*/
-protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromCandidate, /*@ non_null @*/ Candidate toCandidate){
+protected /*@ pure spec_public @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromCandidate, /*@ non_null @*/ Candidate toCandidate){
   return getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) 
     - ((getActualTransfers(fromCandidate, toCandidate) * //@ nowarn;
     		getTotalTransferableVotes (fromCandidate)) / getSurplus(fromCandidate));
@@ -1198,7 +1200,7 @@ protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromC
   @        (\forall int k; 0 < k && k < countNumber;
   @          firstCandidate.getVoteAtCount(k) == secondCandidate.getVoteAtCount(k)));
   @*/
-	protected /*@ pure @*/ boolean isHigherThan(Candidate firstCandidate, Candidate secondCandidate) {
+	protected /*@ pure spec_public @*/ boolean isHigherThan(Candidate firstCandidate, Candidate secondCandidate) {
 		
 		int count = countNumberValue;
 		while (0 <= count) {
@@ -1257,7 +1259,7 @@ protected /*@ pure @*/ int getTransferRemainder(/*@ non_null @*/ Candidate fromC
   @       getActualTransfers(fromCandidate, toCandidate)))) &&
   @       isHigherThan (candidateList[i], toCandidate)));
   @*/
-protected /*@ pure @*/ int getCandidateOrderByHighestRemainder(Candidate fromCandidate, Candidate toCandidate){
+protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candidate fromCandidate, Candidate toCandidate){
 	int numberHigherThan = 0;
 	 
 			for(int i=0; i<totalNumberOfCandidates; i++){
@@ -1296,7 +1298,7 @@ protected /*@ pure @*/ int getCandidateOrderByHighestRemainder(Candidate fromCan
   @     ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
   @       getPotentialTransfers (fromCandidate, candidateList[i].getCandidateID()));
   @*/
-protected /*@ pure @*/ int getTotalTransferableVotes(/*@ non_null @*/ Candidate fromCandidate){
+protected /*@ pure spec_public @*/ int getTotalTransferableVotes(/*@ non_null @*/ Candidate fromCandidate){
     int numberOfTransfers = 0;
  		for(int i = 0; i < totalNumberOfCandidates; i++){
  			if (candidates[i].getStatus() == Candidate.CONTINUING) { //@ nowarn;

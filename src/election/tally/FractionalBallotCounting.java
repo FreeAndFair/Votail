@@ -78,7 +78,7 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 
 		//@ public invariant isPossibleState (state);
 		//@ public constraint isTransition(\old(state), state);
- 		private int state;
+ 		private /*@ spec_public @*/ int state;
  		
  		/**
  		 * 
@@ -281,10 +281,19 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 	 * 
 	 * @see "requirement 1, section 3, item 2, page 12"
 	 */
+	/*@ also
+	  @     requires state == PRECOUNT || state == COUNTING;
+	  @		assignable countNumberValue, candidateList, ballotsToCount;
+	  @     ensures state == FINISHED;
+	  @*/
 	public void count() {
 		
-		status = COUNTING;
-		countNumberValue = 0;
+		// Start or else resume the counting of ballots
+		if (status == PRECOUNT) {
+			status = COUNTING;
+			countNumberValue = 0;
+			ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
+		}
 		
 		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
 			

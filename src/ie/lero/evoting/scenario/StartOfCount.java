@@ -21,12 +21,11 @@ public class StartOfCount implements Scenario {
 	/**
 	 * Test that the count process is started correctly.
 	 */
-	//@ requires parameters != null;
 	public void run () {
 		ballotCounting.setup(parameters);
-		//@ assert ballotCounting.getStatus() == AbstractBallotCounting.PRECOUNT;
+		//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
 		ballotCounting.count();
-		//@ assert ballotCounting.getStatus() == AbstractBallotCounting.FINISHED;
+		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
 		ballotCounting.report();
 		
 	}

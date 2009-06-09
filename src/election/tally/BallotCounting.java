@@ -297,7 +297,6 @@ public class BallotCounting extends AbstractBallotCounting {
 	 * 
 	 * @return The Droop Quota for this electoral constituency.
 	 */
-	//@ requires 0 < numberOfSeats;
 	//@ ensures quota == \result;
 	public /*@ pure @*/ int getQuota() {
  		return numberOfVotesRequired;
@@ -312,6 +311,8 @@ public class BallotCounting extends AbstractBallotCounting {
 	 */
 	/*@ also
 	  @     requires state == PRECOUNT || state == COUNTING;
+	  @		assignable countNumberValue, ballotsToCount, candidateList[*];
+	  @     assignable candidates, candidates[*];
 	  @     ensures state == FINISHED;
 	  @*/
 	public void count() {
