@@ -329,7 +329,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			countNumberValue = 0;
 			ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
 			
-			// Reset all initial values
+			// Reset all initial values if not already started or if doing a full recount
 			totalNumberOfContinuingCandidates = totalNumberOfCandidates;
 			totalRemainingSeats = numberOfSeats;
 			numberOfVotesRequired = 1 + (totalNumberOfVotes / (1 + numberOfSeats));
