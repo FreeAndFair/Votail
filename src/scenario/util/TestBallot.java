@@ -50,4 +50,8 @@ public class TestBallot extends Ballot {
 		updateTimeStamp();
 		
 	}
+
+	public TestBallot() {
+		// TODO Auto-generated constructor stub
+	}
 }

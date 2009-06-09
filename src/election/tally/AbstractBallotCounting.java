@@ -160,7 +160,7 @@ public abstract class AbstractBallotCounting {
 	  @*/
 
 	/** List of candidates for election */
-	protected /*@ spec_public @*/ Candidate[] candidates;
+	protected /*@ spec_public non_null @*/ Candidate[] candidates;
    //@ protected represents candidateList <- candidates;
 	
 
@@ -289,7 +289,7 @@ public abstract class AbstractBallotCounting {
 	  @*/
 	/** Number of votes so far which did not have a transfer to
 	 * a continuing candidate */
-	protected int totalofNonTransferableVotes;
+	protected /*@ spec_public @*/ int totalofNonTransferableVotes;
    //@ protected represents nonTransferableVotes <- totalofNonTransferableVotes;
 
 	/** Minimum number of votes needed to guarantee election */
@@ -300,7 +300,7 @@ public abstract class AbstractBallotCounting {
 	  @   quota == 1 + (totalVotes / (seats + 1));
 	  @*/
 	/** Minimum number of votes needed to guarantee election */
-	protected int numberOfVotesRequired;
+	protected /*@ spec_public @*/ int numberOfVotesRequired;
    //@ protected represents quota <- numberOfVotesRequired;
 
 	/** Minimum number of votes needed to save deposit unless elected */
@@ -312,7 +312,7 @@ public abstract class AbstractBallotCounting {
 	  @   (((totalVotes / (totalSeats + 1)) + 1) / 4) + 1;
 	  @*/
 	/** Number of votes required to be deemed elected */
-	protected int savingThreshold;
+	protected /*@ spec_public @*/ int savingThreshold;
    //@ protected represents depositSavingThreshold <- savingThreshold;
 
 	/** Number of rounds of counting so far */
@@ -362,7 +362,7 @@ public abstract class AbstractBallotCounting {
 	  @   remainingSeats == (seats - numberElected);
 	  @*/
 	
-	protected int totalRemainingSeats;
+	protected /*@ spec_public @*/ int totalRemainingSeats;
    //@ protected represents remainingSeats <- totalRemainingSeats;
 
 	/** Number of candidates neither elected nor excluded from election */
@@ -378,7 +378,7 @@ public abstract class AbstractBallotCounting {
 	  @   (totalCandidates - numberElected) - numberEliminated;
 	  @*/
 	/** Number of candidates neither elected nor excluded from election */
-	protected int totalNumberOfContinuingCandidates;
+	protected /*@ spec_public @*/ int totalNumberOfContinuingCandidates;
    //@ protected represents numberOfContinuingCandidates <- totalNumberOfContinuingCandidates;
 	
 	/** There must be at least one continuing candidate for each remaining seat
@@ -774,9 +774,10 @@ public /*@ pure @*/ final int[] getElectedCandidateIDs() {
   @     requires state == EMPTY;
   @     assignable status; 
   @     assignable totalNumberOfCandidates;
-  @     assignable numberOfSeats;
+  @     assignable numberOfSeats, totalRemainingSeats;
   @     assignable totalNumberOfSeats;
   @     assignable candidates, decisions;
+  @		assignable totalNumberOfContinuingCandidates;
   @     ensures state == PRELOAD;
   @     ensures totalCandidates == electionParameters.numberOfCandidates;
   @     ensures seats == electionParameters.numberOfSeatsInThisElection;
@@ -789,6 +790,8 @@ public void setup(/*@ non_null @*/ Election electionParameters){
 	this.status = PRELOAD;
 	this.candidates = electionParameters.getCandidateList();
 	decisions = new Decision[Decision.MAX_DECISIONS];
+	this.totalRemainingSeats = this.numberOfSeats;
+	this.totalNumberOfContinuingCandidates = this.totalNumberOfCandidates;
 }
 
 /**
@@ -799,7 +802,7 @@ public void setup(/*@ non_null @*/ Election electionParameters){
   @   protected normal_behavior
   @     requires state == PRELOAD;
   @     assignable state, totalVotes, ballotsToCount, ballots;
-  @     assignable totalNumberOfVotes;
+  @     assignable totalNumberOfVotes, numberOfVotesRequired;
   @     ensures state == PRECOUNT;
   @     ensures totalVotes == ballotBox.numberOfBallots;
   @     ensures this.ballots == ballotBox.ballots;
@@ -808,6 +811,9 @@ public void load(/*@ non_null @*/ BallotBox ballotBox) {
  	ballots = ballotBox.getBallots();
  	totalNumberOfVotes = ballotBox.size();
  	status = PRECOUNT;
+ 	
+ 	// Droop quota
+ 	numberOfVotesRequired = 1 + (totalNumberOfVotes / (1 + numberOfSeats));
 }
 
 /**

@@ -313,6 +313,12 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @     requires state == PRECOUNT || state == COUNTING;
 	  @		assignable countNumberValue, ballotsToCount, candidateList[*];
 	  @     assignable candidates, candidates[*];
+	  @		assignable totalNumberOfContinuingCandidates;
+	  @		assignable totalRemainingSeats;
+	  @		assignable numberOfVotesRequired, savingThreshold;
+	  @		assignable numberOfCandidatesElected;
+	  @		assignable numberOfCandidatesEliminated;
+	  @		assignable totalofNonTransferableVotes;
 	  @     ensures state == FINISHED;
 	  @*/
 	public void count() {
@@ -322,6 +328,15 @@ public class BallotCounting extends AbstractBallotCounting {
 			status = COUNTING;
 			countNumberValue = 0;
 			ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
+			
+			// Reset all initial values
+			totalNumberOfContinuingCandidates = totalNumberOfCandidates;
+			totalRemainingSeats = numberOfSeats;
+			numberOfVotesRequired = 1 + (totalNumberOfVotes / (1 + numberOfSeats));
+			savingThreshold = 1 + ((totalNumberOfVotes / (1 + totalNumberOfSeats)) / 4);
+			numberOfCandidatesElected = 0;
+			numberOfCandidatesEliminated = 0;
+			totalofNonTransferableVotes = 0;
 		}
 		
 		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
@@ -335,6 +350,9 @@ public class BallotCounting extends AbstractBallotCounting {
 				
 				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_ELECTED);
 				winner.declareElected();
+				numberOfCandidatesElected++;
+				totalNumberOfContinuingCandidates--;
+				totalRemainingSeats--;
 
 				ballotCountingMachine.changeState(BallotCountingModel.SURPLUS_AVAILABLE);
 				distributeSurplus(winner);
@@ -347,6 +365,8 @@ public class BallotCounting extends AbstractBallotCounting {
 			
 			ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_EXCLUDED);	
 			loser.declareEliminated();
+			numberOfCandidatesEliminated++;
+			totalNumberOfContinuingCandidates--;
 			
 			ballotCountingMachine.changeState(BallotCountingModel.READY_TO_MOVE_BALLOTS);	
 			redistributeBallots(loser.getCandidateID());
@@ -359,6 +379,9 @@ public class BallotCounting extends AbstractBallotCounting {
 			for (int c = 0; c < totalNumberOfCandidates; c++) {
 				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
 					candidates[c].declareElected();
+					numberOfCandidatesElected++;
+					totalNumberOfContinuingCandidates--;
+					totalRemainingSeats--;
 				}
 			countNumberValue++;
 			}

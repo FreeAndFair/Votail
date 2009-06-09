@@ -68,11 +68,7 @@ public static final int MAX_CANDIDATES = 50;
   protected /*@ spec_public non_null @*/ int[] votesRemoved;
 
 //@ public invariant votesAdded != votesRemoved;
-//@ public invariant votesRemoved.owner != null;
-//@ public invariant votesAdded.owner != null;
 //@ public invariant votesRemoved != votesAdded;
-//@ public invariant votesRemoved.owner == votesAdded.owner;
-//@ public invariant \typeof(votesRemoved.owner) <: Candidate.class;
 	
 /** The status of the candidate at the latest count */
 /*@ public invariant state == ELECTED || state == ELIMINATED ||
@@ -249,9 +245,7 @@ public static final int MAX_CANDIDATES = 50;
   public Candidate(){
     state = UNASSIGNED;
     votesAdded = new int [MAXCOUNT];
-    //@ set votesAdded.owner = this;
     votesRemoved = new int [MAXCOUNT];
-    //@ set votesRemoved.owner = this;
     randomNumber = UniqueNumber.getUniqueID(); //@ nowarn;
     //@ set _randomNumber = randomNumber;
   } //@ nowarn;
