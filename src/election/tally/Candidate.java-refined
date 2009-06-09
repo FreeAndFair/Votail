@@ -203,6 +203,7 @@ public class Candidate  {
    * This is the default constructor method for a <code>Candidate</code> object.
    */
   /*@ public normal_behavior
+    @   assignable state;
     @   ensures state == UNASSIGNED;
     @*/
   public Candidate();

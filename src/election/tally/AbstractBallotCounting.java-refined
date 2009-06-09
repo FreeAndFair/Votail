@@ -606,7 +606,7 @@ public abstract class AbstractBallotCounting {
     @   requires remainingSeats == seats;
     @   requires numberElected == 0;
     @   requires nonTransferableVotes == 0;
-    @   requires state == PRECOUNT;
+    @   requires state == PRECOUNT || state == COUNTING;
     @   requires numberOfContinuingCandidates == totalCandidates;
     @   requires countNumber == 0;
     @   ensures state == FINISHED;
@@ -625,7 +625,7 @@ public abstract class AbstractBallotCounting {
     @   assignable numberEliminated;
     @   ensures numberEliminated == totalCandidates - numberElected;
     @*/
-  public void count();
+  public abstract void count();
   
   /**
    * Get the status of the algorithm in progress
@@ -673,7 +673,7 @@ public abstract class AbstractBallotCounting {
     @   fromCandidate.getLastSetAddedCountNumber()) && 
     @   (getNextContinuingPreference(ballotsToCount[j]) == toCandidateID));
     @*/
-  protected /*@ pure @*/ int getPotentialTransfers (
+  protected /*@ pure spec_public@*/ int getPotentialTransfers (
 		  /*@ non_null @*/ Candidate fromCandidate, int toCandidateID);
   
   /**
@@ -688,7 +688,7 @@ public abstract class AbstractBallotCounting {
     @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
     @   getPotentialTransfers (fromCandidate, candidateList[i].getCandidateID()));
     @*/
-  protected /*@ pure @*/ int getTotalTransferableVotes (
+  protected /*@ pure spec_public @*/ int getTotalTransferableVotes (
 		  /*@ non_null @*/ Candidate fromCandidate); 
   
   /**
@@ -710,7 +710,8 @@ public abstract class AbstractBallotCounting {
     @       isContinuingCandidateID(ballot.getNextPreference(i)) == false)
     @   );
     @*/
-  protected /*@ pure @*/ int getNextContinuingPreference(/*@ non_null @*/ Ballot ballot);
+  protected /*@ pure spec_public @*/ int getNextContinuingPreference(
+		  /*@ non_null @*/ Ballot ballot);
   
   /**
    * Determine actual number of votes to transfer to this candidate, excluding
@@ -721,10 +722,9 @@ public abstract class AbstractBallotCounting {
    * 
    * @design The votes in a surplus are transfered in proportion to
    *   the number of transfers available throughout the candidates ballot stack.
-   *   The calculations are made using integer values because there is no concept
-   *   of fractional votes or fractional transfer of votes, in the existing manual
-   *   counting system.  If not all transferable votes are accounted for the
-   *   highest remainders for each continuing candidate need to be examined.
+   *   If not all transferable votes are accounted for the highest remainders 
+   *   for each continuing candidate need to be examined, unless we are 
+   *   allowing for fractional transfers by rewighting of votes.
    * 
    * @param fromCandidate Candidate from which to count the transfers
    * @param toCandidate Continuing candidate eligible to receive votes
@@ -751,7 +751,7 @@ public abstract class AbstractBallotCounting {
     @     getNextContinuingPreference(ballotsToCount[j]) == 
     @     toCandidate.getCandidateID()));
     @*/
-  protected /*@ pure @*/ int getActualTransfers (
+  protected /*@ pure spec_public @*/ int getActualTransfers (
 		  /*@ non_null @*/ Candidate fromCandidate, 
 		  /*@ non_null @*/ Candidate toCandidate);
   
@@ -786,7 +786,7 @@ public abstract class AbstractBallotCounting {
     @   getTransferShortfall (fromCandidate))
     @   ==> \result == 0;
     @*/
-  protected /*@ pure @*/ int getRoundedFractionalValue (
+  protected /*@ pure spec_public @*/ int getRoundedFractionalValue (
 		  /*@ non_null @*/ Candidate fromCandidate, 
 		  /*@ non_null @*/ Candidate toCandidate);
   
@@ -828,7 +828,7 @@ public abstract class AbstractBallotCounting {
     @   getActualTransfers(fromCandidate, toCandidate)))) &&
     @   isHigherThan (candidateList[i], toCandidate)));
     @*/
-  protected /*@ pure @*/ int getCandidateOrderByHighestRemainder (
+  protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder (
 		  /*@ non_null @*/ Candidate fromCandidate, 
 		  /*@ non_null @*/ Candidate toCandidate);
   
@@ -864,7 +864,7 @@ public abstract class AbstractBallotCounting {
     @     (\forall int k; 0 <= k && k < countNumber;
     @     firstCandidate.getVoteAtCount(k) == secondCandidate.getVoteAtCount(k)));
     @*/
-  protected /*@ pure @*/ boolean isHigherThan (
+  protected /*@ pure spec_public @*/ boolean isHigherThan (
 		  /*@ non_null @*/ Candidate firstCandidate,
 		  /*@ non_null @*/ Candidate secondCandidate);
   
@@ -874,8 +874,13 @@ public abstract class AbstractBallotCounting {
    * @design The offical guidelines suggest that the returning officer 
    * be asked to draw lots each time a random selection is required.  This
    * is simulated by having random numbers assigned to the candidates, so that
-   * process of drawing lots is repeatable for testing purposes. <p> This means that
+   * process of drawing lots is repeatable for testing purposes. <p> 
+   * This means that
    * the count results are deterministic for any given set of random numbers.
+   * <p>
+   * Where fractional transfers are possible then there should be less need for
+   * this, especially when second and subsequent preferences are used in the
+   * even that two candidates receive an equal number of first preferences.
    * 
    * @param firstCandidate
    *        The first of the two candidates to be compared
@@ -894,7 +899,7 @@ public abstract class AbstractBallotCounting {
     @ ensures (\result == secondCandidate.candidateID) <==>
     @   (secondCandidate.randomNumber < firstCandidate.randomNumber);
     @*/
-  protected /*@ pure @*/ int randomSelection (
+  protected /*@ pure spec_public @*/ int randomSelection (
 		  /*@ non_null @*/ Candidate firstCandidate,
 		  /*@ non_null @*/ Candidate secondCandidate);
   
@@ -924,7 +929,7 @@ public abstract class AbstractBallotCounting {
     @     getTotalTransferableVotes (fromCandidate)) /
     @     getSurplus(fromCandidate)); 
     @*/
-  protected /*@ pure @*/ int getTransferRemainder (
+  protected /*@ pure spec_public @*/ int getTransferRemainder (
 		  /*@ non_null @*/ Candidate fromCandidate, 
 		  /*@ non_null @*/ Candidate toCandidate); 
   
@@ -946,7 +951,7 @@ public abstract class AbstractBallotCounting {
     @     candidateList[i].getStatus() == Candidate.CONTINUING;
     @     getActualTransfers (fromCandidate, candidateList[i]));
     @*/
-  protected /*@ pure @*/ int getTransferShortfall (
+  protected /*@ pure spec_public @*/ int getTransferShortfall (
 		  /*@ non_null @*/ Candidate fromCandidate);
   
   /**
@@ -1013,7 +1018,7 @@ public abstract class AbstractBallotCounting {
     @ ensures toCandidate.getTotalVote() ==
     @   \old (toCandidate.getTotalVote()) + numberOfVotes;
     @*/
-  protected abstract void transferVotes(
+  public abstract void transferVotes(
 		  /*@ non_null @*/ Candidate fromCandidate,
 		  /*@ non_null @*/ Candidate toCandidate,
 		  int numberOfVotes);

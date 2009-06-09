@@ -25,11 +25,8 @@
 /**
  * Ballot counting for elections to Seanad Eireann
  */
-package election.tally.seanad;
+package election.tally;
 
-import election.tally.AbstractBallotCounting;
-import election.tally.BallotCountingModel;
-import election.tally.Candidate;
 
 /**
  * @author Dermot Cochran
@@ -228,7 +225,7 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 
 	
     /**
-     * 
+     * @param candidateWithSurplus The candidate from which to reweight and allocate the ballots
      */
 	public void distributeSurplus(final Candidate candidateWithSurplus) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {

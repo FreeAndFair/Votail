@@ -1,8 +1,8 @@
 package ie.lero.evoting.scenario;
 
+import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
-import election.tally.dail.DailBallotCounting;
 
 /**
  * This is a test for the correctness of the ballot counting process in the 
@@ -15,7 +15,7 @@ import election.tally.dail.DailBallotCounting;
  */
 public class ExclusionScenario implements Scenario {
 
-	private DailBallotCounting ballotCounting;
+	private BallotCounting ballotCounting;
 	private scenario.util.TestBallotBox ballotBox;
 
 	
@@ -34,7 +34,7 @@ public class ExclusionScenario implements Scenario {
 	public ExclusionScenario() {
 		
 		ballotBox = new scenario.util.TestBallotBox();
-		ballotCounting = new DailBallotCounting();
+		ballotCounting = new BallotCounting();
 		Election parameters = new Election();
 		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;
@@ -62,6 +62,8 @@ public class ExclusionScenario implements Scenario {
 	/**
 	 * Test the event that the lowest continuing candidate is excluded from 
 	 * election.
+	 * 
+	 * @param args unused
 	 */
 	public static void main(String[] args) {
 		Scenario scenario = new ExclusionScenario();

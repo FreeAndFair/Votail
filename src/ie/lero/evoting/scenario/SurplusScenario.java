@@ -2,10 +2,10 @@ package ie.lero.evoting.scenario;
 
 import scenario.util.TestBallot;
 import election.tally.Ballot;
+import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
 import election.tally.Report;
-import election.tally.dail.DailBallotCounting;
 
 /**
  * @author Dermot Cochran
@@ -13,7 +13,7 @@ import election.tally.dail.DailBallotCounting;
  */
 public class SurplusScenario {
 	
-	protected DailBallotCounting ballotCounting;
+	protected BallotCounting ballotCounting;
 	protected Election parameters;
 	protected Candidate candidate;
 	protected scenario.util.TestBallotBox ballotBox;
@@ -22,7 +22,7 @@ public class SurplusScenario {
 	 * Create the scenario data needed
 	 */
 	protected void setUp() {
-		ballotCounting = new DailBallotCounting();
+		ballotCounting = new BallotCounting();
 		ballotBox = new scenario.util.TestBallotBox();
 		parameters = new Election();
 		parameters.totalNumberOfSeats = 5;

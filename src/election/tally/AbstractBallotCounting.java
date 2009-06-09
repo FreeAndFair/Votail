@@ -102,7 +102,7 @@ public abstract class AbstractBallotCounting {
 	  @ protected invariant numberOfDecisions < decisions.length;
 	  @*/
 	
-	protected Decision[] decisions;
+	protected /*@ spec_public @*/ Decision[] decisions;
    //@ protected represents decisionsMade <- decisions;
 
 	/** Number of decisions made */
@@ -327,7 +327,7 @@ public abstract class AbstractBallotCounting {
 	  @   countNumber <= \old (countNumber) + 1;
 	  @*/
 	/** Number of rounds of counting */
-	protected int countNumberValue;
+	protected /*@ spec_public @*/ int countNumberValue;
    //@ protected represents countNumber <- countNumberValue;
 
 	/** Number of candidates with surplus votes */
@@ -529,7 +529,8 @@ protected static final byte FILLING_LAST_SEATS = 0;
 /*@ also
   @   public normal_behavior
   @		assignable state, countNumber, numberElected, numberEliminated,
-  @       countNumberValue, numberOfCandidatesElected, numberOfCandidatesEliminated, decisions;
+  @       countNumberValue, numberOfCandidatesElected, 
+  @       numberOfCandidatesEliminated, decisions;
   @     ensures state == EMPTY;
   @     ensures countNumber == 0;
   @     ensures numberElected == 0;
@@ -1509,4 +1510,6 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 			final /*@ non_null @*/ Candidate candidate) {
 		return candidate.equals(findLowestCandidate());
 	}
+	
+	public abstract void count();
 }

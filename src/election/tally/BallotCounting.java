@@ -1,8 +1,5 @@
-package election.tally.dail;
+package election.tally;
 
-import election.tally.AbstractBallotCounting;
-import election.tally.BallotCountingModel;
-import election.tally.Candidate;
  
 /**
  * Ballot counting for elections to D‡il ƒireann - the lower house of the Irish 
@@ -41,7 +38,7 @@ import election.tally.Candidate;
  * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">Formal Verification and Risk Analysis for Remote Voting Systems</a>
  *
  */
-public class DailBallotCounting extends AbstractBallotCounting {
+public class BallotCounting extends AbstractBallotCounting {
 
 	/**
 	 * Inner class for state machine
@@ -231,12 +228,12 @@ public class DailBallotCounting extends AbstractBallotCounting {
 	}
 
     // Model of the ballot counting process
-	private BallotCountingModel ballotCountingMachine;
+	private /*@ spec_public @*/ BallotCountingModel ballotCountingMachine;
 	
 	/**
 	 * Default constructor.
 	 */
-	public DailBallotCounting() {
+	public BallotCounting() {
 		super();
 		ballotCountingMachine = new BallotCountingMachine();
 	}
@@ -314,7 +311,6 @@ public class DailBallotCounting extends AbstractBallotCounting {
 	 * @see "requirement 1, section 3, item 2, page 12"
 	 */
 	/*@ also
-	  @   public normal_behavior
 	  @     requires state == PRECOUNT || state == COUNTING;
 	  @     ensures state == FINISHED;
 	  @*/
