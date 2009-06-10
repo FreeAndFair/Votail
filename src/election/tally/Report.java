@@ -102,7 +102,10 @@ public class Report {
 	//@ public invariant 0 <= totalNumberOfCounts;
 	private /*@ spec_public @*/ int totalNumberOfCounts;
 
-	private String[] resultsAtEachCount;
+	/**
+	 * Number of votes for each candidate at each round of counting.
+	 */
+	private StringBuffer[] resultsAtEachCount;
 	
 	/**
 	 * Store the election results for this constituency.
@@ -118,12 +121,13 @@ public class Report {
 		numberElected = list.length;
 		electedCandidateIDs = list;
 		totalNumberOfCounts = counts;
-		resultsAtEachCount = new String[counts];
+		resultsAtEachCount = new StringBuffer[counts];
 		for (int i = 0; i < counts && i < Candidate.MAXCOUNT; i++){
+			resultsAtEachCount[i] = new StringBuffer();
 			for (int c = 0; c < candidates.length; c++) {
-				resultsAtEachCount[i] = "Candidate " + 
-						candidates[c].getCandidateID() + " : " +
-						candidates[c].getVoteAtCount(i) + "\n";
+				resultsAtEachCount[i].append ("Candidate " + 
+						candidates[c].getCandidateID() + " had " +
+						candidates[c].getTotalAtCount(i) + " votes.\n");
 			}
 			} 
 		}
@@ -150,10 +154,10 @@ public class Report {
 			results.append(" ");
 			results.append(electedCandidateIDs[c]);
 		}
-		results.append("\n");
+		results.append("\n\n");
 		for (int i = 0; i < totalNumberOfCounts; i++) {
 			results.append("At count number ");
-			results.append(i);
+			results.append(i+1);
 			results.append(":\n");
 			results.append(resultsAtEachCount[i]);
 		}

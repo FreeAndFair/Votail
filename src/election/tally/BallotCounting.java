@@ -327,7 +327,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		// Start or else resume the counting of ballots
 		if (status == PRECOUNT) {
 			status = COUNTING;
-			countNumberValue = 0;
+			countNumberValue = 1;
 			ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
 			
 			// Reset all initial values if not already started or if doing a full recount
@@ -429,6 +429,12 @@ public class BallotCounting extends AbstractBallotCounting {
 			log.append(".\n");
 		}
 		return log;
+	}
+
+	//@ ensures \old(countNumber) + 1 == countNumber;
+	public void incrementCountNumber() {
+		countNumberValue++;
+		
 	}
 
 }

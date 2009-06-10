@@ -25,34 +25,28 @@ public class SurplusScenario {
 		ballotCounting = new BallotCounting();
 		ballotBox = new scenario.util.TestBallotBox();
 		parameters = new Election();
-		parameters.totalNumberOfSeats = 5;
+		parameters.totalNumberOfSeats = 2;
 		parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
-		parameters.numberOfCandidates = Candidate.MAX_CANDIDATES / 2;
+		parameters.numberOfCandidates = 3;
 		
 		// Generate sample candidates
 	 	Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
 	 	int[] candidateIDList = new int[parameters.numberOfCandidates];
-	 	int numberOfPreferences = 1;
+	 	int numberOfPreferences = parameters.numberOfCandidates;
 	 	
 		for (int i = 0; i < parameters.numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
-			int numberOfVotes = 10*i+100;
-			candidates[i].addVote(numberOfVotes, 1);
+  			candidateIDList[i] = candidates[i].getCandidateID();
+		}
+
+		int numberOfVotes = 10000;
+		candidates[0].addVote(numberOfVotes, 0);
+		
+		// Generate first preference ballots to match
+		for (int b = 0; b < numberOfVotes && ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
+				Ballot testBallot = new TestBallot(candidateIDList,numberOfPreferences);
+				ballotBox.accept(testBallot);
 			
-			// Use an arbitrary number of preferences, less than the full list
-			numberOfPreferences = 1 + i / 3;
-			candidateIDList[i] = candidates[i].getCandidateID();
-			
-			// Generate first preference ballots to match
-			for (int b = 0; b < numberOfVotes && ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
-				if (i == 0) {
-					ballotBox.addBallot(candidates[i].getCandidateID());
-				}
-				else {
-					Ballot testBallot = new TestBallot(candidateIDList,numberOfPreferences);
-					ballotBox.accept(testBallot);
-				}
-			}
 		}
 	 	parameters.setCandidateList(candidates);
 	 	System.out.println("Generated " + ballotBox.size() + " ballot papers for " +
@@ -66,11 +60,15 @@ public class SurplusScenario {
 	 
 	 	ballotCounting.setup(parameters);
 	 	ballotCounting.load(ballotBox);
+ 	 	
+ 	 	System.out.println("Quota: " + ballotCounting.getQuota() + "\n");
 	 	
 	 	// Find and distribute the first surplus
 	 	int c = ballotCounting.findHighestCandidate();
  		ballotCounting.electCandidate(c);
+
  	 	ballotCounting.distributeSurplus(c);
+ 	 	ballotCounting.incrementCountNumber();
 	 	Report report = ballotCounting.report();
 	 	//@ assert 0 < report.getNumberElected();
 	 	

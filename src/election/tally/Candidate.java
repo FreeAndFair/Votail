@@ -387,4 +387,14 @@ private static int nextCandidateID = 1;
 		}
 		return (other.getCandidateID() == this.candidateID);
 	}
+
+public long getTotalAtCount(int count) {
+	long totalAtCount = 0;
+	
+	for (int i = 0; i <= count; i++) {
+		totalAtCount += getVoteAtCount(i);
+	}
+	
+	return totalAtCount;
+}
 }
