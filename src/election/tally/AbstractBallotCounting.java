@@ -683,7 +683,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  */
 /*@ also
   @   protected normal_behavior
-  @   requires getSurplus (candidateWithSurplus) > 0;
+  @   requires getSurplus (candidateList[candidateWithSurplus]) > 0;
   @   requires state == COUNTING;
   @   requires numberOfContinuingCandidates > remainingSeats;
   @   requires (numberOfContinuingCandidates > remainingSeats + 1) ||
@@ -693,21 +693,21 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
   @   requires (remainingSeats > 1) ||
   @     ((highestContinuingVote < sumOfOtherContinuingVotes + sumOfSurpluses) &&
   @     (numberOfEqualHighestContinuing == 1));
-  @   requires getSurplus (candidateWithSurplus) == highestSurplus;
+  @   requires getSurplus (candidateList[candidateWithSurplus]) == highestSurplus;
   @   requires (sumOfSurpluses + highestContinuingVote >= quota) ||
   @     (sumOfSurpluses + lowestContinuingVote > nextHighestVote) ||
   @     (numberOfEqualLowestContinuing > 1) ||
   @     ((sumOfSurpluses + lowestContinuingVote >= depositSavingThreshold) &&
   @     (lowestContinuingVote < depositSavingThreshold));
   @   assignable candidates;
-  @   ensures getSurplus (candidateWithSurplus) == 0;
+  @   ensures getSurplus (candidateList[candidateWithSurplus]) == 0;
   @   ensures countNumber == \old (countNumber) + 1;
   @   ensures (state == COUNTING) || (state == FINISHED);
   @   ensures totalVotes == nonTransferableVotes +
   @     (\sum int i; 0 <= i && i < totalCandidates;
   @   candidateList[i].getTotalVote());
   @*/
-	public abstract void distributeSurplus(Candidate candidateWithSurplus);
+	public abstract void distributeSurplus(int candidateWithSurplus);
 
 /**
  * Elimination of a candidate and transfer of votes.
@@ -771,7 +771,7 @@ public void eliminateCandidates(Candidate[] candidatesToEliminate) {
 public /*@ non_null @*/ Report report(){
 	 
 	status = REPORT;
-	return new Report(getElectedCandidateIDs(), countNumberValue);
+	return new Report(getElectedCandidateIDs(), countNumberValue, candidates);
 }
 
 /**
@@ -842,6 +842,27 @@ public void load(/*@ non_null @*/ BallotBox ballotBox) {
  	
  	// Droop quota
  	numberOfVotesRequired = 1 + (totalNumberOfVotes / (1 + numberOfSeats));
+ 	
+ 	// Number of first preferences for each candidate
+ 	calculateFirstPreferences();
+}
+
+public void calculateFirstPreferences() {
+	for (int c = 0; c < totalNumberOfCandidates; c++) {
+		candidates[c].addVote(countBallotsFor(candidates[c].getCandidateID()), 
+				countNumberValue);
+	}
+	
+}
+
+public /*@ pure @*/ int countBallotsFor(int candidateID) {
+	int numberOfBallots = 0;
+	for (int b=0; b < totalNumberOfVotes; b++) {
+		if (ballots[b].getCandidateID() == candidateID) {
+			numberOfBallots++;
+		}
+	}
+	return numberOfBallots;
 }
 
 /**
@@ -1392,29 +1413,33 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @return The candidate with the most votes
 	 */
-	/*@ ensures (\forall int i; 0 <= i && i < totalCandidates;
-	  @   candidateList[i].getTotalVote() <= \result.getTotalVote());
-	  @ ensures (\exists int i; 0 <= i && i < totalCandidates;
-	  @   candidateList[i].equals(\result));
+	/*@ ensures (\max int i; 0 <= i && i < totalCandidates && 
+	  @   candidates[i].getStatus() == Candidate.CONTINUING;
+	  @   candidateList[i].getTotalVote()) 
+	  @   == candidateList[\result].getTotalVote();
+	  @ ensures (\exists int i; 0 <= i && i < totalCandidates && 
+	  @   candidates[i].getStatus() == Candidate.CONTINUING; i == \result);
 	  @*/
-	public /*@ non_null pure @*/ Candidate findHighestCandidate() {
+	public int findHighestCandidate() {
 		
 		long mostVotes = 0;
-		/*@ non_null @*/ Candidate highestCandidate = new Candidate();
+		int highestCandidate = -1;
 	
 		for (int i=0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getTotalVote() > mostVotes) {
+			if (candidates[i].getStatus() == Candidate.CONTINUING) {
+			  if (candidates[i].getTotalVote() > mostVotes) {
 				mostVotes = candidates[i].getTotalVote();
-				highestCandidate = candidates[i];
+				highestCandidate = i;
 			} else if (candidates[i].getTotalVote() == mostVotes) {
 				// resolve tie for equal highest vote in accordance with electoral law
-				if (isHigherThan(candidates[i],highestCandidate)) {
-					highestCandidate = candidates[i];
+				if (isHigherThan(candidates[i],candidates[highestCandidate])) {
+					highestCandidate =  i;
 				}
+			  }
 			}
 		}
 		
-		//@ assert highestCandidate.getTotalVote() == mostVotes;
+		//@ assert candidates[highestCandidate].getTotalVote() == mostVotes;
 		
 		return highestCandidate;
 	}
@@ -1548,4 +1573,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	}
 	
 	public abstract void count();
+
+	public void electCandidate(int w) {
+	    candidates[w].declareElected();
+		auditDecision(Decision.DEEM_ELECTED,candidates[w].getCandidateID());
+		numberOfCandidatesElected++;
+		totalNumberOfContinuingCandidates--;
+		totalRemainingSeats--;
+	}
 }

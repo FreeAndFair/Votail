@@ -227,12 +227,12 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
     /**
      * @param candidateWithSurplus The candidate from which to reweight and allocate the ballots
      */
-	public void distributeSurplus(final Candidate candidateWithSurplus) {
+	public void distributeSurplus(int candidateWithSurplus) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == Candidate.CONTINUING) {
-				int numberOfTransfers = getActualTransfers (candidateWithSurplus, candidates[i]);
+				int numberOfTransfers = getActualTransfers (candidates[candidateWithSurplus], candidates[i]);
 				if (0 < numberOfTransfers) {
-					transferVotes (candidateWithSurplus, candidates[i], numberOfTransfers);
+					transferVotes (candidates[candidateWithSurplus], candidates[i], numberOfTransfers);
 				}
 			}
 			
@@ -300,13 +300,13 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 			// Transfer surplus votes from winning candidates
 			while (totalNumberOfSurpluses > 0) {
 				ballotCountingMachine.changeState(BallotCountingModel.SURPLUS_AVAILABLE);
-				Candidate winner = findHighestCandidate();
+				int w = findHighestCandidate();
 				
 				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_ELECTED);
-				winner.declareElected();
+				electCandidate(w);
 				
 				ballotCountingMachine.changeState(BallotCountingModel.READY_TO_ALLOCATE_SURPLUS);
-				distributeSurplus(winner);
+				distributeSurplus(w);
 				countNumberValue++;
 			}
 			

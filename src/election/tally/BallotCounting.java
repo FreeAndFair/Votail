@@ -241,16 +241,16 @@ public class BallotCounting extends AbstractBallotCounting {
     /**
      * Distribute the surplus of an elected Dail candidate.
      * 
-     * @param candidate The elected Dail candidate
+     * @param w The elected Dail candidate
      */
 	//@ also
 	//@   requires ballotCountingMachine.getState() == BallotCountingModel.SURPLUS_AVAILABLE;
-	public void distributeSurplus(/*@ non_null @*/ final Candidate candidate) {
+	public void distributeSurplus(/*@ non_null @*/ final int w) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == Candidate.CONTINUING) {
-				int numberOfTransfers = getActualTransfers (candidate, candidates[i]);
+				int numberOfTransfers = getActualTransfers (candidates[w], candidates[i]);
 				if (0 < numberOfTransfers) {
-					transferVotes (candidate, candidates[i], numberOfTransfers);
+					transferVotes (candidates[w], candidates[i], numberOfTransfers);
 				}
 			}
 			
@@ -319,6 +319,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
 	  @		assignable totalofNonTransferableVotes;
+	  @		assignable numberOfSurpluses, sumOfSurpluses;
 	  @     ensures state == FINISHED;
 	  @*/
 	public void count() {
@@ -339,23 +340,19 @@ public class BallotCounting extends AbstractBallotCounting {
 			totalofNonTransferableVotes = 0;
 		}
 		
-		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
+		while (totalNumberOfContinuingCandidates > totalRemainingSeats && countNumberValue < Candidate.MAXCOUNT) {
 			ballotCountingMachine.changeState(BallotCountingModel.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
 
 			// Calculate surpluses
 			calculateSurpluses();
 			
 			// Transfer surplus votes from winning candidates
-			while (totalNumberOfSurpluses > 0) {
+			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT-1) {
 				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATES_HAVE_QUOTA);
-				Candidate winner = findHighestCandidate();
+				int winner = findHighestCandidate();
 				
 				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_ELECTED);
-				winner.declareElected();
-				auditDecision(Decision.DEEM_ELECTED,winner.getCandidateID());
-				numberOfCandidatesElected++;
-				totalNumberOfContinuingCandidates--;
-				totalRemainingSeats--;
+				electCandidate(winner);
 
 				ballotCountingMachine.changeState(BallotCountingModel.SURPLUS_AVAILABLE);
 				distributeSurplus(winner);
@@ -374,6 +371,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			
 			ballotCountingMachine.changeState(BallotCountingModel.READY_TO_MOVE_BALLOTS);	
 			redistributeBallots(loser.getCandidateID());
+			calculateSurpluses();
 			countNumberValue++;
 		}
 		
@@ -382,10 +380,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			ballotCountingMachine.changeState(BallotCountingModel.LAST_SEAT_BEING_FILLED);	
 			for (int c = 0; c < totalNumberOfCandidates; c++) {
 				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
-					candidates[c].declareElected();
-					numberOfCandidatesElected++;
-					totalNumberOfContinuingCandidates--;
-					totalRemainingSeats--;
+					electCandidate(c);
 				}
 			countNumberValue++;
 			}
@@ -395,8 +390,8 @@ public class BallotCounting extends AbstractBallotCounting {
 		status = FINISHED;
 	}
 
-	//@ assignable totalNumberOfSurpluses, totalSumOfSurpluses;
-	private void calculateSurpluses() {
+	//@ assignable numberOfSurpluses, sumOfSurpluses;
+	private /*@ spec_public @*/ void calculateSurpluses() {
 		int numberOfSurpluses = 0;
 		int sumOfSurpluses = 0;
 		int surplus = 0;

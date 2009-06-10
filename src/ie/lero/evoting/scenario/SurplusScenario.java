@@ -68,11 +68,11 @@ public class SurplusScenario {
 	 	ballotCounting.load(ballotBox);
 	 	
 	 	// Find and distribute the first surplus
-	 	candidate = ballotCounting.findHighestCandidate();
+	 	int c = ballotCounting.findHighestCandidate();
 	 	//@ assert candidate.getStatus() == Candidate.CONTINUING;
-		candidate.declareElected();
+		ballotCounting.electCandidate(c);
  		//@ assert candidate.getStatus() == Candidate.ELECTED;
-	 	ballotCounting.distributeSurplus(candidate);
+	 	ballotCounting.distributeSurplus(c);
 	 	Report report = ballotCounting.report();
 	 	//@ assert 0 < report.getNumberElected();
 	 	

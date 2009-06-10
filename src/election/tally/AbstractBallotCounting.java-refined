@@ -485,7 +485,7 @@ public abstract class AbstractBallotCounting {
    * @see requirements 14-18, section 5, item 2, page 18
    * @see requirement 8, section 4, item 2, page 15
    */
-  /*@ requires getSurplus (candidateWithSurplus) > 0;
+  /*@ requires getSurplus (candidateList[candidateWithSurplus]) > 0;
     @ requires state == COUNTING;
     @ requires numberOfContinuingCandidates > remainingSeats;
     @ requires (numberOfContinuingCandidates > remainingSeats + 1) ||
@@ -495,13 +495,13 @@ public abstract class AbstractBallotCounting {
     @ requires (remainingSeats > 1) ||
     @   ((highestContinuingVote < sumOfOtherContinuingVotes + sumOfSurpluses) &&
     @   (numberOfEqualHighestContinuing == 1));
-    @ requires getSurplus (candidateWithSurplus) == highestSurplus;
+    @ requires getSurplus (candidateList[candidateWithSurplus]) == highestSurplus;
     @ requires (sumOfSurpluses + highestContinuingVote >= quota) ||
     @   (sumOfSurpluses + lowestContinuingVote > nextHighestVote) ||
     @   (numberOfEqualLowestContinuing > 1) ||
     @   ((sumOfSurpluses + lowestContinuingVote >= depositSavingThreshold) &&
     @      (lowestContinuingVote < depositSavingThreshold));
-    @ ensures getSurplus (candidateWithSurplus) == 0;
+    @ ensures getSurplus (candidateList[candidateWithSurplus]) == 0;
     @*/
   /** @see requirement 9, section 4, item 3, page 16 */
   /*@ ensures countNumber == \old (countNumber) + 1;
@@ -513,8 +513,7 @@ public abstract class AbstractBallotCounting {
     @   (\sum int i; 0 <= i && i < totalCandidates; 
     @   candidateList[i].getTotalVote());
     @*/
-    public abstract void distributeSurplus(/*@ non_null @*/ 
-                                election.tally.Candidate candidateWithSurplus);
+    public abstract void distributeSurplus(int candidateWithSurplus);
 	
 	
   /** 

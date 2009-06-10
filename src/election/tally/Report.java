@@ -101,21 +101,32 @@ public class Report {
 
 	//@ public invariant 0 <= totalNumberOfCounts;
 	private /*@ spec_public @*/ int totalNumberOfCounts;
+
+	private String[] resultsAtEachCount;
 	
 	/**
 	 * Store the election results for this constituency.
 	 * 
 	 * @param list The list of internal identifiers for the winner candidates
 	 * @param counts The number of rounds of counting 
+	 * @param candidates The list of candidates
 	 */
 	/*@ requires list.length <= MAX_SEATS;
 	  @ requires 0 <= counts;
 	  @*/
-	public Report(/*@ non_null @*/ final int[] list, final int counts){
+	public Report(/*@ non_null @*/ final int[] list, final int counts, Candidate[] candidates){
 		numberElected = list.length;
 		electedCandidateIDs = list;
 		totalNumberOfCounts = counts;
-	} //@ nowarn;
+		resultsAtEachCount = new String[counts];
+		for (int i = 0; i < counts && i < Candidate.MAXCOUNT; i++){
+			for (int c = 0; c < candidates.length; c++) {
+				resultsAtEachCount[i] = "Candidate " + 
+						candidates[c].getCandidateID() + " : " +
+						candidates[c].getVoteAtCount(i) + "\n";
+			}
+			} 
+		}
 
 	/**
 	 * @return the totalNumberOfCounts
@@ -138,6 +149,13 @@ public class Report {
 		for (int c = 0; c < numberElected; c++) {
 			results.append(" ");
 			results.append(electedCandidateIDs[c]);
+		}
+		results.append("\n");
+		for (int i = 0; i < totalNumberOfCounts; i++) {
+			results.append("At count number ");
+			results.append(i);
+			results.append(":\n");
+			results.append(resultsAtEachCount[i]);
 		}
 		return results;
 	}

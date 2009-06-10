@@ -159,9 +159,8 @@ public static final int MAX_CANDIDATES = 50;
 /*@ 
   @   public normal_behavior
   @   requires state != UNASSIGNED;
-  @   requires 0 <= count;
+  @   requires 0 <= count && count < MAXCOUNT;
   @   requires count <= lastCountNumber;
-  @   requires count < MAXCOUNT;
   @   ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
 	public /*@ pure @*/ int getVoteAtCount(int count){
