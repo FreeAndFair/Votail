@@ -340,8 +340,13 @@ public class BallotCounting extends AbstractBallotCounting {
 			totalofNonTransferableVotes = 0;
 		}
 		
-		while (totalNumberOfContinuingCandidates > totalRemainingSeats && countNumberValue < Candidate.MAXCOUNT) {
-			ballotCountingMachine.changeState(BallotCountingModel.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
+		// Recalculate number of continuing candidates
+		totalNumberOfContinuingCandidates = getNumberContinuing();
+		
+		while (totalNumberOfContinuingCandidates > totalRemainingSeats && 
+				countNumberValue < Candidate.MAXCOUNT) {
+			ballotCountingMachine.changeState(
+					BallotCountingModel.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
 
 			// Calculate surpluses
 			calculateSurpluses();

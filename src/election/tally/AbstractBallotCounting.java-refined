@@ -63,8 +63,6 @@ public abstract class AbstractBallotCounting {
    public static final byte COUNTING;
    /** Finished counting */
    public static final byte FINISHED;
-   /** Declare election result */
-   public static final byte REPORT;
  
    
   /*@ public model byte state;
@@ -74,12 +72,11 @@ public abstract class AbstractBallotCounting {
     @ public invariant LOADING < PRECOUNT;
     @ public invariant PRECOUNT < COUNTING;
     @ public invariant COUNTING < FINISHED;
-    @ public invariant FINISHED < REPORT;
     @ public initially state == EMPTY;
     @ public constraint \old (state) <= state;
     @ public invariant (state == EMPTY) || (state == SETUP) || (state == PRELOAD) ||
     @   (state == LOADING) || (state == PRECOUNT) || (state == COUNTING) ||
-    @   (state == FINISHED) || (state == REPORT);
+    @   (state == FINISHED);
     @*/
 	
   /** List of decisions made */

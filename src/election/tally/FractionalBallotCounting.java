@@ -324,7 +324,6 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 		
 		// Filling of last seats
 		if (totalNumberOfContinuingCandidates == totalRemainingSeats) {
-			status = FILLING_LAST_SEATS;
 			ballotCountingMachine.changeState(BallotCountingModel.LAST_SEAT_BEING_FILLED);
 			for (int c = 0; c < totalNumberOfCandidates; c++) {
 				if (isContinuingCandidateID(candidates[c].getCandidateID())) {

@@ -74,9 +74,6 @@ public class SurplusScenario {
 	 	Report report = ballotCounting.report();
 	 	//@ assert 0 < report.getNumberElected();
 	 	
-	 	// Continue with the ballot counting
-	 	ballotCounting.count();
-	 	
 	 	// Declare the results
 	 	System.out.println(report.getResults());
 	 	System.out.println(ballotCounting.getDecisionLog());
