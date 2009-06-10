@@ -1,9 +1,9 @@
 package ie.lero.evoting.scenario;
 
-import election.tally.AbstractBallotCounting;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
+import election.tally.Report;
 
 /**
  * This is a test for the correctness of the ballot counting process in the 
@@ -16,7 +16,7 @@ import election.tally.Election;
  */
 public class ExclusionScenario implements Scenario {
 
-	private AbstractBallotCounting ballotCounting;
+	private BallotCounting ballotCounting;
 	private scenario.util.TestBallotBox ballotBox;
 
 	
@@ -27,6 +27,14 @@ public class ExclusionScenario implements Scenario {
 	 	
  	 	Candidate candidate = ballotCounting.findLowestCandidate();
 	 	ballotCounting.eliminateCandidate(candidate);
+	 	
+	 	ballotCounting.incrementCountNumber();
+	 	Report report = ballotCounting.report();
+	 	//@ assert 0 < report.getNumberElected();
+	 	
+	 	// Declare the results
+	 	System.out.println(report.getResults());
+	 	System.out.println(ballotCounting.getDecisionLog());
  	}
 
 	/**
