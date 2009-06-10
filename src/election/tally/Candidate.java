@@ -1,7 +1,5 @@
 package election.tally;
 
-import election.util.UniqueNumber;
-
 /** 
  * The Candidate object records the number of votes received during
  * each round of counting. Votes can only be added to the candidate's
@@ -39,13 +37,11 @@ public static final int MAX_CANDIDATES = 50;
  * </BON>
  */
 /*@ public invariant 0 <= candidateID;
-  @ public invariant (state != UNASSIGNED) ==> 0 < candidateID;
+  @ public invariant 0 < candidateID;
   @ public invariant (\forall Candidate a, b;
-  @   a != null && b != null &&
-  @   a.state != UNASSIGNED && b.state != UNASSIGNED;
+  @   a != null && b != null;
   @   (a.candidateID == b.candidateID) <==> (a.equals(b)));
-  @ public constraint ((state != UNASSIGNED) && (\old(state) == state)) ==>
-  @   candidateID == \old(candidateID);
+  @ public constraint candidateID == \old(candidateID);
   @*/
 	protected /*@ spec_public @*/ int candidateID;
 	
@@ -72,8 +68,8 @@ public static final int MAX_CANDIDATES = 50;
 	
 /** The status of the candidate at the latest count */
 /*@ public invariant state == ELECTED || state == ELIMINATED ||
-  @   state == CONTINUING || state == UNASSIGNED;
-  @ public initially state == UNASSIGNED;
+  @   state == CONTINUING;
+  @ public initially state == CONTINUING;
   @*/      
 	protected /*@ spec_public @*/ byte state;
 	
@@ -97,11 +93,9 @@ public static final int MAX_CANDIDATES = 50;
  * Unique random number used to simulate drawing of lots between candidates.
  */
 /*@ public invariant (\forall Candidate a, b;
-  @   a != null && b != null &&
-  @   a.state != UNASSIGNED && b.state != UNASSIGNED;
+  @   a != null && b != null;
   @   (a.randomNumber == b.randomNumber) <==> (a.equals(b)));
-  @ public constraint (state != UNASSIGNED) ==>
-  @   randomNumber == \old(randomNumber); 	
+  @ public constraint randomNumber == \old(randomNumber); 	
   @*/
   protected /*@ spec_public @*/ int randomNumber;
   //@ ghost int _randomNumber;
@@ -121,9 +115,6 @@ public static final int MAX_CANDIDATES = 50;
  * of the lowest continuing candidates at the end of a round of counting.  
  */	
 	public static final byte ELIMINATED = 2;	
-
-/** State value for a candidate object without a valid ID */	
-	public static final byte UNASSIGNED = 3;
 	
 /**
  * State value for a candidate defeated at the last round of the election
@@ -147,6 +138,12 @@ public static final int MAX_CANDIDATES = 50;
  */
 	public int total;
 
+	/**
+	 * Next available value for candidate ID number. 
+	 */
+//@ private constraint \old(nextCandidateID) <= nextCandidateID;
+private static int nextCandidateID = 1;
+
 	
 /**
  * Gets number of votes added or removed in this round of counting.
@@ -158,10 +155,9 @@ public static final int MAX_CANDIDATES = 50;
  */	
 /*@ 
   @   public normal_behavior
-  @   requires state != UNASSIGNED;
-  @   requires 0 <= count && count < MAXCOUNT;
-  @   requires count <= lastCountNumber;
-  @   ensures \result == votesAdded[count] - votesRemoved[count];
+  @     requires 0 <= count && count < MAXCOUNT;
+  @     requires count <= lastCountNumber;
+  @     ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
 	public /*@ pure @*/ int getVoteAtCount(int count){
 		return (votesAdded[count] - votesRemoved[count]);
@@ -174,7 +170,6 @@ public static final int MAX_CANDIDATES = 50;
  * @return Net total of votes received
  */	
 /*@ public normal_behavior
-  @   requires state != UNASSIGNED;
   @   ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
   @     ((votesAdded[i]) - (votesRemoved[i])));
   @*/
@@ -196,7 +191,6 @@ public static final int MAX_CANDIDATES = 50;
  */	
 /*@ 
   @   public normal_behavior
-  @   requires state != UNASSIGNED;
   @   ensures \result == (\sum int i; 0 <= i && i <=lastCountNumber;
   @     votesAdded[i]); 
   @   ensures 0 <= \result;
@@ -213,7 +207,7 @@ public static final int MAX_CANDIDATES = 50;
 	
 /**
  * Get status at the current round of counting; {@link #ELECTED}, 
- * {@link #ELIMINATED} or {@link #CONTINUING} or {@link #UNASSIGNED}
+ * {@link #ELIMINATED} or {@link #CONTINUING}
  * 
  *  @return State value for this candidate
  */
@@ -231,7 +225,6 @@ public static final int MAX_CANDIDATES = 50;
  */
 /*@ 
   @   public normal_behavior
-  @   requires state != UNASSIGNED;
   @   ensures \result == candidateID;
   @*/	
 	public /*@ pure @*/ int getCandidateID() {
@@ -242,10 +235,11 @@ public static final int MAX_CANDIDATES = 50;
  * This is the default constructor method for a <code>Candidate</code>
  */	
   public Candidate(){
-    state = UNASSIGNED;
+    state = CONTINUING;
     votesAdded = new int [MAXCOUNT];
     votesRemoved = new int [MAXCOUNT];
-    randomNumber = UniqueNumber.getUniqueID(); //@ nowarn;
+    randomNumber = this.hashCode();
+    candidateID = nextCandidateID++;
     //@ set _randomNumber = randomNumber;
   } //@ nowarn;
 
@@ -300,29 +294,6 @@ public static final int MAX_CANDIDATES = 50;
         votesRemoved[count] = numberOfVotes;
         lastCountNumber = count;
     } //@ nowarn;
-	
-/** 
- * Sets the candidate ID
- * 
- * @param internalID Identification number for this candidate
- * 
- * @design The candidate ID must be assigned by the client object because 
- * the client object must know who the candidate is.
- */
-/*@ 
-  @   public normal_behavior
-  @   requires state == UNASSIGNED;
-  @   requires 0 < internalID;
-  @   requires (\forall Candidate other; other != null && other.state != UNASSIGNED;
-  @     other.candidateID != internalID);
-  @   assignable state, candidateID;
-  @   ensures candidateID == internalID;
-  @   ensures state == CONTINUING;
-  @*/
-	public void setCandidateID(int internalID){
-        this.candidateID = internalID;
-        state = CONTINUING;
-	} //@ nowarn;
 	
 /** Declares the candidate to be elected */
 /*@ public normal_behavior
@@ -392,7 +363,6 @@ public static final int MAX_CANDIDATES = 50;
  */	
 /*@ 
   @ public normal_behavior
-  @ requires state != UNASSIGNED;
   @ ensures (\result == true) <==>
   @   (this.randomNumber > other.randomNumber);
   @*/
@@ -408,13 +378,11 @@ public static final int MAX_CANDIDATES = 50;
  * @return <code>true</code> if this is the same candidate
  */
 /*@ public normal_behavior
-  @   ensures \result <==> ((other != null) && (other.getStatus() != UNASSIGNED) &&
+  @   ensures \result <==> ((other != null) &&
   @     (other.getCandidateID() == candidateID));
   @*/
 	public /*@ pure @*/ boolean equals(final Candidate other) {
 		if (other == null) {
-			return false;
-		} else if (other.getStatus() == UNASSIGNED) {
 			return false;
 		}
 		return (other.getCandidateID() == this.candidateID);

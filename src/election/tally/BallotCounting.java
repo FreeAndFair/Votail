@@ -245,7 +245,7 @@ public class BallotCounting extends AbstractBallotCounting {
      */
 	//@ also
 	//@   requires ballotCountingMachine.getState() == BallotCountingModel.SURPLUS_AVAILABLE;
-	public void distributeSurplus(/*@ non_null @*/ final int w) {
+	public void distributeSurplus(final int w) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == Candidate.CONTINUING) {
 				int numberOfTransfers = getActualTransfers (candidates[w], candidates[i]);

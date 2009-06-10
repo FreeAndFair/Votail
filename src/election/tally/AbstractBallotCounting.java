@@ -1419,6 +1419,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @   == candidateList[\result].getTotalVote();
 	  @ ensures (\exists int i; 0 <= i && i < totalCandidates && 
 	  @   candidates[i].getStatus() == Candidate.CONTINUING; i == \result);
+	  @ ensures 0 <= \result && \result < totalCandidates;
+	  @ ensures candidateList[\result] != null;
 	  @*/
 	public int findHighestCandidate() {
 		
@@ -1440,6 +1442,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		}
 		
 		//@ assert candidates[highestCandidate].getTotalVote() == mostVotes;
+		//@ assert -1 < highestCandidate;
 		
 		return highestCandidate;
 	}
@@ -1574,6 +1577,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	
 	public abstract void count();
 
+	//@ requires 0 <= w && w < totalCandidates;
+	//@ requires candidateList[w] != null;
 	public void electCandidate(int w) {
 	    candidates[w].declareElected();
 		auditDecision(Decision.DEEM_ELECTED,candidates[w].getCandidateID());

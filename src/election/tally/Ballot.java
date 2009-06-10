@@ -130,10 +130,7 @@ public static final int NONTRANSFERABLE = 0;
   protected /*@ spec_public @*/ int positionInList;
 
   /** Maximum possible numbers of counting rounds*/
-  public static final int MAXIMUM_ROUNDS_OF_COUNTING = Candidate.MAX_CANDIDATES - 1;
-
-  /** Default value of internal identifier for an empty ballot */
-  private static final int NO_ID_YET = 0;
+  public static final int MAXIMUM_ROUNDS_OF_COUNTING = Candidate.MAXCOUNT;
   
   /** Candidate ID to which the vote is assigned at the end of each count */
   //@ public invariant candidateIDAtCount.length <= MAXIMUM_ROUNDS_OF_COUNTING;
@@ -148,25 +145,24 @@ public static final int NONTRANSFERABLE = 0;
     
   /** Random number used for proportional distribution of surplus votes */
   //@ public constraint randomNumber == \old (randomNumber);
+  //@ public ghost int _randomNumber;
+
   protected /*@ spec_public @*/ int randomNumber;
+
   /**
- * 
- */
-//@ public ghost int _randomNumber;
-  
+   * Next available value for ballot ID number.
+   */
+  /*@ private invariant 0 < nextBallotID;
+    @ private constraint \old(nextBallotID) <= nextBallotID;
+    @*/
+  private static int nextBallotID = 1;
+
+
+  /**
+   * Generate an empty ballot paper for use by a voter.
+   */
   public /*@ pure @*/ Ballot () {
 	  generateBlankBallot(System.identityHashCode(this));
-  }
-    
-  /** 
-   * Default constructor
-   * 
-   * @param seed A random number used to distinguish this ballot when simulating a random selection
-   */
-  
-  public /*@ pure @*/ Ballot(int seed) {
-	  
-    generateBlankBallot(seed);
   }
 
 /*@ protected normal_behavior
@@ -175,15 +171,14 @@ public static final int NONTRANSFERABLE = 0;
   @   ensures numberOfPreferences == 0;
   @   ensures countNumberAtLastTransfer == 0;
   @   ensures positionInList == 0;
-  @   ensures candidateID == NONTRANSFERABLE; 
-  @   ensures ballotID == NO_ID_YET;
+  @   ensures candidateID == NONTRANSFERABLE;
   @*/
 protected void generateBlankBallot(int seed) {
 	numberOfPreferences = 0;
     countNumberAtLastTransfer = 0;
     positionInList = 0;
     candidateID = NONTRANSFERABLE; 
-    ballotID = NO_ID_YET;
+    ballotID = nextBallotID++;
 	randomNumber = seed;
     //@ set _randomNumber = randomNumber;
 }
