@@ -613,6 +613,34 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 }
 
 /**
+ * @return the totalNumberOfSurpluses
+ */
+protected int getTotalNumberOfSurpluses() {
+	return totalNumberOfSurpluses;
+}
+
+/**
+ * @param totalNumberOfSurpluses the totalNumberOfSurpluses to set
+ */
+protected void setTotalNumberOfSurpluses(int totalNumberOfSurpluses) {
+	this.totalNumberOfSurpluses = totalNumberOfSurpluses;
+}
+
+/**
+ * @return the totalSumOfSurpluses
+ */
+protected int getTotalSumOfSurpluses() {
+	return totalSumOfSurpluses;
+}
+
+/**
+ * @param totalSumOfSurpluses the totalSumOfSurpluses to set
+ */
+protected void setTotalSumOfSurpluses(int totalSumOfSurpluses) {
+	this.totalSumOfSurpluses = totalSumOfSurpluses;
+}
+
+/**
  * Determine if the candidate has enough votes to save his or her deposit.
  * 
  * <BON>query "Has this candidate saved his or her deposit?"</BON>

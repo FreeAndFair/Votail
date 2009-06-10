@@ -342,7 +342,9 @@ public class BallotCounting extends AbstractBallotCounting {
 		while (totalNumberOfContinuingCandidates > totalRemainingSeats) {
 			ballotCountingMachine.changeState(BallotCountingModel.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
 
-		
+			// Calculate surpluses
+			calculateSurpluses();
+			
 			// Transfer surplus votes from winning candidates
 			while (totalNumberOfSurpluses > 0) {
 				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATES_HAVE_QUOTA);
@@ -350,6 +352,7 @@ public class BallotCounting extends AbstractBallotCounting {
 				
 				ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_ELECTED);
 				winner.declareElected();
+				auditDecision(Decision.DEEM_ELECTED,winner.getCandidateID());
 				numberOfCandidatesElected++;
 				totalNumberOfContinuingCandidates--;
 				totalRemainingSeats--;
@@ -357,6 +360,7 @@ public class BallotCounting extends AbstractBallotCounting {
 				ballotCountingMachine.changeState(BallotCountingModel.SURPLUS_AVAILABLE);
 				distributeSurplus(winner);
 				countNumberValue++;
+				calculateSurpluses();
 			}
 			
 			// Exclusion of lowest continuing candidate
@@ -364,7 +368,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			Candidate loser = findLowestCandidate();
 			
 			ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_EXCLUDED);	
-			loser.declareEliminated();
+			eliminateCandidate(loser);
 			numberOfCandidatesEliminated++;
 			totalNumberOfContinuingCandidates--;
 			
@@ -389,6 +393,23 @@ public class BallotCounting extends AbstractBallotCounting {
 		}
 		ballotCountingMachine.changeState(BallotCountingModel.END_OF_COUNT);	
 		status = FINISHED;
+	}
+
+	//@ assignable totalNumberOfSurpluses, totalSumOfSurpluses;
+	private void calculateSurpluses() {
+		int numberOfSurpluses = 0;
+		int sumOfSurpluses = 0;
+		int surplus = 0;
+	
+		for (int c=0; c < totalNumberOfCandidates; c++) {
+			surplus = getSurplus(candidates[c]);
+			if (surplus > 0) {
+				numberOfSurpluses++;
+				sumOfSurpluses += numberOfSurpluses;
+			}
+		}
+		setTotalNumberOfSurpluses(numberOfSurpluses);
+		setTotalSumOfSurpluses(sumOfSurpluses);
 	}
 
 	/**

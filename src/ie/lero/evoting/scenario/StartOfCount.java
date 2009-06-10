@@ -57,13 +57,11 @@ public class StartOfCount implements Scenario {
 
 		// A close race between two almost equal candidates
 		for (int i = 0; i < 50; i++) {
-		ballot = new TestBallot (candidate1.getCandidateID());
-		ballotBox.accept(ballot);
-		ballot = new TestBallot (candidate2.getCandidateID());
-		ballotBox.accept(ballot);
-
+		  ballot = new TestBallot (candidate1.getCandidateID());
+		  ballotBox.accept(ballot);
+		  ballot = new TestBallot (candidate2.getCandidateID());
+		  ballotBox.accept(ballot);
 		}
-		
 	}
 	
 	/**
