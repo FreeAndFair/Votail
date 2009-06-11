@@ -736,7 +736,8 @@ public /*@ non_null pure @*/ Report report(){
  * 
  * @return The unique identifier of each elected candidate.
  */
-public /*@ pure @*/ final int[] getElectedCandidateIDs() {
+//@ requires 0 < numberOfCandidatesElected;
+public /*@ pure non_null @*/ final int[] getElectedCandidateIDs() {
 	int[] electedCandidateIDs = new int [numberOfCandidatesElected]; 
  	
 	int counter = 0;
@@ -1333,10 +1334,11 @@ protected /*@ pure spec_public @*/ int getTotalTransferableVotes(/*@ non_null @*
   @     requires toCandidate.getStatus() == Candidate.CONTINUING;
   @     requires numberOfVotes == getActualTransfers (fromCandidate,toCandidate) +
   @       getRoundedFractionalValue (fromCandidate, toCandidate);
-  @   ensures fromCandidate.getTotalVote() ==
-  @     \old (fromCandidate.getTotalVote()) - numberOfVotes;
-  @   ensures toCandidate.getTotalVote() ==
-  @     \old (toCandidate.getTotalVote()) + numberOfVotes;
+  @		assignable ballotsToCount;
+  @     ensures fromCandidate.getTotalVote() ==
+  @       \old (fromCandidate.getTotalVote()) - numberOfVotes;
+  @     ensures toCandidate.getTotalVote() ==
+  @       \old (toCandidate.getTotalVote()) + numberOfVotes;
   @*/
 public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate, 
 		/*@ non_null @*/ Candidate toCandidate, int numberOfVotes);
@@ -1477,6 +1479,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ requires (decisionType == Decision.EXCLUDE) ||
 	  @   (decisionType == Decision.DEEM_ELECTED) ||
 	  @   (decisionType == Decision.ELECT_BY_QUOTA);
+	  @ assignable decisions;
 	  @ ensures \old(numberOfDecisions) < numberOfDecisions;
 	  @*/
 	protected void auditDecision(final byte decisionType, final int candidateID) {
@@ -1530,6 +1533,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 
 	//@ requires 0 <= w && w < totalCandidates;
 	//@ requires candidateList[w] != null;
+	//@ assignable candidates, decisions, numberOfCandidatesElected, totalNumberOfContinuingCandidates, totalRemainingSeats;
 	public void electCandidate(int w) {
 	    candidates[w].declareElected();
 		auditDecision(Decision.DEEM_ELECTED,candidates[w].getCandidateID());
@@ -1538,7 +1542,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		totalRemainingSeats--;
 	}
 
-	protected int getNumberContinuing() {
+	protected /*@ pure @*/ int getNumberContinuing() {
 		int numberContinuing = 0;
 		
 		for (int i = 0; i < totalNumberOfCandidates; i++) {

@@ -23,18 +23,18 @@ public interface BallotCountingModel extends election.util.Workflow {
 	public static final int ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT = 18;
 	public static final int READY_TO_REWEIGHT_BALLOTS = 19;
 
-	public abstract int getState();
+	public abstract /*@ pure @*/ int getState();
 
 	public abstract void changeState(int newState);
 
 	/**
 	 * Set of possible states
 	 */
-	public abstract boolean isPossibleState(int value);
+	public abstract /*@ pure @*/ boolean isPossibleState(int value);
 
 	/**
 	 * Set of valid transitions from state machine diagram
 	 */
-	public abstract boolean isTransition(int fromState, int toState);
+	public abstract /*@ pure @*/ boolean isTransition(int fromState, int toState);
 
 }

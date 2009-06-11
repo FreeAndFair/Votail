@@ -69,9 +69,6 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 	public class BallotCountingMachine implements BallotCountingModel {
 		
 		// Initial state
-		/**
-		 * 
-		 */
 		public BallotCountingMachine() {
 			state = READY_TO_COUNT;
 		}
@@ -80,9 +77,6 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 		//@ public constraint isTransition(\old(state), state);
  		private /*@ spec_public @*/ int state;
  		
- 		/**
- 		 * 
- 		 */
  		//@ also ensures \result == state;
  		public int getState() {
 			return state;
@@ -96,9 +90,6 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 			state = newState;
 		}
 
-		/**
-		 * 
-		 */
 		public boolean isPossibleState(final int value) {
  			return ((READY_TO_COUNT == value) ||
  					(NO_SEATS_FILLED_YET == value) ||
