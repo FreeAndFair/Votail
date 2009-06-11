@@ -712,39 +712,8 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  * @param candidatesToEliminate One or more candidates to be excluded from the 
  *   election in this count
  */
-/*@ also
-  @   public normal_behavior
-  @     requires 1 <= candidatesToEliminate.length;
-  @     requires candidatesToEliminate.length <= numberOfContinuingCandidates;
-  @     requires (\forall int i;
-  @       0 <= i && i < candidatesToEliminate.length;
-  @       candidatesToEliminate[i].getTotalVote() == 0 ||
-  @       depositSavingThreshold <= candidatesToEliminate[i].getTotalVote() ||
-  @       candidatesToEliminate[i].getTotalVote() +
-  @       sumOfSurpluses + (\sum int j;
-  @       0 <= j && j != i && j < candidatesToEliminate.length;
-  @       candidatesToEliminate[i].getTotalVote()) < depositSavingThreshold);
-  @     requires (\forall int i;
-  @       0 <= i && i < candidatesToEliminate.length;
-  @       candidatesToEliminate[i].getStatus() == Candidate.CONTINUING);
-  @     requires sumOfSurpluses + (\sum int i;
-  @       0 <= i && i < candidatesToEliminate.length;
-  @       candidatesToEliminate[i].getTotalVote()) < quota;
-  @     requires remainingSeats < numberOfContinuingCandidates;
-  @     requires (state == COUNTING);
-  @     ensures (\forall int i;
-  @       0 <= i && i < candidatesToEliminate.length;
-  @       candidatesToEliminate[i].getStatus() == Candidate.ELIMINATED &&
-  @       candidatesToEliminate[i].getTotalVote() == 0);
-  @     assignable candidateList;
-  @     ensures remainingSeats <= numberOfContinuingCandidates;
-  @     ensures numberElected <= seats;
-  @     ensures \old(lowestContinuingVote) <= lowestContinuingVote;
-  @*/
-public void eliminateCandidates(Candidate[] candidatesToEliminate) {
-	for (int i = 0; i < candidatesToEliminate.length; i++)
-		eliminateCandidate(candidatesToEliminate[i]); //@ nowarn;
-}
+
+ 
 
 /**
  * Declare interim or final results
@@ -1436,56 +1405,63 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	}
 
 	/**
-	 * Who are the lowest continuing candidates?
+	 * Who is the lowest continuing candidate?
 	 * 
 	 * @return The continuing candidate with the least votes
 	 */
 	/*@ requires 1 <= totalCandidates;
 	  @ ensures (\forall int i; 
 	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
-	  @   candidateList[i].getTotalVote() >= \result.getTotalVote());
+	  @   candidateList[i].getTotalVote() >= candidateList[\result].getTotalVote());
 	  @ ensures (\exists int i; 
 	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
-	  @   candidateList[i].equals(\result));
+	  @   i == \result);
 	  @*/
-	public /*@ pure non_null @*/ Candidate findLowestCandidate() {
+	public int findLowestCandidate() {
 		
 		long leastVotes = MAXVOTES;
 		int index = 0; 
 
 		for (int i=0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getTotalVote() < leastVotes) {
+			if (candidates[i].getStatus() == Candidate.CONTINUING) {
+			  if (candidates[i].getTotalVote() < leastVotes) {
 				leastVotes = candidates[i].getTotalVote();
 				index = i;
-			} else if (candidates[i].getTotalVote() == leastVotes) {
+			  } else if (candidates[i].getTotalVote() == leastVotes) {
 				// resolve tie for equal lowest vote in accordance with electoral law
 				if (isHigherThan(candidates[index],candidates[i])) {
 					index = i;
 				}
+			  }
 			}
 		}
 		
 		//@ assert candidates[index].getTotalVote() == leastVotes;
 		//@ assert 0 <= leastVotes;
 		
-		return candidates[index];
+		return index;
 	}
 
 	/**
 	 * Exclude one candidate from the election.
 	 * 
-	 * @param candidate The candidate to be excluded
+	 * @param loser The candidate to be excluded
 	 */
-	/*@ requires isLowestCandidate (candidate);
-	  @ requires candidate.getStatus() == Candidate.CONTINUING;
-	  @ ensures candidate.getStatus() == Candidate.ELIMINATED;
+	/*@ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
+	  @ requires remainingSeats < numberOfContinuingCandidates;
+	  @ requires (state == COUNTING);
+	  @ assignable candidateList;
+	  @ ensures remainingSeats <= numberOfContinuingCandidates;
+	  @ ensures numberElected <= seats;
+	  @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
+	  @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
 	  @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
-	  @   ballotsToCount[b].getCandidateID() != candidate.getCandidateID());
+	  @   ballotsToCount[b].getCandidateID() != candidateList[loser].getCandidateID());
 	  @*/
-	public void eliminateCandidate(final /*@ non_null @*/ Candidate candidate) {
-		final int candidateID = candidate.getCandidateID();
+	public void eliminateCandidate(final int loser) {
+		final int candidateID = candidates[loser].getCandidateID();
 
-		candidate.declareEliminated();
+		candidates[loser].declareEliminated();
 		redistributeBallots(candidateID);
 		auditDecision(Decision.EXCLUDE, candidateID);
 	}
@@ -1548,19 +1524,6 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		  nextCandidateID = ballot.getCandidateID();
 		}
 		while ((nextCandidateID != Ballot.NONTRANSFERABLE) && (!isContinuingCandidateID(nextCandidateID)));
-	}
-	
-	/**
-	 * Is this the lowest continuing candidate?
-	 * 
-	 * @param candidate The candidate
-	 * @return <code>true</code> if this candidate is the lowest, <code>false</code> otherwise
-	 */
-	//@ requires 1 <= totalCandidates;
-	//@ ensures \result <==> candidate.equals(findLowestCandidate());
-	protected /*@ spec_public pure @*/ boolean isLowestCandidate(
-			final /*@ non_null @*/ Candidate candidate) {
-		return candidate.equals(findLowestCandidate());
 	}
 	
 	public abstract void count();

@@ -312,13 +312,13 @@ public class FractionalBallotCounting extends AbstractBallotCounting {
 			
 			// Exclusion of lowest continuing candidate
 			ballotCountingMachine.changeState(BallotCountingModel.NO_SURPLUS_AVAILABLE);
-			Candidate loser = findLowestCandidate();
+			int loser = findLowestCandidate();
 			
 			ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_EXCLUDED);
-			loser.declareEliminated();
+			eliminateCandidate(loser);
 			
 			ballotCountingMachine.changeState(BallotCountingModel.READY_TO_MOVE_BALLOTS);
-			redistributeBallots(loser.getCandidateID());
+			redistributeBallots(candidates[loser].getCandidateID());
 			countNumberValue++;
 		}
 		

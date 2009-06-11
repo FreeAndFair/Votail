@@ -25,8 +25,7 @@ public class ExclusionScenario implements Scenario {
 	 */
 	public final void run() {
 	 	
- 	 	Candidate candidate = ballotCounting.findLowestCandidate();
-	 	ballotCounting.eliminateCandidate(candidate);
+	 	ballotCounting.eliminateCandidate(ballotCounting.findLowestCandidate());
 	 	
 	 	ballotCounting.incrementCountNumber();
 	 	Report report = ballotCounting.report();

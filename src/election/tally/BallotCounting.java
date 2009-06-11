@@ -327,7 +327,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		// Start or else resume the counting of ballots
 		if (status == PRECOUNT) {
 			status = COUNTING;
-			countNumberValue = 1;
+			countNumberValue = 0;
 			ballotCountingMachine.changeState(BallotCountingModel.NO_SEATS_FILLED_YET);
 			
 			// Reset all initial values if not already started or if doing a full recount
@@ -361,22 +361,32 @@ public class BallotCounting extends AbstractBallotCounting {
 
 				ballotCountingMachine.changeState(BallotCountingModel.SURPLUS_AVAILABLE);
 				distributeSurplus(winner);
-				countNumberValue++;
 				calculateSurpluses();
 			}
 			
-			// Exclusion of lowest continuing candidate
-			ballotCountingMachine.changeState(BallotCountingModel.NO_SURPLUS_AVAILABLE);	
-			Candidate loser = findLowestCandidate();
+			// Even if no surplus then elect any candidate with a full quota
+			for (int c = 0; c < totalNumberOfCandidates; c++) {
+				if (hasQuota(candidates[c])) {
+					ballotCountingMachine.changeState(BallotCountingModel.CANDIDATES_HAVE_QUOTA);
+					electCandidate(c);
+					ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_ELECTED);
+				}
+			}
 			
-			ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_EXCLUDED);	
-			eliminateCandidate(loser);
-			numberOfCandidatesEliminated++;
-			totalNumberOfContinuingCandidates--;
+			// Exclusion of lowest continuing candidate if no surplus
+			if (totalNumberOfContinuingCandidates > totalRemainingSeats && 
+					countNumberValue < Candidate.MAXCOUNT) {
+			  ballotCountingMachine.changeState(BallotCountingModel.NO_SURPLUS_AVAILABLE);	
+			  int loser = findLowestCandidate();
 			
-			ballotCountingMachine.changeState(BallotCountingModel.READY_TO_MOVE_BALLOTS);	
-			redistributeBallots(loser.getCandidateID());
-			calculateSurpluses();
+			  ballotCountingMachine.changeState(BallotCountingModel.CANDIDATE_EXCLUDED);	
+			  eliminateCandidate(loser);
+			  numberOfCandidatesEliminated++;
+			  totalNumberOfContinuingCandidates--;
+			
+			  ballotCountingMachine.changeState(BallotCountingModel.READY_TO_MOVE_BALLOTS);	
+			  redistributeBallots(candidates[loser].getCandidateID());
+ 			}
 			countNumberValue++;
 		}
 		

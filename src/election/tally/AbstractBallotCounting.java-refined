@@ -111,20 +111,20 @@ public abstract class AbstractBallotCounting {
     @   candidateList[i].getOriginalVote() == 0);
     @
     @ public invariant (state == PRELOAD || state == LOADING || state == PRECOUNT ||
-    @   state == COUNTING || state == FINISHED || state == REPORT)
+    @   state == COUNTING || state == FINISHED)
     @   ==>
     @   (\forall int i, j; 
     @     0 <= i && i < totalCandidates && i < j && j < totalCandidates;
     @     candidateList[i].getCandidateID() != candidateList[j].getCandidateID());
     @
     @ public invariant (state == PRELOAD || state == LOADING || state == PRECOUNT ||
-    @   state == COUNTING || state == FINISHED || state == REPORT)
+    @   state == COUNTING || state == FINISHED)
     @   ==>
     @   (\forall int i; 
     @     0 <= i && i < totalCandidates;
     @     candidateList[i].getCandidateID() != Ballot.NONTRANSFERABLE);
     @
-    @ protected invariant (state == COUNTING || state == FINISHED || state == REPORT)
+    @ protected invariant (state == COUNTING || state == FINISHED)
     @   ==> (\forall int i; 0 <= i && i < totalCandidates;
     @   candidateList[i].getTotalVote() == 
     @   getNumberOfVotes (candidateList[i].getCandidateID()));
@@ -155,10 +155,10 @@ public abstract class AbstractBallotCounting {
   //@ public invariant 0 <= numberElected;
   //@ public invariant numberElected <= seats;
   /*@ public invariant (state <= PRECOUNT) ==> numberElected == 0;
-    @ protected invariant (COUNTING <= state && state <= REPORT)
+    @ protected invariant (COUNTING <= state && state <= FINISHED)
     @   ==> numberElected == (\num_of int i; 0 <= i && i < totalCandidates;
     @       isElected(candidateList[i]));
-    @ public invariant (state == FINISHED || state == REPORT) ==> 
+    @ public invariant (state == FINISHED) ==> 
     @   numberElected == seats;
     @ public constraint (state == COUNTING) ==> 
     @   \old(numberElected) <= numberElected;
@@ -169,7 +169,7 @@ public abstract class AbstractBallotCounting {
   //@ public model int numberEliminated;
   //@ public invariant 0 <= numberEliminated;
   //@ public invariant numberEliminated <= totalCandidates - seats;
-  /*@ public invariant (state == COUNTING || state == FINISHED || state == REPORT)
+  /*@ public invariant (state == COUNTING || state == FINISHED)
     @   ==> numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
     @       candidateList[i].getStatus() == Candidate.ELIMINATED);
     @*/
@@ -210,7 +210,7 @@ public abstract class AbstractBallotCounting {
     @ public constraint (state == LOADING) 
     @   ==> \old (totalVotes) <= totalVotes;
     @ public constraint (state == PRECOUNT || state == COUNTING || 
-    @   state == FINISHED || state == REPORT) 
+    @   state == FINISHED) 
     @   ==> totalVotes == \old (totalVotes);
     @*/
 	
@@ -219,7 +219,7 @@ public abstract class AbstractBallotCounting {
   //@ public model int nonTransferableVotes;
   //@ public invariant 0 <= nonTransferableVotes;
   //@ public invariant nonTransferableVotes <= totalVotes;
-  /*@ public invariant (state == COUNTING || state == FINISHED || state == REPORT)
+  /*@ public invariant (state == COUNTING || state == FINISHED)
     @   ==> nonTransferableVotes == (\num_of int i; 0 <= i && i < totalVotes;
     @   ballotsToCount[i].candidateID == Ballot.NONTRANSFERABLE);
     @*/
@@ -270,7 +270,7 @@ public abstract class AbstractBallotCounting {
   //@ public invariant 0 <= remainingSeats;
   //@ public invariant remainingSeats <= seats;
   //@ public invariant (state <= PRECOUNT) ==> remainingSeats == seats;
-  /*@ public invariant (state == FINISHED || state == REPORT) ==> 
+  /*@ public invariant (state == FINISHED) ==> 
 	@   remainingSeats == 0;
 	@ public invariant (state == COUNTING) ==> 
 	@   remainingSeats == (seats - numberElected);
@@ -464,7 +464,7 @@ public abstract class AbstractBallotCounting {
    * @return <code>true</code> if candidate has had enough votes to save deposit 
    * or has been elected
    */
-  /*@ requires (state == COUNTING) || (state == FINISHED) || (state == REPORT);
+  /*@ requires (state == COUNTING) || (state == FINISHED);
     @ ensures \result == (candidate.getOriginalVote() >= depositSavingThreshold) ||
     @   (isElected (candidate) == true);
     @*/
@@ -512,56 +512,10 @@ public abstract class AbstractBallotCounting {
     @*/
     public abstract void distributeSurplus(int candidateWithSurplus);
 	
-	
-  /** 
-   * Elimination of one or more candidates and transfer of votes
-   * 
-   * @param candidate This candidate
-   * 
-   * @design More than one candidate could be eliminated in the same round if the
-   *   combined vote held by the group is not enough to elect a candidate or to
-   *   save a deposit, and if there are no surplus votes available for distribution.
-   * 
-   * @see requirement 10, section 4, item 4, page 16
-   * @see requirement 12, section 4, item 4, page 16
-   */
-  /*@ 
-    @ requires 1 <= candidatesToEliminate.length;
-    @ requires candidatesToEliminate.length <= numberOfContinuingCandidates; 
-    @ requires (\forall int i;
-    @          0 <= i && i < candidatesToEliminate.length;
-    @          candidatesToEliminate[i].getTotalVote() == 0 ||
-    @          depositSavingThreshold <= candidatesToEliminate[i].getTotalVote() ||
-    @          candidatesToEliminate[i].getTotalVote() + 
-    @          sumOfSurpluses + (\sum int j;
-    @            0 <= j && j != i && j < candidatesToEliminate.length;
-    @            candidatesToEliminate[i].getTotalVote()) < depositSavingThreshold);
-    @ requires (\forall int i;
-    @          0 <= i && i < candidatesToEliminate.length;
-    @          candidatesToEliminate[i].getStatus() == Candidate.CONTINUING);
-    @ requires sumOfSurpluses + (\sum int i;
-    @          0 <= i && i < candidatesToEliminate.length;
-    @          candidatesToEliminate[i].getTotalVote()) < quota;
-    @ requires remainingSeats < numberOfContinuingCandidates;
-    @ requires (state == COUNTING);
-    @ ensures (\forall int i;
-    @          0 <= i && i < candidatesToEliminate.length;
-    @          candidatesToEliminate[i].getStatus() == Candidate.ELIMINATED &&
-    @          candidatesToEliminate[i].getTotalVote() == 0);
-    @ ensures remainingSeats <= numberOfContinuingCandidates;
-    @ ensures numberElected <= seats;
-    @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
-    @*/
-  public void eliminateCandidates(
-		  /*@ non_null @*/ Candidate[] candidatesToEliminate);
-	
-	
   /** 
    * Declare election results
    */
-  /*@ requires state == FINISHED;
-    @ assignable state;
-    @ ensures state == REPORT;
+  /*@ requires state == FINISHED || state == COUNTING;
     @*/
   public /*@ non_null @*/ Report report();
 
@@ -639,7 +593,7 @@ public abstract class AbstractBallotCounting {
    * @param candidateID Candidate ID for which to check the votes.
    * @return Number of votes currently assigned to this candidate
    */
-  /*@ requires (state == COUNTING || state == FINISHED || state == REPORT);
+  /*@ requires (state == COUNTING || state == FINISHED);
     @ requires 0 < candidateID || candidateID == Ballot.NONTRANSFERABLE;
     @ ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
     @     ballotsToCount[j].isAssignedTo(candidateID));
@@ -975,7 +929,6 @@ public abstract class AbstractBallotCounting {
    * @return Order of this ballot in numbered list of ballots
    */
   /*@
-    @ requires state == REPORT;
     @ ensures 1 <= \result;
     @ ensures \result <= ballotsToCount.length;
     @ ensures (\forall Ballot a, b; a != null && b != null;
@@ -991,7 +944,6 @@ public abstract class AbstractBallotCounting {
    * @return Order of this candidate for use when lots are chosen
    */
   /*@
-    @ requires state == REPORT;
     @ ensures 1 <= \result;
     @ ensures \result <= candidateList.length;
     @ ensures (\forall Candidate c, d; c != null && d != null;
