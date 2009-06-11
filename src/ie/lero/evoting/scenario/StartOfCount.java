@@ -33,6 +33,7 @@ public class StartOfCount implements Scenario {
 		Report report = ballotCounting.report();
 		
 		// Display results with audit log
+		//@ assert 51 == ballotCounting.getQuota();
 		System.out.println("Quota: " + ballotCounting.getQuota());
 		System.out.println(report.getResults());
 		System.out.println(ballotCounting.getDecisionLog());
