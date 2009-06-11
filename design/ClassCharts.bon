@@ -42,8 +42,8 @@ query
   "Who is the first preference for?",
   "Who is the next preference for?",
   "Who is the highest preference continuing candidate on this ballot?",
-  "Is there a fractional weight on this ballot?",
-  "What is the fractional weight on this ballot?",
+  --"Is there a fractional weight on this ballot?",
+  --"What is the fractional weight on this ballot?",
   "Which elected or continuing candidate benefits from this ballot?"
 command
   "Divide the weight of this ballot by a transfer factor",

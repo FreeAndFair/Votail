@@ -23,6 +23,12 @@ public interface BallotCountingModel extends election.util.Workflow {
 	public static final int ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT = 18;
 	public static final int READY_TO_REWEIGHT_BALLOTS = 19;
 
+	//@ public constraint \old(getState()) == READY_TO_COUNT ==> getState() == NO_SEATS_FILLED_YET; 
+	/*@ public constraint \old(getState()) == NO_SEATS_FILLED_YET ==> getState() == CANDIDATE_ELECTED || 
+	  @                                                               getState() == NO_SURPLUS_AVAILABLE;
+	  @ public constraint \old(getState()) == CANDIDATE_ELECTED ==> getState() == SURPLUS_AVAILABLE ||
+	  @                                                             getState() == NO_SURPLUS_AVAILABLE;
+	  @*/
 	public abstract /*@ pure @*/ int getState();
 
 	public abstract void changeState(int newState);
@@ -30,11 +36,14 @@ public interface BallotCountingModel extends election.util.Workflow {
 	/**
 	 * Set of possible states
 	 */
+	//@ ensures \result <==> (READY_TO_COUNT <= value && value <= READY_TO_REWEIGHT_BALLOTS);
 	public abstract /*@ pure @*/ boolean isPossibleState(int value);
 
 	/**
 	 * Set of valid transitions from state machine diagram
 	 */
+	//@ requires isPossibleState(fromState);
+	//@ requires isPossibleState(toState);
 	public abstract /*@ pure @*/ boolean isTransition(int fromState, int toState);
 
 }
