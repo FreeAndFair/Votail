@@ -83,8 +83,6 @@ end
 class_chart BALLOT_COUNTING
 explanation
   "Count algorithm for tallying of the votes in Dail and Seanad elections"
-inherit
-  COUNT_PROCESS
 query
   "How many continuing candidates?",
   "How many remaining seats?"
@@ -114,6 +112,24 @@ query
   "How many votes in each round?"
 end
 
+class_chart ELECTION
+end
+
+class_chart EXCLUSION
+end
+
+class_chart REGISTRAR
+end
+
+class_chart START_OF_COUNT
+end
+
+class_chart SURPLUS_DISTRIBUTION
+end
+
+class_chart POLLING_BOOTH
+end
+
 class_chart VOTER
 explanation
   "A person who casts a ballot in an election"
@@ -134,4 +150,7 @@ constraint
   "It is impossible to reveal at what time of day the voter has cast",
   "A voter may only reverse their most recent ballot",
   "All ballots are cast with the same initial weight"
+end
+
+class_chart WORKFLOW
 end
