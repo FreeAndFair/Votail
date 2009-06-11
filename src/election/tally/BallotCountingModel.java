@@ -27,7 +27,15 @@ public interface BallotCountingModel extends election.util.Workflow {
 	/*@ public constraint \old(getState()) == NO_SEATS_FILLED_YET ==> getState() == CANDIDATE_ELECTED || 
 	  @                                                               getState() == NO_SURPLUS_AVAILABLE;
 	  @ public constraint \old(getState()) == CANDIDATE_ELECTED ==> getState() == SURPLUS_AVAILABLE ||
-	  @                                                             getState() == NO_SURPLUS_AVAILABLE;
+	  @                                                             getState() == NO_SURPLUS_AVAILABLE ||
+	  @                                                             getState() == CANDIDATES_HAVE_QUOTA;
+	  @ public constraint \old(getState()) == SURPLUS_AVAILABLE ==> getState() == READY_TO_ALLOCATE_SURPLUS;
+	  @ public constraint \old(getState()) == READY_TO_ALLOCATE_SURPLUS ==> getState() == READY_TO_CALCULATE_ROUNDING_TRANFSERS;
+	  @ public constraint \old(getState()) == READY_TO_CALCULATE_ROUNDING_TRANSFERS ==> getState() == READY_TO_ADJUST_NUMBER_OF_TRANSFERS;
+	  @ public constraint \old(getState()) == READY_TO_ADJUST_NUMBER_OF_TRANSFERS ==> getState() == READY_TO_MOVE_BALLOTS;
+	  @ public constraint \old(getState()) == READY_TO_MOVE_BALLOTS ==> getState() == READY_FOR_NEXT_ROUND_OF_COUNTING;
+	  @ public constraint \old(getState()) == CANDIDATE_EXCLUDED ==> getState() == READY_TO_MOVE_BALLOTS;
+	  @ public constraint \old(getState()) == NO_SURPLUS_AVAILABLE ==> getState() == CANDIDATE_EXCLUDED;
 	  @*/
 	public abstract /*@ pure @*/ int getState();
 
@@ -36,13 +44,13 @@ public interface BallotCountingModel extends election.util.Workflow {
 	/**
 	 * Set of possible states
 	 */
-	//@ ensures \result <==> (READY_TO_COUNT <= value && value <= READY_TO_REWEIGHT_BALLOTS);
+	//@ also ensures \result <==> (READY_TO_COUNT <= value && value <= READY_TO_REWEIGHT_BALLOTS);
 	public abstract /*@ pure @*/ boolean isPossibleState(int value);
 
 	/**
 	 * Set of valid transitions from state machine diagram
 	 */
-	//@ requires isPossibleState(fromState);
+	//@ also requires isPossibleState(fromState);
 	//@ requires isPossibleState(toState);
 	public abstract /*@ pure @*/ boolean isTransition(int fromState, int toState);
 
