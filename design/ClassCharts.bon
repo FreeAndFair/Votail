@@ -42,16 +42,12 @@ query
   "Who is the first preference for?",
   "Who is the next preference for?",
   "Who is the highest preference continuing candidate on this ballot?",
-  --"Is there a fractional weight on this ballot?",
-  --"What is the fractional weight on this ballot?",
   "Which elected or continuing candidate benefits from this ballot?"
 command
-  "Divide the weight of this ballot by a transfer factor",
-  "Allocate this ballot to the next preference candidate"
+   "Allocate this ballot to the next preference candidate"
 constraint
   "The sequence of preferences is unbroken e.g. no candidate is listed twice",
-  "The frcational weight is greater than zero but not greater than one"
-end
+ end
 
 class_chart BALLOT_BOX
 explanation 
@@ -90,14 +86,12 @@ command
   "Calculate quota",
   "Find highest continuing candidate with quota",
   "Calculate surplus",
-  "Calculate weight factor",
   "Calculate transfer factor",
   "Calculate non-fractional transfers",
   "Calculate fractional differences",
   "Calculate adjustments",
   "Calculate transfers",
   "Move ballots",
-  "Weight and transfer ballots",
   "Select lowest continuing candidates for exclusion",
   "Declare remaining candidates elected",
   "Close the count" 
@@ -113,21 +107,44 @@ query
 end
 
 class_chart ELECTION
+explanation
+  "The overall parameters of the election"
+query
+  "How many candidates in this election?",
+  "How many seats are in this constituency?",
+  "How many seats are being filled in this election?"
+constraint
+  "At least one seat is bing filled",
+  "The number of seats being filled is not more than the number of seats in this constituency",
+  "The number of seats being filled is less than the number of candidates"
 end
 
 class_chart EXCLUSION
+explanation
+  "The stage of counting when the lowest continuing candidate is deemed to have lost \
+  \ and his or her votes are redistributed to the next preference on the ballot or \
+  \ else to the pile or non-transferbale ballots"
 end
 
 class_chart REGISTRAR
+explanation
+  "The mechanism by which voters are authenticated before being given a ballot paper."
 end
 
 class_chart START_OF_COUNT
+explanation
+  "The stage of counting when the ballot box is opened and the initial calculations are made."
 end
 
 class_chart SURPLUS_DISTRIBUTION
+explanation
+  "The stage of counting when the surplus ballots of an elected candidate are \
+  \ allocated in proportion to their next preferences"
 end
 
 class_chart POLLING_BOOTH
+explanation
+  "The mechanism by which a ballot is transmitted from the voter to the ballot box"
 end
 
 class_chart VOTER
@@ -150,7 +167,4 @@ constraint
   "It is impossible to reveal at what time of day the voter has cast",
   "A voter may only reverse their most recent ballot",
   "All ballots are cast with the same initial weight"
-end
-
-class_chart WORKFLOW
 end

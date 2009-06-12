@@ -22,29 +22,35 @@
 -- THE SOFTWARE.
 --
 
-cluster_chart ELECTION
+cluster_chart COUNTING_PROCESS
 indexing
   author: "Dermot Cochran"
 explanation 
-  "Counting of electronic ballots"
+  "The counting of electronic ballots"
 class BALLOT description "List of some or all candidates in order of preference"
 class BALLOT_BOX description "The set of all valid ballots"
 class BALLOT_COUNTING description "The algorithm used to count the ballots"
 class CANDIDATE description "A person eligible and nominated for election"
-class ELECTION description "The overall conduct and management of the election"
-class POLLING_BOOTH description "The security mechanism by which ballots are cast"
-class REGISTRAR description "The list of all authenticated voters"
+class ELECTION description "The overall parameters of the election"
 class REPORT description "The official statement of the election results"
-class VOTER description "The person casting a vote"
 end
 
-cluster_chart WORKFLOW
+cluster_chart COUNTING_STAGES
 indexing
   author: "Dermot Cochran"
 explanation
-  "The handling of information during the election process"
+  "The handling of information during different statges of the election process"
 class EXCLUSION description "The exclusion of the lowest continuing candidate and redistribution of ballots"
 class START_OF_COUNT description "The closing of polling, opening of ballot box and counting of votes"
 class SURPLUS_DISTRIBUTION description "Election of highest continuing candidate and distribution of surplus ballots"
-class WORKFLOW description "The different stages of the counting process"
+end
+
+cluster_chart VOTING_PROCESS
+indexing
+  author: "Dermot Cochran"
+explanation 
+  "The casting of ballots by electronic or computer mediated means"
+class POLLING_BOOTH description "The security mechanism by which ballots are cast"
+class REGISTRAR description "The list of all authenticated voters"
+class VOTER description "The person casting a vote"
 end
