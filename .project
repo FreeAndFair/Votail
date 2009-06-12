@@ -21,7 +21,7 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>mobius.escjava2.plugin.autocheckEscjavaBuilder</name>
+			<name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -31,7 +31,7 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
+			<name>mobius.escjava2.plugin.autocheckEscjavaBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -46,5 +46,6 @@
 		<nature>AutoGrader.nature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
 		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+		<nature>net.sourceforge.pmd.eclipse.plugin.pmdNature</nature>
 	</natures>
 </projectDescription>
