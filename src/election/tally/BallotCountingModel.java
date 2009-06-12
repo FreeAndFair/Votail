@@ -78,7 +78,7 @@ public interface BallotCountingModel {
 	  @                   getState() == CANDIDATE_EXCLUDED;
 	  @
 	  @ public constraint \old(getState()) == READY_TO_REWEIGHT_BALLOTS ==>
-	  @                   getState() == READY_FOR_NEXT_ROUND_OF_COUNTING;
+	  @                   getState() == READY_TO_MOVE_BALLOTS;
 	  @
 	  @ public constraint \old(getState()) == ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT ==>
 	  @                   getState() == ALL_SEATS_FILLED;

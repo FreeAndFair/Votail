@@ -1,17 +1,17 @@
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
-import election.tally.Report;
 
 /**
  * @author Dermot Cochran
  * @copyright 2009 Dermot Cochran
  */
-public class SurplusScenario {
+public class SurplusScenario extends TestCase{
 	
 	protected BallotCounting ballotCounting;
 	protected Election parameters;
@@ -50,8 +50,6 @@ public class SurplusScenario {
 			
 		}
 	 	parameters.setCandidateList(candidates);
-	 	System.out.println("Generated " + ballotBox.size() + " ballot papers for " +
-	 			parameters.numberOfCandidates + " candidates.");
 	}
 	 
 	/**
@@ -69,23 +67,10 @@ public class SurplusScenario {
  		ballotCounting.electCandidate(c);
 
  	 	ballotCounting.distributeSurplus(c);
- 	 	ballotCounting.incrementCountNumber();
-	 	Report report = ballotCounting.report();
-	 	//@ assert 0 < report.getNumberElected();
-	 	
-	 	// Declare the results
-	 	System.out.println(report.getResults());
-	 	System.out.println(ballotCounting.getDecisionLog());
-	}
-	
-	/**
-	 * Election of the highest candidate and distribution of their surplus ballots.
-	 * 
-	 * @param args Optional parameters to use when running this scenario
-	 */
-	public static void main(String[] args) {
-		SurplusScenario scenario = new SurplusScenario();
-		scenario.setUp();
-		scenario.testDistributionOfSurplus();
+ 	 	
+	 	//@ assert 1 == ballotCounting.report().getNumberElected();
+		//@ assert ballotCounting.report().hasSavedDeposit(candidate1.getCandidateID());
+		//@ assert ballotCounting.report().isElected(candidate2.getCandidateID());
+		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
 	}
 }

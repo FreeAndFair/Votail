@@ -1,5 +1,6 @@
 package election.tally;
 
+
 /*
  * Copyright (c) 2005-2009 Dermot Cochran
  * 
@@ -95,17 +96,23 @@ public class Report {
 	/**
 	 * @return the electedCandidateIDs
 	 */
-	public /*@ pure @*/ int[] getElectedCandidateIDs() {
-		return electedCandidateIDs;
+	public /*@ pure @*/ boolean isElectedCandidateID (int id) {
+		for (int i=0; i < electedCandidateIDs.length; i++) {
+			if (id == electedCandidateIDs[i]) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	//@ public invariant 0 <= totalNumberOfCounts;
 	private /*@ spec_public @*/ int totalNumberOfCounts;
 
-	/**
-	 * Number of votes for each candidate at each round of counting.
-	 */
-	private StringBuffer[] resultsAtEachCount;
+	private /*@ spec_public @*/ int[] candidateIDs;
+
+	private long[][] candidateVotes;
+
+	private /*@ spec_oublic @*/ int numberOfCandidates;
 	
 	/**
 	 * Store the election results for this constituency.
@@ -119,48 +126,46 @@ public class Report {
 	  @*/
 	public Report(/*@ non_null @*/ final int[] list, final int counts, Candidate[] candidates){
 		numberElected = list.length;
-		electedCandidateIDs = list;
+		electedCandidateIDs = new int [list.length];
+		for (int i=0; i < list.length; i++) {
+			electedCandidateIDs[i] = list[i];
+		}
 		totalNumberOfCounts = counts;
-		resultsAtEachCount = new StringBuffer[counts];
-		for (int i = 0; i < counts && i < Candidate.MAXCOUNT; i++){
-			resultsAtEachCount[i] = new StringBuffer();
-			for (int c = 0; c < candidates.length; c++) {
-				resultsAtEachCount[i].append ("Candidate " + 
-						candidates[c].getCandidateID() + " had " +
-						candidates[c].getTotalAtCount(i) + " votes.\n");
+		numberOfCandidates = candidates.length;
+		candidateIDs = new int [candidates.length];
+		candidateVotes = new long [candidates.length][counts];
+		for (int c=0; c<candidates.length; c++) {
+			candidateIDs[c] = candidates[c].getCandidateID();
+			for (int n=0; n < counts; n++) {
+				candidateVotes[c][n] = candidates[c].getVoteAtCount(n);
 			}
-			} 
+		}
 		}
 
 	/**
 	 * @return the totalNumberOfCounts
 	 */
-	public /*@ pure @*/ 
-	int getTotalNumberOfCounts() {
+	public /*@ pure @*/ int getTotalNumberOfCounts() {
 		return totalNumberOfCounts;
 	}
 
 	/**
-	 * List the results for auditing.
+	 * Get the total vote for each candidate at each round of counting.
 	 * 
-	 * @return The list of candidate IDs and number of rounds
+	 * @param id The ID number of the candidate
+	 * @param n The round of counting
+	 * 
+	 * @return The total vote for this candidate at that round of counting.
 	 */
-	public /*@ pure @*/ StringBuffer getResults() {
-		StringBuffer results = new StringBuffer();
-		results.append("Number of rounds of counting: " + totalNumberOfCounts + "\n");
-		results.append("Number of candidates elected: " + numberElected + "\n");
-		results.append("List of candidates elected:");
-		for (int c = 0; c < numberElected; c++) {
-			results.append(" ");
-			results.append(electedCandidateIDs[c]);
+	//@ requires 0 <= n && n < totalNumberOfCounts;
+	//@ requires (\exists int i; 0 <= i && i < numberOfCandidates; candidateIDs[i] == id);
+	public /*@ pure @*/ long getResult(int id, int n) {
+		for (int c = 0; c < numberOfCandidates; c++) {
+			if (candidateIDs[c]== id) {
+				return candidateVotes[c][n];
+			}	
 		}
-		results.append("\n\n");
-		for (int i = 0; i < totalNumberOfCounts; i++) {
-			results.append("At count number ");
-			results.append(i+1);
-			results.append(":\n");
-			results.append(resultsAtEachCount[i]);
-		}
-		return results;
+		//@ unreachable;
+		return 0;
 	}
 }

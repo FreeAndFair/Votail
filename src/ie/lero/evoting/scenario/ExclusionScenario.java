@@ -1,10 +1,10 @@
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
-import election.tally.Report;
 
 /**
  * This is a test for the correctness of the ballot counting process in the 
@@ -15,7 +15,7 @@ import election.tally.Report;
  * 
  * @see election.tally.Candidate
  */
-public class ExclusionScenario implements Scenario {
+public class ExclusionScenario extends TestCase {
 
 	private BallotCounting ballotCounting;
 	private BallotBox ballotBox;
@@ -24,17 +24,12 @@ public class ExclusionScenario implements Scenario {
 	/**
 	 * Execute this scenario.
 	 */
-	public final void run() {
+	public final void testExclusion() {
 	 	
 	 	ballotCounting.eliminateCandidate(ballotCounting.findLowestCandidate());
 	 	
-	 	ballotCounting.incrementCountNumber();
-	 	Report report = ballotCounting.report();
-	 	//@ assert 0 < report.getNumberElected();
-	 	
-	 	// Declare the results
-	 	System.out.println(report.getResults());
-	 	System.out.println(ballotCounting.getDecisionLog());
+	 	//@ assert 0 == ballotCounting.report().getNumberElected();
+		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
  	}
 
 	/**
@@ -66,16 +61,5 @@ public class ExclusionScenario implements Scenario {
 		parameters.setCandidateList(candidates);
  	 	ballotCounting.setup(parameters);
  	 	ballotCounting.load(ballotBox);
-	}
-	
-	/**
-	 * Test the event that the lowest continuing candidate is excluded from 
-	 * election.
-	 * 
-	 * @param args unused
-	 */
-	public static void main(String[] args) {
-		Scenario scenario = new ExclusionScenario();
-		scenario.run();
 	}
 }

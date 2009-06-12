@@ -1,18 +1,18 @@
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
-import election.tally.Report;
 
 
 /**
  * @author Dermot Cochran
  *
  */
-public class StartOfCount implements Scenario {
+public class StartOfCount extends TestCase {
 
 	protected BallotCounting ballotCounting;
 	protected /*@ spec_public @*/ Election parameters;
@@ -22,24 +22,22 @@ public class StartOfCount implements Scenario {
 	/**
 	 * Test that the count process is started correctly.
 	 */
-	public void run () {
+	public void testCount () {
 		ballotCounting.setup(parameters);
 		ballotCounting.load(ballotBox);
 		
 		//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
 		ballotCounting.count();
 		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
-		Report report = ballotCounting.report();
 		
-		// Display results with audit log
-		//@ assert 51 == ballotCounting.getQuota();
-		System.out.println("Quota: " + ballotCounting.getQuota());
-		System.out.println(report.getResults());
-		System.out.println(ballotCounting.getDecisionLog());
+		//@ assert 1 == ballotCounting.report().getNumberElected();
+		//@ assert ballotCounting.report().hasSavedDeposit(candidate1.getCandidateID());
+		//@ assert ballotCounting.report().isElected(candidate2.getCandidateID());
+		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
 	}
 
 	//@ ensures parameters != null;
-	public StartOfCount() {
+	protected void setUp() {
 		ballotCounting = new BallotCounting();
 		parameters = new Election();
 		parameters.totalNumberOfSeats = 1;
@@ -49,8 +47,7 @@ public class StartOfCount implements Scenario {
 		candidate2 = new Candidate();
 		ballotBox = new BallotBox();
 		
-		// Generate 101 ballots between two candidates
-		Candidate[] list = {candidate1,candidate2};
+ 		Candidate[] list = {candidate1,candidate2};
 		parameters.setCandidateList(list);
  		Ballot ballot = new Ballot();
  		ballot.setFirstPreference(candidate2.getCandidateID());
@@ -65,13 +62,6 @@ public class StartOfCount implements Scenario {
 		  ballot.setFirstPreference(candidate2.getCandidateID());
 		  ballotBox.accept(ballot);
 		}
-	}
-	
-	/**
-	 * @param args unused
-	 */
-	public static void main(String[] args) {
-		Scenario scenario = new StartOfCount();
-		scenario.run();
+		//@ assert ballotBox.size() == 101;
 	}
 }

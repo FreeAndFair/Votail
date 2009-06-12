@@ -26,8 +26,6 @@
 
 package election.tally;
 
-import scenario.util.TestBallot;
-
 /** Data transfer structure for set of all valid votes */
 //@ refine "BallotBox.java-refined";
 public class BallotBox {
@@ -104,6 +102,8 @@ public class BallotBox {
 	 * @param candidateID The first preference candidateID for the test ballot
 	 */
 	public void addBallot(int candidateID) {
-		accept(new TestBallot(candidateID));
+		Ballot ballot = new Ballot();
+		ballot.setFirstPreference(candidateID);
+		accept(ballot);
 	}
 }

@@ -43,29 +43,29 @@ public class BallotCounting extends AbstractBallotCounting {
 	/**
 	 * Inner class for state machine
 	 */
-	public class BallotCountingMachine implements BallotCountingModel {
+	public static class BallotCountingMachine implements BallotCountingModel {
 		
 		// Initial state
 		/**
 		 * Inner state machine for counting of Dail election ballots.
 		 */
 		public BallotCountingMachine() {
-			state = READY_TO_COUNT;
+			substate = READY_TO_COUNT;
 		} //@ nowarn;
 
 		//@ public invariant isPossibleState (state);
 		//@ public constraint isTransition(\old(state), state);
 		//@ public initially state == READY_TO_COUNT;
- 		private /*@ spec_public @*/ int state;
+ 		private /*@ spec_public @*/ int substate;
  		
  		/**
  		 * Get the state of the inner automaton for counting ballots in Dail elections.
  		 * 
  		 * @return The state of the count.
  		 */
- 		//@ also ensures \result == state;
+ 		//@ also ensures \result == substate;
  		public /*@ pure @*/ int getState() {
-			return state;
+			return substate;
 		} //@ nowarn;
 
  		/**
@@ -73,9 +73,9 @@ public class BallotCounting extends AbstractBallotCounting {
  		 * 
  		 * @param newState The next stage of counting.
  		 */
- 		//@ also ensures newState == state;
+ 		//@ also ensures newState == getState();
 		public void changeState(final int newState) {
-			state = newState;
+			substate = newState;
 		} //@ nowarn;
 
 		/**
@@ -230,28 +230,28 @@ public class BallotCounting extends AbstractBallotCounting {
     /**
 	 * Inner class for state machine
 	 */
-	public class FractionalBallotCountingMachine implements BallotCountingModel {
+	public static class FractionalBallotCountingMachine implements BallotCountingModel {
 		
 		// Initial state
 		public FractionalBallotCountingMachine() {
-			state = READY_TO_COUNT;
+			substate = READY_TO_COUNT;
 		}
 	
 		//@ public invariant isPossibleState (state);
 		//@ public constraint isTransition(\old(state), state);
-		private /*@ spec_public @*/ int state;
+		private /*@ spec_public @*/ int substate;
 		
-		//@ also ensures \result == state;
+		//@ also ensures \result == substate;
 		public int getState() {
-			return state;
+			return substate;
 		}
 	
 		/**
 		 * 
 		 */
-		//@ also ensures newState == state;
+		//@ also ensures newState == getState();
 		public void changeState(int newState) {
-			state = newState;
+			substate = newState;
 		}
 	
 		public boolean isPossibleState(final int value) {
