@@ -1,7 +1,7 @@
 package ie.lero.evoting.scenario;
 
-import scenario.util.TestBallot;
 import election.tally.Ballot;
+import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
@@ -16,14 +16,14 @@ public class SurplusScenario {
 	protected BallotCounting ballotCounting;
 	protected Election parameters;
 	protected Candidate candidate;
-	protected scenario.util.TestBallotBox ballotBox;
+	protected BallotBox ballotBox;
 	
 	/**
 	 * Create the scenario data needed
 	 */
 	protected void setUp() {
 		ballotCounting = new BallotCounting();
-		ballotBox = new scenario.util.TestBallotBox();
+		ballotBox = new BallotBox();
 		parameters = new Election();
 		parameters.totalNumberOfSeats = 2;
 		parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
@@ -44,7 +44,8 @@ public class SurplusScenario {
 		
 		// Generate first preference ballots to match
 		for (int b = 0; b < numberOfVotes && ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
-				Ballot testBallot = new TestBallot(candidateIDList,numberOfPreferences);
+				Ballot testBallot = new Ballot();
+				testBallot.setMultiplePreferences(candidateIDList,numberOfPreferences);
 				ballotBox.accept(testBallot);
 			
 		}

@@ -1,7 +1,6 @@
 package ie.lero.evoting.scenario;
 
-import scenario.util.TestBallot;
-import scenario.util.TestBallotBox;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
@@ -48,19 +47,22 @@ public class StartOfCount implements Scenario {
 		parameters.numberOfCandidates = 2;
 		candidate1 = new Candidate();
 		candidate2 = new Candidate();
-		ballotBox = new TestBallotBox();
+		ballotBox = new BallotBox();
 		
 		// Generate 101 ballots between two candidates
 		Candidate[] list = {candidate1,candidate2};
 		parameters.setCandidateList(list);
- 		TestBallot ballot = new TestBallot(candidate2.getCandidateID());
+ 		Ballot ballot = new Ballot();
+ 		ballot.setFirstPreference(candidate2.getCandidateID());
  		ballotBox.accept(ballot);
 
 		// A close race between two almost equal candidates
 		for (int i = 0; i < 50; i++) {
-		  ballot = new TestBallot (candidate1.getCandidateID());
+		  ballot = new Ballot();
+		  ballot.setFirstPreference(candidate1.getCandidateID());
 		  ballotBox.accept(ballot);
-		  ballot = new TestBallot (candidate2.getCandidateID());
+		  ballot = new Ballot();
+		  ballot.setFirstPreference(candidate2.getCandidateID());
 		  ballotBox.accept(ballot);
 		}
 	}

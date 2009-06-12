@@ -1,5 +1,6 @@
 package ie.lero.evoting.scenario;
 
+import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
@@ -17,7 +18,7 @@ import election.tally.Report;
 public class ExclusionScenario implements Scenario {
 
 	private BallotCounting ballotCounting;
-	private scenario.util.TestBallotBox ballotBox;
+	private BallotBox ballotBox;
 
 	
 	/**
@@ -41,7 +42,7 @@ public class ExclusionScenario implements Scenario {
 	 */
 	public ExclusionScenario() {
 		
-		ballotBox = new scenario.util.TestBallotBox();
+		ballotBox = new BallotBox();
 		ballotCounting = new BallotCounting();
 		Election parameters = new Election();
 		parameters.totalNumberOfSeats = 4;

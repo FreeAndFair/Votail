@@ -1,6 +1,6 @@
 package election.tally;
 
-public interface BallotCountingModel extends election.util.Workflow {
+public interface BallotCountingModel {
 
 	// States within the ballot counting machine
 	public static final int READY_TO_COUNT = 1;
@@ -30,27 +30,33 @@ public interface BallotCountingModel extends election.util.Workflow {
 	  @                                                             getState() == NO_SURPLUS_AVAILABLE ||
 	  @                                                             getState() == CANDIDATES_HAVE_QUOTA;
 	  @ public constraint \old(getState()) == SURPLUS_AVAILABLE ==> getState() == READY_TO_ALLOCATE_SURPLUS;
-	  @ public constraint \old(getState()) == READY_TO_ALLOCATE_SURPLUS ==> getState() == READY_TO_CALCULATE_ROUNDING_TRANFSERS;
+	  @ public constraint \old(getState()) == READY_TO_ALLOCATE_SURPLUS ==> getState() == READY_TO_CALCULATE_ROUNDING_TRANFSFERS;
 	  @ public constraint \old(getState()) == READY_TO_CALCULATE_ROUNDING_TRANSFERS ==> getState() == READY_TO_ADJUST_NUMBER_OF_TRANSFERS;
 	  @ public constraint \old(getState()) == READY_TO_ADJUST_NUMBER_OF_TRANSFERS ==> getState() == READY_TO_MOVE_BALLOTS;
 	  @ public constraint \old(getState()) == READY_TO_MOVE_BALLOTS ==> getState() == READY_FOR_NEXT_ROUND_OF_COUNTING;
 	  @ public constraint \old(getState()) == CANDIDATE_EXCLUDED ==> getState() == READY_TO_MOVE_BALLOTS;
 	  @ public constraint \old(getState()) == NO_SURPLUS_AVAILABLE ==> getState() == CANDIDATE_EXCLUDED;
+	  
 	  @*/
+	//@ ensures isPossibleState(\result);
+	//@ public initially getState() == READY_TO_COUNT;
 	public abstract /*@ pure @*/ int getState();
 
+	//@ requires isPossibleState (newState);
+	//@ requires isTransition (getState(), newState);
+	//@ ensures getState() == newState;
 	public abstract void changeState(int newState);
 
 	/**
 	 * Set of possible states
 	 */
-	//@ also ensures \result <==> (READY_TO_COUNT <= value && value <= READY_TO_REWEIGHT_BALLOTS);
+	//@ ensures \result <==> (READY_TO_COUNT <= value && value <= READY_TO_REWEIGHT_BALLOTS);
 	public abstract /*@ pure @*/ boolean isPossibleState(int value);
 
 	/**
 	 * Set of valid transitions from state machine diagram
 	 */
-	//@ also requires isPossibleState(fromState);
+	//@ requires isPossibleState(fromState);
 	//@ requires isPossibleState(toState);
 	public abstract /*@ pure @*/ boolean isTransition(int fromState, int toState);
 
