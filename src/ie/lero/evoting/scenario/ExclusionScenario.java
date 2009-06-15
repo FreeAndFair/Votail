@@ -29,7 +29,7 @@ public class ExclusionScenario extends TestCase {
 	 	ballotCounting.eliminateCandidate(ballotCounting.findLowestCandidate());
 	 	
 	 	//@ assert 0 == ballotCounting.report().getNumberElected();
-		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
+		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
  	}
 
 	/**
