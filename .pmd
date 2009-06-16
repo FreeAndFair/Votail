@@ -165,10 +165,6 @@
             <ruleset>Clone Implementation Rules</ruleset>
         </rule>
         <rule>
-            <name>CyclomaticComplexity</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
             <name>ExcessiveMethodLength</name>
             <ruleset>Code Size Rules</ruleset>
         </rule>

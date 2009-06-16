@@ -62,25 +62,25 @@ package election.tally;
 //@ refine "AbstractBallotCounting.java-refined";
 public abstract class AbstractBallotCounting {
 	/**
-	* Abstract State Machine for Election Algorithm.
-	*/
+	 * Outer level of Abstract State Machine for Election Algorithm.
+	 */
 	/*@ public model byte state;
-	@ public invariant EMPTY < SETUP;
-	@ public invariant SETUP < PRELOAD;
-	@ public invariant PRELOAD < LOADING;
-	@ public invariant LOADING < PRECOUNT;
-	@ public invariant PRECOUNT < COUNTING;
-	@ public invariant COUNTING < FINISHED;
-	@ public initially state == EMPTY;
-	@ public constraint \old (state) <= state;
-	@ public invariant (state == EMPTY) || (state == SETUP) || 
-	@   (state == PRELOAD) ||
-	@   (state == LOADING) || (state == PRECOUNT) || 
-	@   (state == COUNTING) ||
-	@   (state == FINISHED);
-	@*/
+	  @ public invariant EMPTY < SETUP;
+	  @ public invariant SETUP < PRELOAD;
+	  @ public invariant PRELOAD < LOADING;
+	  @ public invariant LOADING < PRECOUNT;
+	  @ public invariant PRECOUNT < COUNTING;
+	  @ public invariant COUNTING < FINISHED;
+	  @ public initially state == EMPTY;
+	  @ public constraint \old (state) <= state;
+	  @ public invariant (state == EMPTY) || (state == SETUP) || 
+	  @   (state == PRELOAD) ||
+	  @   (state == LOADING) || (state == PRECOUNT) || 
+	  @   (state == COUNTING) ||
+	  @   (state == FINISHED);
+	  @*/
 	
-	protected /*@ spec_public @*/ byte status; //@ in state;
+	protected transient /*@ spec_public @*/ byte status; //@ in state;
    //@ public represents state <- status;
 	/*@
 	  @ public invariant status == EMPTY ||status == SETUP || 
@@ -101,7 +101,7 @@ public abstract class AbstractBallotCounting {
 	  @ protected invariant numberOfDecisions < decisions.length;
 	  @*/
 	
-	protected /*@ spec_public @*/ Decision[] decisions;
+	protected transient /*@ spec_public @*/ Decision[] decisions;
    //@ protected represents decisionsMade <- decisions;
 
 	/** Number of decisions made */
@@ -158,7 +158,7 @@ public abstract class AbstractBallotCounting {
 	  @*/
 
 	/** List of candidates for election */
-	protected /*@ spec_public non_null @*/ Candidate[] candidates;
+	protected transient /*@ spec_public non_null @*/ Candidate[] candidates;
    //@ protected represents candidateList <- candidates;
 	
 
@@ -170,7 +170,7 @@ public abstract class AbstractBallotCounting {
 	  @     0 <= i && i < totalVotes && i < j && j < totalVotes;
 	  @     ballotsToCount[i].getBallotID() != ballotsToCount[j].getBallotID());
 	  @*/
-	protected Ballot[] ballots;
+	protected transient Ballot[] ballots;
    //@ protected represents ballotsToCount <- ballots;
 	
 	/** Total number of candidates for election */
@@ -183,7 +183,7 @@ public abstract class AbstractBallotCounting {
 	  @   numberElected + numberEliminated;
 	  @ public invariant (state == COUNTING) ==> 1 <= totalCandidates;
 	  @*/
-	protected /*@ spec_public @*/ int totalNumberOfCandidates;
+	protected transient /*@ spec_public @*/ int totalNumberOfCandidates;
    //@ public represents totalCandidates <- totalNumberOfCandidates;
 	
 	/** Number of candidates elected so far */
@@ -201,7 +201,7 @@ public abstract class AbstractBallotCounting {
 	  @   \old(numberElected) <= numberElected;
 	  @*/
 	/** Number of candidates elected so far */
-	protected /*@ spec_public @*/ int numberOfCandidatesElected;
+	protected transient /*@ spec_public @*/ int numberOfCandidatesElected;
    //@ public represents numberElected <- numberOfCandidatesElected;
 	
 	/** Number of candidates excluded from election so far */
@@ -214,7 +214,7 @@ public abstract class AbstractBallotCounting {
 	  @  candidateList[i].getStatus() == Candidate.ELIMINATED);
 	  @*/
 	/** Number of candidates excluded from election so far */
-	protected /*@ spec_public @*/ int numberOfCandidatesEliminated;
+	protected transient /*@ spec_public @*/ int numberOfCandidatesEliminated;
    //@ public represents numberEliminated <- numberOfCandidatesEliminated;
 
 	/** Number of seats to be filled in this election */
@@ -226,7 +226,7 @@ public abstract class AbstractBallotCounting {
 	  @ public invariant (state == COUNTING) ==> (1 <= seats);
 	  @*/
 	/** Number of seats in this election */
-	protected int numberOfSeats;
+	protected transient int numberOfSeats;
    //@ protected represents seats <- numberOfSeats;
 	
 	/** Total number of seats in this constituency
@@ -236,11 +236,11 @@ public abstract class AbstractBallotCounting {
 	 */
    //@ public model int totalSeats;
    //@ public invariant 0 <= totalSeats;
-	/*@ public constraint (state == LOADING || state == COUNTING) ==>
-	  @   totalSeats == \old (totalSeats);
+	/*@ public constraint (LOADING <= state) ==>
+	  @   (totalSeats == \old (totalSeats)) && (1 <= totalSeats);
 	  @*/
 	/** Number of seats in this constituency */
-	protected int totalNumberOfSeats;
+	protected transient int totalNumberOfSeats;
   //@ protected represents totalSeats <- totalNumberOfSeats;
 
 	/** Total number of valid votes in this election */
@@ -261,15 +261,15 @@ public abstract class AbstractBallotCounting {
 	  @*/
 	
    /** Total number of valid ballot papers */
-	protected int totalNumberOfVotes;
+	protected transient int totalNumberOfVotes;
    
    /** 
     * Article 16 of the constitution of the Republic or Ireland specifies 
-    * a maximum of 30,000 people per seat, and the current electoral laws specify a
-    * maximum of five seats per constituency, so the maximum possible
-    * number of of voters is 150,000. 
+    * a maximum of 30,000 people per seat, and the current electoral laws 
+    * specify a maximum of five seats per national constituency, so the 
+    * maximum possible number of ballots is 150,000. 
     */
-	final static int MAXVOTES = 150000;
+	final protected static int MAXVOTES = 150000;
    
    //@ protected represents totalVotes <- totalNumberOfVotes;
 	
@@ -296,7 +296,7 @@ public abstract class AbstractBallotCounting {
 	  @   quota == 1 + (totalVotes / (seats + 1));
 	  @*/
 	/** Minimum number of votes needed to guarantee election */
-	protected /*@ spec_public @*/ int numberOfVotesRequired;
+	protected transient /*@ spec_public @*/ int numberOfVotesRequired;
    //@ protected represents quota <- numberOfVotesRequired;
 
 	/** Minimum number of votes needed to save deposit unless elected */
@@ -308,7 +308,7 @@ public abstract class AbstractBallotCounting {
 	  @   (((totalVotes / (totalSeats + 1)) + 1) / 4) + 1;
 	  @*/
 	/** Number of votes required to be deemed elected */
-	protected /*@ spec_public @*/ int savingThreshold;
+	protected transient /*@ spec_public @*/ int savingThreshold;
    //@ protected represents depositSavingThreshold <- savingThreshold;
 
 	/** Number of rounds of counting so far */
@@ -323,7 +323,7 @@ public abstract class AbstractBallotCounting {
 	  @   countNumber <= \old (countNumber) + 1;
 	  @*/
 	/** Number of rounds of counting */
-	protected /*@ spec_public @*/ int countNumberValue;
+	protected transient /*@ spec_public @*/ int countNumberValue;
    //@ protected represents countNumber <- countNumberValue;
 
 	/** Number of candidates with surplus votes */
@@ -358,7 +358,7 @@ public abstract class AbstractBallotCounting {
 	  @   remainingSeats == (seats - numberElected);
 	  @*/
 	
-	protected /*@ spec_public @*/ int totalRemainingSeats;
+	protected transient /*@ spec_public @*/ int totalRemainingSeats;
    //@ protected represents remainingSeats <- totalRemainingSeats;
 
 	/** Number of candidates neither elected nor excluded from election */
@@ -374,7 +374,7 @@ public abstract class AbstractBallotCounting {
 	  @   (totalCandidates - numberElected) - numberEliminated;
 	  @*/
 	/** Number of candidates neither elected nor excluded from election */
-	protected /*@ spec_public @*/ int totalNumberOfContinuingCandidates;
+	protected transient /*@ spec_public @*/ int totalNumberOfContinuingCandidates;
    //@ protected represents numberOfContinuingCandidates <- totalNumberOfContinuingCandidates;
 	
 	/** There must be at least one continuing candidate for each remaining seat
@@ -479,17 +479,21 @@ public abstract class AbstractBallotCounting {
 	  @ numberOfEqualLowestContinuing <= numberOfContinuingCandidates;
 	  @ public invariant (state == COUNTING) ==> numberOfEqualLowestContinuing ==
 	  @ (\num_of int i; 0 <= i && i < totalCandidates &&
-	  @ candidateList[i].getStatus() == Candidate.CONTINUING;
-	  @ candidateList[i].getTotalVote() == lowestContinuingVote);
+	  @   candidateList[i].getStatus() == Candidate.CONTINUING;
+	  @   candidateList[i].getTotalVote() == lowestContinuingVote);
 	  @*/
 	/**  Number of candidates with equal lowest non-zero votes */
 	protected int totalNumberOfEqualLowestContinuing;
-   //@ protected represents numberOfEqualLowestContinuing <- totalNumberOfEqualLowestContinuing;
+   /*@ protected represents numberOfEqualLowestContinuing <- 
+     @                      totalNumberOfEqualLowestContinuing;
+     @ 
+     @*/
 	
 	/**
 	 * Number of decisions taken.
 	 */
-	protected /*@ spec_public @*/ int decisionsTaken;
+	//@ public invariant decisionsTaken <= decisions.length;
+	protected transient /*@ spec_public @*/ int decisionsTaken;
 	
 /**
  * @design The election count algorithm is modeled as a two tier abstract state
@@ -503,8 +507,8 @@ public abstract class AbstractBallotCounting {
 
 /** Start state */
 public static final byte EMPTY = 0;
-/** Set up candidate list */
-public static final byte SETUP = 1;
+/** Setting up candidate list and number of seats to fill*/
+public static final byte SETTING_UP = 1;
 /** Ready to load ballots */
 public static final byte PRELOAD = 2;
 /** Load all valid ballots */
@@ -893,7 +897,7 @@ protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
 /**
  * Gets the status of the algorithm in progress.
  * 
- * @return The state variable value {@link #EMPTY}, {@link #SETUP},
+ * @return The state variable value {@link #EMPTY}, {@link #SETTING_UP},
  * {@link #PRELOAD}, {@link #LOADING}, {@link #PRECOUNT},
  * {@link #COUNTING}, {@link #FINISHED}
  */
@@ -1534,12 +1538,25 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	
 	public abstract void count();
 
-	//@ requires 0 <= w && w < totalCandidates;
-	//@ requires candidateList[w] != null;
-	//@ assignable candidates, decisions, numberOfCandidatesElected, totalNumberOfContinuingCandidates, totalRemainingSeats;
-	public void electCandidate(int w) {
-	    candidates[w].declareElected();
-		auditDecision(Decision.DEEM_ELECTED,candidates[w].getCandidateID());
+	/**
+	 * Elect this winning candidate.
+	 * 
+	 * @param winner The candidate with enough votes to win
+	 */
+	//@ requires 0 <= winner && winner < totalCandidates;
+	//@ requires candidateList[winner] != null;
+	//@ requires numberElected < numberOfSeats;
+	//@ requires 0 < numberContinuing;
+	//@ requires 0 < seatsRemaining;
+	//@ assignable candidates, decisions, numberOfCandidatesElected;
+	//@ assignable totalNumberOfContinuingCandidates, totalRemainingSeats;
+	//@ ensures isElected (candidateList[winner]);
+	//@ ensures 1 + \old(numberElected) == numberElected;
+	//@ ensures \old(numberContinuing) == 1 + numberContinuing;
+	//@ ensures \old(seatsRemaining) == 1 + seatsRemaining;
+	public void electCandidate(int winner) {
+	    candidates[winner].declareElected();
+		auditDecision(Decision.DEEM_ELECTED,candidates[winner].getCandidateID());
 		numberOfCandidatesElected++;
 		totalNumberOfContinuingCandidates--;
 		totalRemainingSeats--;
