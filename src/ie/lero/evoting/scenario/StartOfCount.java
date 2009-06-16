@@ -8,7 +8,8 @@ import election.tally.Candidate;
 import election.tally.Election;
 
 /**
- * @author Dermot Cochran
+ * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
+ * Dermot Cochran</a>
  */
 public class StartOfCount extends TestCase {
 
@@ -41,7 +42,7 @@ public class StartOfCount extends TestCase {
 		/*@ assert ballotCounting.report().isElectedCandidateID(
 		  @                                  candidate2.getCandidateID());
 		  @*/
-		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
+		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 	
 	/**
@@ -61,10 +62,10 @@ public class StartOfCount extends TestCase {
 		//@ assert 1 == ballotCounting.report().getNumberElected();
 		//@ assert ballotCounting.isDepositSaved(candidate1);
 		//@ assert ballotCounting.isDepositSaved(candidate2);
-		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
+		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 
-	//@ ensures parameters != null;
+	//@ also ensures parameters != null;
 	protected void setUp() {
 		ballotCounting = new BallotCounting();
 		parameters = new Election();

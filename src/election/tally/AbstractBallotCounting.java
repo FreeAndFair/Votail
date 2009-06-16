@@ -774,7 +774,10 @@ public void setup(/*@ non_null @*/ Election electionParameters){
 	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
 	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; 
 	this.status = PRELOAD;
-	this.candidates = electionParameters.getCandidateList();
+	this.candidates = new Candidate[totalNumberOfCandidates];
+	for (int i = 0; i < totalNumberOfCandidates; i++) {
+		this.candidates[i] = electionParameters.getCandidate(i);
+	}
 	decisions = new Decision[Decision.MAX_DECISIONS];
 	this.totalRemainingSeats = this.numberOfSeats;
 	this.totalNumberOfContinuingCandidates = this.totalNumberOfCandidates;

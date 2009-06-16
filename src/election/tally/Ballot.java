@@ -161,11 +161,7 @@ public static final int NONTRANSFERABLE = 0;
   /**
    * Generate an empty ballot paper for use by a voter.
    */
-  public /*@ pure @*/ Ballot () {
-	  generateBlankBallot(System.identityHashCode(this));
-  }
-
-/*@ protected normal_behavior
+/*@ also public normal_behavior
   @	  assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
   @     candidateID, ballotID, positionInList, randomNumber;
   @   ensures numberOfPreferences == 0;
@@ -173,15 +169,15 @@ public static final int NONTRANSFERABLE = 0;
   @   ensures positionInList == 0;
   @   ensures candidateID == NONTRANSFERABLE;
   @*/
-protected void generateBlankBallot(int seed) {
-	numberOfPreferences = 0;
-    countNumberAtLastTransfer = 0;
-    positionInList = 0;
-    candidateID = NONTRANSFERABLE; 
-    ballotID = nextBallotID++;
-	randomNumber = seed;
-    //@ set _randomNumber = randomNumber;
-}
+  public /*@ pure @*/ Ballot () {
+ 	  numberOfPreferences = 0;
+	    countNumberAtLastTransfer = 0;
+	    positionInList = 0;
+	    candidateID = NONTRANSFERABLE; 
+	    ballotID = nextBallotID++;
+		randomNumber = this.hashCode();
+	    //@ set _randomNumber = randomNumber;
+  }
     
   /**
    * Get the location of the ballot at each count

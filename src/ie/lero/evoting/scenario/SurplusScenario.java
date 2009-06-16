@@ -8,8 +8,8 @@ import election.tally.Candidate;
 import election.tally.Election;
 
 /**
- * @author Dermot Cochran
- * @copyright 2009 Dermot Cochran
+ * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
+ * Dermot Cochran</a>
  */
 public class SurplusScenario extends TestCase{
 	
@@ -42,10 +42,11 @@ public class SurplusScenario extends TestCase{
 		int numberOfVotes = 10000;
 		candidates[0].addVote(numberOfVotes, 0);
 		
-		// Generate first preference ballots to match
-		for (int b = 0; b < numberOfVotes && ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
+		for (int b = 0; b < numberOfVotes && 
+		        ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
 				Ballot testBallot = new Ballot();
-				testBallot.setMultiplePreferences(candidateIDList,numberOfPreferences);
+				testBallot.setMultiplePreferences(
+						candidateIDList,numberOfPreferences);
 				ballotBox.accept(testBallot);
 			
 		}
@@ -53,7 +54,7 @@ public class SurplusScenario extends TestCase{
 	}
 	 
 	/**
-	 * Test the distribution of surplus ballots
+	 * Test the distribution of surplus ballots.
 	 */
 	public void testDistributionOfSurplus() {
 	 
@@ -68,8 +69,6 @@ public class SurplusScenario extends TestCase{
  	 	ballotCounting.distributeSurplus(c);
  	 	
 	 	//@ assert 1 == ballotCounting.report().getNumberElected();
-		//@ assert ballotCounting.isDepositSaved(candidate1);
-		//@ assert ballotCounting.isElected(candidate2);
 		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 }

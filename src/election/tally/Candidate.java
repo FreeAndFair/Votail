@@ -27,14 +27,6 @@ public class Candidate {
 public static final int MAX_CANDIDATES = 50;
 
 /** Identifier for the candidate.
- * 
- * <BON>
- * class_chart CANDIDATE_ID
- * inherit VALUE
- * constraints
- *   The internal identifier for each candidate is a non negative number
- * end
- * </BON>
  */
 /*@ public invariant 0 <= candidateID;
   @ public invariant 0 < candidateID;
@@ -43,7 +35,7 @@ public static final int MAX_CANDIDATES = 50;
   @   (a.candidateID == b.candidateID) <==> (a.equals(b)));
   @ public constraint candidateID == \old(candidateID);
   @*/
-	protected /*@ spec_public @*/ int candidateID;
+	protected transient /*@ spec_public @*/ int candidateID;
 	
 /** Number of votes added at each count */
 /*@ public invariant (\forall int i; 0 < i && i < MAXCOUNT;
@@ -52,7 +44,7 @@ public static final int MAX_CANDIDATES = 50;
   @   votesAdded[i] == 0);	
   @ public invariant votesAdded.length == MAXCOUNT;
   @*/
-  protected /*@ spec_public non_null @*/ int[] votesAdded;
+  protected transient /*@ spec_public non_null @*/ int[] votesAdded;
 	
 /** Number of votes removed at each count */
 /*@ public invariant (\forall int i; 0 < i && i < MAXCOUNT;
@@ -61,7 +53,7 @@ public static final int MAX_CANDIDATES = 50;
   @                                  votesRemoved[i] == 0);
   @ public invariant votesRemoved.length == MAXCOUNT;
   @*/
-  protected /*@ spec_public non_null @*/ int[] votesRemoved;
+  protected transient /*@ spec_public non_null @*/ int[] votesRemoved;
 
 //@ public invariant votesAdded != votesRemoved;
 //@ public invariant votesRemoved != votesAdded;
@@ -71,23 +63,21 @@ public static final int MAX_CANDIDATES = 50;
   @   state == CONTINUING;
   @ public initially state == CONTINUING;
   @*/      
-	protected /*@ spec_public @*/ byte state;
+	protected transient /*@ spec_public @*/ byte state;
 	
 /** The number of rounds of counting so far */
 //@ public invariant 0 <= lastCountNumber;
 //@ public initially lastCountNumber == 0;
 //@ public constraint \old(lastCountNumber) <= lastCountNumber;
 //@ public invariant lastCountNumber < MAXCOUNT;
-	protected /*@ spec_public @*/ int lastCountNumber;
+	protected transient /*@ spec_public @*/ int lastCountNumber;
 	
 /** The count number at which the last set of votes were added */
-//@ public invariant 0 <= lastSetAddedCountNumber;
-//@ public initially lastSetAddedCountNumber == 0;	
-/*@ public constraint 
-  @   \old(lastSetAddedCountNumber) <= lastSetAddedCountNumber;
-  @*/
-//@ public invariant lastSetAddedCountNumber <= lastCountNumber;
-	protected /*@ spec_public @*/ int lastSetAddedCountNumber;
+//@ public invariant 0 <= lastSetCount;
+//@ public initially lastSetCount == 0;	
+//@ public constraint \old(lastSetCount) <= lastSetCount;
+//@ public invariant lastSetCount <= lastCountNumber;
+	protected transient /*@ spec_public @*/ int lastSetCount;
 	
 /**
  * Unique random number used to simulate drawing of lots between candidates.
@@ -97,7 +87,7 @@ public static final int MAX_CANDIDATES = 50;
   @   (a.randomNumber == b.randomNumber) <==> (a.equals(b)));
   @ public constraint randomNumber == \old(randomNumber); 	
   @*/
-  protected /*@ spec_public @*/ int randomNumber;
+  protected transient /*@ spec_public @*/ int randomNumber;
   //@ ghost int _randomNumber;
 	
 /** State value for a candidate neither elected nor eliminated yet */
@@ -159,7 +149,7 @@ private static int nextCandidateID = 1;
   @     requires count <= lastCountNumber;
   @     ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
-	public /*@ pure @*/ int getVoteAtCount(int count){
+	public /*@ pure @*/ int getVoteAtCount(final int count){
 		return (votesAdded[count] - votesRemoved[count]);
 	}
 	
@@ -259,15 +249,15 @@ private static int nextCandidateID = 1;
   @   requires votesAdded[count] == 0;
   @   requires 0 < count & count < MAXCOUNT;
   @   requires 0 <= numberOfVotes;
-  @   assignable lastCountNumber, votesAdded[count], lastSetAddedCountNumber;
+  @   assignable lastCountNumber, votesAdded[count], lastSetCount;
   @   ensures votesAdded[count] == numberOfVotes;
   @   ensures lastCountNumber == count;
-  @   ensures lastSetAddedCountNumber == count;
+  @   ensures lastSetCount == count;
   @*/
-  public void addVote(int numberOfVotes, int count){
+  public void addVote(final int numberOfVotes, final int count){
        votesAdded[count] = numberOfVotes;
        lastCountNumber = count;
-       lastSetAddedCountNumber = count;
+       lastSetCount = count;
   } //@ nowarn;
 
 /**
@@ -326,11 +316,10 @@ private static int nextCandidateID = 1;
  * @return The number of votes in the last set added 
  */	
 /*@ public normal_behavior
-  @   ensures \result == votesAdded[lastSetAddedCountNumber];
+  @   ensures \result == votesAdded[lastSetCount];
   @*/
 	public /*@ pure @*/ int getNumberOfVotesInLastSet(){
-		int number = votesAdded[lastSetAddedCountNumber];
-		return number;
+		return votesAdded[lastSetCount];
 	}
 
 /**
@@ -344,10 +333,10 @@ private static int nextCandidateID = 1;
  * @return The last count number at which votes were added
  */	
 /*@ public normal_behavior
-  @   ensures \result == lastSetAddedCountNumber;
+  @   ensures \result == lastSetCount;
   @*/
 	public /*@ pure @*/ int getLastSetAddedCountNumber(){
-		return lastSetAddedCountNumber;
+		return lastSetCount;
 	}	
 	
 /**
@@ -366,7 +355,7 @@ private static int nextCandidateID = 1;
   @ ensures (\result == true) <==>
   @   (this.randomNumber > other.randomNumber);
   @*/
-	public /*@ pure @*/ boolean isAfter(/*@ non_null @*/ Candidate other){
+	public /*@ pure @*/ boolean isAfter(final /*@ non_null @*/ Candidate other){
 		return (this.randomNumber > other.randomNumber);
 	}
 	
@@ -381,14 +370,18 @@ private static int nextCandidateID = 1;
   @   ensures \result <==> ((other != null) &&
   @     (other.getCandidateID() == candidateID));
   @*/
-	public /*@ pure @*/ boolean equals(final Candidate other) {
+	public /*@ pure @*/ boolean sameAs(final Candidate other) {
+		boolean sameCandidate;
 		if (other == null) {
-			return false;
+			sameCandidate = false;
 		}
-		return (other.getCandidateID() == this.candidateID);
+		else {
+			sameCandidate = (other.getCandidateID() == this.candidateID);
+		}
+		return sameCandidate;
 	}
 
-public long getTotalAtCount(int count) {
+public long getTotalAtCount(final int count) {
 	long totalAtCount = 0;
 	
 	for (int i = 0; i <= count; i++) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pmd>
-    <workingSet>Voting</workingSet>
+    <workingSet>Votail</workingSet>
     <useProjectRuleSet>false</useProjectRuleSet>
     <ruleSetFile>.ruleset</ruleSetFile>
     <rules>
@@ -169,10 +169,6 @@
             <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
-            <name>ExcessiveClassLength</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
             <name>ExcessiveMethodLength</name>
             <ruleset>Code Size Rules</ruleset>
         </rule>
@@ -198,14 +194,6 @@
         </rule>
         <rule>
             <name>NPathComplexity</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>TooManyFields</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>TooManyMethods</name>
             <ruleset>Code Size Rules</ruleset>
         </rule>
         <rule>
@@ -710,10 +698,6 @@
         </rule>
         <rule>
             <name>ClassNamingConventions</name>
-            <ruleset>Naming Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LongVariable</name>
             <ruleset>Naming Rules</ruleset>
         </rule>
         <rule>

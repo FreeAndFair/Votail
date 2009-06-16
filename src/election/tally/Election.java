@@ -25,23 +25,24 @@ package election.tally;
 /**
  * Data transfer structure for candidate ID details and number of seats.
  * 
- * @author Dermot Cochran
+ * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
+ * Dermot Cochran</a>
  */
 
 public class Election {
 
 /** Number of candidates for election in this constituency */
 //@ public invariant 0 <= numberOfCandidates;
-	public int numberOfCandidates;
+	public transient int numberOfCandidates;
 	
 /** Number of seats to be filled in this election */
 //@ public invariant 0 <= numberOfSeatsInThisElection;
 //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
-	public int numberOfSeatsInThisElection;
+	public transient int numberOfSeatsInThisElection;
 	
 /** Number of seats in this constituency */
 //@ public invariant 0 <= totalNumberOfSeats;
-	public int totalNumberOfSeats;
+	public transient int totalNumberOfSeats;
 	
 /** List of all candidates in this election */
 /*@ public invariant (\forall int i;
@@ -96,14 +97,19 @@ public class Election {
 	  @*/	
 	public void setCandidateList(final /*@ non_null @*/ Candidate[] listOfCandidates) {
 		numberOfCandidates = listOfCandidates.length;
-		this.candidateList = listOfCandidates;
-	} //@ nowarn;
+		candidateList = new Candidate[numberOfCandidates];
+		for (int i = 0; i < numberOfCandidates; i++) {
+		  this.candidateList[i] = listOfCandidates[i];
+		}
+	}
 
 	/**
-	 * @return the candidateList
+	 * 
+	 * 
+	 * @return The candidate at that position on the initial list
 	 */
-	public /*@ pure non_null @*/ Candidate[] getCandidateList() {
-		return candidateList;
+	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
+		return candidateList[index];
 	}
 
 	/**
