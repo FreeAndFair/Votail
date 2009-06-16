@@ -1,5 +1,5 @@
 #FindBugs User Preferences
-#Mon May 18 14:58:12 IST 2009
+#Tue Jun 16 09:14:08 IST 2009
 detectorAppendingToAnObjectOutputStream=AppendingToAnObjectOutputStream|true
 detectorBadAppletConstructor=BadAppletConstructor|false
 detectorBadResultSetAccess=BadResultSetAccess|true
@@ -109,7 +109,7 @@ detectorSynchronizingOnContentsOfFieldToProtectField=SynchronizingOnContentsOfFi
 detectorURLProblems=URLProblems|true
 detectorUncallableMethodOfAnonymousClass=UncallableMethodOfAnonymousClass|true
 detectorUnnecessaryMath=UnnecessaryMath|true
-detectorUnreadFields=UnreadFields|true
+detectorUnreadFields=UnreadFields|false
 detectorUseObjectEquals=UseObjectEquals|true
 detectorUselessSubclassMethod=UselessSubclassMethod|true
 detectorVarArgsProblems=VarArgsProblems|true

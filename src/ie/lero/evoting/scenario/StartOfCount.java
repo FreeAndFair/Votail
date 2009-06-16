@@ -7,10 +7,8 @@ import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
 
-
 /**
  * @author Dermot Cochran
- *
  */
 public class StartOfCount extends TestCase {
 
@@ -20,19 +18,49 @@ public class StartOfCount extends TestCase {
 	protected BallotBox ballotBox;
 
 	/**
-	 * Test that the count process is started correctly.
+	 * Test a close race between two almost equal candidates.
 	 */
 	public void testCount () {
+		//@ assert ballotCounting.getStatus() == BallotCounting.EMPTY;
 		ballotCounting.setup(parameters);
+		
+		//@ assert ballotCounting.getStatus() == BallotCounting.PRELOAD;
+		Ballot ballot = new Ballot();
+ 		ballot.setFirstPreference(candidate2.getCandidateID());
+ 		ballotBox.accept(ballot);
+ 		ballotCounting.load(ballotBox);
+		
+		//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
+		ballotCounting.count();
+		
+		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
+		//@ assert 1 == ballotCounting.report().getNumberElected();
+		//@ assert ballotCounting.isDepositSaved(candidate1);
+		//@ assert ballotCounting.isDepositSaved(candidate2);
+		//@ assert ballotCounting.isElected(candidate2);
+		/*@ assert ballotCounting.report().isElectedCandidateID(
+		  @                                  candidate2.getCandidateID());
+		  @*/
+		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
+	}
+	
+	/**
+	 * Test a tie between two equal candidates.
+	 */
+	public void testTie () {
+		//@ assert ballotCounting.getStatus() == BallotCounting.EMPTY;
+		ballotCounting.setup(parameters);
+		
+		//@ assert ballotCounting.getStatus() == BallotCounting.PRELOAD;
 		ballotCounting.load(ballotBox);
 		
 		//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
 		ballotCounting.count();
-		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
 		
+		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
 		//@ assert 1 == ballotCounting.report().getNumberElected();
-		//@ assert ballotCounting.report().hasSavedDeposit(candidate1.getCandidateID());
-		//@ assert ballotCounting.report().isElected(candidate2.getCandidateID());
+		//@ assert ballotCounting.isDepositSaved(candidate1);
+		//@ assert ballotCounting.isDepositSaved(candidate2);
 		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
 	}
 
@@ -49,13 +77,9 @@ public class StartOfCount extends TestCase {
 		
  		Candidate[] list = {candidate1,candidate2};
 		parameters.setCandidateList(list);
- 		Ballot ballot = new Ballot();
- 		ballot.setFirstPreference(candidate2.getCandidateID());
- 		ballotBox.accept(ballot);
-
-		// A close race between two almost equal candidates
+ 		
 		for (int i = 0; i < 50; i++) {
-		  ballot = new Ballot();
+		  Ballot ballot = new Ballot();
 		  ballot.setFirstPreference(candidate1.getCandidateID());
 		  ballotBox.accept(ballot);
 		  ballot = new Ballot();
@@ -63,5 +87,14 @@ public class StartOfCount extends TestCase {
 		  ballotBox.accept(ballot);
 		}
 		//@ assert ballotBox.size() == 101;
+	}
+	
+	// JML RAC
+	public static void main (String[] args) {
+		StartOfCount scenario = new StartOfCount();
+		scenario.setUp();
+		scenario.testCount();
+		scenario.setUp();
+		scenario.testTie();
 	}
 }

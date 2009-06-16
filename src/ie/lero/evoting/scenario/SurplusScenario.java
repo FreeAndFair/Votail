@@ -59,8 +59,7 @@ public class SurplusScenario extends TestCase{
 	 
 	 	ballotCounting.setup(parameters);
 	 	ballotCounting.load(ballotBox);
- 	 	
- 	 	System.out.println("Quota: " + ballotCounting.getQuota() + "\n");
+ 	 	//@ assert 3334 == ballotCounting.getQuota();
 	 	
 	 	// Find and distribute the first surplus
 	 	int c = ballotCounting.findHighestCandidate();
@@ -69,8 +68,8 @@ public class SurplusScenario extends TestCase{
  	 	ballotCounting.distributeSurplus(c);
  	 	
 	 	//@ assert 1 == ballotCounting.report().getNumberElected();
-		//@ assert ballotCounting.report().hasSavedDeposit(candidate1.getCandidateID());
-		//@ assert ballotCounting.report().isElected(candidate2.getCandidateID());
-		//@ assert 1 == ballotCounting.report().getTotalNumberofCounts();
+		//@ assert ballotCounting.isDepositSaved(candidate1);
+		//@ assert ballotCounting.isElected(candidate2);
+		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 }

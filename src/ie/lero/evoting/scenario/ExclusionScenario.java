@@ -19,7 +19,6 @@ public class ExclusionScenario extends TestCase {
 
 	private BallotCounting ballotCounting;
 	private BallotBox ballotBox;
-
 	
 	/**
 	 * Execute this scenario.

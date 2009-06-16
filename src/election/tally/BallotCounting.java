@@ -43,7 +43,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	/**
 	 * Inner class for state machine
 	 */
-	public static class BallotCountingMachine implements BallotCountingModel {
+	public class BallotCountingMachine implements BallotCountingModel {
 		
 		// Initial state
 		/**

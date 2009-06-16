@@ -112,7 +112,7 @@ public class Report {
 
 	private long[][] candidateVotes;
 
-	private /*@ spec_oublic @*/ int numberOfCandidates;
+	private /*@ spec_public @*/ int numberOfCandidates;
 	
 	/**
 	 * Store the election results for this constituency.

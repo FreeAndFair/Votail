@@ -49,4 +49,8 @@ scenario
   "CASTING_A_VOTE"
 description
   "A voter generates a ballot and adds it to the ballot box via a polling booth"
+scenario
+  "TWO_EQUAL_CANDIDATES"
+description
+  "Two candidates each receive the same number of votes at each count.  One is chosen by lot."
 end
