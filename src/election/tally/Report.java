@@ -123,6 +123,7 @@ public class Report {
 	 */
 	/*@ requires list.length <= MAX_SEATS;
 	  @ requires 0 <= counts;
+	  @ requires candidates != null;
 	  @*/
 	public Report(/*@ non_null @*/ final int[] list, final int counts, Candidate[] candidates){
 		numberElected = list.length;
@@ -159,6 +160,7 @@ public class Report {
 	 */
 	//@ requires 0 <= n && n < totalNumberOfCounts;
 	//@ requires candidateIDs != null;
+	//@ requires numberOfCandidates <= candidateIDs.length;
 	//@ requires (\exists int i; 0 <= i && i < numberOfCandidates; candidateIDs[i] == id);
 	public /*@ pure @*/ long getResult(int id, int n) {
 		for (int c = 0; c < numberOfCandidates; c++) {
