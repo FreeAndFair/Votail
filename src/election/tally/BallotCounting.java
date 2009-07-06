@@ -353,12 +353,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			return false;
 		}
 
-		public int getState() {
-			return 0;
-		}
-
-		public void changeState(final int newState) {
-		}
+	
 	}
 
 	// Model of the ballot counting process

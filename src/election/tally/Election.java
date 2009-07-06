@@ -104,10 +104,11 @@ public class Election {
 	}
 
 	/**
-	 * 
+	 * Get the Candidate object
 	 * 
 	 * @return The candidate at that position on the initial list
 	 */
+	//@ requires 0 <= index && index < candidateList.length;
 	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
 		return candidateList[index];
 	}

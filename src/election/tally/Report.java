@@ -158,6 +158,7 @@ public class Report {
 	 * @return The total vote for this candidate at that round of counting.
 	 */
 	//@ requires 0 <= n && n < totalNumberOfCounts;
+	//@ requires candidateIDs != null;
 	//@ requires (\exists int i; 0 <= i && i < numberOfCandidates; candidateIDs[i] == id);
 	public /*@ pure @*/ long getResult(int id, int n) {
 		for (int c = 0; c < numberOfCandidates; c++) {
