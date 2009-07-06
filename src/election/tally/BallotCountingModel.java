@@ -90,7 +90,7 @@ public interface BallotCountingModel {
 	 * Get the current stage of counting.
 	 */
 	 //@ ensures isPossibleState(\result);
-	public abstract /*@ pure @*/ int getState();
+	public /*@ pure @*/ int getState();
 
 	/**
 	 * Move to the next stage of counting.
@@ -100,7 +100,7 @@ public interface BallotCountingModel {
 	//@ requires isPossibleState (newState);
 	//@ requires isTransition (getState(), newState);
 	//@ ensures getState() == newState;
-	public abstract void changeState(int newState);
+	public void changeState(int newState);
 
 	/**
 	 * Confirm that this value is a valid stage of counting.

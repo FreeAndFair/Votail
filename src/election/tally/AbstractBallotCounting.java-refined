@@ -52,7 +52,7 @@ public abstract class AbstractBallotCounting {
    /** Start state */
    public static final byte EMPTY;
    /** Set up candidate list */
-   public static final byte SETUP;
+   public static final byte SETTING_UP;
    /** Ready to load ballots */
    public static final byte PRELOAD;
    /** Load all valid ballots */
@@ -66,15 +66,15 @@ public abstract class AbstractBallotCounting {
  
    
   /*@ public model byte state;
-    @ public invariant EMPTY < SETUP;
-    @ public invariant SETUP < PRELOAD;
+    @ public invariant EMPTY < SETTING_UP;
+    @ public invariant SETTING_UP < PRELOAD;
     @ public invariant PRELOAD < LOADING;
     @ public invariant LOADING < PRECOUNT;
     @ public invariant PRECOUNT < COUNTING;
     @ public invariant COUNTING < FINISHED;
     @ public initially state == EMPTY;
     @ public constraint \old (state) <= state;
-    @ public invariant (state == EMPTY) || (state == SETUP) || (state == PRELOAD) ||
+    @ public invariant (state == EMPTY) || (state == SETTING_UP) || (state == PRELOAD) ||
     @   (state == LOADING) || (state == PRECOUNT) || (state == COUNTING) ||
     @   (state == FINISHED);
     @*/
@@ -205,7 +205,7 @@ public abstract class AbstractBallotCounting {
   //@ public model int totalVotes;
   //@ public invariant 0 <= totalVotes;
   //@ public invariant totalVotes <= ballotsToCount.length;
-  /*@ public invariant (state == EMPTY || state == SETUP || state == PRELOAD) 
+  /*@ public invariant (state == EMPTY || state == SETTING_UP || state == PRELOAD) 
 	@   ==> totalVotes == 0;
     @ public constraint (state == LOADING) 
     @   ==> \old (totalVotes) <= totalVotes;

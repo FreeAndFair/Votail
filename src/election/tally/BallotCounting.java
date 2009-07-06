@@ -53,10 +53,10 @@ public class BallotCounting extends AbstractBallotCounting {
 			substate = READY_TO_COUNT;
 		} //@ nowarn;
 
-		//@ public invariant isPossibleState (state);
-		//@ public constraint isTransition(\old(state), state);
-		//@ public initially state == READY_TO_COUNT;
- 		private /*@ spec_public @*/ int substate;
+		//@ public invariant isPossibleState (substate);
+		//@ public constraint isTransition(\old(substate), substate);
+		//@ public initially substate == READY_TO_COUNT;
+ 		protected /*@ spec_public @*/ int substate;
  		
  		/**
  		 * Get the state of the inner automaton for counting ballots in Dail elections.
@@ -228,31 +228,9 @@ public class BallotCounting extends AbstractBallotCounting {
 	}
 
     /**
-	 * Inner class for state machine
+	 * Alternative inner class for counting of fractional ballots
 	 */
-	public static class FractionalBallotCountingMachine implements BallotCountingModel {
-		
-		// Initial state
-		public FractionalBallotCountingMachine() {
-			substate = READY_TO_COUNT;
-		}
-	
-		//@ public invariant isPossibleState (state);
-		//@ public constraint isTransition(\old(state), state);
-		private /*@ spec_public @*/ int substate;
-		
-		//@ also ensures \result == substate;
-		public int getState() {
-			return substate;
-		}
-	
-		/**
-		 * 
-		 */
-		//@ also ensures newState == getState();
-		public void changeState(int newState) {
-			substate = newState;
-		}
+	public static class FractionalBallotCountingMachine extends BallotCountingMachine {
 	
 		public boolean isPossibleState(final int value) {
 			return ((READY_TO_COUNT == value) ||
@@ -373,6 +351,13 @@ public class BallotCounting extends AbstractBallotCounting {
 			
 			// No other state transitions are possible
 			return false;
+		}
+
+		public int getState() {
+			return 0;
+		}
+
+		public void changeState(final int newState) {
 		}
 	}
 
