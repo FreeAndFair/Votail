@@ -76,7 +76,8 @@ public class BallotBox {
 	 * Accept a ballot paper.
 	 * @param ballot The ballot paper
 	 */
-	/*@ ensures \old(numberOfBallots) + 1 == numberOfBallots;
+	/*@ requires numberOfBallots < ballots.length;
+	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @ ensures (\exists int b; 0 <= b && b < numberOfBallots;
 	  @         ballot.equals(ballots[b]));
 	  @*/
