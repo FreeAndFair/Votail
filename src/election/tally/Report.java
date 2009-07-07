@@ -160,15 +160,17 @@ public class Report {
 	 */
 	//@ requires 0 <= n && n < totalNumberOfCounts;
 	//@ requires candidateIDs != null;
+	//@ requires candidateVotes != null;
 	//@ requires numberOfCandidates <= candidateIDs.length;
 	//@ requires (\exists int i; 0 <= i && i < numberOfCandidates; candidateIDs[i] == id);
-	public /*@ pure @*/ long getResult(int id, int n) {
+	public /*@ pure @*/ long getResult(final int id, final int n) {
+	
+		long result = 0;
 		for (int c = 0; c < numberOfCandidates; c++) {
-			if (candidateIDs[c]== id) {
-				return candidateVotes[c][n];
+			if (candidateIDs[c] == id) {
+				result = candidateVotes[c][n];
 			}	
 		}
-		//@ unreachable;
-		return 0;
+		return result;
 	}
 }
