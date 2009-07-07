@@ -2,7 +2,7 @@ package election.tally;
 
  
 /**
- * Ballot counting for elections to D‡il ƒireann - the lower house of the Irish 
+ * Ballot counting for elections to Dï¿½il ï¿½ireann - the lower house of the Irish 
  * Parliament.
  * 
  * @author Dermot Cochran
@@ -225,14 +225,9 @@ public class BallotCounting extends AbstractBallotCounting {
 			return false;
 		} //@ nowarn;
 		
-	}
+	 
 
-    /**
-	 * Alternative inner class for counting of fractional ballots
-	 */
-	public static class FractionalBallotCountingMachine extends BallotCountingMachine {
-	
-		public boolean isPossibleState(final int value) {
+		public boolean isPossibleStateForFractionalBallots(final int value) {
 			return ((READY_TO_COUNT == value) ||
 					(NO_SEATS_FILLED_YET == value) ||
 					(CANDIDATES_HAVE_QUOTA == value) ||
@@ -252,7 +247,7 @@ public class BallotCounting extends AbstractBallotCounting {
 					(READY_TO_REWEIGHT_BALLOTS == value));
 		}
 	
-		public boolean isTransition(final int fromState, final int toState) {
+		public boolean isTransitionForFractionalBallots(final int fromState, final int toState) {
 			// Self transitions are allowed
 			if (toState == fromState) {
 				return true;
