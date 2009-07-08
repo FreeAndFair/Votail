@@ -94,7 +94,11 @@ public class Report {
 	}
 
 	/**
-	 * @return the electedCandidateIDs
+	 * Is this the internal identifier of an elected candidate?
+	 * 
+	 * @param id The internal identifier
+	 * 
+	 * @return <code>true</code> if this is the ID of an elected candidate
 	 */
 	public /*@ pure @*/ boolean isElectedCandidateID (int id) {
 		for (int i=0; i < electedCandidateIDs.length; i++) {
@@ -111,7 +115,7 @@ public class Report {
 	//@ public invariant candidateIDs.length == numberOfCandidates;
 	private /*@ spec_public @*/ int[] candidateIDs;
 
-	//@ public invariant candidateVotes.length == numberofCandidates * totalNumberOfCounts;
+	//@ public invariant candidateVotes.length == (numberOfCandidates * totalNumberOfCounts);
 	private /*@ spec_public @*/ long[][] candidateVotes;
 
 	//@ public invariant 0 <= numberOfCandidates;
@@ -130,8 +134,10 @@ public class Report {
 	  @ requires \nonnullelements (candidates);
 	  @ assignable candidateIDs;
 	  @ assignable candidateVotes;
+	  @ assignable numberElected;
+	  @ assignable electedCandidateIDs;
 	  @*/
-	public Report(/*@ non_null @*/ final int[] list, final int counts, Candidate[] candidates){
+	public Report(/*@ non_null @*/ final int[] list, final int counts, final Candidate[] candidates){
 		numberElected = list.length;
 		electedCandidateIDs = new int [list.length];
 		for (int i=0; i < list.length; i++) {
@@ -150,7 +156,9 @@ public class Report {
 		}
 
 	/**
-	 * @return the totalNumberOfCounts
+	 * How many rounds of counting?
+	 * 
+	 * @return The number of rounds of counting
 	 */
 	public /*@ pure @*/ int getTotalNumberOfCounts() {
 		return totalNumberOfCounts;

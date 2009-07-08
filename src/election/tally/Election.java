@@ -71,9 +71,13 @@ public class Election {
 
 	/**
 	 * Set the list of candidates.
-	 * 
-	 * @constraint This method may only be called once i.e. the list of candidates cannot be altered once set.
-	 * @constraint No candidate may appear more than once on the list.
+	 * <p>
+	 * <strong>Constraints:</strong>
+	 * <ul>
+	 * <li> This method may only be called once i.e. the initial list of candidates cannot be altered.</li>
+	 * <li> No candidate may appear more than once on the list.</li>
+	 * </ul>
+	 * <p>
 	 * 
 	 * @param listOfCandidates The list of candidates for this election.
 	 */
@@ -104,11 +108,12 @@ public class Election {
 	}
 
 	/**
-	 * Get the Candidate object
+	 * Get the <code>Candidate</code> object.
 	 * 
 	 * @return The candidate at that position on the initial list
 	 */
 	//@ requires candidateList != null;
+	//@ requires \nonnullelements (candidateList);
 	//@ requires 0 <= index && index < candidateList.length;
 	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
 		return candidateList[index];

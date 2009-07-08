@@ -39,7 +39,7 @@ public class SurplusScenario extends TestCase{
   			candidateIDList[i] = candidates[i].getCandidateID();
 		}
 
-		int numberOfVotes = 10000;
+		final int numberOfVotes = 10000;
 		candidates[0].addVote(numberOfVotes, 0);
 		
 		for (int b = 0; b < numberOfVotes && 
@@ -63,10 +63,15 @@ public class SurplusScenario extends TestCase{
  	 	//@ assert 3334 == ballotCounting.getQuota();
 	 	
 	 	// Find and distribute the first surplus
-	 	int c = ballotCounting.findHighestCandidate();
- 		ballotCounting.electCandidate(c);
+	 	final int indexOfHighestCandidate = ballotCounting.findHighestCandidate();
+	 	//@ assert 0 <= indexOfHighestCandidate;
+	 	
+ 		ballotCounting.electCandidate(indexOfHighestCandidate);
+ 		
+ 		//@ assert 1 <= ballotCounting.getNumberOfSurpluses();
+ 		//@ assert 1 <= ballotCounting.getSumOfSurpluses();
 
- 	 	ballotCounting.distributeSurplus(c);
+ 	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);
  	 	
 	 	//@ assert 1 == ballotCounting.report().getNumberElected();
 		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
