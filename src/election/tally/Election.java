@@ -57,7 +57,7 @@ public class Election {
   @   i != j;
   @   !candidateList[i].equals(candidateList[j])); 
   @*/	
-	private /*@ spec_public non_null @*/ Candidate[] candidateList;
+	private transient /*@ spec_public non_null @*/ Candidate[] candidateList;
 	
 	/**
 	 * 
