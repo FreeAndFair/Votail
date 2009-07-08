@@ -108,10 +108,13 @@ public class Report {
 	//@ public invariant 0 <= totalNumberOfCounts;
 	private /*@ spec_public @*/ int totalNumberOfCounts;
 
+	//@ public invariant candidateIDs.length == numberOfCandidates;
 	private /*@ spec_public @*/ int[] candidateIDs;
 
-	private long[][] candidateVotes;
+	//@ public invariant candidateVotes.length == numberofCandidates * totalNumberOfCounts;
+	private /*@ spec_public @*/ long[][] candidateVotes;
 
+	//@ public invariant 0 <= numberOfCandidates;
 	private /*@ spec_public @*/ int numberOfCandidates;
 	
 	/**
@@ -124,6 +127,9 @@ public class Report {
 	/*@ requires list.length <= MAX_SEATS;
 	  @ requires 0 <= counts;
 	  @ requires candidates != null;
+	  @ requires \nonnullelements (candidates);
+	  @ assignable candidateIDs;
+	  @ assignable candidateVotes;
 	  @*/
 	public Report(/*@ non_null @*/ final int[] list, final int counts, Candidate[] candidates){
 		numberElected = list.length;
@@ -169,6 +175,7 @@ public class Report {
 		for (int c = 0; c < numberOfCandidates; c++) {
 			if (candidateIDs[c] == id) {
 				result = candidateVotes[c][n];
+				break;
 			}	
 		}
 		return result;

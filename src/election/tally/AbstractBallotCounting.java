@@ -226,8 +226,8 @@ public abstract class AbstractBallotCounting {
 	  @ public invariant (state == COUNTING) ==> (1 <= seats);
 	  @*/
 	/** Number of seats in this election */
-	protected transient int numberOfSeats;
-   //@ protected represents seats <- numberOfSeats;
+	protected transient /*@ spec_public @*/ int numberOfSeats;
+   //@ public represents seats <- numberOfSeats;
 	
 	/** Total number of seats in this constituency
 	 * @design The constitution and laws of Ireland do not allow less than three or
@@ -247,7 +247,7 @@ public abstract class AbstractBallotCounting {
    //@ public model int totalVotes;
    //@ public invariant 0 <= totalVotes;
    //@ protected invariant totalVotes <= ballotsToCount.length;
-	/*@ public invariant (state == EMPTY || state == SETUP || 
+	/*@ public invariant (state == EMPTY || state == SETTING_UP || 
 	  @   state == PRELOAD)
 	  @ ==> 
 	  @   totalVotes == 0;
@@ -609,31 +609,47 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 }
 
 /**
+ * How many elected candidates have surplus votes available for redistribution?
+ * 
  * @return the totalNumberOfSurpluses
  */
-protected int getTotalNumberOfSurpluses() {
+protected /*@ pure @*/ int getTotalNumberOfSurpluses() {
 	return totalNumberOfSurpluses;
 }
 
 /**
+ * Update the number of candidates with surplus votes for redistribution.
+ * 
  * @param totalNumberOfSurpluses the totalNumberOfSurpluses to set
  */
-protected void setTotalNumberOfSurpluses(int totalNumberOfSurpluses) {
-	this.totalNumberOfSurpluses = totalNumberOfSurpluses;
+//@ requires 0 <= quantity;
+//@ requires quantity <= numberElected;
+//@ assignable totalNumberOfSurpluses;
+//@ ensures quantity == totalNumberOfSurpluses;
+protected void setTotalNumberOfSurpluses(final int quantity) {
+	this.totalNumberOfSurpluses = quantity;
 }
 
 /**
+ * How many surplus votes are available for distribution?
+ * 
  * @return the totalSumOfSurpluses
  */
-protected int getTotalSumOfSurpluses() {
+protected /*@ pure @*/ int getTotalSumOfSurpluses() {
 	return totalSumOfSurpluses;
 }
 
 /**
+ * Update the total number of surplus votes available for redistribution.
+ * 
  * @param totalSumOfSurpluses the totalSumOfSurpluses to set
  */
-protected void setTotalSumOfSurpluses(int totalSumOfSurpluses) {
-	this.totalSumOfSurpluses = totalSumOfSurpluses;
+//@ requires 0 <= sum;
+//@ requires sum <= totalVotes;
+//@ assignable totalSumOfSurpluses;
+//@ ensures sum == totalSumOfSurpluses;
+protected void setTotalSumOfSurpluses(final int sum) {
+	this.totalSumOfSurpluses = sum;
 }
 
 /**
@@ -929,8 +945,9 @@ public /*@ pure @*/ byte getStatus(){
 		int result = Ballot.NONTRANSFERABLE;
 
   		for (int i = 1; i < ballot.remainingPreferences(); i++) {
-			if (isContinuingCandidateID(ballot.getNextPreference(i)) == true) {
-				result = ballot.getNextPreference(i);
+			int nextPreference = ballot.getNextPreference(i);
+			if (isContinuingCandidateID(nextPreference)) {
+				result = nextPreference;
 				break;
 			}
 		}
@@ -1545,15 +1562,15 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 */
 	//@ requires 0 <= winner && winner < totalCandidates;
 	//@ requires candidateList[winner] != null;
-	//@ requires numberElected < numberOfSeats;
-	//@ requires 0 < numberContinuing;
-	//@ requires 0 < seatsRemaining;
+	//@ requires numberElected < seats;
+	//@ requires 0 < numberOfContinuingCandidates;
+	//@ requires 0 < remainingSeats;
 	//@ assignable candidates, decisions, numberOfCandidatesElected;
 	//@ assignable totalNumberOfContinuingCandidates, totalRemainingSeats;
 	//@ ensures isElected (candidateList[winner]);
 	//@ ensures 1 + \old(numberElected) == numberElected;
-	//@ ensures \old(numberContinuing) == 1 + numberContinuing;
-	//@ ensures \old(seatsRemaining) == 1 + seatsRemaining;
+	//@ ensures \old(numberOfContinuingCandidates) == 1 + numberOfContinuingCandidates;
+	//@ ensures \old(remainingSeats) == 1 + remainingSeats;
 	public void electCandidate(int winner) {
 	    candidates[winner].declareElected();
 		auditDecision(Decision.DEEM_ELECTED,candidates[winner].getCandidateID());
