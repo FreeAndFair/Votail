@@ -918,25 +918,25 @@ public /*@ pure @*/ byte getStatus(){
  */
 /*@ also 
   @   protected normal_behavior
-  @   requires state == COUNTING;
-  @   ensures (\result == Ballot.NONTRANSFERABLE) <=!=>
-  @   (\exists int k; 1 <= k && k <= ballot.remainingPreferences();
-  @   (\result == ballot.getNextPreference(k)) &&
-  @   (\forall int i; 1 <= i && i < k;
-  @   isContinuingCandidateID(ballot.getNextPreference(i)) == false));
+  @     requires state == COUNTING;
+  @     ensures (\result == Ballot.NONTRANSFERABLE) <=!=>
+  @       (\exists int k; 1 <= k && k <= ballot.remainingPreferences();
+  @       (\result == ballot.getNextPreference(k)) &&
+  @       (\forall int i; 1 <= i && i < k;
+  @       isContinuingCandidateID(ballot.getNextPreference(i)) == false));
   @*/
 	protected /*@ pure spec_public @*/ int getNextContinuingPreference(Ballot ballot) {
-		if (status == COUNTING) {
-			for (int k = 1; k < ballot.remainingPreferences(); k++) {
-				for (int i = 1; i < k; i++) {
-					if (isContinuingCandidateID(ballot.getNextPreference(i)) == false) {
-						return ballot.getNextPreference(k);
-					}
-				}
+		int result = Ballot.NONTRANSFERABLE;
+
+  		for (int i = 1; i < ballot.remainingPreferences(); i++) {
+			if (isContinuingCandidateID(ballot.getNextPreference(i)) == true) {
+				result = ballot.getNextPreference(i);
+				break;
 			}
 		}
-		return Ballot.NONTRANSFERABLE;
-	} //@nowarn;
+		
+		return result;
+	}
 
 /**
  * Determine if a candidate ID belongs to a continuing candidate.
