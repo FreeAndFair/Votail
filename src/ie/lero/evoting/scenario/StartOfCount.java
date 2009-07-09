@@ -6,6 +6,7 @@ import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
+import election.tally.Report;
 
 /**
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
@@ -36,7 +37,8 @@ public class StartOfCount extends TestCase {
 		
 		assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED);
 		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
-		assertTrue(1 == ballotCounting.report().getNumberElected());
+		final Report report = ballotCounting.report();
+		assertTrue(1 == report.getNumberElected());
 		//@ assert 1 == ballotCounting.report().getNumberElected();
 		assertTrue(ballotCounting.isDepositSaved(candidate1));
 		//@ assert ballotCounting.isDepositSaved(candidate1);
@@ -44,12 +46,12 @@ public class StartOfCount extends TestCase {
 		//@ assert ballotCounting.isDepositSaved(candidate2);
 		assertTrue(ballotCounting.isElected(candidate2));
 		//@ assert ballotCounting.isElected(candidate2);
-		assertTrue(ballotCounting.report().isElectedCandidateID(candidate2.getCandidateID()));
+		assertTrue(report.isElectedCandidateID(candidate2.getCandidateID()));
 		/*@ assert ballotCounting.report().isElectedCandidateID(
 		  @                                  candidate2.getCandidateID());
 		  @*/
-		assertTrue(1 == ballotCounting.report().getTotalNumberOfCounts());
-		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
+		assertTrue(1 == report.getTotalNumberOfCounts());
+		//@ assert 2 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 	
 	/**
