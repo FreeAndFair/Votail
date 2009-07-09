@@ -34,14 +34,21 @@ public class StartOfCount extends TestCase {
 		//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
 		ballotCounting.count();
 		
+		assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED);
 		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
+		assertTrue(1 == ballotCounting.report().getNumberElected());
 		//@ assert 1 == ballotCounting.report().getNumberElected();
+		assertTrue(ballotCounting.isDepositSaved(candidate1));
 		//@ assert ballotCounting.isDepositSaved(candidate1);
+		assertTrue(ballotCounting.isDepositSaved(candidate2));
 		//@ assert ballotCounting.isDepositSaved(candidate2);
+		assertTrue(ballotCounting.isElected(candidate2));
 		//@ assert ballotCounting.isElected(candidate2);
+		assertTrue(ballotCounting.report().isElectedCandidateID(candidate2.getCandidateID()));
 		/*@ assert ballotCounting.report().isElectedCandidateID(
 		  @                                  candidate2.getCandidateID());
 		  @*/
+		assertTrue(1 == ballotCounting.report().getTotalNumberOfCounts());
 		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 	

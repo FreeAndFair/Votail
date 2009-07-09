@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 public class TestReport extends TestCase {
 
 	/**
-	 * @param name
+	 * @param name the name of this report.
 	 */
 	public TestReport(String name) {
 		super(name);

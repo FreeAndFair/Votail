@@ -17,7 +17,7 @@ import election.tally.Election;
  */
 public class ExclusionScenario extends TestCase {
 
-	private BallotCounting ballotCounting;
+	private /*@ spec_public @*/ BallotCounting ballotCounting;
 	private BallotBox ballotBox;
 	
 	/**
