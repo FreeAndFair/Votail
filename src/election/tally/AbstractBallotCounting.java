@@ -828,6 +828,10 @@ public void load(/*@ non_null @*/ BallotBox ballotBox) {
  	calculateFirstPreferences();
 }
 
+/**
+ * Calculate the first preference counts for each candidate.
+ */
+//@ assignable candidates[*];
 public void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
 		candidates[c].addVote(countBallotsFor(candidates[c].getCandidateID()), 

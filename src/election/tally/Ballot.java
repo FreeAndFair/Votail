@@ -155,7 +155,7 @@ public static final int NONTRANSFERABLE = 0;
   /*@ private invariant 0 < nextBallotID;
     @ private constraint \old(nextBallotID) <= nextBallotID;
     @*/
-  private static int nextBallotID = 1;
+  private /*@ spec_public @*/ static int nextBallotID = 1;
 
 
   /**
@@ -163,7 +163,7 @@ public static final int NONTRANSFERABLE = 0;
    */
 /*@ also public normal_behavior
   @	  assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
-  @     candidateID, ballotID, positionInList, randomNumber;
+  @     candidateID, ballotID, positionInList, randomNumber, nextBallotID;
   @   ensures numberOfPreferences == 0;
   @   ensures countNumberAtLastTransfer == 0;
   @   ensures positionInList == 0;
@@ -188,6 +188,7 @@ public static final int NONTRANSFERABLE = 0;
   /*@ also public normal_behavior
     @ requires 0 <= countNumber;
     @ requires countNumber <= countNumberAtLastTransfer;
+    @ requires countNumber <= candidateIDAtCount.length;
     @ ensures \result == candidateIDAtCount[countNumber];
     @*/
   public /*@ pure @*/ int getPreferenceAtCount(final int countNumber) {
