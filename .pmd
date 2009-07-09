@@ -508,42 +508,6 @@
             <ruleset>Import Statement Rules</ruleset>
         </rule>
         <rule>
-            <name>DoNotCallSystemExit</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>DoNotUseThreads</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LocalHomeNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>LocalInterfaceSessionNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>MDBAndSessionBeanNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>RemoteInterfaceNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>RemoteSessionInterfaceNamingConvention</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>StaticEJBFieldShouldBeFinal</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UseProperClassLoader</name>
-            <ruleset>J2EE Rules</ruleset>
-        </rule>
-        <rule>
             <name>ProperLogger</name>
             <ruleset>Jakarta Commons Logging Rules</ruleset>
         </rule>
@@ -566,14 +530,6 @@
         <rule>
             <name>SystemPrintln</name>
             <ruleset>Java Logging Rules</ruleset>
-        </rule>
-        <rule>
-            <name>BeanMembersShouldSerialize</name>
-            <ruleset>JavaBean Rules</ruleset>
-        </rule>
-        <rule>
-            <name>MissingSerialVersionUID</name>
-            <ruleset>JavaBean Rules</ruleset>
         </rule>
         <rule>
             <name>JUnitAssertionsShouldIncludeMessage</name>
