@@ -51,7 +51,7 @@ public class StartOfCount extends TestCase {
 		  @                                  candidate2.getCandidateID());
 		  @*/
 		assertTrue(1 == report.getTotalNumberOfCounts());
-		//@ assert 2 == ballotCounting.report().getTotalNumberOfCounts();
+		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 	
 	/**
