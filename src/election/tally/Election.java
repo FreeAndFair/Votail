@@ -118,22 +118,4 @@ public class Election {
 	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
 		return candidateList[index];
 	}
-
-	/**
-	 * Set the total number of seats in this constituency
-	 * 
-	 * @param numberOfSeats The total number of seats in this constituency
-	 * @param numberToElect The number of seats to be filled in this election
-	 */
-	/*@ public normal_behavior 
-	  @   requires 0 < numberOfSeats;
-	  @   requires 0 < numberToElect;
-	  @   requires numberToElect <= numberOfSeats;
-	  @   assignable totalNumberOfSeats, numberOfSeatsInThisElection;
-	  @   ensures this.totalNumberOfSeats == numberOfSeats;
-	  @*/
-	public void setNumberOfSeats(final int numberOfSeats, final int numberToElect) {
-		this.totalNumberOfSeats = numberOfSeats;
- 		this.numberOfSeatsInThisElection = numberToElect;
-		}
 	}
