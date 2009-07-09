@@ -331,7 +331,7 @@ public abstract class AbstractBallotCounting {
    //@ public invariant 0 <= numberOfSurpluses;
    //@ protected invariant numberOfSurpluses <= numberElected;
 	/** Number of candidates with surplus votes */
-	protected int totalNumberOfSurpluses;
+	protected /*@ spec_public @*/ int totalNumberOfSurpluses;
    //@ protected represents numberOfSurpluses <- totalNumberOfSurpluses;
 
 	/** Total number of undistributed surplus votes */
@@ -343,7 +343,7 @@ public abstract class AbstractBallotCounting {
 	  @   0 <= i && i < totalCandidates; getSurplus(candidateList[i]));
 	  @*/
 	/** Number of candidates with surplus votes */
-	protected int totalSumOfSurpluses;
+	protected /*@ spec_public @*/ int totalSumOfSurpluses;
    //@ protected represents sumOfSurpluses <- totalSumOfSurpluses;
 
 	
@@ -1528,6 +1528,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @param The unique identifier for the excluded candidate
 	 */
 	/*@ requires candidateID != Ballot.NONTRANSFERABLE;
+	  @ assignable ballots[*];
 	  @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
 	  @   ballotsToCount[b].getCandidateID() != candidateID);
 	  @*/
@@ -1546,6 +1547,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param ballot The ballot
 	 */
+	//@ assignable nextCandidateID;
 	/*@ ensures (ballot.candidateID == Ballot.NONTRANSFERABLE) ||
 	  @   (isContinuingCandidateID(ballot.candidateID));
 	  @*/
@@ -1571,7 +1573,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	//@ requires numberElected < seats;
 	//@ requires 0 < numberOfContinuingCandidates;
 	//@ requires 0 < remainingSeats;
-	//@ assignable candidates, decisions, numberOfCandidatesElected;
+	//@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
 	//@ assignable totalNumberOfContinuingCandidates, totalRemainingSeats;
 	//@ ensures isElected (candidateList[winner]);
 	//@ ensures 1 + \old(numberElected) == numberElected;

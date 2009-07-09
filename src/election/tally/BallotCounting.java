@@ -529,7 +529,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		status = FINISHED;
 	}
 
-	//@ assignable numberOfSurpluses, sumOfSurpluses;
+	//@ assignable numberOfSurpluses, sumOfSurpluses, totalNumberOfSurpluses, totalSumOfSurpluses;
 	private /*@ spec_public @*/ void calculateSurpluses() {
 		int numberOfSurpluses = 0;
 		int sumOfSurpluses = 0;

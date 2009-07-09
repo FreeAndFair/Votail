@@ -174,7 +174,7 @@ public static final int NONTRANSFERABLE = 0;
 	    countNumberAtLastTransfer = 0;
 	    positionInList = 0;
 	    candidateID = NONTRANSFERABLE; 
-	    ballotID = nextBallotID++;
+	    ballotID = getNextBallotID();
 		randomNumber = this.hashCode();
 	    //@ set _randomNumber = randomNumber;
   }
@@ -249,7 +249,7 @@ public static final int NONTRANSFERABLE = 0;
     @   requires (\forall int i; 0 <= i && i < list.length;
     @     0 < list[i]);
     @   requires positionInList == 0;
-    @	assignable numberOfPreferences, ballotID, preferenceList, candidateID;
+    @	assignable numberOfPreferences, ballotID, preferenceList, candidateID, nextBallotID;;
     @   ensures numberOfPreferences == list.length;
     @   ensures preferenceList.length == list.length;
     @   ensures (\forall int i; 0 <= i && i < list.length;
@@ -258,7 +258,7 @@ public static final int NONTRANSFERABLE = 0;
    public void load(/*@ non_null @*/ int[] list){
     
     // Assign an internal identifier
-    ballotID = this.hashCode();
+    ballotID = getNextBallotID();
     
     preferenceList = new int [list.length];
     for(int i = 0; i < list.length; i++){
@@ -268,6 +268,18 @@ public static final int NONTRANSFERABLE = 0;
     candidateID = list[positionInList]; // first preference
     numberOfPreferences = preferenceList.length;
   }
+
+   /**
+    * Get the next unique internal identifier
+    * 
+    * @return Unique internal identifier
+    */
+   //@ assignable nextBallotID;
+   //@ ensures \old(nextBallotID) != nextBallotID;
+   //@ ensures \result == \old(nextBallotID);
+   private int getNextBallotID() {
+	 return nextBallotID++;
+}
     
   /**
    * Get candidate ID to which the ballot is assigned 
