@@ -249,7 +249,7 @@ public static final int NONTRANSFERABLE = 0;
     @   requires (\forall int i; 0 <= i && i < list.length;
     @     0 < list[i]);
     @   requires positionInList == 0;
-    @	assignable numberOfPreferences, ballotID, preferenceList, candidateID, nextBallotID;;
+    @	assignable numberOfPreferences, ballotID, preferenceList, candidateID, nextBallotID;
     @   ensures numberOfPreferences == list.length;
     @   ensures preferenceList.length == list.length;
     @   ensures (\forall int i; 0 <= i && i < list.length;
