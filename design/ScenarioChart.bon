@@ -22,35 +22,85 @@
 -- THE SOFTWARE.
 --
 
+-- See diagrams/DailBallotCounting
+
 scenario_chart VOTAIL
 explanation 
   "Scenarios for ballot counting"
+scenario
+  "01: READY_TO_COUNT"
+description
+  "A complete set of authenticated ballots is ready for counting"
+scenario
+  "02: NO_SEATS_FILLED_YET"
+description
+  "No candidates have been elected so far"
 scenario 
-  "CANDIDATE_REACHES_QUOTA"
+  "03: CANDIDATE_REACHES_QUOTA"
 description
   "One or more candidates achieve the minimum quota of votes"
+scenario
+  "04: CANDIDATE_ELECTED"
+description
+  "The highest continuing candidate with quota is deemed to be elected"
+scenario
+  "05: NO_SURPLUS_AVAILABLE"
+description
+  "There is no surplus avaialble for distribution"
+scenario
+  "06: SURPLUS_AVAILABLE"
+description
+  "There is at least one surplus availble for distribution"
+scenario
+  "07: READY_TO_CALCULATE_ROUNDING_TRANSFERS"
+description
+  "The non-fractional transfers have been calculated"
+scenario
+  "08: READY_TO_ALLOCATE_SURPLUS"
+description
+  "The transfer value has been calculated"
+scenario
+  "09: READY_TO_ADJUST_TRANSFERS"
+description
+  "The roundings of transfers have been calculated"
+scenario
+  "10: READY_TO_MOVE_BALLOTS"
+description
+  "The number of ballots for transfer to each candidate has been determined"
 scenario 
-  "LOWEST_CANDIDATE_EXCLUDED"
+  "11: LOWEST_CANDIDATE_EXCLUDED"
 description
   "Exclude one or more of the lowest continuing candidates"
 scenario
-  "FILLING_OF_LAST_SEAT"
+  "12: READY_FOR_NEXT_ROUND"
+description
+  "Ballots have been transfered form one canidate to one or more others"
+scenario
+  "13: FILLING_OF_LAST_SEAT"
 description
   "There is one remaining seat and at least two continuing candidates, or the number of continuing candidates is just one more than the number of remaining seats"
 scenario
-  "ALL_SEATS_FILLED"
+  "14: MORE_CANDIDATES_THAN_SEATS"
+description
+  "There are more continuing candidates than remaining seats"
+scenario
+  "15: SEATS_REMAINING"
+description
+  "There is at least one vacancy yet to be filled"
+scenario
+  "16: ALL_SEATS_FILLED"
 description
   "The number of continuing candidates equals the number of seats remaining"
 scenario
-  "CONTINUING_CANDIATES_EQUAL_REMAINING_SEATS"
+  "17: END_OF_COUNT"
+description
+  "Counting has finished and the final results are available"
+scenario
+  "18: CONTINUING_CANDIDATES_EQUAL_REMAINING_SEATS"
 description
   "The number of continuing candidates equals the number of remaining seats; all continuing candidates are deemed elected"
 scenario
-  "CASTING_A_VOTE"
+  "19: READY_TO_REWEIGHT_BALLOTS"
 description
-  "A voter generates a ballot and adds it to the ballot box via a polling booth"
-scenario
-  "TWO_EQUAL_CANDIDATES"
-description
-  "Two candidates each receive the same number of votes at each count.  One is chosen by lot."
+  "Fractional ballots are being transfered to avoid rounding"
 end
