@@ -47,21 +47,70 @@ involves
 end
 
 -- Internal (outgoing) events
+-- See diagrams/DailBallotCounting
 
 event_chart VOTAIL
 outgoing
 part
   "2/2"
 event
-  "One or more candidates are elected and surplus votes are transferred"
+  "A: The quota is calculated"
 involves
-  CANDIDATE, BALLOT_BOX, BALLOT_COUNTING
+  BALLOT_COUNTING
+event
+  "B: The highest continuing candidate is found"
+involves
+  BALLOT_COUNTING
+event
+  "C: The surplus, from an elected candidate, is calculated"
+involves
+  BALLOT_COUNTING
 event 
-  "One or more candidates are excluded and their ballots are redistributed"
+  "D: The transfer factor from a surplus is calculated"
 involves
-  CANDIDATE, BALLOT_BOX, BALLOT_COUNTING
+  BALLOT_COUNTING
  event
-  "Election results are available"
+  "E: The non-fractional transfers from a surplus are calculated"
  involves
-   BALLOT_COUNTING, REPORT, ELECTION
+   BALLOT_COUNTING
+ event
+   "F: Fractional differences are calculated for each candidate"
+ involves
+   BALLOT_COUNTING
+ event
+   "G: Adjusted transfers from surplus are calculated"
+ involves
+   BALLOT_COUNTING
+ event
+   "H: Transfers, from an excluded candidate, are calculated"
+ involves
+   BALLOT_COUNTING
+ event
+   "J: The lowest continuing candidate is selected for exclusion"
+ involves
+   BALLOT_COUNTING
+ event
+   "K: The number of continuing candidates is recalculated"
+ involves
+   BALLOT_COUNTING, CANDIDATE
+ event
+   "L: The selected ballots are moved to the next continuing preference candidate"
+ involves
+   BALLOT, BALLOT_COUNTING
+ event
+   "M: The number of remaining seats is checked"
+ involves
+   BALLOT_COUNTING
+ event
+   "N: The remaining candidates are deemed elected"
+ involves
+   BALLOT_COUNTING, CANDIDATE
+ event
+   "P: The counting is closed and final result declared"
+ involves
+   BALLOT_COUNTING, REPORT
+ event
+   "Q: The ballots are reweighted (if applicable)"
+ involves
+   BALLOT, BALLOT_COUNTING
 end
