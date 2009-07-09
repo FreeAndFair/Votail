@@ -138,6 +138,7 @@ public class Report {
 	  @ assignable numberElected;
 	  @ assignable electedCandidateIDs;
 	  @ assignable totalNumberOfCounts;
+	  @ assignable numberOfCandidates;
 	  @*/
 	public Report(/*@ non_null @*/ final int[] list, final int counts, final Candidate[] candidates){
 		numberElected = list.length;

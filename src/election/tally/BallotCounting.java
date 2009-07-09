@@ -2,7 +2,7 @@ package election.tally;
 
  
 /**
- * Ballot counting for elections to D�il �ireann - the lower house of the Irish 
+ * Ballot counting for elections to Dail Eireann - the lower house of the Irish 
  * Parliament.
  * 
  * @author Dermot Cochran
@@ -556,7 +556,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		for (int d = 0; d < decisionsTaken; d++) {
 			log.append("At count number " + decisions[d].atCountNumber);
 			log.append(", candidate " + decisions[d].candidateID);
-			log.append(" was " + decisions[d].getDescription());
+			log.append(" was " + decisions[d].toString());
 			if (decisions[d].chosenByLot) {
 				log.append(" by random selection");
 			}

@@ -104,7 +104,7 @@ public static final int MAX_DECISIONS = 100;
  * 
  * @return The natural language description of the decision code
  */
-public final /*@ helper @*/ String getDescription() {
+public final String toString() {
 	String message;
 	switch (decisionTaken) {
 	  case ELECT_BY_QUOTA: message = "elected by reaching quota"; break;

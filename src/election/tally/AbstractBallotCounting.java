@@ -1374,6 +1374,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
  */
 /*@ also
   @   requires state == COUNTING;
+  @   assignable decisions[*], decisionsTaken;
   @   ensures (\forall int i; 0 <= i && i < totalCandidates;
   @     isElected (candidateList[i]) ==> (\exists int k;
   @     0 <= k && k < numberOfDecisions;
@@ -1477,7 +1478,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	/*@ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
 	  @ requires remainingSeats < numberOfContinuingCandidates;
 	  @ requires (state == COUNTING);
-	  @ assignable candidateList;
+	  @ assignable candidateList, decisions[*], decisionsTaken;
 	  @ ensures remainingSeats <= numberOfContinuingCandidates;
 	  @ ensures numberElected <= seats;
 	  @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
@@ -1504,7 +1505,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ requires (decisionType == Decision.EXCLUDE) ||
 	  @   (decisionType == Decision.DEEM_ELECTED) ||
 	  @   (decisionType == Decision.ELECT_BY_QUOTA);
-	  @ assignable decisions;
+	  @ assignable decisions[*], decisionsTaken;
 	  @ ensures \old(numberOfDecisions) < numberOfDecisions;
 	  @*/
 	protected void auditDecision(final byte decisionType, final int candidateID) {
