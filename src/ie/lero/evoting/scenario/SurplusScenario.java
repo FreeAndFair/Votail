@@ -67,10 +67,6 @@ public class SurplusScenario extends TestCase{
 	 	//@ assert 0 <= indexOfHighestCandidate;
 	 	
  		ballotCounting.electCandidate(indexOfHighestCandidate);
- 		
- 		//@ assert 1 <= ballotCounting.getNumberOfSurpluses();
- 		//@ assert 1 <= ballotCounting.getSumOfSurpluses();
-
  	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);
  	 	
 	 	//@ assert 1 == ballotCounting.report().getNumberElected();

@@ -1436,6 +1436,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @return The continuing candidate with the least votes
 	 */
 	/*@ requires 1 <= totalCandidates;
+	  @ requires \nonnullelements(candidates);
 	  @ ensures (\forall int i; 
 	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
 	  @   candidateList[i].getTotalVote() >= candidateList[\result].getTotalVote());

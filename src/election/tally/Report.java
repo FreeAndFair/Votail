@@ -109,13 +109,14 @@ public class Report {
 		return false;
 	}
 
+	/** Total number of rounds of counting */
 	//@ public invariant 0 <= totalNumberOfCounts;
 	private /*@ spec_public @*/ int totalNumberOfCounts;
 
-	//@ public invariant candidateIDs.length == numberOfCandidates;
+	/** Internal identifiers for each candidate */
 	private /*@ spec_public @*/ int[] candidateIDs;
 
-	//@ public invariant candidateVotes.length == (numberOfCandidates * totalNumberOfCounts);
+	/** Number of votes for each candidate in each round of counting */
 	private /*@ spec_public @*/ long[][] candidateVotes;
 
 	//@ public invariant 0 <= numberOfCandidates;
@@ -136,6 +137,7 @@ public class Report {
 	  @ assignable candidateVotes;
 	  @ assignable numberElected;
 	  @ assignable electedCandidateIDs;
+	  @ assignable totalNumberOfCounts;
 	  @*/
 	public Report(/*@ non_null @*/ final int[] list, final int counts, final Candidate[] candidates){
 		numberElected = list.length;
@@ -168,21 +170,23 @@ public class Report {
 	 * Get the total vote for each candidate at each round of counting.
 	 * 
 	 * @param id The ID number of the candidate
-	 * @param n The round of counting
+	 * @param round The round of counting
 	 * 
 	 * @return The total vote for this candidate at that round of counting.
 	 */
-	//@ requires 0 <= n && n < totalNumberOfCounts;
+	//@ requires 0 <= round && round < totalNumberOfCounts;
 	//@ requires candidateIDs != null;
 	//@ requires candidateVotes != null;
 	//@ requires numberOfCandidates <= candidateIDs.length;
+	//@ requires numberOfCandidates <= candidateVotes.length;
+	//@ requires (\forall int c; 0 <= c && c < numberOfCandidates; round < candidateVotes[c].length);
 	//@ requires (\exists int i; 0 <= i && i < numberOfCandidates; candidateIDs[i] == id);
-	public /*@ pure @*/ long getResult(final int id, final int n) {
+	public /*@ pure @*/ long getResult(final int id, final int round) {
 	
 		long result = 0;
 		for (int c = 0; c < numberOfCandidates; c++) {
 			if (candidateIDs[c] == id) {
-				result = candidateVotes[c][n];
+				result = candidateVotes[c][round];
 				break;
 			}	
 		}

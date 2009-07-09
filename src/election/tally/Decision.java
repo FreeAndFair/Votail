@@ -100,16 +100,21 @@ public static final int MAX_DECISIONS = 100;
 		chosenByLot = false;	
 	}
 
-public String getDescription() {
+/** Get the English language text of the decision code
+ * 
+ * @return The natural language description of the decision code
+ */
+public final /*@ helper @*/ String getDescription() {
+	String message;
 	switch (decisionTaken) {
-	  case ELECT_BY_QUOTA: return "elected by reaching quota";
-	  case EXCLUDE: return "excluded from election"; 
-	  case NO_DECISION: return "was unchanged";
-	  case ROUND_UP_FRACTION: return "given an extra vote due to rounding up of ballot transfers";
-	  case DISTRIBUTE_SURPLUS: return "had their surplus votes distributed";
-	  case DEEM_ELECTED: return "was deemed elected"; 
-	
-	  default:  return "was unchanged";
+	  case ELECT_BY_QUOTA: message = "elected by reaching quota"; break;
+	  case EXCLUDE: message = "excluded from election"; break;
+	  case NO_DECISION: message = "was unchanged"; break;
+	  case ROUND_UP_FRACTION: message = "given an extra vote due to rounding up of ballot transfers"; break;
+	  case DISTRIBUTE_SURPLUS: message = "had their surplus votes distributed"; break;
+	  case DEEM_ELECTED: message = "was deemed elected"; break;
+	  default: message = "";
 	}
+	return message;
 }
 }

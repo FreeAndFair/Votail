@@ -23,9 +23,11 @@ public class ExclusionScenario extends TestCase {
 	/**
 	 * Execute this scenario.
 	 */
+	//@ requires ballotCounting != null;
 	public final void testExclusion() {
 	 	
-	 	ballotCounting.eliminateCandidate(ballotCounting.findLowestCandidate());
+	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
+		ballotCounting.eliminateCandidate(lowestCandidate);
 	 	
 	 	//@ assert 0 == ballotCounting.report().getNumberElected();
 		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
@@ -47,6 +49,7 @@ public class ExclusionScenario extends TestCase {
 		Candidate[] candidates = new Candidate[numberOfCandidates];
 		for (int i = 0; i < numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
+			assert candidates[i].getStatus() == Candidate.CONTINUING;
 			int numberOfVotes = i*1000;
 			candidates[i].addVote(numberOfVotes, 1);
 			
