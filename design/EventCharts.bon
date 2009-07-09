@@ -32,18 +32,6 @@ event
   "Ballot counting starts"
 involves
   BALLOT_BOX, BALLOT_COUNTING
-event
-  "A ballot is cast by a voter"
-involves
-  BALLOT, BALLOT_BOX, POLLING_BOOTH, VOTER
-event
-  "A voter is registered and authenticated to a polling booth"
-involves
-  REGISTRAR, VOTER, POLLING_BOOTH
-event
-  "The list of candidates is shown to the voter"
-involves
-  ELECTION, VOTER
 end
 
 -- Internal (outgoing) events
