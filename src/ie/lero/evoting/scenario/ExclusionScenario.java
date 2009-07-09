@@ -49,7 +49,7 @@ public class ExclusionScenario extends TestCase {
 		Candidate[] candidates = new Candidate[numberOfCandidates];
 		for (int i = 0; i < numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
-			assert candidates[i].getStatus() == Candidate.CONTINUING;
+			assertTrue (candidates[i].getStatus() == Candidate.CONTINUING);
 			int numberOfVotes = i*1000;
 			candidates[i].addVote(numberOfVotes, 1);
 			
@@ -63,5 +63,14 @@ public class ExclusionScenario extends TestCase {
 		parameters.setCandidateList(candidates);
  	 	ballotCounting.setup(parameters);
  	 	ballotCounting.load(ballotBox);
+	}
+	
+	// JML RAC
+	public static void main (String[] args) {
+		StartOfCount scenario = new StartOfCount();
+		scenario.setUp();
+		scenario.testCount();
+		scenario.setUp();
+		scenario.testTie();
 	}
 }
