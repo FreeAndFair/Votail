@@ -1547,7 +1547,6 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param ballot The ballot
 	 */
-	//@ assignable nextCandidateID;
 	/*@ ensures (ballot.candidateID == Ballot.NONTRANSFERABLE) ||
 	  @   (isContinuingCandidateID(ballot.candidateID));
 	  @*/
