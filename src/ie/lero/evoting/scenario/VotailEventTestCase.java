@@ -8,10 +8,10 @@ import junit.framework.TestCase;
 
 public abstract class VotailEventTestCase extends TestCase {
 
-	protected BallotCounting ballotCounting;
-	protected BallotBox ballotBox;
-	protected Election parameters;
-	protected Candidate candidate;
+	protected /*@ spec_public @*/ BallotCounting ballotCounting;
+	protected /*@ spec_public @*/ BallotBox ballotBox;
+	protected /*@ spec_public @*/ Election parameters;
+	protected /*@ spec_public @*/ Candidate candidate;
 
 	public VotailEventTestCase() {
 		super();

@@ -836,15 +836,28 @@ public void load(/*@ non_null @*/ BallotBox ballotBox) {
 /**
  * Calculate the first preference counts for each candidate.
  */
-//@ assignable candidates[*];
+/*@ requires candidates != null;
+  @ requires (\forall int index; 0 <= index && index < totalNumberOfCandidates;
+  @          candidates[index] != null);
+  @ assignable candidates[*];
+  @*/
 public void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
 		candidates[c].addVote(countBallotsFor(candidates[c].getCandidateID()), 
 				countNumberValue);
 	}
-	
 }
 
+/**
+ * Count the number of ballots in the pile for this candidate.
+ * 
+ * @param candidateID The internal identifier of this candidate
+ * @return The number of ballots in this candidate's pile
+ */
+/*@ requires ballotsToCount != null;
+  @ requires (\forall int index; 0 <= index && index < totalNumberOfVotes;
+  @          ballotsToCount[index] != null); 
+  @*/
 public /*@ pure @*/ int countBallotsFor(int candidateID) {
 	int numberOfBallots = 0;
 	for (int b=0; b < totalNumberOfVotes; b++) {

@@ -104,17 +104,18 @@ public static final int MAX_DECISIONS = 100;
  * 
  * @return The natural language description of the decision code
  */
-public final String toString() {
+public /*@ non_null @*/ String toString() {
+	String prefix = new String ("At count number " + atCountNumber + " candidate " + candidateID);
 	String message;
 	switch (decisionTaken) {
-	  case ELECT_BY_QUOTA: message = "elected by reaching quota"; break;
-	  case EXCLUDE: message = "excluded from election"; break;
-	  case NO_DECISION: message = "was unchanged"; break;
-	  case ROUND_UP_FRACTION: message = "given an extra vote due to rounding up of ballot transfers"; break;
-	  case DISTRIBUTE_SURPLUS: message = "had their surplus votes distributed"; break;
-	  case DEEM_ELECTED: message = "was deemed elected"; break;
+	  case ELECT_BY_QUOTA: message = " was elected by reaching quota"; break;
+	  case EXCLUDE: message = " was excluded from election"; break;
+	  case ROUND_UP_FRACTION: message = " was given an extra vote due to rounding up of ballot transfers"; break;
+	  case DISTRIBUTE_SURPLUS: message = " had their surplus votes distributed"; break;
+	  case DEEM_ELECTED: message = " was deemed elected"; break;
+	  case NO_DECISION: message = " was unchanged"; break;
 	  default: message = "";
 	}
-	return message;
-}
+	return prefix + message;
+	}
 }
