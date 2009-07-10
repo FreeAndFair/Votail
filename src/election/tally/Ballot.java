@@ -114,7 +114,7 @@ public static final int NONTRANSFERABLE = 0;
     @   preferenceList[i] != preferenceList[j]);
     @*/
   //@ public invariant preferenceList.length >= numberOfPreferences;
-  protected /*@ spec_public non_null@*/ int[] preferenceList = new int [Candidate.MAX_CANDIDATES];
+  protected /*@ spec_public non_null @*/ int[] preferenceList;
 	
   /** Total number of valid preferences on this ballot paper */
   //@ public invariant 0 <= numberOfPreferences;
@@ -171,12 +171,13 @@ public static final int NONTRANSFERABLE = 0;
   @*/
   public /*@ pure @*/ Ballot () {
  	  numberOfPreferences = 0;
-	    countNumberAtLastTransfer = 0;
-	    positionInList = 0;
-	    candidateID = NONTRANSFERABLE; 
-	    ballotID = getNextBallotID();
-		randomNumber = this.hashCode();
-	    //@ set _randomNumber = randomNumber;
+	  countNumberAtLastTransfer = 0;
+	  positionInList = 0;
+	  candidateID = NONTRANSFERABLE; 
+	  ballotID = getNextBallotID();
+      randomNumber = this.hashCode();
+	  //@ set _randomNumber = randomNumber;
+      preferenceList = new int [Candidate.MAX_CANDIDATES];
   }
     
   /**
@@ -188,7 +189,7 @@ public static final int NONTRANSFERABLE = 0;
   /*@ also public normal_behavior
     @ requires 0 <= countNumber;
     @ requires countNumber <= countNumberAtLastTransfer;
-    @ requires countNumber <= candidateIDAtCount.length;
+    @ requires countNumber < candidateIDAtCount.length;
     @ ensures \result == candidateIDAtCount[countNumber];
     @*/
   public /*@ pure @*/ int getPreferenceAtCount(final int countNumber) {
@@ -345,21 +346,22 @@ public static final int NONTRANSFERABLE = 0;
   /*@ also public normal_behavior
     @   requires 0 <= positionInList;
     @   requires positionInList <= numberOfPreferences;
+    @   requires positionInList <= preferenceList.length;
     @   requires countNumberAtLastTransfer <= countNumber;
     @   assignable countNumberAtLastTransfer, positionInList, candidateID;
-    @   ensures countNumberAtLastTransfer == countNumber;
+    @   ensures (countNumberAtLastTransfer == countNumber) || (candidateID == NONTRANSFERABLE);
     @   ensures \old(positionInList) <= positionInList;
     @   ensures (positionInList == \old(positionInList) + 1) ||
     @           (positionInList == numberOfPreferences);
     @*/
   public void transfer(int countNumber) {
- 		countNumberAtLastTransfer = countNumber;
-		positionInList = positionInList + 1;
 
 		if (positionInList < numberOfPreferences) {
-			candidateID = preferenceList [positionInList];
+	 		countNumberAtLastTransfer = countNumber;
+			candidateID = preferenceList[positionInList];
+			positionInList = positionInList + 1;
 		}
-		else if (positionInList == numberOfPreferences) {
+		else {
 			candidateID = NONTRANSFERABLE;
 		}
 	}
@@ -433,18 +435,4 @@ public static final int NONTRANSFERABLE = 0;
     }
     return false;
   }
-
-public void setFirstPreference(final int firstPreferenceID) {
-	numberOfPreferences = 1;
-	this.candidateID = firstPreferenceID;
-	preferenceList[0] = firstPreferenceID;
-}
-
-public void setMultiplePreferences(int[] candidateIDList, final int howManyPreferences) {
-	this.numberOfPreferences = howManyPreferences;
-	this.candidateID = candidateIDList[0];
-	for (int c = 0; c < howManyPreferences; c++) {
-		preferenceList[c] = candidateIDList[c];
-	}
-}
 }

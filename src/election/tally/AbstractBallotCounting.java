@@ -743,6 +743,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
 /*@ also
   @   protected normal_behavior
   @     requires state == FINISHED || state == COUNTING;
+  @     requires 0 < numberOfCandidatesElected;
   @     ensures \result.getNumberElected() == numberOfSeats;
   @	    ensures \result.getNumberElected() == getElectedCandidateIDs().length;
   @*/
@@ -763,7 +764,7 @@ public /*@ pure non_null @*/ final int[] getElectedCandidateIDs() {
 	int counter = 0;
  	for (int i = 0; (i < totalNumberOfCandidates) && 
  	    (counter < numberOfCandidatesElected); i++) {
-		if (isElected(candidates[i])) { //@ nowarn;
+		if (isElected(candidates[i])) {
 			electedCandidateIDs[counter++] = candidates[i].candidateID;
 		}
 	}
@@ -817,8 +818,12 @@ public void setup(/*@ non_null @*/ Election electionParameters){
   @     ensures this.ballots == ballotBox.ballots;
   @*/
 public void load(/*@ non_null @*/ BallotBox ballotBox) {
- 	ballots = ballotBox.getBallots();
  	totalNumberOfVotes = ballotBox.size();
+ 	ballots = new Ballot[totalNumberOfVotes];
+ 	int b = 0;
+ 	while (b < totalNumberOfVotes && ballotBox.isNextBallot()) {
+ 		ballots[b++] = ballotBox.getNextBallot();
+ 	}
  	status = PRECOUNT;
  	
  	// Droop quota
@@ -895,6 +900,7 @@ protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
   @     requires 0 < toCandidateID;
   @     requires toCandidateID != Ballot.NONTRANSFERABLE;
   @     requires ballotsToCount != null;
+  @     requires \nonnullelements(ballotsToCount);
   @     ensures \result== (\num_of int j; 0 <= j && j < ballotsToCount.length;
   @       (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
   @       (ballotsToCount[j].getCountNumberAtLastTransfer() ==
@@ -903,8 +909,8 @@ protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
   @*/
 	protected /*@ pure spec_public @*/ int getPotentialTransfers(Candidate fromCandidate,int toCandidateID) {
 		int numberOfBallots = 0;
- 		for (int j = 0; j < ballots.length; j++) { //@ nowarn;
-			final int candidateID = fromCandidate.getCandidateID(); //@ nowarn;
+ 		for (int j = 0; j < ballots.length; j++) {
+			final int candidateID = fromCandidate.getCandidateID();
 			if (ballots[j].isAssignedTo(candidateID) && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
 				if (ballots[j].getCountNumberAtLastTransfer() == fromCandidate.getLastSetAddedCountNumber()) {
 					numberOfBallots++;
@@ -1569,6 +1575,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 */
 	//@ requires 0 <= winner && winner < totalCandidates;
 	//@ requires candidateList[winner] != null;
+	//@ requires candidateList[winner].getStatus() == Candidate.CONTINUING;
 	//@ requires numberElected < seats;
 	//@ requires 0 < numberOfContinuingCandidates;
 	//@ requires 0 < remainingSeats;

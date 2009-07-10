@@ -34,9 +34,9 @@ public class BallotBox {
  * List of valid ballot papers.
  */
 /*@ public invariant (\forall int i, j;
-  @   0 <= i && i <numberOfBallots &&
-  @   0 <= j && j <numberOfBallots &&
-  @   i != j;
+  @   0 <= i && i < numberOfBallots &&
+  @   0 <= j && j < numberOfBallots &&
+  @   i != j && ballots[i] != null && ballots[j] != null;
   @   ballots[i].ballotID != ballots[j].ballotID);
   @*/	
 	protected /*@ spec_public non_null @*/ Ballot[] ballots;
@@ -57,12 +57,12 @@ public class BallotBox {
 	
     //@ public invariant 0 <= numberOfBallots;
     //@ public initially numberOfBallots == 0;
-    //@ public constraint numberOfBallots >= \old(numberOfBallots);
 	/**
 	 * The total number of ballots in this ballot box.
 	 */
-    //@ public invariant numberOfBallots == ballots.length;
+    //@ public invariant numberOfBallots <= ballots.length;
 	private /*@ spec_public @*/ int numberOfBallots;
+	private int index;
 	
 	/**
 	 * Create an empty ballot box.
@@ -85,26 +85,13 @@ public class BallotBox {
 		ballots[numberOfBallots++] = ballot;
 	}
 
-	/**
-	 * Get the full set of ballots cast.
-	 * 
-	 * @return The full set of ballots.
-	 */
-	/*@ public normal_behavior
-	  @   ensures ballots == \result;
-	  @*/
-	public /*@ pure non_null @*/ Ballot[] getBallots() {
- 		return ballots;
+	public boolean isNextBallot() {
+		// TODO Auto-generated method stub
+		return index < numberOfBallots;
 	}
 
-	/**
-	 * Add single preference ballot for testing.
-	 * 
-	 * @param candidateID The first preference candidateID for the test ballot
-	 */
-	public void addBallot(int candidateID) {
-		Ballot ballot = new Ballot();
-		ballot.setFirstPreference(candidateID);
-		accept(ballot);
+	public Ballot getNextBallot() {
+		// TODO Auto-generated method stub
+		return ballots[index++];
 	}
 }
