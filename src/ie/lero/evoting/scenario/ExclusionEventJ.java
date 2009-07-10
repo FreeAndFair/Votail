@@ -1,10 +1,10 @@
 package ie.lero.evoting.scenario;
 
-import junit.framework.TestCase;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
+import election.tally.mock.MockBallot;
 
 /**
  * This is a test for the correctness of the ballot counting process in the 
@@ -15,11 +15,8 @@ import election.tally.Election;
  * 
  * @see election.tally.Candidate
  */
-public class ExclusionEventJ extends TestCase {
+public class ExclusionEventJ extends VotailEventTestCase {
 
-	private /*@ spec_public @*/ BallotCounting ballotCounting;
-	private BallotBox ballotBox;
-	
 	/**
 	 * Execute this scenario.
 	 */
@@ -40,7 +37,7 @@ public class ExclusionEventJ extends TestCase {
 		
 		ballotBox = new BallotBox();
 		ballotCounting = new BallotCounting();
-		Election parameters = new Election();
+		parameters = new Election();
 		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;
 		
@@ -56,7 +53,9 @@ public class ExclusionEventJ extends TestCase {
 			// Generate first preference ballots
 			for (int b = 0; b < numberOfVotes; b++) {
 				
-				ballotBox.addBallot(candidates[i].getCandidateID());
+				MockBallot ballot = new MockBallot();
+			    ballot.setFirstPreference(candidates[i].getCandidateID());
+				ballotBox.accept(ballot);
 			}
 		}
 		

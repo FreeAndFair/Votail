@@ -1,22 +1,17 @@
 package ie.lero.evoting.scenario;
 
-import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
+import election.tally.mock.MockBallot;
 
 /**
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-public class SurplusCalculationEventC extends TestCase{
-	
-	protected BallotCounting ballotCounting;
-	protected Election parameters;
-	protected Candidate candidate;
-	protected BallotBox ballotBox;
+public class SurplusCalculationEventC extends VotailEventTestCase{
 	
 	/**
 	 * Create the scenario data needed
@@ -44,7 +39,7 @@ public class SurplusCalculationEventC extends TestCase{
 		
 		for (int b = 0; b < numberOfVotes && 
 		        ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
-				Ballot testBallot = new Ballot();
+				MockBallot testBallot = new MockBallot();
 				testBallot.setMultiplePreferences(
 						candidateIDList,numberOfPreferences);
 				ballotBox.accept(testBallot);

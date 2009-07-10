@@ -3,16 +3,15 @@
  */
 package ie.lero.evoting.scenario;
 
-import junit.framework.TestCase;
 
 /**
- * @author Dermot
+ * @author Dermot Cochran
  *
  */
-public class QuotaCalculationEventA extends TestCase {
+public class QuotaCalculationEventA extends VotailEventTestCase {
 
 	/**
-	 * @param name
+	 * @param name Name of test
 	 */
 	public QuotaCalculationEventA(String name) {
 		super(name);
@@ -30,6 +29,19 @@ public class QuotaCalculationEventA extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+	}
+	
+	/**
+	 * Test the calculation of quota and deposit saving threshold.
+	 */
+	public void testCalculateQuota () {
+		assertTrue(ballotCounting != null);
+		assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY);
+		//@ assert ballotCounting.getStatus() == BallotCounting.EMPTY;
+		ballotCounting.setup(parameters);
+		
+		assertTrue(1 == ballotCounting.report().getTotalNumberOfCounts());
+		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 	}
 
 }
