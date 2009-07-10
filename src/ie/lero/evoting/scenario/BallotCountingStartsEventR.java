@@ -12,7 +12,7 @@ import election.tally.Report;
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-public class StartOfCount extends TestCase {
+public class BallotCountingStartsEventR extends TestCase {
 
 	protected BallotCounting ballotCounting;
 	protected /*@ spec_public @*/ Election parameters;
@@ -35,6 +35,10 @@ public class StartOfCount extends TestCase {
 		//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
 		ballotCounting.count();
 		
+		testClosureEvent();
+	}
+
+	public void testClosureEvent() {
 		assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED);
 		//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
 		final Report report = ballotCounting.report();
@@ -57,10 +61,21 @@ public class StartOfCount extends TestCase {
 	/**
 	 * Test a tie between two equal candidates.
 	 */
-	public void testTie () {
+	public void testCalculateQuota () {
+		assertTrue(ballotCounting.getStatus() == BallotCounting.EMPTY);
 		//@ assert ballotCounting.getStatus() == BallotCounting.EMPTY;
 		ballotCounting.setup(parameters);
 		
+		assertTrue(1 == report.getTotalNumberOfCounts());
+		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
+	}
+	
+	/**
+	 * Test a tie between two equal candidates.
+	 */
+	public void testTie () {
+		assertTrue(ballotCounting.getStatus() == BallotCounting.EMPTY);
+		//@ assert ballotCounting.getStatu)
 		//@ assert ballotCounting.getStatus() == BallotCounting.PRELOAD;
 		ballotCounting.load(ballotBox);
 		
@@ -97,14 +112,5 @@ public class StartOfCount extends TestCase {
 		  ballotBox.accept(ballot);
 		}
 		//@ assert ballotBox.size() == 101;
-	}
-	
-	// JML RAC
-	public static void main (String[] args) {
-		StartOfCount scenario = new StartOfCount();
-		scenario.setUp();
-		scenario.testCount();
-		scenario.setUp();
-		scenario.testTie();
 	}
 }

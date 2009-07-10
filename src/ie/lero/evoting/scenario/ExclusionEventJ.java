@@ -15,7 +15,7 @@ import election.tally.Election;
  * 
  * @see election.tally.Candidate
  */
-public class ExclusionScenario extends TestCase {
+public class ExclusionEventJ extends TestCase {
 
 	private /*@ spec_public @*/ BallotCounting ballotCounting;
 	private BallotBox ballotBox;
@@ -36,7 +36,7 @@ public class ExclusionScenario extends TestCase {
 	/**
 	 * Create test data for a mock election.
 	 */
-	public ExclusionScenario() {
+	public ExclusionEventJ() {
 		
 		ballotBox = new BallotBox();
 		ballotCounting = new BallotCounting();
@@ -63,14 +63,5 @@ public class ExclusionScenario extends TestCase {
 		parameters.setCandidateList(candidates);
  	 	ballotCounting.setup(parameters);
  	 	ballotCounting.load(ballotBox);
-	}
-	
-	// JML RAC
-	public static void main (String[] args) {
-		StartOfCount scenario = new StartOfCount();
-		scenario.setUp();
-		scenario.testCount();
-		scenario.setUp();
-		scenario.testTie();
 	}
 }

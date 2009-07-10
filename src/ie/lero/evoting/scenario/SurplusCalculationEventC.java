@@ -11,7 +11,7 @@ import election.tally.Election;
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-public class SurplusScenario extends TestCase{
+public class SurplusCalculationEventC extends TestCase{
 	
 	protected BallotCounting ballotCounting;
 	protected Election parameters;

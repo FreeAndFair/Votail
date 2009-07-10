@@ -29,7 +29,7 @@ incoming
 part
   "1/2"
 event
-  "Ballot counting starts"
+  "R: Ballot counting starts"
 involves
   BALLOT_BOX, BALLOT_COUNTING
 end

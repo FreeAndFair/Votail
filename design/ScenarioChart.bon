@@ -74,7 +74,7 @@ description
 scenario
   "12: READY_FOR_NEXT_ROUND"
 description
-  "Ballots have been transfered form one canidate to one or more others"
+  "Ballots have been transfered form one candidate to one or more others"
 scenario
   "13: FILLING_OF_LAST_SEAT"
 description
