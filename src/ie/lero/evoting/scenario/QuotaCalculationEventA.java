@@ -37,7 +37,7 @@ public class QuotaCalculationEventA extends VotailEventTestCase {
 	public void testCalculateQuota () {
 		assertTrue(ballotCounting != null);
 		assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY);
-		//@ assert ballotCounting.getStatus() == BallotCounting.EMPTY;
+		//@ assert ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY;
 		ballotCounting.setup(parameters);
 		
 		assertTrue(1 == ballotCounting.report().getTotalNumberOfCounts());

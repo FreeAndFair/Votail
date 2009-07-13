@@ -40,13 +40,15 @@ public class SelectHighestContinuingCandidateEventB extends VotailEventTestCase 
 			assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY);
  			ballotCounting.load(ballotBox);
 			
+ 			assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.PRECOUNT);
 			//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
 			ballotCounting.count();
 			
+			assertTrue((ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED)
+			    && (1 == ballotCounting.report().getNumberElected())
+			   && (1 == ballotCounting.report().getTotalNumberOfCounts()));
 			//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;
 			//@ assert 1 == ballotCounting.report().getNumberElected();
-			//@ assert ballotCounting.isDepositSaved(candidate1);
-			//@ assert ballotCounting.isDepositSaved(candidate2);
 			//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
 		}
 

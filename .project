@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Votail</name>
+	<name>Vótáil</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -12,11 +12,6 @@
 		</buildCommand>
 		<buildCommand>
 			<name>ie.ucd.bon.plugin.boncbuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>ch.ethz.inf.pm.jml.plugin.CheckerBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -62,7 +57,6 @@
 		<nature>ie.ucd.bon.plugin.boncnature</nature>
 		<nature>mobius.escjava2.plugin.autocheckEscjavaNature</nature>
 		<nature>net.sourceforge.metrics.nature</nature>
-		<nature>ch.ethz.inf.pm.jml.plugin.CheckerNature</nature>
 		<nature>AutoGrader.nature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
 		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>

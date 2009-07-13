@@ -163,7 +163,7 @@ public static final int NONTRANSFERABLE = 0;
    */
 /*@ also public normal_behavior
   @	  assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
-  @     candidateID, ballotID, positionInList, randomNumber, nextBallotID;
+  @     candidateID, ballotID, positionInList, randomNumber, nextBallotID, preferenceList;
   @   ensures numberOfPreferences == 0;
   @   ensures countNumberAtLastTransfer == 0;
   @   ensures positionInList == 0;
@@ -174,7 +174,7 @@ public static final int NONTRANSFERABLE = 0;
 	  countNumberAtLastTransfer = 0;
 	  positionInList = 0;
 	  candidateID = NONTRANSFERABLE; 
-	  ballotID = getNextBallotID();
+	  ballotID = getNextBallotID(); //@ nowarn;
       randomNumber = this.hashCode();
 	  //@ set _randomNumber = randomNumber;
       preferenceList = new int [Candidate.MAX_CANDIDATES];

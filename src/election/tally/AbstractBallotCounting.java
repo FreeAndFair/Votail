@@ -637,7 +637,7 @@ protected void setTotalNumberOfSurpluses(final int quantity) {
  */
 protected /*@ pure @*/ int getTotalSumOfSurpluses() {
 	return totalSumOfSurpluses;
-}
+} //@ nowarn;
 
 /**
  * Update the total number of surplus votes available for redistribution.
@@ -855,7 +855,7 @@ public void calculateFirstPreferences() {
  * @return The number of ballots in this candidate's pile
  */
 /*@ requires ballotsToCount != null;
-  @ requires (\forall int index; 0 <= index && index < totalNumberOfVotes;
+  @ requires (\forall int index; 0 <= index && index < totalVotes;
   @          ballotsToCount[index] != null); 
   @*/
 public /*@ pure @*/ int countBallotsFor(int candidateID) {
@@ -1566,17 +1566,22 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @param ballot The ballot
 	 */
-	/*@ ensures (ballot.candidateID == Ballot.NONTRANSFERABLE) ||
+	/*@ requires ballot.countNumberAtLastTransfer < countNumberValue;
+	  @ assignable ballot.countNumberAtLastTransfer;
+	  @ assignable ballot.positionInList;
+	  @ assignable ballot.candidateID;
+	  @ ensures (ballot.candidateID == Ballot.NONTRANSFERABLE) ||
 	  @   (isContinuingCandidateID(ballot.candidateID));
 	  @*/
-	protected void transferBallot(final /*@ non_null @*/ Ballot ballot) {
+	protected void transferBallot(/*@ non_null @*/ Ballot ballot) {
 		
 		int nextCandidateID;
 		do {
 		  ballot.transfer(countNumberValue);
 		  nextCandidateID = ballot.getCandidateID();
 		}
-		while ((nextCandidateID != Ballot.NONTRANSFERABLE) && (!isContinuingCandidateID(nextCandidateID)));
+		while ((nextCandidateID != Ballot.NONTRANSFERABLE) && 
+				(!isContinuingCandidateID(nextCandidateID)));
 	}
 	
 	public abstract void count();
@@ -1594,6 +1599,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	//@ requires 0 < remainingSeats;
 	//@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
 	//@ assignable totalNumberOfContinuingCandidates, totalRemainingSeats;
+	//@ assignable candidates[winner];
 	//@ ensures isElected (candidateList[winner]);
 	//@ ensures 1 + \old(numberElected) == numberElected;
 	//@ ensures \old(numberOfContinuingCandidates) == 1 + numberOfContinuingCandidates;
