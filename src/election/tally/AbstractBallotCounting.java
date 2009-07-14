@@ -60,7 +60,7 @@ package election.tally;
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
-public abstract class AbstractBallotCounting {
+public abstract class AbstractBallotCounting implements State {
 	/**
 	 * Outer level of Abstract State Machine for Election Algorithm.
 	 */
@@ -505,21 +505,6 @@ public abstract class AbstractBallotCounting {
  *   
  */	
 
-/** Start state */
-public static final byte EMPTY = 0;
-/** Setting up candidate list and number of seats to fill*/
-public static final byte SETTING_UP = 1;
-/** Ready to load ballots */
-public static final byte PRELOAD = 2;
-/** Load all valid ballots */
-public static final byte LOADING = 3;
-/** Ready to count votes */
-public static final byte PRECOUNT = 4;
-/** Count the votes */
-public static final byte COUNTING = 5;
-/** Finished counting */
-public static final byte FINISHED = 6;
-
 /**
  * Default Constructor.
  */
@@ -576,7 +561,7 @@ public /*@ pure @*/ boolean hasQuota(/*@ non_null @*/ Candidate candidate){
   @       (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
   @*/
 public /*@ pure @*/ boolean isElected(Candidate candidate){
-	return ((candidate.getStatus() == Candidate.ELECTED) || hasQuota(candidate));
+	return ((candidate.getStatus() == CandidateStatus.ELECTED) || hasQuota(candidate));
 }
 
 /**
@@ -615,7 +600,7 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
  */
 protected /*@ pure @*/ int getTotalNumberOfSurpluses() {
 	return totalNumberOfSurpluses;
-}
+} //@ nowarn;
 
 /**
  * Update the number of candidates with surplus votes for redistribution.
@@ -743,13 +728,14 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
 /*@ also
   @   protected normal_behavior
   @     requires state == FINISHED || state == COUNTING;
-  @     requires 0 < numberOfCandidatesElected;
+  @     requires 0 <= numberOfCandidatesElected;
   @     ensures \result.getNumberElected() == numberOfSeats;
   @	    ensures \result.getNumberElected() == getElectedCandidateIDs().length;
   @*/
 public /*@ non_null pure @*/ Report report(){
 	 
-	return new Report(getElectedCandidateIDs(), countNumberValue, candidates);
+	final int[] electedCandidateIDs = getElectedCandidateIDs(); //@ nowarn;
+	return new Report(electedCandidateIDs, countNumberValue, candidates);
 }
 
 /**
@@ -757,14 +743,15 @@ public /*@ non_null pure @*/ Report report(){
  * 
  * @return The unique identifier of each elected candidate.
  */
-//@ requires 0 < numberOfCandidatesElected;
+//@ requires 0 <= numberOfCandidatesElected;
 public /*@ pure non_null @*/ final int[] getElectedCandidateIDs() {
 	int[] electedCandidateIDs = new int [numberOfCandidatesElected]; 
  	
 	int counter = 0;
  	for (int i = 0; (i < totalNumberOfCandidates) && 
  	    (counter < numberOfCandidatesElected); i++) {
-		if (isElected(candidates[i])) {
+		final boolean elected = candidates[i].isElected();
+		if (elected) {
 			electedCandidateIDs[counter++] = candidates[i].candidateID;
 		}
 	}
@@ -791,7 +778,7 @@ public /*@ pure non_null @*/ final int[] getElectedCandidateIDs() {
   @     ensures totalSeats == electionParameters.totalNumberOfSeats;
   @*/
 public void setup(/*@ non_null @*/ Election electionParameters){
-	this.totalNumberOfCandidates = electionParameters.numberOfCandidates;
+	this.totalNumberOfCandidates = electionParameters.numberOfCandidates; //@ nowarn;
 	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
 	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; 
 	this.status = PRELOAD;
@@ -997,7 +984,7 @@ public /*@ pure @*/ byte getStatus(){
 	public /*@ pure @*/ boolean isContinuingCandidateID(int candidateID) {
 		for (int i = 0; i < candidates.length; i++) { //@ nowarn;
 			if ((candidateID == candidates[i].getCandidateID()) //@ nowarn;
-					&& (candidates[i].getStatus() == Candidate.CONTINUING)) {
+					&& (candidates[i].getStatus() == CandidateStatus.CONTINUING)) {
                 return true;
 			}
 		}
@@ -1039,13 +1026,13 @@ public /*@ pure @*/ byte getStatus(){
   @*/
 	protected /*@ pure spec_public @*/ int getActualTransfers(Candidate fromCandidate, Candidate toCandidate) {
 		int numberOfVotes =0;
-		if (status == COUNTING && toCandidate.getStatus() == Candidate.CONTINUING) {
-			if (fromCandidate.getStatus() == Candidate.ELECTED && (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate))) {
+		if (status == COUNTING && toCandidate.getStatus() == CandidateStatus.CONTINUING) {
+			if (fromCandidate.getStatus() == CandidateStatus.ELECTED && (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate))) {
 				numberOfVotes=(getSurplus (fromCandidate) * getPotentialTransfers (fromCandidate,toCandidate.getCandidateID()) / getTotalTransferableVotes (fromCandidate));
 			    return numberOfVotes;
 			}
          else
-			if (fromCandidate.getStatus() == Candidate.ELIMINATED || (getTotalTransferableVotes(fromCandidate) <= getSurplus(fromCandidate))) {
+			if (fromCandidate.getStatus() == CandidateStatus.ELIMINATED || (getTotalTransferableVotes(fromCandidate) <= getSurplus(fromCandidate))) {
 				for(int j =0; j < totalNumberOfVotes; j++){
 					if(ballots[j].isAssignedTo(fromCandidate.getCandidateID()) && //@ nowarn;
 							getNextContinuingPreference(ballots[j]) == toCandidate.getCandidateID()){
@@ -1102,7 +1089,7 @@ protected /*@ pure spec_public @*/ int getRoundedFractionalValue(/*@ non_null @*
 protected /*@ pure spec_public @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromCandidate){
 	int shortfall = 0;
  	for(int i=0; i < candidates.length; i++){ //@ nowarn;
-		if(candidates[i].getStatus() == Candidate.CONTINUING) {
+		if(candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 			shortfall += getActualTransfers (fromCandidate, candidates[i]);
 		}
 	}
@@ -1321,7 +1308,7 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candi
 	int numberHigherThan = 0;
 	 
 			for(int i=0; i<totalNumberOfCandidates; i++){
-				if(candidates[i].getCandidateID() != toCandidate.getCandidateID()&& candidates[i].getStatus() == Candidate.CONTINUING){
+				if(candidates[i].getCandidateID() != toCandidate.getCandidateID()&& candidates[i].getStatus() == CandidateStatus.CONTINUING){
 					if(getTransferRemainder(fromCandidate, candidates[i]) > getTransferRemainder(fromCandidate, toCandidate)){
 						numberHigherThan++;
 					}
@@ -1359,7 +1346,7 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candi
 protected /*@ pure spec_public @*/ int getTotalTransferableVotes(/*@ non_null @*/ Candidate fromCandidate){
     int numberOfTransfers = 0;
  		for(int i = 0; i < totalNumberOfCandidates; i++){
- 			if (candidates[i].getStatus() == Candidate.CONTINUING) { //@ nowarn;
+ 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) { //@ nowarn;
  				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID());
  			}
 		}
@@ -1434,7 +1421,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		int highestCandidate = -1;
 	
 		for (int i=0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getStatus() == Candidate.CONTINUING) {
+			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 			  if (candidates[i].getTotalVote() > mostVotes) {
 				mostVotes = candidates[i].getTotalVote();
 				highestCandidate = i;
@@ -1474,7 +1461,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		int index = 0; 
 
 		for (int i=0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getStatus() == Candidate.CONTINUING) {
+			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 			  if (candidates[i].getTotalVote() < leastVotes) {
 				leastVotes = candidates[i].getTotalVote();
 				index = i;
@@ -1616,7 +1603,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		int numberContinuing = 0;
 		
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getStatus() == Candidate.CONTINUING) {
+			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 				numberContinuing++;
 			}
 		}

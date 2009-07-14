@@ -190,6 +190,7 @@ public static final int NONTRANSFERABLE = 0;
     @ requires 0 <= countNumber;
     @ requires countNumber <= countNumberAtLastTransfer;
     @ requires countNumber < candidateIDAtCount.length;
+    @ requires countNumber < MAXIMUM_ROUNDS_OF_COUNTING;
     @ ensures \result == candidateIDAtCount[countNumber];
     @*/
   public /*@ pure @*/ int getPreferenceAtCount(final int countNumber) {
@@ -259,7 +260,7 @@ public static final int NONTRANSFERABLE = 0;
    public void load(/*@ non_null @*/ int[] list){
     
     // Assign an internal identifier
-    ballotID = getNextBallotID();
+    ballotID = getNextBallotID(); //@ nowarn;
     
     preferenceList = new int [list.length];
     for(int i = 0; i < list.length; i++){
@@ -358,7 +359,7 @@ public static final int NONTRANSFERABLE = 0;
 
 		if (positionInList < numberOfPreferences) {
 	 		countNumberAtLastTransfer = countNumber;
-			candidateID = preferenceList[positionInList];
+			candidateID = preferenceList[positionInList]; //@ nowarn;
 			positionInList = positionInList + 1;
 		}
 		else {

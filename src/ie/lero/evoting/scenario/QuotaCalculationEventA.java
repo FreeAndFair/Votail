@@ -3,6 +3,8 @@
  */
 package ie.lero.evoting.scenario;
 
+import election.tally.State;
+
 
 /**
  * @author Dermot Cochran
@@ -36,7 +38,7 @@ public class QuotaCalculationEventA extends VotailEventTestCase {
 	 */
 	public void testCalculateQuota () {
 		assertTrue(ballotCounting != null);
-		assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY);
+		assertTrue(ballotCounting.getStatus() == State.EMPTY);
 		//@ assert ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY;
 		ballotCounting.setup(parameters);
 		

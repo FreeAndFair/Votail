@@ -4,6 +4,7 @@
 package ie.lero.evoting.scenario;
 
 import election.tally.BallotCounting;
+import election.tally.State;
 
 /**
  * @author Dermot
@@ -37,14 +38,14 @@ public class SelectHighestContinuingCandidateEventB extends VotailEventTestCase 
 		 * Test a tie between two equal candidates.
 		 */
 		public void testTie () {
-			assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY);
+			assertTrue(ballotCounting.getStatus() == State.EMPTY);
  			ballotCounting.load(ballotBox);
 			
- 			assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.PRECOUNT);
+ 			assertTrue(ballotCounting.getStatus() == State.PRECOUNT);
 			//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
 			ballotCounting.count();
 			
-			assertTrue((ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED)
+			assertTrue((ballotCounting.getStatus() == State.FINISHED)
 			    && (1 == ballotCounting.report().getNumberElected())
 			   && (1 == ballotCounting.report().getTotalNumberOfCounts()));
 			//@ assert ballotCounting.getStatus() == BallotCounting.FINISHED;

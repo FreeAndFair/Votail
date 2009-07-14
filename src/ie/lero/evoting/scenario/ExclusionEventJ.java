@@ -3,6 +3,7 @@ package ie.lero.evoting.scenario;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
+import election.tally.CandidateStatus;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
 
@@ -46,7 +47,7 @@ public class ExclusionEventJ extends VotailEventTestCase {
 		Candidate[] candidates = new Candidate[numberOfCandidates];
 		for (int i = 0; i < numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
-			assertTrue (candidates[i].getStatus() == Candidate.CONTINUING);
+			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
 			int numberOfVotes = i*1000;
 			candidates[i].addVote(numberOfVotes, 1);
 			

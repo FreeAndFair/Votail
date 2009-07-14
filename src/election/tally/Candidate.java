@@ -14,7 +14,7 @@ package election.tally;
  * @copyright 2005-2009
  */
 
-public class Candidate {
+public class Candidate implements CandidateStatus {
 	
 /**
  * Maximum expected number of candidates in any one constituency.
@@ -84,35 +84,11 @@ public static final int MAX_CANDIDATES = 50;
  */
 /*@ public invariant (\forall Candidate a, b;
   @   a != null && b != null;
-  @   (a.randomNumber == b.randomNumber) <==> (a.equals(b)));
-  @ public constraint randomNumber == \old(randomNumber); 	
+  @   (a.randomNumber == b.randomNumber) <==> (a.candidateID == b.candidateID));
   @*/
   protected transient /*@ spec_public @*/ int randomNumber;
   //@ ghost int _randomNumber;
 	
-/** State value for a candidate neither elected nor eliminated yet */
-	public static final byte CONTINUING = 0;
-	
-/**
- * State value for a candidate deemed to have been elected either by
- * having a quota or being the highest continuing candidate for the
- * last remaining seat.  
- */	
-	public static final byte ELECTED = 1;
-	
-/**
- * State value for a candidate excluded from election as being one
- * of the lowest continuing candidates at the end of a round of counting.  
- */	
-	public static final byte ELIMINATED = 2;	
-	
-/**
- * State value for a candidate defeated at the last round of the election
- * e.g. the second highest remaining candidate when the last seat is 
- * being filled  
- */	
-	public static final byte DEFEATED = 4;	
-
 /**
  * Maximum possible number of counts
  * 
@@ -228,7 +204,7 @@ private static int nextCandidateID = 1;
     state = CONTINUING;
     votesAdded = new int [MAXCOUNT];
     votesRemoved = new int [MAXCOUNT];
-    randomNumber = this.hashCode();
+    randomNumber = this.hashCode(); //@ nowarn;
     candidateID = nextCandidateID++;
     //@ set _randomNumber = randomNumber;
   } //@ nowarn;
@@ -381,7 +357,13 @@ private static int nextCandidateID = 1;
 		return sameCandidate;
 	}
 
-public long getTotalAtCount(final int count) {
+/**
+ * How many votes have been received by this round of counting?
+ * 
+ * @param count The round of counting
+ * @return The total number of votes received so far
+ */
+public /*@ pure @*/ long getTotalAtCount(final int count) {
 	long totalAtCount = 0;
 	
 	for (int i = 0; i <= count; i++) {
@@ -390,4 +372,13 @@ public long getTotalAtCount(final int count) {
 	
 	return totalAtCount;
 }
+
+/**
+ * Has this candidate been elected?
+ * 
+ * @return <code>true</code> if elected
+ */
+public /*@ pure @*/ boolean isElected() {
+	return (getStatus() == ELECTED);
+	}
 }

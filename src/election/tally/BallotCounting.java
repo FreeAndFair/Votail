@@ -371,7 +371,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	//@   requires ballotCountingMachine.getState() == BallotCountingModel.SURPLUS_AVAILABLE;
 	public void distributeSurplus(final int w) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getStatus() == Candidate.CONTINUING) {
+			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 				int numberOfTransfers = getActualTransfers (candidates[w], candidates[i]);
 				if (0 < numberOfTransfers) {
 					transferVotes (candidates[w], candidates[i], numberOfTransfers);
@@ -444,6 +444,8 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable numberOfCandidatesEliminated;
 	  @		assignable totalofNonTransferableVotes;
 	  @		assignable numberOfSurpluses, sumOfSurpluses;
+	  @     assignable totalNumberOfSurluses, totalSumOfurpluses;
+	  @		assignable decisions, decisionsTaken;
 	  @     ensures state == FINISHED;
 	  @*/
 	public void count() {

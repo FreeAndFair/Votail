@@ -104,7 +104,7 @@ public static final int MAX_DECISIONS = 100;
  * 
  * @return The natural language description of the decision code
  */
-public /*@ non_null @*/ String toString() {
+public /*@ non_null @*/ String getDescription() {
 	String prefix = new String ("At count number " + atCountNumber + " candidate " + candidateID);
 	String message;
 	switch (decisionTaken) {

@@ -3,6 +3,8 @@
  */
 package ie.lero.evoting.scenario;
 
+import election.tally.State;
+
 
 /**
  * @author Dermot Cochran
@@ -32,7 +34,7 @@ public class ClosureEventP extends VotailEventTestCase {
 	}
 
 	public void testClosureEvent() {
-		assertTrue(ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED);
+		assertTrue(ballotCounting.getStatus() == State.FINISHED);
 		//@ assert ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED;
 	}
 }
