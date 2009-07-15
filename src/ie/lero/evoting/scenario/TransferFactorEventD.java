@@ -7,7 +7,7 @@ package ie.lero.evoting.scenario;
  * @author Dermot
  *
  */
-public class TransferFactorEventD extends VotailEventTestCase {
+public class TransferFactorEventD extends AbstractEvent {
 
 	protected void setUp() throws Exception {
 		super.setUp();

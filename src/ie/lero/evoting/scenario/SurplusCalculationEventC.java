@@ -11,7 +11,7 @@ import election.tally.mock.MockBallot;
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-public class SurplusCalculationEventC extends VotailEventTestCase{
+public class SurplusCalculationEventC extends AbstractEvent{
 	
 	/**
 	 * Create the scenario data needed

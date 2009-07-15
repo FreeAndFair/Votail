@@ -1,6 +1,6 @@
 package ie.lero.evoting.scenario;
 
-public class FractionalDifferencesEventF extends VotailEventTestCase {
+public class FractionalDifferencesEventF extends AbstractEvent {
 
 	protected void setUp() throws Exception {
 		super.setUp();

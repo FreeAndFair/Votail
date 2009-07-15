@@ -1,6 +1,6 @@
 package ie.lero.evoting.scenario;
 
-public class CheckRemainingSeatsEventM extends VotailEventTestCase {
+public class CheckRemainingSeatsEventM extends AbstractEvent {
 
 	protected void setUp() throws Exception {
 		super.setUp();

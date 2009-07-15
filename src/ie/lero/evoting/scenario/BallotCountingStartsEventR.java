@@ -1,59 +1,56 @@
 package ie.lero.evoting.scenario;
 
-import election.tally.BallotBox;
-import election.tally.BallotCounting;
 import election.tally.Candidate;
-import election.tally.Election;
 import election.tally.mock.MockBallot;
 
 /**
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-public class BallotCountingStartsEventR extends VotailEventTestCase {
+public class BallotCountingStartsEventR extends AbstractEvent {
 
-	 
-	protected Candidate candidate1, candidate2;
-	 
+	 protected void setEventClass() {
+		eventClass = 'R';		
+	}
 
-	/**
-	 * Test a close race between two almost equal candidates.
-	 */
-	public void testCount () {
-		//@ assert ballotCounting.getStatus() == BallotCounting.EMPTY;
-		ballotCounting.setup(parameters);
+ 	protected void setUpBallotBox() {
 		
-		//@ assert ballotCounting.getStatus() == BallotCounting.PRELOAD;
+		MockBallot ballot1, ballot2;
 		MockBallot ballot = new MockBallot();
  		ballot.setFirstPreference(candidate2.getCandidateID());
  		ballotBox.accept(ballot);
- 		ballotCounting.load(ballotBox);
 		
-		//@ assert ballotCounting.getStatus() == BallotCounting.PRECOUNT;
-		ballotCounting.count();
+ 		for (int i = 0; i < 50; i++) {
+ 			  ballot1 = new MockBallot();
+  			  ballot1.setFirstPreference(candidate1.getCandidateID());
+ 			  ballotBox.accept(ballot1);
+ 			  ballot2 = new MockBallot();
+ 			  ballot2.setFirstPreference(candidate2.getCandidateID());
+ 			  ballotBox.accept(ballot2);
+ 			}
 	}
 
-	//@ also ensures parameters != null;
-	protected void setUp() {
-		ballotCounting = new BallotCounting();
-		parameters = new Election();
+	protected void setUpParameters() {
 		parameters.totalNumberOfSeats = 1;
 		parameters.numberOfSeatsInThisElection = 1;
 		parameters.numberOfCandidates = 2;
 		candidate1 = new Candidate();
 		candidate2 = new Candidate();
-		ballotBox = new BallotBox();
-		
+ 		
  		Candidate[] list = {candidate1,candidate2};
 		parameters.setCandidateList(list);
- 		
-		for (int i = 0; i < 50; i++) {
-		  MockBallot ballot = new MockBallot();
-		  ballot.setFirstPreference(candidate1.getCandidateID());
-		  ballotBox.accept(ballot);
-		  ballot.setFirstPreference(candidate2.getCandidateID());
-		  ballotBox.accept(ballot);
-		}
-		//@ assert ballotBox.size() == 101;
+		
+	}
+
+	protected Candidate candidate1, candidate2;
+	 
+
+	/**
+	 * Test start-of-count event.
+	 */
+	public void testEvent() {
+		 
+		assertTrue(ballotCounting.getStatus() == election.tally.ElectionStatus.PRECOUNT);
+		ballotCounting.calculateFirstPreferences();
 	}
 }

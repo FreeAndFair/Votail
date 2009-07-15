@@ -1,6 +1,6 @@
 package ie.lero.evoting.scenario;
 
-public class CountContinuingCandidatesEventK extends VotailEventTestCase {
+public class CountContinuingCandidatesEventK extends AbstractEvent {
 
 	protected void setUp() throws Exception {
 		super.setUp();

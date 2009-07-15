@@ -3,32 +3,19 @@
  */
 package ie.lero.evoting.scenario;
 
-import election.tally.State;
+import election.tally.ElectionStatus;
 
 
 /**
  * @author Dermot Cochran
  *
  */
-public class QuotaCalculationEventA extends VotailEventTestCase {
+public class QuotaCalculationEventA extends AbstractEvent {
 
-	/**
-	 * @param name Name of test
-	 */
-	public QuotaCalculationEventA(String name) {
-		super(name);
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
@@ -38,7 +25,7 @@ public class QuotaCalculationEventA extends VotailEventTestCase {
 	 */
 	public void testCalculateQuota () {
 		assertTrue(ballotCounting != null);
-		assertTrue(ballotCounting.getStatus() == State.EMPTY);
+		assertTrue(ballotCounting.getStatus() == ElectionStatus.EMPTY);
 		//@ assert ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY;
 		ballotCounting.setup(parameters);
 		

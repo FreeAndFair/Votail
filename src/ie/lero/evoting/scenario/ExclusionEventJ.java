@@ -16,7 +16,7 @@ import election.tally.mock.MockBallot;
  * 
  * @see election.tally.Candidate
  */
-public class ExclusionEventJ extends VotailEventTestCase {
+public class ExclusionEventJ extends AbstractEvent {
 
 	/**
 	 * Execute this scenario.

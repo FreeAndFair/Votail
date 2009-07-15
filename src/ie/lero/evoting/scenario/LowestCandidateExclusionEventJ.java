@@ -1,6 +1,6 @@
 package ie.lero.evoting.scenario;
 
-public class LowestCandidateExclusionEventJ extends VotailEventTestCase {
+public class LowestCandidateExclusionEventJ extends AbstractEvent {
 
 	protected void setUp() throws Exception {
 		super.setUp();
