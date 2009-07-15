@@ -1,6 +1,6 @@
 package election.tally;
 
-public interface BallotCountingModel {
+public interface CountStatus {
 
 	// States within the ballot counting machine
 	public static final int READY_TO_COUNT = 1;

@@ -105,7 +105,7 @@ public class Election {
 		for (int i = 0; i < numberOfCandidates; i++) {
 		  this.candidateList[i] = listOfCandidates[i];
 		}
-	}
+	} //@ nowarn;
 
 	/**
 	 * Get the <code>Candidate</code> object.

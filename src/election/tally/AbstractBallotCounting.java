@@ -60,7 +60,7 @@ package election.tally;
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
-public abstract class AbstractBallotCounting implements State {
+public abstract class AbstractBallotCounting implements ElectionStatus {
 	/**
 	 * Outer level of Abstract State Machine for Election Algorithm.
 	 */
@@ -1455,7 +1455,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
 	  @   i == \result);
 	  @*/
-	public int findLowestCandidate() {
+	public /*@ pure @*/ int findLowestCandidate() {
 		
 		long leastVotes = MAXVOTES;
 		int index = 0; 

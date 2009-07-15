@@ -70,7 +70,7 @@ public class BallotBox {
 	public /*@ pure @*/ BallotBox(){
 		numberOfBallots = 0;
 		ballots = new Ballot[Ballot.MAX_BALLOTS];
-	}
+	} //@ nowarn;
 	
 	/**
 	 * Accept a ballot paper.
@@ -82,16 +82,16 @@ public class BallotBox {
 	  @         ballot.equals(ballots[b]));
 	  @*/
 	public void accept (/*@ non_null @*/ Ballot ballot) {
-		ballots[numberOfBallots++] = ballot;
-	}
+		ballots[numberOfBallots++] = ballot; //@ nowarn;
+	} //@ nowarn;
 
 	public boolean isNextBallot() {
-		// TODO Auto-generated method stub
 		return index < numberOfBallots;
 	}
 
+	//@ requires 0 <= index;
+	//@ requires index < ballots.length;
 	public Ballot getNextBallot() {
-		// TODO Auto-generated method stub
 		return ballots[index++];
 	}
 }
