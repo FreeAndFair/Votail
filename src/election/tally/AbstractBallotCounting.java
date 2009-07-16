@@ -736,7 +736,7 @@ public /*@ non_null pure @*/ Report report(){
 	 
 	final int[] electedCandidateIDs = getElectedCandidateIDs(); //@ nowarn;
 	return new Report(electedCandidateIDs, countNumberValue, candidates); //@ nowarn;
-}
+} //@ nowarn;
 
 /**
  * Get the list of elected candidates for this constituency.
@@ -782,10 +782,10 @@ public /*@ pure non_null @*/ final int[] getElectedCandidateIDs() {
   @*/
 public void setup(/*@ non_null @*/ Election electionParameters){
 	this.totalNumberOfCandidates = electionParameters.numberOfCandidates; //@ nowarn;
-	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
-	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; 
+	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection; //@ nowarn;
+	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; //@ nowarn;
 	this.status = PRELOAD;
-	this.candidates = new Candidate[totalNumberOfCandidates];
+	this.candidates = new Candidate[totalNumberOfCandidates]; //@ nowarn;
 	for (int i = 0; i < totalNumberOfCandidates; i++) {
 		this.candidates[i] = electionParameters.getCandidate(i);
 	}
@@ -829,12 +829,16 @@ public void load(/*@ non_null @*/ BallotBox ballotBox) {
 /*@ requires candidates != null;
   @ requires (\forall int index; 0 <= index && index < totalNumberOfCandidates;
   @          candidates[index] != null);
+  @ requires ballotsToCount != null;
+  @ requires (\forall int index; 0 <= index && index < totalVotes;
+  @          ballotsToCount[index] != null); 
   @ assignable candidates[*];
   @*/
 public void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
-		candidates[c].addVote(countBallotsFor(candidates[c].getCandidateID()), 
-				countNumberValue);
+		final int candidateID = candidates[c].getCandidateID();
+		final int numberOfBallotsInPile = countBallotsFor(candidateID);
+		candidates[c].addVote(numberOfBallotsInPile, countNumberValue); //@ nowarn;
 	}
 }
 
@@ -873,12 +877,12 @@ public /*@ pure @*/ int countBallotsFor(int candidateID) {
   @     requires (state == COUNTING || state == FINISHED);
   @     requires 0 < candidateID || candidateID == Ballot.NONTRANSFERABLE;
   @     ensures 0 <= \result;
-  @     ensures \result== (\num_of int j; 0 <= j && j < ballotsToCount.length;
+  @     ensures \result== (\num_of int j; 0 <= j && j < totalNumberOfVotes;
   @       ballotsToCount[j].isAssignedTo(candidateID));
   @*/
 protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
 	int numberOfVotes = 0;
- 	for (int j = 0; j < ballots.length; j++) { //@ nowarn;
+ 	for (int j = 0; j < totalNumberOfVotes; j++) { //@ nowarn;
 		if (ballots[j].isAssignedTo(candidateID)) { //@ nowarn;
 			numberOfVotes++;
 		}
@@ -898,14 +902,12 @@ protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
  * @return Number of votes potentially transferable from this candidate to that candidate
  */
 /*@ also
-  @   protected normal_behavior
-  @     requires (state == COUNTING);
+  @     requires state == COUNTING;
   @     requires 0 < toCandidateID;
   @     requires toCandidateID != Ballot.NONTRANSFERABLE;
   @     requires ballotsToCount != null;
-  @     requires \nonnullelements(ballotsToCount);
-  @	    requires ballots != null;
-  @     ensures \result== (\num_of int j; 0 <= j && j < ballotsToCount.length;
+  @     requires (\forall int b; 0 <= b && b < totalVotes; ballotsToCount[b] != null);
+  @     ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
   @       (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
   @       (ballotsToCount[j].getCountNumberAtLastTransfer() ==
   @       fromCandidate.getLastSetAddedCountNumber()) &&
@@ -913,7 +915,7 @@ protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
   @*/
 	protected /*@ pure spec_public @*/ int getPotentialTransfers(Candidate fromCandidate,int toCandidateID) {
 		int numberOfBallots = 0;
- 		for (int j = 0; j < ballots.length; j++) {
+ 		for (int j = 0; j < totalNumberOfVotes; j++) {
 			final int candidateID = fromCandidate.getCandidateID();
 			if (ballots[j].isAssignedTo(candidateID) && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
 				if (ballots[j].getCountNumberAtLastTransfer() == fromCandidate.getLastSetAddedCountNumber()) {
@@ -944,16 +946,16 @@ public /*@ pure @*/ byte getStatus(){
  * 
  * @param ballot Ballot paper from which to get the next preference
  * 
- * @return Candidate if next continuing candidate or NONTRANSFERABLE
+ * @return Internal ID of next continuing candidate or <code>NONTRANSFERABLE</code>
  */
 /*@ also 
   @   protected normal_behavior
   @     requires state == COUNTING;
   @     ensures (\result == Ballot.NONTRANSFERABLE) <=!=>
-  @       (\exists int k; 1 <= k && k <= ballot.remainingPreferences();
+  @       (\exists int k; 1 <= k && k < ballot.remainingPreferences();
   @       (\result == ballot.getNextPreference(k)) &&
   @       (\forall int i; 1 <= i && i < k;
-  @       isContinuingCandidateID(ballot.getNextPreference(i)) == false));
+  @         isContinuingCandidateID(ballot.getNextPreference(i)) == false));
   @*/
 	protected /*@ pure spec_public @*/ int getNextContinuingPreference(Ballot ballot) {
 		int result = Ballot.NONTRANSFERABLE;
@@ -967,7 +969,7 @@ public /*@ pure @*/ byte getStatus(){
 		}
 		
 		return result;
-	}
+	} //@ nowarn;
 
 /**
  * Determine if a candidate ID belongs to a continuing candidate.
@@ -978,9 +980,10 @@ public /*@ pure @*/ byte getStatus(){
  * continuing candidate
  */
 /*@ also
-  @   public normal_behavior
   @     requires 0 <= candidateID;
   @     requires candidateList != null;
+  @     requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
+  @              candidateList[c] != null);
   @     ensures \result == (\exists int i;
   @       0 <= i && i < candidateList.length;
   @       candidateList[i] != null &&
@@ -989,7 +992,7 @@ public /*@ pure @*/ byte getStatus(){
   @*/
 	public /*@ pure @*/ boolean isContinuingCandidateID(int candidateID) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) { 
-			final byte candidateStatus = candidates[i].getStatus();
+			final byte candidateStatus = candidates[i].getStatus(); //@ nowarn;
 			if (candidateID == candidates[i].getCandidateID()) {
                 return candidateStatus == CandidateStatus.CONTINUING;
 			}
@@ -1034,7 +1037,8 @@ public /*@ pure @*/ byte getStatus(){
 		int numberOfVotes =0;
 		if (status == COUNTING && toCandidate.getStatus() == CandidateStatus.CONTINUING) {
 			if (fromCandidate.getStatus() == CandidateStatus.ELECTED && (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate))) {
-				numberOfVotes=(getSurplus (fromCandidate) * getPotentialTransfers (fromCandidate,toCandidate.getCandidateID()) / getTotalTransferableVotes (fromCandidate));
+				final int potentialTransfers = getPotentialTransfers (fromCandidate,toCandidate.getCandidateID());
+				numberOfVotes= (getSurplus (fromCandidate) * potentialTransfers / getTotalTransferableVotes (fromCandidate));
 			    return numberOfVotes;
 			}
          else
@@ -1092,10 +1096,14 @@ protected /*@ pure spec_public @*/ int getRoundedFractionalValue(/*@ non_null @*
  * @return The shortfall between the sum of the transfers and the size
  * of surplus
  */
+/*@ also requires candidates != null;
+  @      requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
+  @               candidates[c] != null);
+  @*/
 protected /*@ pure spec_public @*/ int getTransferShortfall(/*@ non_null @*/ Candidate fromCandidate){
 	int shortfall = 0;
- 	for(int i=0; i < candidates.length; i++){ //@ nowarn;
-		if(candidates[i].getStatus() == CandidateStatus.CONTINUING) {
+ 	for (int i=0; i < totalNumberOfCandidates; i++) {  //@ nowarn;
+		if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 			shortfall += getActualTransfers (fromCandidate, candidates[i]);
 		}
 	}
@@ -1118,10 +1126,11 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(/*@ non_null @*/ Can
  */
 /*@ also 
   @   protected normal_behavior
+  @     requires firstCandidate.randomNumber != secondCandidate.randomNumber;
   @     ensures (\result == firstCandidate.candidateID) <==>
   @       (firstCandidate.randomNumber < secondCandidate.randomNumber);
-  @     ensures (\result == secondCandidate.candidateID) ||
-  @       (\result == firstCandidate.candidateID);
+  @     ensures (\result == secondCandidate.candidateID) <==>
+  @       (secondCandidate.randomNumber < firstCandidate.randomNumber);
   @*/
 protected /*@ pure spec_public @*/ int randomSelection(
 		/*@ non_null @*/ Candidate firstCandidate, 
@@ -1142,15 +1151,14 @@ protected /*@ pure spec_public @*/ int randomSelection(
  */
 /*@ also
   @   protected normal_behavior 
+  @     requires ballots != null;
   @     ensures 1 <= \result;
   @     ensures \result <= ballotsToCount.length;
-  @     ensures (\forall Ballot a, b; a != null && b != null;
-  @       (getOrder (a) < getOrder (b)) <==> (b.isAfter(a)));
   @*/
 protected /*@ pure @*/ int getOrder(Ballot ballot){
       // Determine the number of ballots with a lower random number
 	  int order = 1;
-	  for (int b = 0; b < ballots.length; b++) {
+	  for (int b = 0; b < totalNumberOfVotes; b++) {
 		  if (ballots[b].isAfter(ballot)) {
 			  order++;
 		  }
@@ -1167,6 +1175,7 @@ protected /*@ pure @*/ int getOrder(Ballot ballot){
  */
 /*@ also
   @   protected normal_behavior
+  @     requires candidates != null;
   @     ensures 1 <= \result;
   @     ensures \result <= candidateList.length;
   @     ensures (\forall Candidate c, d; c != null && d != null;
@@ -1197,6 +1206,9 @@ protected /*@ pure @*/ int getOrder(Candidate candidate){
  */
 /*@ also
   @   protected normal_behavior
+  @     requires candidates != null;
+  @     requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
+  @              candidates[c] != null);
   @     requires state == COUNTING;
   @     requires isElected (fromCandidate);
   @     requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
@@ -1267,8 +1279,8 @@ protected /*@ pure spec_public @*/ int getTransferRemainder(/*@ non_null @*/ Can
 			count--;
 		}
 		
-		return secondCandidate.isAfter(firstCandidate);
-	}
+		return secondCandidate.isAfter(firstCandidate); //@ nowarn;
+	} //@ nowarn;
 
 /**
  * Determine the number of continuing candidates with a higher remainder in
@@ -1480,7 +1492,6 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 			}
 		}
 		
-		//@ assert candidates[index].getTotalVote() == leastVotes;
 		//@ assert 0 <= leastVotes;
 		
 		return index;
@@ -1540,6 +1551,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * @param The unique identifier for the excluded candidate
 	 */
 	/*@ requires candidateID != Ballot.NONTRANSFERABLE;
+	  @ requires ballots != null && (\forall int b;
+	  @          0 <= b && b < totalVotes; ballots[b] != null);
 	  @ assignable ballots[*];
 	  @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
 	  @   ballotsToCount[b].getCandidateID() != candidateID);
@@ -1592,7 +1605,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	//@ requires 0 < remainingSeats;
 	//@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
 	//@ assignable totalNumberOfContinuingCandidates, totalRemainingSeats;
-	//@ assignable candidates[winner];
+	//@ assignable candidates[winner], candidates[winner],state;
 	//@ ensures isElected (candidateList[winner]);
 	//@ ensures 1 + \old(numberElected) == numberElected;
 	//@ ensures \old(numberOfContinuingCandidates) == 1 + numberOfContinuingCandidates;
@@ -1605,7 +1618,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		totalRemainingSeats--;
 	}
 
-	protected /*@ pure @*/ int getNumberContinuing() {
+	//@ requires state == COUNTING;
+	//@ assignable numberOfContinuingCandidates;
+	//@ ensures \result == numberOfContinuingCandidates;
+	protected int getNumberContinuing() {
 		int numberContinuing = 0;
 		
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
@@ -1613,6 +1629,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 				numberContinuing++;
 			}
 		}
+		
+		totalNumberOfContinuingCandidates = numberContinuing;
 		return numberContinuing;
 	}
 }

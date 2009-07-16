@@ -112,8 +112,7 @@ public class Election {
 	 * 
 	 * @return The candidate at that position on the initial list
 	 */
-	//@ requires candidateList != null;
-	//@ requires \nonnullelements (candidateList);
+	//@ requires candidateList != null && candidateList[index] != null;
 	//@ requires 0 <= index && index < candidateList.length;
 	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
 		return candidateList[index];

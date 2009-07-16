@@ -368,7 +368,7 @@ public class BallotCounting extends AbstractBallotCounting {
      * @param w The elected Dail candidate
      */
 	//@ also
-	//@   requires ballotCountingMachine.getState() == BallotCountingModel.SURPLUS_AVAILABLE;
+	//@   requires ballotCountingMachine.getState() == CountStatus.SURPLUS_AVAILABLE;
 	public void distributeSurplus(final int w) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
@@ -391,7 +391,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	 * @param numberOfVotes The number of votes to be transferred
 	 */
 	//@ also
-	//@   requires ballotCountingMachine.getState() == BallotCountingModel.READY_TO_MOVE_BALLOTS;
+	//@   requires ballotCountingMachine.getState() == CountStatus.READY_TO_MOVE_BALLOTS;
 	public void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 			/*@ non_null @*/ Candidate toCandidate, int numberOfVotes) {
 		

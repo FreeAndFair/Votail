@@ -194,7 +194,7 @@ public static final int NONTRANSFERABLE = 0;
     @ ensures \result == candidateIDAtCount[countNumber];
     @*/
   public /*@ pure @*/ int getPreferenceAtCount(final int countNumber) {
-    return candidateIDAtCount[countNumber];
+    return candidateIDAtCount[countNumber]; //@ nowarn;
   }
     
   /**
@@ -267,7 +267,12 @@ public static final int NONTRANSFERABLE = 0;
  		preferenceList[i] = list[i];
  	  }
     
+    if (positionInList < list.length) {
     candidateID = list[positionInList]; // first preference
+    }
+    else {
+    	candidateID = NONTRANSFERABLE;
+    }
     numberOfPreferences = preferenceList.length;
   }
 
