@@ -735,7 +735,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
 public /*@ non_null pure @*/ Report report(){
 	 
 	final int[] electedCandidateIDs = getElectedCandidateIDs(); //@ nowarn;
-	return new Report(electedCandidateIDs, countNumberValue, candidates);
+	return new Report(electedCandidateIDs, countNumberValue, candidates); //@ nowarn;
 }
 
 /**
@@ -743,7 +743,10 @@ public /*@ non_null pure @*/ Report report(){
  * 
  * @return The unique identifier of each elected candidate.
  */
-//@ requires 0 <= numberOfCandidatesElected;
+/*@ requires 0 <= numberOfCandidatesElected;
+  @ requires (\forall int i; 0 <= i && i < totalNumberOfCandidates;
+  @          candidates[i] != null);
+  @*/
 public /*@ pure non_null @*/ final int[] getElectedCandidateIDs() {
 	int[] electedCandidateIDs = new int [numberOfCandidatesElected]; 
  	
@@ -901,6 +904,7 @@ protected /*@ pure @*/ int getNumberOfVotes(final int candidateID){
   @     requires toCandidateID != Ballot.NONTRANSFERABLE;
   @     requires ballotsToCount != null;
   @     requires \nonnullelements(ballotsToCount);
+  @	    requires ballots != null;
   @     ensures \result== (\num_of int j; 0 <= j && j < ballotsToCount.length;
   @       (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
   @       (ballotsToCount[j].getCountNumberAtLastTransfer() ==
@@ -975,17 +979,19 @@ public /*@ pure @*/ byte getStatus(){
  */
 /*@ also
   @   public normal_behavior
-  @     requires 0 < candidateID;
+  @     requires 0 <= candidateID;
+  @     requires candidateList != null;
   @     ensures \result == (\exists int i;
   @       0 <= i && i < candidateList.length;
+  @       candidateList[i] != null &&
   @       candidateID == candidateList[i].getCandidateID() &&
-  @       candidateList[i].getStatus() == Candidate.CONTINUING);
+  @       candidateList[i].getStatus() == CandidateStatus.CONTINUING);
   @*/
 	public /*@ pure @*/ boolean isContinuingCandidateID(int candidateID) {
-		for (int i = 0; i < candidates.length; i++) { //@ nowarn;
-			if ((candidateID == candidates[i].getCandidateID()) //@ nowarn;
-					&& (candidates[i].getStatus() == CandidateStatus.CONTINUING)) {
-                return true;
+		for (int i = 0; i < totalNumberOfCandidates; i++) { 
+			final byte candidateStatus = candidates[i].getStatus();
+			if (candidateID == candidates[i].getCandidateID()) {
+                return candidateStatus == CandidateStatus.CONTINUING;
 			}
 		}
 		return false;

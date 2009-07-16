@@ -33,37 +33,20 @@
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>
  */
 
-public abstract class AbstractBallotCounting {
+public abstract class AbstractBallotCounting implements ElectionStatus {
 	
   /**  
    * Abstract State Machine for Election Algorithm.
-   * @design 
+   * <p>
    * The election count algorithm is modeled as a two tier state machine with 
    * state values and transitions between those states. The normal path for the 
    * outer tier of the state machine is: 
    * <p>
    * EMPTY --> SETUP --> PRELOAD --> LOADING --> PRECOUNT --> 
    * COUNTING --> FINISHED --> REPORT 
-   * 
-   * The inner tier of the state machine has two variants; one for Dail 
-   * Eireann - the lower house of the Oireachtas - and one for Seanad Eireann.
+   * <p>
+   * The inner state machine models the status of the count.
    */
-  
-   /** Start state */
-   public static final byte EMPTY;
-   /** Set up candidate list */
-   public static final byte SETTING_UP;
-   /** Ready to load ballots */
-   public static final byte PRELOAD;
-   /** Load all valid ballots */
-   public static final byte LOADING;
-   /** Ready to count votes */
-   public static final byte PRECOUNT;
-   /** Count the votes */
-   public static final byte COUNTING;
-   /** Finished counting */
-   public static final byte FINISHED;
- 
    
   /*@ public model byte state;
     @ public invariant EMPTY < SETTING_UP;

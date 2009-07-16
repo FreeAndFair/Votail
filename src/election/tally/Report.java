@@ -151,12 +151,12 @@ public class Report {
 		candidateIDs = new int [candidates.length];
 		candidateVotes = new long [candidates.length][counts];
 		for (int c=0; c<candidates.length; c++) {
-			candidateIDs[c] = candidates[c].getCandidateID();
+			candidateIDs[c] = candidates[c].getCandidateID(); //@ nowarn;
 			for (int n=0; n < counts; n++) {
-				candidateVotes[c][n] = candidates[c].getVoteAtCount(n);
+				candidateVotes[c][n] = candidates[c].getVoteAtCount(n); //@ nowarn;
 			}
 		}
-		}
+	} //@ nowarn;
 
 	/**
 	 * How many rounds of counting?
@@ -187,7 +187,7 @@ public class Report {
 		long result = 0;
 		for (int c = 0; c < numberOfCandidates; c++) {
 			if (candidateIDs[c] == id) {
-				result = candidateVotes[c][round];
+				result = candidateVotes[c][round]; //@ nowarn;
 				break;
 			}	
 		}
