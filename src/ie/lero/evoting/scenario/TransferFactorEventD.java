@@ -4,17 +4,21 @@
 package ie.lero.evoting.scenario;
 
 /**
- * @author Dermot
+ * @author Dermot Cochran
  *
  */
 public class TransferFactorEventD extends AbstractEvent {
 
-	protected void setUp() throws Exception {
-		super.setUp();
+	protected void setEventCode() {
+		eventCode = 'D';		
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	protected void setUpBallotBox() {
 	}
 
+	protected void setUpParameters() {
+	}
+
+	public void testEvent() {
+	}
 }

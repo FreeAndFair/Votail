@@ -18,4 +18,18 @@ public class SelectHighestContinuingCandidateEventB extends AbstractEvent {
 		
 	}
 
+ 	protected void setEventCode() {
+      eventCode = 'B';		
+	}
+
+ 	protected void setUpBallotBox() {
+		// TODO Auto-generated method stub
+		
+	}
+
+ 	protected void setUpParameters() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

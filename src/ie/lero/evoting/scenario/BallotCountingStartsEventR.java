@@ -9,8 +9,8 @@ import election.tally.mock.MockBallot;
  */
 public class BallotCountingStartsEventR extends AbstractEvent {
 
-	 protected void setEventClass() {
-		eventClass = 'R';		
+	 protected void setEventCode() {
+		eventCode = 'R';		
 	}
 
  	protected void setUpBallotBox() {

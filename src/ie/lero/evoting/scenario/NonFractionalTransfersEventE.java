@@ -8,13 +8,21 @@ package ie.lero.evoting.scenario;
  *
  */
 public class NonFractionalTransfersEventE extends AbstractEvent {
-
-	protected void setUp() throws Exception {
-		super.setUp();
+	 
+	protected void setUpBallotBox() {
+ 		
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
+ 	protected void setUpParameters() {
+ 		
+	}
+ 	
+ 	public void testEvent() {
+ 		
+ 	}
+
+	protected void setEventCode() {
+		eventCode ='E';		
 	}
 
 }

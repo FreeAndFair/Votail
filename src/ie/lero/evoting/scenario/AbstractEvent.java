@@ -5,20 +5,16 @@ import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
 
-public abstract class AbstractEvent extends TestCase {
+public abstract class AbstractEvent extends TestCase { //@ nowarn;
 
 	protected /*@ spec_public @*/ BallotCounting ballotCounting;
 	protected /*@ spec_public @*/ BallotBox ballotBox;
 	protected /*@ spec_public @*/ Election parameters;
-	protected /*@ spec_public @*/ char eventClass;
-
-	public AbstractEvent() {
-		super();
-	}
+	protected /*@ spec_public @*/ char eventCode;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		setEventClass();
+		setEventCode();
 		parameters = new Election();
 		ballotBox = new BallotBox();
 		ballotCounting = new BallotCounting();
@@ -34,6 +30,10 @@ public abstract class AbstractEvent extends TestCase {
 	//@ assignable parameters; 
 	protected abstract void setUpParameters();
 	
-	//@ assignable eventClass;
-	protected abstract void setEventClass();
+	//@ assignable eventCode;
+	//@ ensures 'A' <= eventCode;
+	//@ ensures eventCode <= 'R';
+	protected abstract void setEventCode();
+	
+	public abstract void testEvent();
 }

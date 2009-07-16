@@ -1,10 +1,7 @@
 package ie.lero.evoting.scenario;
 
-import election.tally.BallotBox;
-import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.CandidateStatus;
-import election.tally.Election;
 import election.tally.mock.MockBallot;
 
 /**
@@ -17,6 +14,9 @@ import election.tally.mock.MockBallot;
  * @see election.tally.Candidate
  */
 public class ExclusionEventJ extends AbstractEvent {
+
+	private int numberOfCandidates;
+	private Candidate[] candidates;
 
 	/**
 	 * Execute this scenario.
@@ -31,25 +31,19 @@ public class ExclusionEventJ extends AbstractEvent {
 		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
  	}
 
-	/**
-	 * Create test data for a mock election.
-	 */
-	public ExclusionEventJ() {
-		
-		ballotBox = new BallotBox();
-		ballotCounting = new BallotCounting();
-		parameters = new Election();
-		parameters.totalNumberOfSeats = 4;
-		parameters.numberOfSeatsInThisElection = 4;
-		
-		// Generate candidates
-		int numberOfCandidates = 2 + parameters.numberOfSeatsInThisElection;
-		Candidate[] candidates = new Candidate[numberOfCandidates];
-		for (int i = 0; i < numberOfCandidates; i++) {
-			candidates[i] = new Candidate();
+	 
+
+	 
+	protected void setEventCode() {
+		eventCode = 'J';		
+	}
+
+ 	protected void setUpBallotBox() {
+ 		for (int i = 0; i < numberOfCandidates; i++) {
+			 
 			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
 			int numberOfVotes = i*1000;
-			candidates[i].addVote(numberOfVotes, 1);
+			 
 			
 			// Generate first preference ballots
 			for (int b = 0; b < numberOfVotes; b++) {
@@ -60,8 +54,29 @@ public class ExclusionEventJ extends AbstractEvent {
 			}
 		}
 		
+	}
+
+ 	protected void setUpParameters() {
+ 		parameters.totalNumberOfSeats = 4;
+		parameters.numberOfSeatsInThisElection = 4;		
+		
+
+		// Generate candidates
+		numberOfCandidates = 2 + parameters.numberOfSeatsInThisElection;
+		Candidate[] candidates = new Candidate[numberOfCandidates];
+		for (int i = 0; i < numberOfCandidates; i++) {
+			candidates[i] = new Candidate();
+			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
+			int numberOfVotes = i*1000;
+			candidates[i].addVote(numberOfVotes, 1);
+			 
+		}
+		
 		parameters.setCandidateList(candidates);
- 	 	ballotCounting.setup(parameters);
- 	 	ballotCounting.load(ballotBox);
+	}
+
+ 	public void testEvent() {
+		// TODO Auto-generated method stub
+		
 	}
 }

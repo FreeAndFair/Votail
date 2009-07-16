@@ -12,6 +12,26 @@ import election.tally.ElectionStatus;
  */
 public class ClosureEventP extends AbstractEvent {
 
+ 	protected void setEventCode() {
+		// TODO Auto-generated method stub
+		
+	}
+
+ 	protected void setUpBallotBox() {
+		// TODO Auto-generated method stub
+		
+	}
+
+ 	protected void setUpParameters() {
+		// TODO Auto-generated method stub
+		
+	}
+
+ 	public void testEvent() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
