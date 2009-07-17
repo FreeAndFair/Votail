@@ -42,16 +42,6 @@ public class Ballot {
     @                            a.ballotID == b.ballotID <==> a == b);
     @*/
   protected /*@ spec_public @*/ int ballotID;
-  
-  /** Candidate ID to which this ballot is assigned */
-  //@ public invariant (0 < candidateID) || (candidateID == NONTRANSFERABLE);
-  /*@ public invariant (0 <= positionInList && 
-    @                  positionInList < numberOfPreferences) ==>
-    @                  candidateID == preferenceList[positionInList];
-    @ public invariant (positionInList == numberOfPreferences) ==>
-    @                  candidateID == NONTRANSFERABLE;
-    @*/
-  protected /*@ spec_public @*/ int candidateID;
 
   /** Preference list of candidate IDs */
   /*@ public invariant (\forall int i; 
@@ -102,7 +92,6 @@ public class Ballot {
     @   ensures numberOfPreferences == 0;
     @   ensures countNumberAtLastTransfer == 0;
     @   ensures positionInList == 0;
-    @   ensures candidateID == NONTRANSFERABLE;
     @   ensures ballotID > 0;
     @*/
   public /*@ pure @*/ Ballot();
@@ -257,9 +246,7 @@ public class Ballot {
    * @return <code>true</code> if this ballot paper is assigned to this candidate ID
    */
   /*@ public normal_behavior
-    @   requires (0 < candidateIDToCheck) || 
-    @     (candidateIDToCheck == NONTRANSFERABLE);
-    @   ensures (\result == true) <==> (candidateID == candidateIDToCheck); 
+    @   ensures (\result == true) <==> (getCandidateID() == candidateIDToCheck); 
     @*/
   public /*@ pure @*/ boolean isAssignedTo (int candidateIDToCheck);
   

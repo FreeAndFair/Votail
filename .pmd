@@ -532,46 +532,6 @@
             <ruleset>Java Logging Rules</ruleset>
         </rule>
         <rule>
-            <name>JUnitAssertionsShouldIncludeMessage</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnitSpelling</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnitStaticSuite</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnitTestsShouldIncludeAssert</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>SimplifyBooleanAssertion</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>TestClassWithoutTestCases</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UnnecessaryBooleanAssertion</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UseAssertEqualsInsteadOfAssertTrue</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UseAssertNullInsteadOfAssertTrue</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
-            <name>UseAssertSameInsteadOfAssertTrue</name>
-            <ruleset>JUnit Rules</ruleset>
-        </rule>
-        <rule>
             <name>AvoidAssertAsIdentifier</name>
             <ruleset>Migration Rules</ruleset>
         </rule>

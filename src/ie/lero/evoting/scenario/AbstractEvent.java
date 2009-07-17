@@ -5,7 +5,7 @@ import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
 
-public abstract class AbstractEvent extends TestCase { //@ nowarn;
+public abstract class AbstractEvent extends TestCase {
 
 	protected /*@ spec_public @*/ BallotCounting ballotCounting;
 	protected /*@ spec_public @*/ BallotBox ballotBox;

@@ -204,7 +204,7 @@ public abstract class AbstractBallotCounting implements ElectionStatus {
   //@ public invariant nonTransferableVotes <= totalVotes;
   /*@ public invariant (state == COUNTING || state == FINISHED)
     @   ==> nonTransferableVotes == (\num_of int i; 0 <= i && i < totalVotes;
-    @   ballotsToCount[i].candidateID == Ballot.NONTRANSFERABLE);
+    @   ballotsToCount[i].getCandidateID() == Ballot.NONTRANSFERABLE);
     @*/
 	
   /** Minimum number of votes needed to guarantee election */

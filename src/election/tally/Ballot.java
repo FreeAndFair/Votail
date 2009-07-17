@@ -92,18 +92,7 @@ public static final int NONTRANSFERABLE = 0;
     @                                    a.ballotID == b.ballotID <==> a==b);
     @*/
   protected /*@ spec_public @*/ int ballotID;
-	
-  /** Candidate ID to which this ballot is assigned */
-  /*@ public invariant (0 < candidateID) ||
-    @  (candidateID == NONTRANSFERABLE);
-    @ public invariant (0 <= positionInList &&
-    @   positionInList < numberOfPreferences) ==>
-    @   candidateID == preferenceList[positionInList];
-    @ public invariant ( positionInList == numberOfPreferences) ==>
-    @   candidateID == NONTRANSFERABLE;
-    @*/
-  protected /*@ spec_public @*/ int candidateID;
-	
+	 
   /** Preference list of candidate IDs */	
   /*@ public invariant (\forall int i;
     @   0 <= i && i < numberOfPreferences;
@@ -112,8 +101,8 @@ public static final int NONTRANSFERABLE = 0;
     @ public invariant (\forall int i,j;
     @   0 < i && i < numberOfPreferences && 0 <= j && j < i;
     @   preferenceList[i] != preferenceList[j]);
+    @ public invariant preferenceList.length >= numberOfPreferences;
     @*/
-  //@ public invariant preferenceList.length >= numberOfPreferences;
   protected /*@ spec_public non_null @*/ int[] preferenceList;
 	
   /** Total number of valid preferences on this ballot paper */
@@ -128,18 +117,15 @@ public static final int NONTRANSFERABLE = 0;
   //@ public invariant positionInList <= numberOfPreferences;
   //@ public constraint \old(positionInList) <= positionInList;
   protected /*@ spec_public @*/ int positionInList;
-
-  /** Maximum possible numbers of counting rounds*/
-  public static final int MAXIMUM_ROUNDS_OF_COUNTING = Candidate.MAXCOUNT;
-  
+   
   /** Candidate ID to which the vote is assigned at the end of each count */
-  //@ public invariant candidateIDAtCount.length <= MAXIMUM_ROUNDS_OF_COUNTING;
+  //@ public invariant candidateIDAtCount.length <= Candidate.MAXCOUNT;
   protected /*@ spec_public non_null @*/ int[] candidateIDAtCount = 
-    new int [MAXIMUM_ROUNDS_OF_COUNTING];
+    new int [Candidate.MAXCOUNT];
 
   /** Last count number in which this ballot was transferred */
   //@ public invariant 0 <= countNumberAtLastTransfer;
-  //@ public invariant countNumberAtLastTransfer < MAXIMUM_ROUNDS_OF_COUNTING;
+  //@ public invariant countNumberAtLastTransfer < Candidate.MAXCOUNT;
   //@ public initially countNumberAtLastTransfer == 0;  
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
     
@@ -163,19 +149,17 @@ public static final int NONTRANSFERABLE = 0;
    */
 /*@ also public normal_behavior
   @	  assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
-  @     candidateID, ballotID, positionInList, randomNumber, nextBallotID, preferenceList;
+  @     ballotID, positionInList, randomNumber, nextBallotID, preferenceList;
   @   ensures numberOfPreferences == 0;
   @   ensures countNumberAtLastTransfer == 0;
   @   ensures positionInList == 0;
-  @   ensures candidateID == NONTRANSFERABLE;
   @*/
-  public /*@ pure @*/ Ballot () {
+  public Ballot () {
  	  numberOfPreferences = 0;
 	  countNumberAtLastTransfer = 0;
 	  positionInList = 0;
-	  candidateID = NONTRANSFERABLE; 
-	  ballotID = getNextBallotID(); //@ nowarn;
-      randomNumber = this.hashCode();
+	  ballotID = nextBallotID++; //@ nowarn;
+      randomNumber = this.hashCode(); //@ nowarn;
 	  //@ set _randomNumber = randomNumber;
       preferenceList = new int [Candidate.MAX_CANDIDATES];
   }
@@ -190,7 +174,7 @@ public static final int NONTRANSFERABLE = 0;
     @ requires 0 <= countNumber;
     @ requires countNumber <= countNumberAtLastTransfer;
     @ requires countNumber < candidateIDAtCount.length;
-    @ requires countNumber < MAXIMUM_ROUNDS_OF_COUNTING;
+    @ requires countNumber < Candidate.MAXCOUNT;
     @ ensures \result == candidateIDAtCount[countNumber];
     @*/
   public /*@ pure @*/ int getPreferenceAtCount(final int countNumber) {
@@ -251,42 +235,22 @@ public static final int NONTRANSFERABLE = 0;
     @   requires (\forall int i; 0 <= i && i < list.length;
     @     0 < list[i]);
     @   requires positionInList == 0;
-    @	assignable numberOfPreferences, ballotID, preferenceList, candidateID, nextBallotID;
+    @	assignable numberOfPreferences, ballotID, preferenceList, nextBallotID, positionInList, candidateIDAtCount[*];
     @   ensures numberOfPreferences == list.length;
     @   ensures preferenceList.length == list.length;
     @   ensures (\forall int i; 0 <= i && i < list.length;
     @     (preferenceList[i] == list[i]));
     @*/
-   public void load(/*@ non_null @*/ int[] list){
-    
-    // Assign an internal identifier
-    ballotID = getNextBallotID(); //@ nowarn;
-    
+   public void load(final /*@ non_null @*/ int[] list) {
+	        
     preferenceList = new int [list.length];
-    for(int i = 0; i < list.length; i++){
+    for(int i = 0; i < list.length; i++) {
  		preferenceList[i] = list[i];
- 	  }
+ 	}
     
-    if (positionInList < list.length) {
-    candidateID = list[positionInList]; // first preference
-    }
-    else {
-    	candidateID = NONTRANSFERABLE;
-    }
     numberOfPreferences = preferenceList.length;
+    candidateIDAtCount [countNumberAtLastTransfer] = getCandidateID(); //@ nowarn;
   }
-
-   /**
-    * Get the next unique internal identifier
-    * 
-    * @return Unique internal identifier
-    */
-   //@ assignable nextBallotID;
-   //@ ensures \old(nextBallotID) != nextBallotID;
-   //@ ensures \result == \old(nextBallotID);
-   private int getNextBallotID() {
-	 return nextBallotID++;
-}
     
   /**
    * Get candidate ID to which the ballot is assigned 
@@ -302,17 +266,12 @@ public static final int NONTRANSFERABLE = 0;
     @   ensures (positionInList < numberOfPreferences) ==>
     @     (\result == preferenceList[positionInList]);
     @*/   
-  public /*@ pure @*/ int getCandidateID(){
-    if(0 <= positionInList && positionInList <= numberOfPreferences){
-      if(preferenceList != null){
-        if(positionInList == numberOfPreferences){
-          return NONTRANSFERABLE;
-        }else if(positionInList < numberOfPreferences){
-          return preferenceList[positionInList];
+  public /*@ pure @*/ int getCandidateID() {
+       if (positionInList < numberOfPreferences) {
+    	   return preferenceList[positionInList];
+        } else {
+           return NONTRANSFERABLE;
         }
-      }
-    }
-    return 0;
   }
     
   /**
@@ -352,23 +311,24 @@ public static final int NONTRANSFERABLE = 0;
   /*@ also public normal_behavior
     @   requires 0 <= positionInList;
     @   requires positionInList <= numberOfPreferences;
-    @   requires positionInList <= preferenceList.length;
+    @   requires positionInList < preferenceList.length;
     @   requires countNumberAtLastTransfer <= countNumber;
-    @   assignable countNumberAtLastTransfer, positionInList, candidateID;
-    @   ensures (countNumberAtLastTransfer == countNumber) || (candidateID == NONTRANSFERABLE);
+    @   requires countNumber < candidateIDAtCount.length;
+    @   assignable countNumberAtLastTransfer, positionInList, candidateIDAtCount[*];
+    @   ensures (countNumberAtLastTransfer == countNumber) || (getCandidateID() == NONTRANSFERABLE);
     @   ensures \old(positionInList) <= positionInList;
     @   ensures (positionInList == \old(positionInList) + 1) ||
     @           (positionInList == numberOfPreferences);
     @*/
-  public void transfer(int countNumber) {
+  public void transfer(final int countNumber) {
 
 		if (positionInList < numberOfPreferences) {
+			// Update ballot history
+			for (int r = countNumberAtLastTransfer; r < countNumber; r++) {
+				candidateIDAtCount [r] = getCandidateID();
+			}
 	 		countNumberAtLastTransfer = countNumber;
-			candidateID = preferenceList[positionInList]; //@ nowarn;
-			positionInList = positionInList + 1;
-		}
-		else {
-			candidateID = NONTRANSFERABLE;
+ 			positionInList++;
 		}
 	}
     
@@ -397,12 +357,10 @@ public static final int NONTRANSFERABLE = 0;
    * candidate ID
    */    
   /*@ also public normal_behavior
-    @ requires (0 < candidateIDToCheck) ||
-    @   (candidateIDToCheck == NONTRANSFERABLE);
-    @ ensures (\result == true) <==> (candidateID == candidateIDToCheck);
+    @   ensures (\result == true) <==> (getCandidateID() == candidateIDToCheck);
     @*/
-  public /*@ pure @*/ boolean isAssignedTo(int candidateIDToCheck){
-    return (candidateID == candidateIDToCheck);
+  public /*@ pure @*/ boolean isAssignedTo(final int candidateIDToCheck){
+    return (getCandidateID() == candidateIDToCheck);
   }
     
   /**
@@ -435,7 +393,7 @@ public static final int NONTRANSFERABLE = 0;
     @     requires this.randomNumber != other.randomNumber;
     @     ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
   */    
-  public /*@ pure @*/ boolean isAfter(/*@ non_null @*/Ballot other){
+  public /*@ pure @*/ boolean isAfter(final /*@ non_null @*/ Ballot other){
     if(this.randomNumber > other.randomNumber ){
       return true;
     }
