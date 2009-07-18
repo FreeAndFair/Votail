@@ -4,9 +4,7 @@ public class TransfersFromExcludedCandidateEventH extends AbstractEvent {
 
 	 
 
- 	protected void setEventCode() {
- 		eventCode = 'H';		
-	}
+
 
  	protected void setUpBallotBox() {
 		// TODO Auto-generated method stub

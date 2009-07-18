@@ -9,9 +9,7 @@ package ie.lero.evoting.scenario;
  */
 public class TransferFactorEventD extends AbstractEvent {
 
-	protected void setEventCode() {
-		eventCode = 'D';		
-	}
+
 
 	protected void setUpBallotBox() {
 	}

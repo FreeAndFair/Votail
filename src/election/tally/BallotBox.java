@@ -55,14 +55,21 @@ public class BallotBox {
 		return numberOfBallots;
 	}
 	
-    //@ public invariant 0 <= numberOfBallots;
-    //@ public initially numberOfBallots == 0;
-	/**
-	 * The total number of ballots in this ballot box.
-	 */
-    //@ public invariant numberOfBallots <= ballots.length;
+  /**
+   * The total number of ballots in this ballot box.
+   */
+  //@ public invariant 0 <= numberOfBallots;
+  //@ public initially numberOfBallots == 0;
+  //@ public invariant numberOfBallots <= ballots.length;
 	private /*@ spec_public @*/ int numberOfBallots;
-	private int index;
+	
+	/**
+	 * Number of ballots copied from box
+	 */
+	//@ public initially index = 0;
+	//@ public invariant index <= numberOfBallots;
+	//@ public constraint \old(index) <= index;
+ 	private /*@ spec_public @*/ int index;
 	
 	/**
 	 * Create an empty ballot box.
@@ -79,7 +86,7 @@ public class BallotBox {
 	/*@ requires numberOfBallots < ballots.length;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @ ensures (\exists int b; 0 <= b && b < numberOfBallots;
-	  @         ballot.equals(ballots[b]));
+	  @         ballot.ballotId == ballotsToCount[b].ballotID);
 	  @*/
 	public void accept (/*@ non_null @*/ Ballot ballot) {
 		ballots[numberOfBallots++] = ballot; //@ nowarn;

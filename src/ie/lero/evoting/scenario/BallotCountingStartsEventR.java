@@ -9,9 +9,7 @@ import election.tally.mock.MockBallot;
  */
 public class BallotCountingStartsEventR extends AbstractEvent {
 
-	 protected void setEventCode() {
-		eventCode = 'R';		
-	}
+	  
 
  	protected void setUpBallotBox() {
 		
@@ -30,6 +28,8 @@ public class BallotCountingStartsEventR extends AbstractEvent {
  			}
 	}
 
+ 	/*@ assignable parameters, candidate1, candidate2;
+ 	  @*/
 	protected void setUpParameters() {
 		parameters.totalNumberOfSeats = 1;
 		parameters.numberOfSeatsInThisElection = 1;

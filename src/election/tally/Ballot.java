@@ -315,7 +315,8 @@ public static final int NONTRANSFERABLE = 0;
     @   requires countNumberAtLastTransfer <= countNumber;
     @   requires countNumber < candidateIDAtCount.length;
     @   assignable countNumberAtLastTransfer, positionInList, candidateIDAtCount[*];
-    @   ensures (countNumberAtLastTransfer == countNumber) || (getCandidateID() == NONTRANSFERABLE);
+    @   ensures (countNumberAtLastTransfer == countNumber) || 
+    @           (positionInList == numberOfPreferences);
     @   ensures \old(positionInList) <= positionInList;
     @   ensures (positionInList == \old(positionInList) + 1) ||
     @           (positionInList == numberOfPreferences);
@@ -325,12 +326,12 @@ public static final int NONTRANSFERABLE = 0;
 		if (positionInList < numberOfPreferences) {
 			// Update ballot history
 			for (int r = countNumberAtLastTransfer; r < countNumber; r++) {
-				candidateIDAtCount [r] = getCandidateID();
+				candidateIDAtCount [r] = getCandidateID(); //@ nowarn;
 			}
 	 		countNumberAtLastTransfer = countNumber;
  			positionInList++;
 		}
-	}
+	} 
     
   /**
    * Get ballot ID number

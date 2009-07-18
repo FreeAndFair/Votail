@@ -9,9 +9,7 @@ package ie.lero.evoting.scenario;
  */
 public class NonFractionalTransfersEventE extends AbstractEvent {
 	 
-	protected void setUpBallotBox() {
- 		
-	}
+	 
 
  	protected void setUpParameters() {
  		
@@ -21,8 +19,6 @@ public class NonFractionalTransfersEventE extends AbstractEvent {
  		
  	}
 
-	protected void setEventCode() {
-		eventCode ='E';		
-	}
+	
 
 }

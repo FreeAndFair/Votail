@@ -4,9 +4,7 @@ public class FractionalDifferencesEventF extends AbstractEvent {
 
 	 
 
- 	protected void setEventCode() {
- 		eventCode = 'F';		
-	}
+ 	
 
  	protected void setUpBallotBox() {
 		// TODO Auto-generated method stub

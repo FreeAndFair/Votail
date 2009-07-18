@@ -34,9 +34,7 @@ public class ExclusionEventJ extends AbstractEvent {
 	 
 
 	 
-	protected void setEventCode() {
-		eventCode = 'J';		
-	}
+	
 
  	protected void setUpBallotBox() {
  		for (int i = 0; i < numberOfCandidates; i++) {
@@ -56,6 +54,7 @@ public class ExclusionEventJ extends AbstractEvent {
 		
 	}
 
+ 	//@ assignable numberOfCandidates;
  	protected void setUpParameters() {
  		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;		
@@ -63,7 +62,7 @@ public class ExclusionEventJ extends AbstractEvent {
 
 		// Generate candidates
 		numberOfCandidates = 2 + parameters.numberOfSeatsInThisElection;
-		Candidate[] candidates = new Candidate[numberOfCandidates];
+		candidates = new Candidate[numberOfCandidates];
 		for (int i = 0; i < numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
 			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);

@@ -228,10 +228,6 @@
             <ruleset>Controversial Rules</ruleset>
         </rule>
         <rule>
-            <name>DataflowAnomalyAnalysis</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
             <name>DefaultPackage</name>
             <ruleset>Controversial Rules</ruleset>
         </rule>

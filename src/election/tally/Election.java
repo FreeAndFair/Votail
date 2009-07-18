@@ -55,7 +55,7 @@ public class Election {
   @   0 <= i && i < numberOfCandidates &&
   @   0 <= j && j < numberOfCandidates &&
   @   i != j;
-  @   !candidateList[i].equals(candidateList[j])); 
+  @   candidateList[i].candidateID != (candidateList[j]).candidateID); 
   @*/	
 	private transient /*@ spec_public non_null @*/ Candidate[] candidateList;
 	
@@ -92,11 +92,11 @@ public class Election {
 	  @     0 <= i && i < listOfCandidates.length &&
 	  @     0 <= j && j < listOfCandidates.length &&
 	  @     i != j;
-	  @     (false == listOfCandidates[i].equals(listOfCandidates[j]))); 
+	  @     (listOfCandidates[i].candidateID != (listOfCandidates[j].candidateID))); 
 	  @  assignable candidateList, numberOfCandidates;
 	  @  ensures (\forall int i;
 	  @     0 <= i && i < listOfCandidates.length;
- 	  @     candidateList[i].equals(listOfCandidates[i]));
+ 	  @     candidateList[i].candidateID == (listOfCandidates[i].candidateID));
  	  @  ensures listOfCandidates.length == numberOfCandidates;
 	  @*/	
 	public void setCandidateList(final /*@ non_null @*/ Candidate[] listOfCandidates) {

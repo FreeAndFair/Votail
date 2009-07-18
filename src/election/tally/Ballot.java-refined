@@ -94,7 +94,7 @@ public class Ballot {
     @   ensures positionInList == 0;
     @   ensures ballotID > 0;
     @*/
-  public /*@ pure @*/ Ballot();
+  public Ballot();
   
   /**
    * Get the location of the ballot at each count
