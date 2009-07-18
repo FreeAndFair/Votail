@@ -86,18 +86,29 @@ public class BallotBox {
 	/*@ requires numberOfBallots < ballots.length;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @ ensures (\exists int b; 0 <= b && b < numberOfBallots;
-	  @         ballotsToCount.ballotID == ballotsToCount[b].ballotID);
+	  @         ballots[b].ballotID == ballot.ballotID);
 	  @*/
-	public void accept (/*@ non_null @*/ Ballot ballot) {
+	public void accept (final /*@ non_null @*/ Ballot ballot) {
 		ballots[numberOfBallots++] = ballot; //@ nowarn;
 	} //@ nowarn;
 
-	public boolean isNextBallot() {
+	/**
+	 * Is there another ballot paper?
+	 * @return <code>true</code>if there is
+	 */
+	//@ ensures \result <==> index < numberOfBallots;
+	public /*@ pure @*/ boolean isNextBallot() {
 		return index < numberOfBallots;
 	}
 
+	/**
+	 * Get the next ballot paper
+	 * @return The ballot paper
+	 */
 	//@ requires 0 <= index;
-	//@ requires index < ballots.length;
+	//@ requires isNextBallot();
+	//@ assignable index;
+	//@ ensures \result == ballots[\old(index)];
 	public Ballot getNextBallot() {
 		return ballots[index++];
 	}

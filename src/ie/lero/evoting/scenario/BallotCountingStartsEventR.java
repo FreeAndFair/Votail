@@ -13,17 +13,23 @@ import election.tally.mock.MockBallot;
  */
 public class BallotCountingStartsEventR extends TestCase {
 
-	  
-
- 	private Election parameters;
+  private Election parameters;
   private BallotBox ballotBox;
   private BallotCounting ballotCounting;
 
+  protected void setUp() throws Exception {
+    super.setUp();
+    setUpParameters();
+    setUpBallotBox();
+    ballotCounting = new BallotCounting();
+    ballotCounting.setup(parameters);
+    ballotCounting.load(ballotBox);
+ }
 
   protected void setUpBallotBox() {
-		
+		ballotBox = new BallotBox();
 		MockBallot ballot1, ballot2;
-		MockBallot ballot = new MockBallot();
+		MockBallot ballot = new MockBallot(); //@ nowarn;
  		ballot.setFirstPreference(candidate2.getCandidateID());
  		ballotBox.accept(ballot);
 		
@@ -40,6 +46,7 @@ public class BallotCountingStartsEventR extends TestCase {
  	/*@ assignable parameters, candidate1, candidate2;
  	  @*/
 	protected void setUpParameters() {
+	  parameters = new Election();
 		parameters.totalNumberOfSeats = 1;
 		parameters.numberOfSeatsInThisElection = 1;
 		parameters.numberOfCandidates = 2;

@@ -4,7 +4,9 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.BallotBox;
 import election.tally.BallotCounting;
+import election.tally.Election;
 import election.tally.ElectionStatus;
 
 
@@ -16,32 +18,16 @@ public class ClosureEventP extends TestCase {
 
  	private BallotCounting ballotCounting;
 
-  protected void setEventCode() {
-		// TODO Auto-generated method stub
-		
-	}
-
- 	protected void setUpBallotBox() {
-		// TODO Auto-generated method stub
-		
-	}
-
- 	protected void setUpParameters() {
-		// TODO Auto-generated method stub
-		
-	}
-
- 	public void testEvent() {
-		// TODO Auto-generated method stub
-		
-	}
+   
 
 	protected void setUp() throws Exception {
 		super.setUp();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
+		ballotCounting = new BallotCounting();
+		Election parameters = new Election();
+		BallotBox ballotBox = new BallotBox();
+		ballotCounting.setup(parameters);
+		ballotCounting.load(ballotBox);
+		ballotCounting.count();
 	}
 
 	public void testClosureEvent() {

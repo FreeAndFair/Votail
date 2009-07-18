@@ -1153,7 +1153,7 @@ protected /*@ pure spec_public @*/ int randomSelection(
   @     ensures \result <= ballotsToCount.length;
   @*/
 protected /*@ pure @*/ int getOrder(Ballot ballot){
-      // Determine the number of ballots with a lower random number
+    // Determine the number of ballots with a lower random number
 	  int order = 1;
 	  for (int b = 0; b < totalNumberOfVotes; b++) {
 		  if (ballots[b].isAfter(ballot)) {
