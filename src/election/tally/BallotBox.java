@@ -111,5 +111,5 @@ public class BallotBox {
 	//@ ensures \result == ballots[\old(index)];
 	public Ballot getNextBallot() {
 		return ballots[index++];
-	}
+	} //@ nowarn;
 }

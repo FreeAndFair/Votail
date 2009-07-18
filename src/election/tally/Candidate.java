@@ -14,7 +14,7 @@ package election.tally;
  * @copyright 2005-2009
  */
 
-public class Candidate implements CandidateStatus {
+public class Candidate extends CandidateStatus {
 	
 /**
  * Maximum expected number of candidates in any one constituency.

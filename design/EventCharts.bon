@@ -22,18 +22,6 @@
 -- THE SOFTWARE.
 --
 
--- External (incoming) events
-
-event_chart VOTAIL
-incoming
-part
-  "1/2"
-event
-  "R: Ballot counting starts"
-involves
-  BALLOT_BOX, BALLOT_COUNTING
-end
-
 -- Internal (outgoing) events
 -- See diagrams/DailBallotCounting
 

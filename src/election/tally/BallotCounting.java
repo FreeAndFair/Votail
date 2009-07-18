@@ -533,7 +533,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		status = FINISHED;
 	}
 
-	public void updateCountStatus(int countingStatus) {
+	public void updateCountStatus(final int countingStatus) {
 		ballotCountingMachine.changeState(countingStatus);
 	}
 

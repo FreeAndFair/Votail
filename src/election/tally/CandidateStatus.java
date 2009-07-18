@@ -1,6 +1,6 @@
 package election.tally;
 
-public interface CandidateStatus {
+public class CandidateStatus {
 
 	/** State value for a candidate neither elected nor eliminated yet */
 	public static final byte CONTINUING = 0;
