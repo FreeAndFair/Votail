@@ -3,11 +3,13 @@
  */
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
+
 /**
  * @author Dermot Cochran
  *
  */
-public class NonFractionalTransfersEventE extends AbstractEvent {
+public class NonFractionalTransfersEventE extends TestCase {
 	 
 	 
 

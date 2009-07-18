@@ -1,6 +1,8 @@
 package ie.lero.evoting.scenario;
 
-public class MoveBallotsEventL extends AbstractEvent {
+import junit.framework.TestCase;
+
+public class MoveBallotsEventL extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();

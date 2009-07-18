@@ -1,17 +1,26 @@
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
+import election.tally.BallotBox;
+import election.tally.BallotCounting;
 import election.tally.Candidate;
+import election.tally.Election;
 import election.tally.mock.MockBallot;
 
 /**
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-public class BallotCountingStartsEventR extends AbstractEvent {
+public class BallotCountingStartsEventR extends TestCase {
 
 	  
 
- 	protected void setUpBallotBox() {
+ 	private Election parameters;
+  private BallotBox ballotBox;
+  private BallotCounting ballotCounting;
+
+
+  protected void setUpBallotBox() {
 		
 		MockBallot ballot1, ballot2;
 		MockBallot ballot = new MockBallot();

@@ -66,7 +66,7 @@ public class BallotBox {
 	/**
 	 * Number of ballots copied from box
 	 */
-	//@ public initially index = 0;
+	//@ public initially index == 0;
 	//@ public invariant index <= numberOfBallots;
 	//@ public constraint \old(index) <= index;
  	private /*@ spec_public @*/ int index;
@@ -86,7 +86,7 @@ public class BallotBox {
 	/*@ requires numberOfBallots < ballots.length;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @ ensures (\exists int b; 0 <= b && b < numberOfBallots;
-	  @         ballot.ballotId == ballotsToCount[b].ballotID);
+	  @         ballotsToCount.ballotID == ballotsToCount[b].ballotID);
 	  @*/
 	public void accept (/*@ non_null @*/ Ballot ballot) {
 		ballots[numberOfBallots++] = ballot; //@ nowarn;

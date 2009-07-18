@@ -1,6 +1,8 @@
 package ie.lero.evoting.scenario;
 
-public class FractionalDifferencesEventF extends AbstractEvent {
+import junit.framework.TestCase;
+
+public class FractionalDifferencesEventF extends TestCase {
 
 	 
 

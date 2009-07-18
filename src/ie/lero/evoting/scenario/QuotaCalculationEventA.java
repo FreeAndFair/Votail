@@ -3,6 +3,9 @@
  */
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
+import election.tally.BallotCounting;
+import election.tally.Election;
 import election.tally.ElectionStatus;
 
 
@@ -10,7 +13,10 @@ import election.tally.ElectionStatus;
  * @author Dermot Cochran
  *
  */
-public class QuotaCalculationEventA extends AbstractEvent {
+public class QuotaCalculationEventA extends TestCase {
+  
+  BallotCounting ballotCounting;
+  Election parameters;
 
 	protected void setUp() throws Exception {
 		super.setUp();

@@ -1,6 +1,8 @@
 package ie.lero.evoting.scenario;
 
-public class ElectRemainingCandidatesEventN extends AbstractEvent {
+import junit.framework.TestCase;
+
+public class ElectRemainingCandidatesEventN extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();

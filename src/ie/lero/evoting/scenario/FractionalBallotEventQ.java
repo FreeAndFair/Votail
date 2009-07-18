@@ -1,6 +1,8 @@
 package ie.lero.evoting.scenario;
 
-public class FractionalBallotEventQ extends AbstractEvent {
+import junit.framework.TestCase;
+
+public class FractionalBallotEventQ extends TestCase {
 
  	protected void setEventCode() {
 		// TODO Auto-generated method stub

@@ -1,6 +1,8 @@
 package ie.lero.evoting.scenario;
 
-public class CheckRemainingSeatsEventM extends AbstractEvent {
+import junit.framework.TestCase;
+
+public class CheckRemainingSeatsEventM extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();

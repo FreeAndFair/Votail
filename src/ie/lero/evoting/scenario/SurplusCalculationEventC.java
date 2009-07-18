@@ -1,5 +1,6 @@
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
@@ -11,8 +12,12 @@ import election.tally.mock.MockBallot;
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-public class SurplusCalculationEventC extends AbstractEvent{
+public class SurplusCalculationEventC extends TestCase{
 	
+  BallotCounting ballotCounting;
+  Election parameters;
+  BallotBox ballotBox;
+  
  	protected void setEventCode() {
 		// TODO Auto-generated method stub
 		

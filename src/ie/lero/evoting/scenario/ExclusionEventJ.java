@@ -1,7 +1,11 @@
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
+import election.tally.BallotBox;
+import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.CandidateStatus;
+import election.tally.Election;
 import election.tally.mock.MockBallot;
 
 /**
@@ -13,10 +17,13 @@ import election.tally.mock.MockBallot;
  * 
  * @see election.tally.Candidate
  */
-public class ExclusionEventJ extends AbstractEvent {
+public class ExclusionEventJ extends TestCase {
 
 	private int numberOfCandidates;
 	private Candidate[] candidates;
+  private Election parameters;
+  private BallotCounting ballotCounting;
+  private BallotBox ballotBox;
 
 	/**
 	 * Execute this scenario.
@@ -73,6 +80,17 @@ public class ExclusionEventJ extends AbstractEvent {
 		
 		parameters.setCandidateList(candidates);
 	}
+ 	
+ 	protected void setUp() throws Exception {
+    super.setUp();
+    ballotBox = new BallotBox();
+    ballotCounting = new BallotCounting();
+    parameters = new Election();
+    setUpParameters();
+    setUpBallotBox();
+    ballotCounting.setup(parameters);
+    ballotCounting.load(ballotBox);
+ 	}
 
  	public void testEvent() {
 		// TODO Auto-generated method stub

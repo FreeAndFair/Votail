@@ -1,6 +1,8 @@
 package ie.lero.evoting.scenario;
 
-public class TransfersFromExcludedCandidateEventH extends AbstractEvent {
+import junit.framework.TestCase;
+
+public class TransfersFromExcludedCandidateEventH extends TestCase {
 
 	 
 

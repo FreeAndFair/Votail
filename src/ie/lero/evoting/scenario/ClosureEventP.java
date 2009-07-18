@@ -3,6 +3,8 @@
  */
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
+import election.tally.BallotCounting;
 import election.tally.ElectionStatus;
 
 
@@ -10,9 +12,11 @@ import election.tally.ElectionStatus;
  * @author Dermot Cochran
  *
  */
-public class ClosureEventP extends AbstractEvent {
+public class ClosureEventP extends TestCase {
 
- 	protected void setEventCode() {
+ 	private BallotCounting ballotCounting;
+
+  protected void setEventCode() {
 		// TODO Auto-generated method stub
 		
 	}

@@ -57,7 +57,7 @@ public class Election {
   @   i != j;
   @   candidateList[i].candidateID != (candidateList[j]).candidateID); 
   @*/	
-	private transient /*@ spec_public non_null @*/ Candidate[] candidateList;
+	protected transient /*@ spec_public non_null @*/ Candidate[] candidateList;
 	
 	/**
 	 * 

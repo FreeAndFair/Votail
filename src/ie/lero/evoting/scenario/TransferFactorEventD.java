@@ -3,11 +3,13 @@
  */
 package ie.lero.evoting.scenario;
 
+import junit.framework.TestCase;
+
 /**
  * @author Dermot Cochran
  *
  */
-public class TransferFactorEventD extends AbstractEvent {
+public class TransferFactorEventD extends TestCase {
 
 
 

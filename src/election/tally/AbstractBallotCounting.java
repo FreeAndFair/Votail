@@ -1148,7 +1148,7 @@ protected /*@ pure spec_public @*/ int randomSelection(
 /*@ also
   @   protected normal_behavior 
   @     requires ballotsToCount != null && (\forall int b;
-  @              0 <= b && b < totalVotes; ballotToCount[b] != null);
+  @              0 <= b && b < totalVotes; ballotsToCount[b] != null);
   @     ensures 1 <= \result;
   @     ensures \result <= ballotsToCount.length;
   @*/
