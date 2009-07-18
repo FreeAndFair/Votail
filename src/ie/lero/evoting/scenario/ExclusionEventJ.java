@@ -6,6 +6,7 @@ import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.CandidateStatus;
 import election.tally.Election;
+import election.tally.ElectionStatus;
 import election.tally.mock.MockBallot;
 
 /**
@@ -31,6 +32,7 @@ public class ExclusionEventJ extends TestCase {
 	//@ requires ballotCounting != null;
 	public final void testExclusion() {
 	 	
+	  assertTrue (ballotCounting.getStatus() == ElectionStatus.COUNTING);
 	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
 		ballotCounting.eliminateCandidate(lowestCandidate);
 	 	
@@ -42,7 +44,7 @@ public class ExclusionEventJ extends TestCase {
 
 	 
 	
-
+  //@ requires candidates != null;
  	protected void setUpBallotBox() {
  		for (int i = 0; i < numberOfCandidates; i++) {
 			 
@@ -61,6 +63,7 @@ public class ExclusionEventJ extends TestCase {
 		
 	}
 
+  //@ requires parameters != null;
  	//@ assignable numberOfCandidates;
  	protected void setUpParameters() {
  		parameters.totalNumberOfSeats = 4;
@@ -90,10 +93,6 @@ public class ExclusionEventJ extends TestCase {
     setUpBallotBox();
     ballotCounting.setup(parameters);
     ballotCounting.load(ballotBox);
- 	}
-
- 	public void testEvent() {
-		// TODO Auto-generated method stub
 		
 	}
 }

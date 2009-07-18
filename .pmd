@@ -124,10 +124,6 @@
             <ruleset>Basic Rules</ruleset>
         </rule>
         <rule>
-            <name>UnnecessaryReturn</name>
-            <ruleset>Basic Rules</ruleset>
-        </rule>
-        <rule>
             <name>UnusedNullCheckInEquals</name>
             <ruleset>Basic Rules</ruleset>
         </rule>
@@ -164,39 +160,7 @@
             <ruleset>Clone Implementation Rules</ruleset>
         </rule>
         <rule>
-            <name>ExcessiveMethodLength</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>ExcessiveParameterList</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>ExcessivePublicCount</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>NcssConstructorCount</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>NcssMethodCount</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>NcssTypeCount</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
-            <name>NPathComplexity</name>
-            <ruleset>Code Size Rules</ruleset>
-        </rule>
-        <rule>
             <name>AssignmentInOperand</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
-            <name>AtLeastOneConstructor</name>
             <ruleset>Controversial Rules</ruleset>
         </rule>
         <rule>
@@ -244,10 +208,6 @@
             <ruleset>Controversial Rules</ruleset>
         </rule>
         <rule>
-            <name>OnlyOneReturn</name>
-            <ruleset>Controversial Rules</ruleset>
-        </rule>
-        <rule>
             <name>SuspiciousOctalEscape</name>
             <ruleset>Controversial Rules</ruleset>
         </rule>
@@ -285,10 +245,6 @@
         </rule>
         <rule>
             <name>AssignmentToNonFinalStatic</name>
-            <ruleset>Design Rules</ruleset>
-        </rule>
-        <rule>
-            <name>AvoidConstantsInterface</name>
             <ruleset>Design Rules</ruleset>
         </rule>
         <rule>
@@ -541,26 +497,6 @@
         </rule>
         <rule>
             <name>IntegerInstantiation</name>
-            <ruleset>Migration Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnit4SuitesShouldUseSuiteAnnotation</name>
-            <ruleset>Migration Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnit4TestShouldUseAfterAnnotation</name>
-            <ruleset>Migration Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnit4TestShouldUseBeforeAnnotation</name>
-            <ruleset>Migration Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnit4TestShouldUseTestAnnotation</name>
-            <ruleset>Migration Rules</ruleset>
-        </rule>
-        <rule>
-            <name>JUnitUseExpected</name>
             <ruleset>Migration Rules</ruleset>
         </rule>
         <rule>

@@ -813,7 +813,7 @@ public void setup(/*@ non_null @*/ Election electionParameters){
   @*/
 public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  	totalNumberOfVotes = ballotBox.size(); //@ nowarn;
- 	ballots = new Ballot[totalNumberOfVotes];
+ 	ballots = new Ballot[totalNumberOfVotes]; //@ nowarn;
  	int index = 0;
  	while (index < totalNumberOfVotes && ballotBox.isNextBallot()) {
  		ballots[index++] = ballotBox.getNextBallot();
@@ -1044,7 +1044,7 @@ public /*@ pure @*/ byte getStatus(){
 		}
 		
     return numberOfVotes;
-	}
+	} //@ nowarn;
 
 protected int getTransferFactor(final /*@ non_null @*/ Candidate fromCandidate) {
   return (getSurplus (fromCandidate) / getTotalTransferableVotes (fromCandidate)); //@ nowarn;
@@ -1107,7 +1107,7 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
 	int shortfall = 0;
  	for (int i=0; i < totalNumberOfCandidates; i++) {
 		if (candidates[i].getStatus() == CandidateStatus.CONTINUING) { //@ nowarn;
-			shortfall += getActualTransfers (fromCandidate, candidates[i]);
+			shortfall += getActualTransfers (fromCandidate, candidates[i]); //@ nowarn;
 		}
 	}
 	return shortfall;
@@ -1168,7 +1168,7 @@ protected /*@ pure @*/ int getOrder(Ballot ballot){
 		  }
 	  }
 	  return order;
-	}
+	} //@ nowarn;
 
 /**
  * List each candidate ID in order by random number to show how lots would have 
@@ -1195,7 +1195,7 @@ protected /*@ pure @*/ int getOrder(Candidate candidate){
 		}
 	}
 	return order;
-}
+} //@ nowarn;
 
 /**
  * Determine the individuals remainder after integer division by the
@@ -1373,7 +1373,7 @@ protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
     int numberOfTransfers = 0;
  		for(int i = 0; i < totalNumberOfCandidates; i++){
  			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) { //@ nowarn;
- 				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID());
+ 				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID());  //@ nowarn;
  			}
 		}
 	return numberOfTransfers;
@@ -1453,18 +1453,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 			  if (candidates[i].getTotalVote() > mostVotes) {
 				     mostVotes = candidates[i].getTotalVote();
 				     highestCandidate = i;
-			} else if (candidates[i].getTotalVote() == mostVotes && 0 <= highestCandidate) {
-				
-				// resolve tie for equal highest vote in accordance with electoral law
-				if (isHigherThan(candidates[i],candidates[highestCandidate])) {
-					highestCandidate =  i;
-				}
+			} else if (candidates[i].getTotalVote() == mostVotes && 0 <= highestCandidate &&
+				    isHigherThan(candidates[i],candidates[highestCandidate])) {
+					   highestCandidate =  i;
 			  }
 			}
 		}
-		
-		//@ assert candidates[highestCandidate].getTotalVote() == mostVotes;
-		//@ assert -1 < highestCandidate;
 		
 		return highestCandidate;
 	}
@@ -1493,17 +1487,15 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 			  if (candidates[i].getTotalVote() < leastVotes) {
 				leastVotes = candidates[i].getTotalVote();
 				index = i;
-			  } else if (candidates[i].getTotalVote() == leastVotes) {
-				// resolve tie for equal lowest vote in accordance with electoral law
-				if (isHigherThan(candidates[index],candidates[i])) {
+			  } else if (candidates[i].getTotalVote() == leastVotes &&
+ 				    isHigherThan(candidates[index],candidates[i])) {
 					index = i;
-				}
 			  }
 			}
 		}
 		
 		return index;
-	}
+	} //@ nowarn;
 
 	/**
 	 * Exclude one candidate from the election.
@@ -1516,6 +1508,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ requires (state == COUNTING);
 	  @ requires 0 <= loser && loser < totalNumberOfContinuingCandidates;
 	  @ assignable candidateList, decisions[*], decisionsTaken;
+	  @ assignable candidateList[loser];
 	  @ ensures remainingSeats <= numberOfContinuingCandidates;
 	  @ ensures numberElected <= seats;
 	  @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
@@ -1526,7 +1519,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	public void eliminateCandidate(final int loser) {
 		final int candidateID = candidates[loser].getCandidateID();
 
-		candidates[loser].declareEliminated();
+		candidates[loser].declareEliminated(); //@ nowarn;
 		redistributeBallots(candidateID);
 		auditDecision(Decision.EXCLUDE, candidateID);
 	}
@@ -1547,7 +1540,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @*/
 	protected void auditDecision(final byte decisionType, final int candidateID) {
 		 
-		Decision decision = new Decision();
+		Decision decision = new Decision(); // NOPMD
 		decision.atCountNumber = countNumberValue;
 		decision.candidateID = candidateID;
 		decision.chosenByLot = false;
@@ -1573,7 +1566,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		for (int b = 0; b < totalNumberOfVotes; b++) {
 			if (ballots[b].getCandidateID() == candidateID) {
 				
-				transferBallot(ballots[b]);
+				transferBallot(ballots[b]); //@ nowarn;
 			}
 		}
 	}

@@ -30,6 +30,7 @@ public class ClosureEventP extends TestCase {
 		ballotCounting.count();
 	}
 
+	//@ requires ballotCounting != null;
 	public void testClosureEvent() {
 		assertTrue(ballotCounting.getStatus() == ElectionStatus.FINISHED);
 		//@ assert ballotCounting.getStatus() == election.tally.AbstractBallotCounting.FINISHED;

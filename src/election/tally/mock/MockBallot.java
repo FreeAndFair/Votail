@@ -7,6 +7,7 @@ public class MockBallot extends election.tally.Ballot {
 	public void setFirstPreference(final int firstPreferenceID) {
 		numberOfPreferences = 1;
 		preferenceList[0] = firstPreferenceID;
+		ballotID = nextBallotID++; // new ballot paper
 	} //@ nowarn;
 
 	/*@ requires 1 < howManyPreferences;
@@ -21,6 +22,7 @@ public class MockBallot extends election.tally.Ballot {
 		for (int c = 0; c < howManyPreferences; c++) {
 			preferenceList[c] = candidateIDList[c];
 		}
+    ballotID = nextBallotID++; // new ballot paper
 	}
 
 }

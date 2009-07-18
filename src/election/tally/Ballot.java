@@ -141,7 +141,7 @@ public static final int NONTRANSFERABLE = 0;
   /*@ private invariant 0 < nextBallotID;
     @ private constraint \old(nextBallotID) <= nextBallotID;
     @*/
-  private /*@ spec_public @*/ static int nextBallotID = 1;
+  protected static int nextBallotID = 1;
 
 
   /**
@@ -248,7 +248,7 @@ public static final int NONTRANSFERABLE = 0;
  		preferenceList[i] = list[i];
  	}
     
-    numberOfPreferences = preferenceList.length;
+    numberOfPreferences = preferenceList.length; //@ nowarn;
     candidateIDAtCount [countNumberAtLastTransfer] = getCandidateID(); //@ nowarn;
   }
     

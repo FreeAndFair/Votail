@@ -1,62 +1,55 @@
 /**
- * 
+ * Event A: Calculate Quota
  */
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.BallotBox;
 import election.tally.BallotCounting;
+import election.tally.Candidate;
 import election.tally.Election;
 import election.tally.ElectionStatus;
-
+import election.tally.mock.MockBallot;
 
 /**
  * @author Dermot Cochran
- *
  */
 public class QuotaCalculationEventA extends TestCase {
   
-  BallotCounting ballotCounting;
-  Election parameters;
-
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-	
 	/**
 	 * Test the calculation of quota and deposit saving threshold.
 	 */
 	public void testCalculateQuota () {
-		assertTrue(ballotCounting != null);
-		assertTrue(ballotCounting.getStatus() == ElectionStatus.EMPTY);
+	  BallotCounting ballotCounting = new BallotCounting();
+	  Election parameters = new Election();
+	  parameters.numberOfCandidates = 2;
+	  parameters.numberOfSeatsInThisElection = 1;
+	  parameters.totalNumberOfSeats = 3;
+	  Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
+	  candidates[0] = new Candidate();
+	  candidates[1] = new Candidate();
+	  parameters.setCandidateList(candidates);
+	  ballotCounting.setup(parameters);
+	  
+ 		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);
 		//@ assert ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY;
-		ballotCounting.setup(parameters);
+		BallotBox ballotBox = new BallotBox();
+		MockBallot ballot = new MockBallot();
+		for (int i = 0; i < 60000; i++) {
+		  ballot.setFirstPreference(candidates[0].getCandidateID());
+		  ballotBox.accept(ballot);
+		}
+		for (int i = 0; i < 40000; i++) {
+		  ballot.setFirstPreference(candidates[1].getCandidateID());
+		  ballotBox.accept(ballot);
+		}
 		
-		assertTrue(1 == ballotCounting.report().getTotalNumberOfCounts());
-		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
-	}
-
- 	protected void setEventCode() {
-		// TODO Auto-generated method stub
+		ballotCounting.load(ballotBox);
 		
-	}
-
- 	protected void setUpBallotBox() {
-		// TODO Auto-generated method stub
+		int quota = ballotCounting.getQuota();
+		assertTrue (500001 == quota);
 		
-	}
-
- 	protected void setUpParameters() {
-		// TODO Auto-generated method stub
-		
-	}
-
- 	public void testEvent() {
-		// TODO Auto-generated method stub
-		
+		assertTrue(ballotCounting.hasQuota(candidates[0]));
 	}
 
 }
