@@ -81,7 +81,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @*/
 	
 	protected transient /*@ spec_public @*/ byte status; //@ in state;
-   //@ public represents state <- status;
+  //@ public represents state <- status;
 	/*@
 	  @ public invariant status == EMPTY ||status == SETTING_UP || 
 	  @   status == PRELOAD ||
@@ -246,19 +246,20 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/** Total number of valid votes in this election */
    //@ public model int totalVotes;
    //@ public invariant 0 <= totalVotes;
-   //@ protected invariant totalVotes <= ballotsToCount.length;
-	/*@ public invariant (state == EMPTY || state == SETTING_UP || 
-	  @   state == PRELOAD)
-	  @ ==> 
-	  @   totalVotes == 0;
-	  @ public constraint (state == LOADING)
-	  @ ==> 
-	  @   \old (totalVotes) <= totalVotes;
-	  @ public constraint (state == PRECOUNT || state == COUNTING ||
-	  @   state == FINISHED)
-	  @ ==> 
-	  @  totalVotes == \old (totalVotes);
-	  @*/
+   /*@ public invariant (state == PRECOUNT || state == COUNTING || state == FINISHED)
+     @   ==> totalVotes <= ballotsToCount.length;
+	   @ public invariant (state == EMPTY || state == SETTING_UP || 
+	   @   state == PRELOAD)
+	   @ ==> 
+	   @   totalVotes == 0;
+	   @ public constraint (state == LOADING)
+	   @ ==> 
+	   @   \old (totalVotes) <= totalVotes;
+	   @ public constraint (state == PRECOUNT || state == COUNTING ||
+	   @   state == FINISHED)
+	   @ ==> 
+	   @  totalVotes == \old (totalVotes);
+	   @*/
 	
    /** Total number of valid ballot papers */
 	protected transient int totalNumberOfVotes;
@@ -283,23 +284,17 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @   (\num_of int i; 0 <= i && i < totalVotes;
 	  @     ballotsToCount[i].getCandidateID() == Ballot.NONTRANSFERABLE);
 	  @*/
-	/** Number of votes so far which did not have a transfer to
-	 * a continuing candidate */
 	protected /*@ spec_public @*/ int totalofNonTransferableVotes;
    //@ protected represents nonTransferableVotes <- totalofNonTransferableVotes;
 
-	/** Minimum number of votes needed to guarantee election */
-   //@ public model int quota;
-   //@ public invariant 0 <= quota;
-   //@ public invariant quota <= totalVotes;
+	/** Number of votes needed to guarantee election */
+  //@ public invariant 0 <= getQuota();
+  //@ public invariant getQuota() <= totalVotes;
 	/*@ public invariant (state == COUNTING) ==>
-	  @   quota == 1 + (totalVotes / (seats + 1));
+	  @   getQuota() == 1 + (totalVotes / (seats + 1));
 	  @*/
-	/** Minimum number of votes needed to guarantee election */
-	protected transient /*@ spec_public @*/ int numberOfVotesRequired;
-   //@ protected represents quota <- numberOfVotesRequired;
-
-	/** Minimum number of votes needed to save deposit unless elected */
+ 
+	/** Number of votes needed to save deposit unless elected */
    //@ public model int depositSavingThreshold;
    //@ public invariant 0 <= depositSavingThreshold;
    //@ public invariant depositSavingThreshold <= totalVotes;
@@ -307,7 +302,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ ==> depositSavingThreshold ==
 	  @   (((totalVotes / (totalSeats + 1)) + 1) / 4) + 1;
 	  @*/
-	/** Number of votes required to be deemed elected */
 	protected transient /*@ spec_public @*/ int savingThreshold;
    //@ protected represents depositSavingThreshold <- savingThreshold;
 
@@ -322,7 +316,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ public constraint (state == COUNTING) ==>
 	  @   countNumber <= \old (countNumber) + 1;
 	  @*/
-	/** Number of rounds of counting */
 	protected transient /*@ spec_public @*/ int countNumberValue;
    //@ protected represents countNumber <- countNumberValue;
 
@@ -330,7 +323,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public model int numberOfSurpluses;
    //@ public invariant 0 <= numberOfSurpluses;
    //@ protected invariant numberOfSurpluses <= numberElected;
-	/** Number of candidates with surplus votes */
 	protected /*@ spec_public @*/ int totalNumberOfSurpluses;
    //@ protected represents numberOfSurpluses <- totalNumberOfSurpluses;
 
@@ -421,7 +413,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
 	/** The highest number of votes held by a continuing candidate */
    //@ public model int highestContinuingVote;
-   //@ public invariant highestContinuingVote < quota;
+   //@ public invariant highestContinuingVote < getQuota();
 	/*@ public invariant (0 < numberOfContinuingCandidates)
 	  @ ==> highestContinuingVote ==
 	  @   (\max int i; 0 < i && i < totalCandidates &&
@@ -518,6 +510,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   @     ensures numberElected == 0;
   @*/
 public AbstractBallotCounting(){
+  super();
 	status = EMPTY;
 	countNumberValue = 0;
 	numberOfCandidatesElected = 0;
@@ -539,10 +532,10 @@ public AbstractBallotCounting(){
   @   public normal_behavior
   @     requires candidate != null;
   @     requires 0 <= countNumber;
-  @     ensures \result <==> (candidate.getTotalVote() >= quota);
+  @     ensures \result <==> (candidate.getTotalVote() >= getQuota());
   @*/
 public /*@ pure @*/ boolean hasQuota(final /*@ non_null @*/ Candidate candidate){
-	return (candidate.getTotalVote() >= numberOfVotesRequired); //@ nowarn;
+	return (candidate.getTotalVote() >= getQuota()); //@ nowarn;
 }
 
 /**
@@ -580,15 +573,15 @@ public /*@ pure @*/ boolean isElected(final Candidate candidate){
   @     requires 0 <= countNumber;
   @     requires COUNTING == state;
   @     ensures (hasQuota(candidate) == true) ==> \result ==
-  @       (candidate.getTotalVote() - quota);
+  @       (candidate.getTotalVote() - getQuota());
   @     ensures (hasQuota(candidate) == false) ==> \result == 0;
   @     ensures \result >= 0;
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 	int surplus = 0;
  	final int totalVote = candidate.getTotalVote(); //@ nowarn;
-	if (totalVote > numberOfVotesRequired) {			
- 		surplus = totalVote - numberOfVotesRequired;
+	if (totalVote > getQuota()) {			
+ 		surplus = totalVote - getQuota();
 	}
 	return surplus;
 }
@@ -690,7 +683,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
   @     ((highestContinuingVote < sumOfOtherContinuingVotes + sumOfSurpluses) &&
   @     (numberOfEqualHighestContinuing == 1));
   @   requires getSurplus (candidateList[candidateWithSurplus]) == highestSurplus;
-  @   requires (sumOfSurpluses + highestContinuingVote >= quota) ||
+  @   requires (sumOfSurpluses + highestContinuingVote >= getQuota()) ||
   @     (sumOfSurpluses + lowestContinuingVote > nextHighestVote) ||
   @     (numberOfEqualLowestContinuing > 1) ||
   @     ((sumOfSurpluses + lowestContinuingVote >= depositSavingThreshold) &&
@@ -717,29 +710,6 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  * @param candidatesToEliminate One or more candidates to be excluded from the 
  *   election in this count
  */
-
-/**
- * Get the list of elected candidates for this constituency.
- * 
- * @return The unique identifier of each elected candidate.
- */
-/*@ requires 0 <= numberOfCandidatesElected;
-  @ requires (\forall int i; 0 <= i && i < totalNumberOfCandidates;
-  @          candidates[i] != null);
-  @*/
-public /*@ pure non_null @*/ final int[] getElectedCandidateIDs() {
-	int[] electedCandidateIDs = new int [numberOfCandidatesElected]; 
- 	
-	int counter = 0;
- 	for (int i = 0; (i < totalNumberOfCandidates) && 
- 	    (counter < numberOfCandidatesElected); i++) {
-		final boolean elected = candidates[i].isElected();
-		if (elected) {
-			electedCandidateIDs[counter++] = candidates[i].candidateID;
-		}
-	}
-	return electedCandidateIDs;
-}
 
 /**
  * Load candidate details and number of seats.
@@ -786,10 +756,9 @@ public void setup(/*@ non_null @*/ Election electionParameters){
   @   protected normal_behavior
   @     requires state == PRELOAD;
   @     assignable state, totalVotes, ballotsToCount, ballots;
-  @     assignable totalNumberOfVotes, numberOfVotesRequired;
+  @     assignable totalNumberOfVotes;
   @     ensures state == PRECOUNT;
   @     ensures totalVotes == ballotBox.numberOfBallots;
-  @     ensures this.ballots == ballotBox.ballots;
   @*/
 public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  	totalNumberOfVotes = ballotBox.size(); //@ nowarn;
@@ -800,11 +769,17 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  	}
  	status = PRECOUNT;
  	
- 	// Droop quota
- 	numberOfVotesRequired = 1 + (totalNumberOfVotes / (1 + numberOfSeats));
- 	
  	// Number of first preferences for each candidate
  	calculateFirstPreferences();
+}
+
+/**
+ * Droop quota
+ * 
+ * @return Number of votes required to ensure election
+ */
+public /*@ pure @*/ int getQuota() {
+  return 1 + (totalNumberOfVotes / (1 + numberOfSeats));
 }
 
 /**
@@ -1059,8 +1034,8 @@ protected int getTransferFactor(final /*@ non_null @*/ Candidate fromCandidate) 
   @   ==> \result == 0;
   @*/
 protected /*@ pure spec_public @*/ int getRoundedFractionalValue(
-          /*@ non_null @*/ Candidate fromCandidate, 
-          /*@ non_null @*/ Candidate toCandidate){
+          final /*@ non_null @*/ Candidate fromCandidate, 
+          final /*@ non_null @*/ Candidate toCandidate){
  		return (getCandidateOrderByHighestRemainder (fromCandidate,toCandidate) <= 
  		  getTransferShortfall (fromCandidate)) ? 1 : 0;
  }
@@ -1343,7 +1318,8 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candi
 /*@ also
   @   protected normal_behavior
   @     requires (state == COUNTING);
-  @     requires candidateList != null;
+  @     requires candidateList != null && (\forall int i;
+  @              0 <= i && i < totalNumberOfCandidates; candidateList[i] != null);
   @     requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
   @       (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
   @     ensures \result == (\sum int i; 0 <= i && i < totalCandidates;

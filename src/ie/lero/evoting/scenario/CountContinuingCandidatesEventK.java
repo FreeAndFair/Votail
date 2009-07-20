@@ -7,8 +7,6 @@ import election.tally.mock.MockCandidate;
 
 public class CountContinuingCandidatesEventK extends TestCase {
 
- 	 
-
  	public void testEvent() {
  	 BallotCounting ballotCounting = new BallotCounting();
    Election election = new Election();
@@ -19,7 +17,4 @@ public class CountContinuingCandidatesEventK extends TestCase {
    ballotCounting.setup(election);
 	 assertTrue (4 == ballotCounting.getContinuingCandidates());
 	}
-
-	 
-
 }

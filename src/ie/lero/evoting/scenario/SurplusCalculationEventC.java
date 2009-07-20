@@ -69,7 +69,7 @@ public class SurplusCalculationEventC extends TestCase{
  		ballotCounting.electCandidate(indexOfHighestCandidate);
  	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);
  	 	
-	 	//@ assert 1 == ballotCounting.report().getNumberElected();
-		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
+ 	 	assertTrue (ballotCounting.countBallotsFor(indexOfHighestCandidate) == 
+ 	 	  ballotCounting.getQuota());
 	}
 }

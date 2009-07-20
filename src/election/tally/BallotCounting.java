@@ -91,10 +91,8 @@ public class BallotCounting extends AbstractBallotCounting {
  					(CANDIDATE_ELECTED == value) ||
  					(NO_SURPLUS_AVAILABLE == value) ||
  					(SURPLUS_AVAILABLE == value) ||
- 					(READY_TO_CALCULATE_ROUNDING_TRANSFERS == value) ||
- 					(READY_TO_ALLOCATE_SURPLUS == value) ||
- 					(READY_TO_ADJUST_NUMBER_OF_TRANSFERS == value) ||
- 					(READY_TO_MOVE_BALLOTS == value) ||
+  				(READY_TO_ALLOCATE_SURPLUS == value) ||
+   				(READY_TO_MOVE_BALLOTS == value) ||
  					(CANDIDATE_EXCLUDED == value) ||
  					(READY_FOR_NEXT_ROUND_OF_COUNTING == value) ||
  					(LAST_SEAT_BEING_FILLED == value) ||
@@ -151,31 +149,19 @@ public class BallotCounting extends AbstractBallotCounting {
 				   return true;
 			   }
 			
-			// Transition: Calculate Transfer Factor
+			// Transition: Calculate Number of Votes to Transfer
 			else if ((SURPLUS_AVAILABLE == fromState) && 
 					(READY_TO_ALLOCATE_SURPLUS == toState)) {
 				return true;
 			}
 			
-			// Transition: Calculate Non-Fractional Transfers
+			// Transition: Calculate Transfers from Surplus
 			else if ((READY_TO_ALLOCATE_SURPLUS == fromState) &&
-					(READY_TO_CALCULATE_ROUNDING_TRANSFERS == toState)) {
-				return true;
-			}
-			
-			// Transition: Calculate Fractional Differences
-			else if ((READY_TO_CALCULATE_ROUNDING_TRANSFERS == fromState) &&
-					(READY_TO_ADJUST_NUMBER_OF_TRANSFERS == toState)) {
-				return true;
-			}
-			
-			// Transition: Calculate Adjusted Number of Transfers
-			else if ((READY_TO_ADJUST_NUMBER_OF_TRANSFERS == fromState) &&
 					(READY_TO_MOVE_BALLOTS == toState)) {
 				return true;
 			}
 			
-			// Transition: Calculate Transfers
+			// Transition: Calculate Transfers from Excluded Candidate
 			else if ((CANDIDATE_EXCLUDED == fromState) &&
 					(READY_TO_MOVE_BALLOTS == toState)) {
 				return true;
@@ -224,129 +210,6 @@ public class BallotCounting extends AbstractBallotCounting {
 			// No other state transitions are possible
 			return false;
 		} //@ nowarn;
-		
-	 
-
-		public boolean isPossibleStateForFractionalBallots(final int value) {
-			return ((READY_TO_COUNT == value) ||
-					(NO_SEATS_FILLED_YET == value) ||
-					(CANDIDATES_HAVE_QUOTA == value) ||
-					(CANDIDATE_ELECTED == value) ||
-					(NO_SURPLUS_AVAILABLE == value) ||
-					(SURPLUS_AVAILABLE == value) ||
-					(READY_TO_ALLOCATE_SURPLUS == value) ||
-					(READY_TO_MOVE_BALLOTS == value) ||
-					(CANDIDATE_EXCLUDED == value) ||
-					(READY_FOR_NEXT_ROUND_OF_COUNTING == value) ||
-					(LAST_SEAT_BEING_FILLED == value) ||
-					(MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value) ||
-					(ONE_OR_MORE_SEATS_REMAINING == value) ||
-					(ALL_SEATS_FILLED == value) ||
-					(END_OF_COUNT == value) ||
-					(ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value) ||
-					(READY_TO_REWEIGHT_BALLOTS == value));
-		}
-	
-		public boolean isTransitionForFractionalBallots(final int fromState, final int toState) {
-			// Self transitions are allowed
-			if (toState == fromState) {
-				return true;
-			}
-			
-			// No transitions into the initial state
-			else if (READY_TO_COUNT == toState) {
-				return false;
-			}
-			
-			// No transitions away from final state
-			else if (END_OF_COUNT == fromState) {
-				return false;
-			}
-			
-			// Transition: Calculate Quota
-			else if ((READY_TO_COUNT == fromState) && 
-					(NO_SEATS_FILLED_YET == toState)) {
-				return true;
-			}
-			
-			// Transition: Find Highest Continuing Candidate with Quota
-			else if (((NO_SEATS_FILLED_YET == fromState) || 
-					(CANDIDATES_HAVE_QUOTA == fromState) ||
-					(MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == fromState)) &&
-				((CANDIDATE_ELECTED == toState) ||	
-					(NO_SURPLUS_AVAILABLE == toState))) {
-					return true;
-				}
-			
-			// Transition: Calculate Surplus
-			else if ((CANDIDATE_ELECTED == fromState) &&
-			   ((CANDIDATES_HAVE_QUOTA == toState) ||
-					   (SURPLUS_AVAILABLE == toState) ||
-					   (NO_SURPLUS_AVAILABLE == toState))) {
-				   return true;
-			   }
-			
-			// Transition: Calculate Weight Factor
-			else if ((SURPLUS_AVAILABLE == fromState) && 
-					(READY_TO_REWEIGHT_BALLOTS == toState)) {
-				return true;
-			}
-			
-			// Transition: Weight and Transfer Ballots
-			else if ((READY_TO_REWEIGHT_BALLOTS == fromState) &&
-					(READY_FOR_NEXT_ROUND_OF_COUNTING == toState)) {
-				return true;
-			}
-			
-			// Transition: Move the Ballots
-			else if ((READY_TO_MOVE_BALLOTS == fromState) && 
-					(READY_FOR_NEXT_ROUND_OF_COUNTING == toState)) {
-				return true;
-			}
-			
-			// Transition: Calculate Transfers
-			else if ((CANDIDATE_EXCLUDED == fromState) &&
-					(READY_TO_MOVE_BALLOTS == toState)) {
-				return true;
-			}
-			
-			// Transition: Select Lowest Continuing Candidates for Exclusion
-			else if (((NO_SURPLUS_AVAILABLE == fromState) ||
-					(LAST_SEAT_BEING_FILLED == fromState)) &&
-					(CANDIDATE_EXCLUDED == toState)) {
-				return true;
-			}
-			
-			// Transition: Count Continuing Candidates
-			else if ((ONE_OR_MORE_SEATS_REMAINING == fromState) &&
-					((LAST_SEAT_BEING_FILLED == toState) ||
-					(MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == toState) ||
-					(ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == toState))) {
-				return true;
-			}
-			
-			// Transition: Check Remaining Seats
-			else if ((READY_FOR_NEXT_ROUND_OF_COUNTING == fromState) &&
-					((ONE_OR_MORE_SEATS_REMAINING == toState) ||
-					(ALL_SEATS_FILLED == toState))) {
-				return true;
-			}
-			
-			// Transition: Declare Remaining Candidates Elected
-			else if ((ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == fromState) &&
-					(ALL_SEATS_FILLED == toState)) {
-				return true;
-			}
-			
-			// Transition: Close the Count
-			else if ((ALL_SEATS_FILLED == fromState) &&
-					(END_OF_COUNT == toState)) {
-				return true;
-			}
-			
-			// No other state transitions are possible
-			return false;
-		}
 
 	
 	}
@@ -365,16 +228,16 @@ public class BallotCounting extends AbstractBallotCounting {
     /**
      * Distribute the surplus of an elected Dail candidate.
      * 
-     * @param w The elected Dail candidate
+     * @param winner The elected Dail candidate
      */
 	//@ also
-	//@   requires ballotCountingMachine.getState() == CountStatus.SURPLUS_AVAILABLE;
-	public void distributeSurplus(final int w) {
-		for (int i = 0; i < totalNumberOfCandidates; i++) {
+	//@   requires countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
+	public void distributeSurplus(final int winner) {
+ 		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-				int numberOfTransfers = getActualTransfers (candidates[w], candidates[i]);
+				final int numberOfTransfers = getActualTransfers (candidates[winner], candidates[i]);
 				if (0 < numberOfTransfers) {
-					transferVotes (candidates[w], candidates[i], numberOfTransfers);
+					transferVotes (candidates[winner], candidates[i], numberOfTransfers);
 				}
 			}
 			
@@ -391,17 +254,17 @@ public class BallotCounting extends AbstractBallotCounting {
 	 * @param numberOfVotes The number of votes to be transferred
 	 */
 	//@ also
-	//@   requires ballotCountingMachine.getState() == CountStatus.READY_TO_MOVE_BALLOTS;
-	public void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
-			/*@ non_null @*/ Candidate toCandidate, int numberOfVotes) {
+	//@   requires countStatus.getState() == CountStatus.READY_TO_MOVE_BALLOTS;
+	public void transferVotes(final /*@ non_null @*/ Candidate fromCandidate,
+			final /*@ non_null @*/ Candidate toCandidate, final int numberOfVotes) {
 		
 		// Update the totals for each candidate
 		fromCandidate.removeVote(numberOfVotes, countNumberValue);
 		toCandidate.addVote(numberOfVotes, countNumberValue);
 		
 		// Transfer the required number of ballots
-		int fromCandidateID = fromCandidate.getCandidateID();
-		int toCandidateID = toCandidate.getCandidateID();
+		final int fromCandidateID = fromCandidate.getCandidateID();
+		final int toCandidateID = toCandidate.getCandidateID();
 		int ballotsMoved = 0;
 		for (int b = 0; b < totalNumberOfVotes && ballotsMoved < numberOfVotes; b++) {
 			if ((ballots[b].getCandidateID() == fromCandidateID) &&
@@ -415,18 +278,6 @@ public class BallotCounting extends AbstractBallotCounting {
 		//@ assert (numberOfVotes == ballotsMoved);
 	}
 
-	 
-	/**
-	 * What is the Droop Quota for this electoral constituency?
-	 * 
-	 * @return The Droop Quota for this electoral constituency.
-	 */
-	//@ ensures quota == \result;
-	public /*@ pure @*/ int getQuota() {
- 		return numberOfVotesRequired;
-	}
-
-
 	/**
 	 * Count the ballots for this constituency using the rules of 
 	 * proportional representation by single transferable vote.
@@ -439,7 +290,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @     assignable candidates, candidates[*];
 	  @		assignable totalNumberOfContinuingCandidates;
 	  @		assignable totalRemainingSeats;
-	  @		assignable numberOfVotesRequired, savingThreshold;
+	  @		assignable savingThreshold;
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
 	  @		assignable totalofNonTransferableVotes;
@@ -460,7 +311,6 @@ public class BallotCounting extends AbstractBallotCounting {
 			// Reset all initial values if not already started or if doing a full recount
 			totalNumberOfContinuingCandidates = totalNumberOfCandidates;
 			totalRemainingSeats = numberOfSeats;
-			numberOfVotesRequired = 1 + (totalNumberOfVotes / (1 + numberOfSeats));
 			savingThreshold = 1 + ((totalNumberOfVotes / (1 + totalNumberOfSeats)) / 4);
 			numberOfCandidatesElected = 0;
 			numberOfCandidatesEliminated = 0;
@@ -481,9 +331,9 @@ public class BallotCounting extends AbstractBallotCounting {
 			// Transfer surplus votes from winning candidates
 			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT-1) {
 				countStatus.changeState(CountStatus.CANDIDATES_HAVE_QUOTA);
-				int winner = findHighestCandidate();
+				final int winner = findHighestCandidate();
 				
-				int countingStatus = CountStatus.CANDIDATE_ELECTED;
+				final int countingStatus = CountStatus.CANDIDATE_ELECTED;
 				updateCountStatus(countingStatus);
 				electCandidate(winner);
 
@@ -561,12 +411,12 @@ public class BallotCounting extends AbstractBallotCounting {
 		
 	}
 
-	//@ ensures totalRemainingSeats == \result();
+	//@ ensures totalRemainingSeats == \result;
   public /*@ pure @*/ int getRemainingSeats() {
     return totalRemainingSeats;
   }
 
-  //@ ensures totalNumberOfContinuingCandidates == \result();
+  //@ ensures totalNumberOfContinuingCandidates == \result;
   public /*@ pure @*/ int getContinuingCandidates() {
     return totalNumberOfContinuingCandidates;
   }
