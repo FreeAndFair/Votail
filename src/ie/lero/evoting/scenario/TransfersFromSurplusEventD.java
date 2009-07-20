@@ -9,7 +9,7 @@ import junit.framework.TestCase;
  * @author Dermot Cochran
  *
  */
-public class TransferFactorEventD extends TestCase {
+public class TransfersFromSurplusEventD extends TestCase {
 
 
 

@@ -42,47 +42,35 @@ event
 involves
   BALLOT_COUNTING
 event 
-  "D: The transfer factor from a surplus is calculated"
+  "D: The number of votes for transfer (from surplus) are calculated"
 involves
   BALLOT_COUNTING
- event
-  "E: The non-fractional transfers from a surplus are calculated"
- involves
-   BALLOT_COUNTING
- event
-   "F: Fractional differences are calculated for each candidate"
- involves
-   BALLOT_COUNTING
- event
-   "G: Adjusted transfers from surplus are calculated"
- involves
-   BALLOT_COUNTING
- event
+event
    "H: Transfers, from an excluded candidate, are calculated"
- involves
+involves
    BALLOT_COUNTING
- event
+event
    "J: The lowest continuing candidate is selected for exclusion"
- involves
+involves
    BALLOT_COUNTING
- event
+event
    "K: The number of continuing candidates is recalculated"
- involves
+involves
    BALLOT_COUNTING, CANDIDATE
- event
+event
    "L: The selected ballots are moved to the next continuing preference candidate"
- involves
+involves
    BALLOT, BALLOT_COUNTING
- event
+event
    "M: The number of remaining seats is checked"
- involves
+involves
    BALLOT_COUNTING
- event
+event
    "N: The remaining candidates are deemed elected"
- involves
+involves
    BALLOT_COUNTING, CANDIDATE
- event
+event
    "P: The counting is closed and final result declared"
- involves
+involves
    BALLOT_COUNTING
 end

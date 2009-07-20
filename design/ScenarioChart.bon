@@ -46,23 +46,11 @@ description
 scenario
   "05: NO_SURPLUS_AVAILABLE"
 description
-  "There is no surplus avaialble for distribution"
+  "There is no surplus available for distribution"
 scenario
   "06: SURPLUS_AVAILABLE"
 description
   "There is at least one surplus availble for distribution"
-scenario
-  "07: READY_TO_CALCULATE_ROUNDING_TRANSFERS"
-description
-  "The non-fractional transfers have been calculated"
-scenario
-  "08: READY_TO_ALLOCATE_SURPLUS"
-description
-  "The transfer value has been calculated"
-scenario
-  "09: READY_TO_ADJUST_TRANSFERS"
-description
-  "The roundings of transfers have been calculated"
 scenario
   "10: READY_TO_MOVE_BALLOTS"
 description
@@ -91,10 +79,6 @@ scenario
   "16: ALL_SEATS_FILLED"
 description
   "The number of continuing candidates equals the number of seats remaining"
-scenario
-  "17: END_OF_COUNT"
-description
-  "Counting has finished and the final results are available"
 scenario
   "18: CONTINUING_CANDIDATES_EQUAL_REMAINING_SEATS"
 description

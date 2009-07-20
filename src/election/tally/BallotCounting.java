@@ -554,29 +554,21 @@ public class BallotCounting extends AbstractBallotCounting {
 		setTotalSumOfSurpluses(sumOfSurpluses);
 	}
 
-	/**
-	 * Get the list of decisions taken
-	 * 
-	 * @return The list of decisions
-	 */
-	public /*@ pure @*/ StringBuffer getDecisionLog() {
-		StringBuffer log = new StringBuffer(56);
-		for (int d = 0; d < decisionsTaken; d++) {
-			log.append("At count number " + decisions[d].atCountNumber);
-			log.append(", candidate " + decisions[d].candidateID);
-			log.append(" was " + decisions[d].toString());
-			if (decisions[d].chosenByLot) {
-				log.append(" by random selection");
-			}
-			log.append(".\n");
-		}
-		return log;
-	}
-
+	//@ assignable countNumber;
 	//@ ensures \old(countNumber) + 1 == countNumber;
 	public void incrementCountNumber() {
 		countNumberValue++;
 		
 	}
+
+	//@ ensures totalRemainingSeats == \result();
+  public /*@ pure @*/ int getRemainingSeats() {
+    return totalRemainingSeats;
+  }
+
+  //@ ensures totalNumberOfContinuingCandidates == \result();
+  public /*@ pure @*/ int getContinuingCandidates() {
+    return totalNumberOfContinuingCandidates;
+  }
 
 }

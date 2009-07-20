@@ -1,35 +1,23 @@
 package ie.lero.evoting.scenario;
 
+import election.tally.BallotCounting;
+import election.tally.Election;
 import junit.framework.TestCase;
 
 public class CountContinuingCandidatesEventK extends TestCase {
 
- 	protected void setEventCode() {
-		// TODO Auto-generated method stub
-		
-	}
-
- 	protected void setUpBallotBox() {
-		// TODO Auto-generated method stub
-		
-	}
-
- 	protected void setUpParameters() {
-		// TODO Auto-generated method stub
-		
-	}
+ 	 
 
  	public void testEvent() {
-		// TODO Auto-generated method stub
-		
+ 	 BallotCounting ballotCounting = new BallotCounting();
+   Election election = new Election();
+   election.numberOfCandidates = 4;
+   election.numberOfSeatsInThisElection = 3;
+   election.totalNumberOfSeats = 3;
+   ballotCounting.setup(election);
+	 assertTrue (4 == ballotCounting.getContinuingCandidates());
 	}
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
+	 
 
 }
