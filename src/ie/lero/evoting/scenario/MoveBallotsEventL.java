@@ -1,35 +1,34 @@
 package ie.lero.evoting.scenario;
 
+import election.tally.BallotBox;
+import election.tally.BallotCounting;
+import election.tally.Candidate;
+import election.tally.Election;
+import election.tally.mock.MockBallot;
 import junit.framework.TestCase;
 
 public class MoveBallotsEventL extends TestCase {
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-	protected void setEventCode() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	protected void setUpBallotBox() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	protected void setUpParameters() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	public void testEvent() {
-		// TODO Auto-generated method stub
-		
+	  BallotCounting ballotCounting = new BallotCounting();
+	   Election election = new Election();
+	   election.numberOfCandidates = 3;
+	   election.numberOfSeatsInThisElection = 3;
+	   election.totalNumberOfSeats = 3;
+	   Candidate[] candidates = new Candidate[3];
+	   election.setCandidateList(candidates);
+	   ballotCounting.setup(election);    
+	   BallotBox ballotBox = new BallotBox();
+	   MockBallot ballot = new MockBallot();
+	   for (int i=0; i<3; i++) {
+	     ballot.setFirstPreference(candidates[i].getCandidateID());
+	     ballotBox.accept(ballot);
+	   }
+	   ballotCounting.load(ballotBox);
+	   int firstElected = ballotCounting.findHighestCandidate();
+	   ballotCounting.distributeSurplus(firstElected);
 	}
 
 }

@@ -245,7 +245,7 @@ public static final int NONTRANSFERABLE = 0;
 	        
     preferenceList = new int [list.length];
     for(int i = 0; i < list.length; i++) {
- 		preferenceList[i] = list[i];
+ 		    preferenceList[i] = list[i];
  	}
     
     numberOfPreferences = preferenceList.length; //@ nowarn;
