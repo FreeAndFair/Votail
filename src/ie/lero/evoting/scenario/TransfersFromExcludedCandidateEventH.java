@@ -3,6 +3,7 @@ package ie.lero.evoting.scenario;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
+import election.tally.CountStatus;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
 import election.tally.mock.MockCandidate;
@@ -13,10 +14,10 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	public void testEvent() {
 	   BallotCounting ballotCounting = new BallotCounting();
 	   Election election = new Election();
-	   election.numberOfCandidates = 3;
+	   election.numberOfCandidates = 4;
 	   election.numberOfSeatsInThisElection = 3;
 	   election.totalNumberOfSeats = 3;
-	   Candidate[] candidates = MockCandidate.generateCandidates(3);
+	   Candidate[] candidates = MockCandidate.generateCandidates(election.numberOfCandidates);
 	   election.setCandidateList(candidates);
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();
@@ -30,8 +31,12 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	     ballotBox.accept(ballot);
 	   }
 	   ballotCounting.load(ballotBox);
+	   ballotCounting.calculateSurpluses();
 		 int loser = ballotCounting.findLowestCandidate();
 		 ballotCounting.eliminateCandidate(loser);
+		 ballotCounting.incrementCountNumber();
+		 ballotCounting.updateCountStatus(CountStatus.CANDIDATE_EXCLUDED);
+		 assertTrue(ballotCounting.getContinuingCandidates() == 3);
 	}
 
 }

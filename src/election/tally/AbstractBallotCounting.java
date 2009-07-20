@@ -734,7 +734,7 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
   @     ensures seats == electionParameters.numberOfSeatsInThisElection;
   @     ensures totalSeats == electionParameters.totalNumberOfSeats;
   @*/
-public void setup(/*@ non_null @*/ Election electionParameters){
+public void setup(final /*@ non_null @*/ Election electionParameters){
 	this.totalNumberOfCandidates = electionParameters.numberOfCandidates; //@ nowarn;
 	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection; //@ nowarn;
 	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; //@ nowarn;
