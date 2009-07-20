@@ -32,7 +32,7 @@ package election.tally;
  * specs.
  */
 
-public class Candidate  {
+public class Candidate extends CandidateStatus {
 
   /** Identifier for the candidate */
   /**

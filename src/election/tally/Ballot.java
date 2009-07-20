@@ -250,7 +250,7 @@ public static final int NONTRANSFERABLE = 0;
     
     numberOfPreferences = preferenceList.length; //@ nowarn;
     candidateIDAtCount [countNumberAtLastTransfer] = getCandidateID(); //@ nowarn;
-  }
+  } //@ nowarn;
     
   /**
    * Get candidate ID to which the ballot is assigned 
@@ -292,9 +292,9 @@ public static final int NONTRANSFERABLE = 0;
     @   (\result == preferenceList[positionInList + offset]);
     @*/
 
-  public /*@ pure @*/ int getNextPreference(int offset){
+  public /*@ pure @*/ int getNextPreference(final int offset){
         if(positionInList + offset < numberOfPreferences){
-          return (preferenceList[positionInList + offset]);
+          return preferenceList[positionInList + offset];
         }
 		return NONTRANSFERABLE;
   }
@@ -331,7 +331,7 @@ public static final int NONTRANSFERABLE = 0;
 	 		countNumberAtLastTransfer = countNumber;
  			positionInList++;
 		}
-	} 
+	} //@ nowarn;
     
   /**
    * Get ballot ID number

@@ -84,9 +84,5 @@ involves
  event
    "P: The counting is closed and final result declared"
  involves
-   BALLOT_COUNTING, REPORT
- event
-   "Q: The ballots are reweighted (if applicable)"
- involves
-   BALLOT, BALLOT_COUNTING
+   BALLOT_COUNTING
 end

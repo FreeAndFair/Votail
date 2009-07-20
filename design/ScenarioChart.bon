@@ -99,8 +99,4 @@ scenario
   "18: CONTINUING_CANDIDATES_EQUAL_REMAINING_SEATS"
 description
   "The number of continuing candidates equals the number of remaining seats; all continuing candidates are deemed elected"
-scenario
-  "19: READY_TO_REWEIGHT_BALLOTS"
-description
-  "Fractional ballots are being transfered to avoid rounding"
 end

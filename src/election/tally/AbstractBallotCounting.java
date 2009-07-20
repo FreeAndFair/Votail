@@ -60,7 +60,7 @@ package election.tally;
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
-public abstract class AbstractBallotCounting implements ElectionStatus {
+public abstract class AbstractBallotCounting extends ElectionStatus {
 	/**
 	 * Outer level of Abstract State Machine for Election Algorithm.
 	 */
@@ -541,7 +541,7 @@ public AbstractBallotCounting(){
   @     requires 0 <= countNumber;
   @     ensures \result <==> (candidate.getTotalVote() >= quota);
   @*/
-public /*@ pure @*/ boolean hasQuota(/*@ non_null @*/ Candidate candidate){
+public /*@ pure @*/ boolean hasQuota(final /*@ non_null @*/ Candidate candidate){
 	return (candidate.getTotalVote() >= numberOfVotesRequired); //@ nowarn;
 }
 
@@ -560,7 +560,7 @@ public /*@ pure @*/ boolean hasQuota(/*@ non_null @*/ Candidate candidate){
   @     ensures (\result == true) <==>
   @       (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
   @*/
-public /*@ pure @*/ boolean isElected(Candidate candidate){
+public /*@ pure @*/ boolean isElected(final Candidate candidate){
 	return ((candidate.getStatus() == CandidateStatus.ELECTED) || hasQuota(candidate));
 }
 
@@ -718,26 +718,6 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
  *   election in this count
  */
 
- 
-
-/**
- * Declare interim or final results
- * 
- * @return This election result
- */
-/*@ also
-  @   protected normal_behavior
-  @     requires state == FINISHED || state == COUNTING;
-  @     requires 0 <= numberOfCandidatesElected;
-  @     ensures \result.getNumberElected() == numberOfSeats;
-  @	    ensures \result.getNumberElected() == getElectedCandidateIDs().length;
-  @*/
-public /*@ non_null pure @*/ Report report(){
-	 
-	final int[] electedCandidateIDs = getElectedCandidateIDs(); //@ nowarn;
-	return new Report(electedCandidateIDs, countNumberValue, candidates); //@ nowarn;
-} //@ nowarn;
-
 /**
  * Get the list of elected candidates for this constituency.
  * 
@@ -816,7 +796,7 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  	ballots = new Ballot[totalNumberOfVotes]; //@ nowarn;
  	int index = 0;
  	while (index < totalNumberOfVotes && ballotBox.isNextBallot()) {
- 		ballots[index++] = ballotBox.getNextBallot();
+ 		ballots[index++] = ballotBox.getNextBallot(); //@ nowarn;
  	}
  	status = PRECOUNT;
  	
@@ -1111,7 +1091,7 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
 		}
 	}
 	return shortfall;
-}
+} //@ nowarn;
 
 /**
  * Simulate random selection between two candidates.
@@ -1220,6 +1200,7 @@ protected /*@ pure @*/ int getOrder(Candidate candidate){
   @     requires getSurplus(fromCandidate) < 
   @       getTotalTransferableVotes(fromCandidate);
   @     requires 0 <= getTransferShortfall (fromCandidate);
+  @     requires 0 < getSurplus(fromCandidate);
   @     ensures \result ==
   @       getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) -
   @       ((getActualTransfers(fromCandidate, toCandidate) *
@@ -1371,11 +1352,9 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candi
 protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
     /*@ non_null @*/ Candidate fromCandidate){
     int numberOfTransfers = 0;
- 		for(int i = 0; i < totalNumberOfCandidates; i++){
- 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) { //@ nowarn;
- 				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID());  //@ nowarn;
- 			}
-		}
+ 		for(int i = 0; i < totalNumberOfCandidates; i++) {
+ 				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID());
+ 		}
 	return numberOfTransfers;
 } 
 

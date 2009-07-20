@@ -33,7 +33,7 @@
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>
  */
 
-public abstract class AbstractBallotCounting implements ElectionStatus {
+public abstract class AbstractBallotCounting extends ElectionStatus {
 	
   /**  
    * Abstract State Machine for Election Algorithm.
@@ -494,14 +494,6 @@ public abstract class AbstractBallotCounting implements ElectionStatus {
     @   candidateList[i].getTotalVote());
     @*/
     public abstract void distributeSurplus(int candidateWithSurplus);
-	
-  /** 
-   * Declare election results
-   */
-  /*@ requires state == FINISHED || state == COUNTING;
-    @*/
-  public /*@ non_null @*/ Report report();
-
 	
   /**
    * Set up candidate details and number of seats

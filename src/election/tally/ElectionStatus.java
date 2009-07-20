@@ -1,6 +1,6 @@
 package election.tally;
 
-public interface ElectionStatus {
+public class ElectionStatus {
 
 	/** Start state */
 	public static final byte EMPTY = 0;

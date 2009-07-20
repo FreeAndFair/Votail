@@ -20,11 +20,11 @@ import election.tally.mock.MockBallot;
  */
 public class ExclusionEventJ extends TestCase {
 
-	private int numberOfCandidates;
-	private Candidate[] candidates;
-  private Election parameters;
-  private BallotCounting ballotCounting;
-  private BallotBox ballotBox;
+	private /*@ spec_public @*/ int numberOfCandidates;
+	private /*@ spec_public @*/ Candidate[] candidates;
+  private /*@ spec_public @*/ Election parameters;
+  private /*@ spec_public @*/ BallotCounting ballotCounting;
+  private /*@ spec_public @*/ BallotBox ballotBox;
 
 	/**
 	 * Execute this scenario.
@@ -33,31 +33,25 @@ public class ExclusionEventJ extends TestCase {
 	public final void testExclusion() {
 	 	
 	  assertTrue (ballotCounting.getStatus() == ElectionStatus.COUNTING);
-	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
+	 	final int lowestCandidate = ballotCounting.findLowestCandidate(); //@ nowarn;
 		ballotCounting.eliminateCandidate(lowestCandidate);
-	 	
-	 	//@ assert 0 == ballotCounting.report().getNumberElected();
-		//@ assert 1 == ballotCounting.report().getTotalNumberOfCounts();
  	}
 
-	 
-
-	 
-	
   //@ requires candidates != null;
+	//@ requires numberOfCandidates < candidates.length;
  	protected void setUpBallotBox() {
+ 	  int numberOfVotes;
+ 	  MockBallot ballot = new MockBallot();
  		for (int i = 0; i < numberOfCandidates; i++) {
 			 
 			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
-			int numberOfVotes = i*1000;
+			numberOfVotes = i*1000;
 			 
-			
 			// Generate first preference ballots
 			for (int b = 0; b < numberOfVotes; b++) {
 				
-				MockBallot ballot = new MockBallot();
-			    ballot.setFirstPreference(candidates[i].getCandidateID());
-				ballotBox.accept(ballot);
+ 			    ballot.setFirstPreference(candidates[i].getCandidateID());
+				  ballotBox.accept(ballot);
 			}
 		}
 		
