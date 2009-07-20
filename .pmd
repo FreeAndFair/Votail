@@ -124,6 +124,10 @@
             <ruleset>Basic Rules</ruleset>
         </rule>
         <rule>
+            <name>UnnecessaryReturn</name>
+            <ruleset>Basic Rules</ruleset>
+        </rule>
+        <rule>
             <name>UnusedNullCheckInEquals</name>
             <ruleset>Basic Rules</ruleset>
         </rule>

@@ -1,0 +1,15 @@
+package election.tally.mock;
+
+import election.tally.Candidate;
+
+public class MockCandidate extends Candidate {
+  
+  public static Candidate[] generateCandidates(int n) {
+    Candidate[] candidates = new Candidate[n];
+    for (int i=0; i<n; i++) {
+        candidates[i] = new Candidate();
+    }
+    return candidates;
+  }
+
+}

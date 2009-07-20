@@ -18,6 +18,9 @@ public class MoveBallotsEventL extends TestCase {
 	   election.numberOfSeatsInThisElection = 3;
 	   election.totalNumberOfSeats = 3;
 	   Candidate[] candidates = new Candidate[3];
+	   candidates[0] = new Candidate();
+	   candidates[1] = new Candidate();
+	   candidates[2] = new Candidate();
 	   election.setCandidateList(candidates);
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();
