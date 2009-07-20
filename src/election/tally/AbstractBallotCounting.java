@@ -354,26 +354,22 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ protected represents remainingSeats <- totalRemainingSeats;
 
 	/** Number of candidates neither elected nor excluded from election */
-   //@ public model int numberOfContinuingCandidates;
-   //@ public invariant 0 <= numberOfContinuingCandidates;
+  //@ public invariant 0 <= getNumberContinuing();
 	/*@ public invariant 
-	  @   numberOfContinuingCandidates <= totalCandidates;
+	  @   getNumberContinuing() <= totalCandidates;
 	  @
 	  @ public invariant (state == FINISHED) ==>
-	  @   numberOfContinuingCandidates == 0;
+	  @   getNumberContinuing() == 0;
 	  @ invariant (state == COUNTING) ==>  
-	  @   numberOfContinuingCandidates ==
+	  @   getNumberContinuing() ==
 	  @   (totalCandidates - numberElected) - numberEliminated;
 	  @*/
-	/** Number of candidates neither elected nor excluded from election */
-	protected transient /*@ spec_public @*/ int totalNumberOfContinuingCandidates;
-   //@ protected represents numberOfContinuingCandidates <- totalNumberOfContinuingCandidates;
-	
+  	
 	/** There must be at least one continuing candidate for each remaining seat
 	 * @see requirement 11, section 4, item 4, page 16
 	 */
 	/*@ invariant (state == COUNTING) ==>
-	  @   remainingSeats <= numberOfContinuingCandidates;
+	  @   remainingSeats <= getNumberContinuing();
 	  @*/
 
 	/** The lowest non-zero number of votes held by a continuing candidate */
@@ -414,7 +410,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/** The highest number of votes held by a continuing candidate */
    //@ public model int highestContinuingVote;
    //@ public invariant highestContinuingVote < getQuota();
-	/*@ public invariant (0 < numberOfContinuingCandidates)
+	/*@ public invariant (0 < getNumberContinuing())
 	  @ ==> highestContinuingVote ==
 	  @   (\max int i; 0 < i && i < totalCandidates &&
 	  @     candidateList[i].getStatus() == Candidate.CONTINUING;
@@ -454,7 +450,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public model int numberOfEqualHighestContinuing;
    //@ public invariant 0 <= numberOfEqualHighestContinuing;
 	/*@ public invariant
-	  @ numberOfEqualHighestContinuing <= numberOfContinuingCandidates;
+	  @ numberOfEqualHighestContinuing <= getNumberContinuing();
 	  @ public invariant (state == COUNTING) ==> numberOfEqualHighestContinuing ==
 	  @ (\num_of int i; 0 <= i && i < totalCandidates &&
 	  @ candidateList[i].getStatus() == Candidate.CONTINUING;
@@ -468,7 +464,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public model int numberOfEqualLowestContinuing;
    //@ public invariant 0 <= numberOfEqualLowestContinuing;
 	/*@ public invariant
-	  @ numberOfEqualLowestContinuing <= numberOfContinuingCandidates;
+	  @ numberOfEqualLowestContinuing <= getNumberContinuing();
 	  @ public invariant (state == COUNTING) ==> numberOfEqualLowestContinuing ==
 	  @ (\num_of int i; 0 <= i && i < totalCandidates &&
 	  @   candidateList[i].getStatus() == Candidate.CONTINUING;
@@ -674,8 +670,8 @@ public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate cand
   @   protected normal_behavior
   @   requires getSurplus (candidateList[candidateWithSurplus]) > 0;
   @   requires state == COUNTING;
-  @   requires numberOfContinuingCandidates > remainingSeats;
-  @   requires (numberOfContinuingCandidates > remainingSeats + 1) ||
+  @   requires getNumberContinuing() > remainingSeats;
+  @   requires (getNumberContinuing() > remainingSeats + 1) ||
   @     (sumOfSurpluses + lowestContinuingVote > nextHighestVote) ||
   @     (numberOfEqualLowestContinuing > 1);
   @   requires remainingSeats > 0;
@@ -745,8 +741,7 @@ public void setup(final /*@ non_null @*/ Election electionParameters){
 	}
 	decisions = new Decision[Decision.MAX_DECISIONS]; //@ nowarn;
 	this.totalRemainingSeats = this.numberOfSeats; //@ nowarn;
-	this.totalNumberOfContinuingCandidates = this.totalNumberOfCandidates; //@ nowarn;
-}
+ }
 
 /**
  * Open the ballot box for counting.
@@ -770,7 +765,7 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  	status = PRECOUNT;
  	
  	// Number of first preferences for each candidate
- 	calculateFirstPreferences();
+ 	calculateFirstPreferences(); //@ nowarn;
 }
 
 /**
@@ -1187,7 +1182,7 @@ protected /*@ pure spec_public @*/ int getTransferRemainder(
           /*@ non_null @*/ Candidate toCandidate){
   return getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) //@ nowarn;
     - ((getActualTransfers(fromCandidate, toCandidate) * //@ nowarn;
-    		getTotalTransferableVotes (fromCandidate)) / getSurplus(fromCandidate));
+    		getTotalTransferableVotes (fromCandidate)) / getSurplus(fromCandidate)); //@ nowarn;
 }
 
 /**
@@ -1329,7 +1324,7 @@ protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
     /*@ non_null @*/ Candidate fromCandidate){
     int numberOfTransfers = 0;
  		for(int i = 0; i < totalNumberOfCandidates; i++) {
- 				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID());
+ 				numberOfTransfers += getPotentialTransfers (fromCandidate, candidates[i].getCandidateID()); //@ nowarn;
  		}
 	return numberOfTransfers;
 } 
@@ -1386,7 +1381,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 * 
 	 * @return The continuing candidate with the most votes
 	 */
-	/*@ requires 1 <= numberOfContinuingCandidates;
+	/*@ requires 1 <= getNumberContinuing();
 	  @ requires candidateList != null && (\forall int c;
 	  @          0 <= c && c < totalNumberOfCandidates; candidateList[c] != null);
 	  @ ensures (\max int i; 0 <= i && i < totalCandidates && 
@@ -1416,7 +1411,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		}
 		
 		return highestCandidate;
-	}
+	} //@ nowarn;
 
 	/**
 	 * Who is the lowest continuing candidate?
@@ -1459,12 +1454,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	 */
 	/*@ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
 	  @ requires candidateList[loser] != null;
-	  @ requires remainingSeats < numberOfContinuingCandidates;
+	  @ requires remainingSeats < getNumberContinuing();
 	  @ requires (state == COUNTING);
-	  @ requires 0 <= loser && loser < totalNumberOfContinuingCandidates;
+	  @ requires 0 <= loser && loser < getNumberContinuing();
 	  @ assignable candidateList, decisions[*], decisionsTaken;
 	  @ assignable candidateList[loser];
-	  @ ensures remainingSeats <= numberOfContinuingCandidates;
+	  @ ensures remainingSeats <= getNumberContinuing();
 	  @ ensures numberElected <= seats;
 	  @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
 	  @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
@@ -1475,7 +1470,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		final int candidateID = candidates[loser].getCandidateID();
 
 		candidates[loser].declareEliminated(); //@ nowarn;
-		redistributeBallots(candidateID);
+		redistributeBallots(candidateID); //@ nowarn;
 		auditDecision(Decision.EXCLUDE, candidateID);
 	}
 
@@ -1524,7 +1519,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 				transferBallot(ballots[b]); //@ nowarn;
 			}
 		}
-	}
+	} //@ nowarn;
 
 	/**
 	 * Transfer the ballot until non-transferable or a continuing candidate is found.
@@ -1557,21 +1552,20 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	//@ requires candidateList[winner] != null;
 	//@ requires candidateList[winner].getStatus() == Candidate.CONTINUING;
 	//@ requires numberElected < seats;
-	//@ requires 0 < numberOfContinuingCandidates;
+	//@ requires 0 < getNumberContinuing();
 	//@ requires 0 < remainingSeats;
 	//@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
 	//@ assignable totalNumberOfContinuingCandidates, totalRemainingSeats;
 	//@ assignable candidates[winner], candidates[winner].state;
 	//@ ensures isElected (candidateList[winner]);
 	//@ ensures 1 + \old(numberElected) == numberElected;
-	//@ ensures \old(numberOfContinuingCandidates) == 1 + numberOfContinuingCandidates;
+	//@ ensures \old(getNumberContinuing()) == 1 + getNumberContinuing();
 	//@ ensures \old(remainingSeats) == 1 + remainingSeats;
 	public void electCandidate(int winner) {
-	    candidates[winner].declareElected();
+	  candidates[winner].declareElected();
 		auditDecision(Decision.DEEM_ELECTED,candidates[winner].getCandidateID()); //@ nowarn;
 		numberOfCandidatesElected++;
-		totalNumberOfContinuingCandidates--;
-		totalRemainingSeats--;
+ 		totalRemainingSeats--;
 	}
 
 	/*@ requires state == COUNTING;

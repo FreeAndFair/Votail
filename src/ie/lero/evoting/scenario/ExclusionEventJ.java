@@ -35,7 +35,7 @@ public class ExclusionEventJ extends TestCase {
 	  assertTrue (ballotCounting.getStatus() == ElectionStatus.COUNTING);
 	 	final int lowestCandidate = ballotCounting.findLowestCandidate(); //@ nowarn;
 		ballotCounting.eliminateCandidate(lowestCandidate);
-		assertTrue (5 == ballotCounting.getRemainingSeats());
+		assertTrue (5 == ballotCounting.getContinuingCandidates());
  	}
 
   //@ requires candidates != null;
@@ -55,7 +55,6 @@ public class ExclusionEventJ extends TestCase {
 				  ballotBox.accept(ballot);
 			}
 		}
-		
 	}
 
   //@ requires parameters != null;
@@ -73,7 +72,6 @@ public class ExclusionEventJ extends TestCase {
 			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
 			int numberOfVotes = i*1000;
 			candidates[i].addVote(numberOfVotes, 1);
-			 
 		}
 		
 		parameters.setCandidateList(candidates);
@@ -88,6 +86,5 @@ public class ExclusionEventJ extends TestCase {
     setUpBallotBox();
     ballotCounting.setup(parameters);
     ballotCounting.load(ballotBox);
-		
 	}
 }

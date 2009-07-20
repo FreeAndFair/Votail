@@ -288,7 +288,6 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @     requires state == PRECOUNT || state == COUNTING;
 	  @		assignable countNumberValue, ballotsToCount, candidateList[*];
 	  @     assignable candidates, candidates[*];
-	  @		assignable totalNumberOfContinuingCandidates;
 	  @		assignable totalRemainingSeats;
 	  @		assignable savingThreshold;
 	  @		assignable numberOfCandidatesElected;
@@ -309,18 +308,14 @@ public class BallotCounting extends AbstractBallotCounting {
 			countStatus.changeState(CountStatus.NO_SEATS_FILLED_YET);
 			
 			// Reset all initial values if not already started or if doing a full recount
-			totalNumberOfContinuingCandidates = totalNumberOfCandidates;
-			totalRemainingSeats = numberOfSeats;
+ 			totalRemainingSeats = numberOfSeats;
 			savingThreshold = 1 + ((totalNumberOfVotes / (1 + totalNumberOfSeats)) / 4);
 			numberOfCandidatesElected = 0;
 			numberOfCandidatesEliminated = 0;
 			totalofNonTransferableVotes = 0;
 		}
 		
-		// Recalculate number of continuing candidates
-		totalNumberOfContinuingCandidates = getNumberContinuing();
-		
-		while (totalNumberOfContinuingCandidates > totalRemainingSeats && 
+		while (getNumberContinuing() > totalRemainingSeats && 
 				countNumberValue < Candidate.MAXCOUNT) {
 			countStatus.changeState(
 					CountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
@@ -352,7 +347,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			}
 			
 			// Exclusion of lowest continuing candidate if no surplus
-			if (totalNumberOfContinuingCandidates > totalRemainingSeats && 
+			if (getNumberContinuing() > totalRemainingSeats && 
 					countNumberValue < Candidate.MAXCOUNT) {
 			  countStatus.changeState(CountStatus.NO_SURPLUS_AVAILABLE);	
 			  int loser = findLowestCandidate();
@@ -360,7 +355,6 @@ public class BallotCounting extends AbstractBallotCounting {
 			  countStatus.changeState(CountStatus.CANDIDATE_EXCLUDED);	
 			  eliminateCandidate(loser);
 			  numberOfCandidatesEliminated++;
-			  totalNumberOfContinuingCandidates--;
 			
 			  countStatus.changeState(CountStatus.READY_TO_MOVE_BALLOTS);	
 			  redistributeBallots(candidates[loser].getCandidateID());
@@ -369,7 +363,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		}
 		
 		// Filling of last seats
-		if (totalNumberOfContinuingCandidates == totalRemainingSeats) {
+		if (getNumberContinuing() == totalRemainingSeats) {
 			countStatus.changeState(CountStatus.LAST_SEAT_BEING_FILLED);	
 			for (int c = 0; c < totalNumberOfCandidates; c++) {
 				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
@@ -418,7 +412,7 @@ public class BallotCounting extends AbstractBallotCounting {
 
   //@ ensures totalNumberOfContinuingCandidates == \result;
   public /*@ pure @*/ int getContinuingCandidates() {
-    return totalNumberOfContinuingCandidates;
+    return getNumberContinuing();
   }
 
 }
