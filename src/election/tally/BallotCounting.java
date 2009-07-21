@@ -236,9 +236,13 @@ public class BallotCounting extends AbstractBallotCounting {
 	public void distributeSurplus(final int winner) {
  		for (int i = 0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-				final int numberOfTransfers = getActualTransfers (candidates[winner], candidates[i]);
+				final int numberOfTransfers = 
+					getActualTransfers (candidates[winner], candidates[i]) + 
+					getRoundedFractionalValue(candidates[winner], 
+							candidates[i]);
 				if (0 < numberOfTransfers) {
-					transferVotes (candidates[winner], candidates[i], numberOfTransfers);
+					transferVotes (candidates[winner], 
+							candidates[i], numberOfTransfers);
 				}
 			}
 			

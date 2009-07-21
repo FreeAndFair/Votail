@@ -944,7 +944,7 @@ public /*@ pure @*/ byte getStatus(){
   @   ensures (isElected (fromCandidate) &&
   @     (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate)))
   @     ==>
-  @       (\result == getRoundedFractionalValue (fromCandidate, toCandidate) +
+  @       (\result == 
   @       (getSurplus (fromCandidate) *
   @         getPotentialTransfers (fromCandidate,
   @         toCandidate.getCandidateID()) /
@@ -967,8 +967,6 @@ public /*@ pure @*/ byte getStatus(){
 		    (getSurplus(fromCandidate) < getTotalTransferableVotes(
 		    		fromCandidate))) {
  			 numberOfVotes *= getTransferFactor(fromCandidate);
- 			 numberOfVotes += getRoundedFractionalValue(fromCandidate, 
- 					 toCandidate);
 		}
 
     return numberOfVotes;
