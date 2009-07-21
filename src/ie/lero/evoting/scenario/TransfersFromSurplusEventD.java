@@ -20,10 +20,11 @@ public class TransfersFromSurplusEventD extends TestCase {
 	public void testEvent() {
 	  BallotCounting ballotCounting = new BallotCounting();
 	   Election election = new Election();
-	   election.numberOfCandidates = 4;
+	   election.numberOfCandidates = 20;
 	   election.numberOfSeatsInThisElection = 3;
 	   election.totalNumberOfSeats = 3;
-	   Candidate[] candidates = MockCandidate.generateCandidates(election.numberOfCandidates);
+	   Candidate[] candidates = MockCandidate.generateCandidates(
+			   election.numberOfCandidates);
 	   election.setCandidateList(candidates);
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();
@@ -35,10 +36,9 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   ballotCounting.load(ballotBox);
 	   int winner = ballotCounting.findHighestCandidate();
 	   ballotCounting.electCandidate(winner);
-	   assertTrue (3 == ballotCounting.getContinuingCandidates());
+	   assertTrue (19 == ballotCounting.getContinuingCandidates());
 	   assertTrue (2 == ballotCounting.getRemainingSeats());
 	   assertTrue (2 == ballotCounting.getQuota());
-	   assertTrue (0 == ballotCounting.getSurplus(candidates[0]));
-	   assertTrue (1 == ballotCounting.countBallotsFor(winner));
+	   ballotCounting.count();
 	}
 }

@@ -224,6 +224,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	public BallotCounting() {
 		super();
 		countStatus = new BallotCountingMachine();
+		countNumberValue = 0;
 	}
 	 
     /**

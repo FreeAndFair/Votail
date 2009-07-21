@@ -918,7 +918,7 @@ public /*@ pure @*/ byte getStatus(){
   @*/
 	public /*@ pure @*/ boolean isContinuingCandidateID(final int candidateID) {
 		for (int i = 0; i < totalNumberOfCandidates; i++) { 
-			final byte candidateStatus = candidates[i].getStatus(); //@ nowarn;
+			final byte candidateStatus = candidates[i].getStatus();
 			if (candidateID == candidates[i].getCandidateID()) {
                 return candidateStatus == CandidateStatus.CONTINUING;
 			}
@@ -1490,14 +1490,11 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ assignable ballot.positionInList;
 	  @*/
 	protected void transferBallot(/*@ non_null @*/ Ballot ballot) {
-		
-		int nextCandidateID;
-		do {
-		  ballot.transfer(countNumberValue); //@ nowarn;
-		  nextCandidateID = ballot.getCandidateID();
-		}
-		while ((nextCandidateID != Ballot.NONTRANSFERABLE) && 
-				(!isContinuingCandidateID(nextCandidateID)));
+		 
+		while ((ballot.getCandidateID() != Ballot.NONTRANSFERABLE) && 
+				(!isContinuingCandidateID(ballot.getCandidateID()))) {
+			ballot.transfer(countNumberValue);
+ 		}
 	}
 	
 	public abstract void count();
