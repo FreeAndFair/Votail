@@ -24,7 +24,7 @@ public class QuotaCalculationEventA extends TestCase {
 	  Election parameters = new Election();
 	  parameters.numberOfCandidates = 2;
 	  parameters.numberOfSeatsInThisElection = 1;
-	  parameters.totalNumberOfSeats = 3;
+	  parameters.totalNumberOfSeats = 1;
 	  Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
 	  candidates[0] = new Candidate();
 	  candidates[1] = new Candidate();
@@ -32,7 +32,6 @@ public class QuotaCalculationEventA extends TestCase {
 	  ballotCounting.setup(parameters);
 	  
  		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);
-		//@ assert ballotCounting.getStatus() == election.tally.AbstractBallotCounting.EMPTY;
 		BallotBox ballotBox = new BallotBox();
 		MockBallot ballot = new MockBallot();
 		for (int i = 0; i < 60000; i++) {
@@ -46,8 +45,14 @@ public class QuotaCalculationEventA extends TestCase {
 		
 		ballotCounting.load(ballotBox);
 		
+		ballotCounting.calculateFirstPreferences();
+		ballotCounting.calculateSurpluses();
+		assertTrue (ballotCounting.getRemainingSeats() == 1);
+		
+		assertTrue (ballotBox.size() == 100000);
+		
 		int quota = ballotCounting.getQuota();
-		assertTrue (500001 == quota);
+		assertTrue (50001 == quota);
 		
 		assertTrue(ballotCounting.hasQuota(candidates[0]));
 	}

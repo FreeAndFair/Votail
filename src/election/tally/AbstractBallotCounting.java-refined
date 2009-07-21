@@ -424,10 +424,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * or has been elected
    */
   /*@ requires (state == COUNTING) || (state == FINISHED);
-    @ ensures \result == (candidate.getOriginalVote() >= depositSavingThreshold) ||
-    @   (isElected (candidate) == true);
+    @ ensures \result == (candidateList[index].getOriginalVote() >= depositSavingThreshold) ||
+    @   (isElected (candidateList[index]) == true);
     @*/
-  public /*@ pure @*/ boolean isDepositSaved (/*@ non_null @*/ election.tally.Candidate candidate);
+  public /*@ pure @*/ boolean isDepositSaved (int index);
 
 	
   /** 

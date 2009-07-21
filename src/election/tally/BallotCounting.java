@@ -240,7 +240,7 @@ public class BallotCounting extends AbstractBallotCounting {
 					getActualTransfers (candidates[winner], candidates[i]) + 
 					getRoundedFractionalValue(candidates[winner], 
 							candidates[i]);
-				if (0 < numberOfTransfers) {
+				if (0 <= numberOfTransfers) {
 					transferVotes (candidates[winner], 
 							candidates[i], numberOfTransfers);
 				}

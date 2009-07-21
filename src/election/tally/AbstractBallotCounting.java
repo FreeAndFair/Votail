@@ -636,18 +636,18 @@ protected void setTotalSumOfSurpluses(final int sum) {
  * @design This needs to be checked just before the candidate is eliminated to include
  *   all transfers received before the candidate was either elected or eliminated
  * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV commentary on count rules, section 3 page 13, section 4 page 17 and section 14</a>
- * @param candidate The candidate for which to check
+ * @param index The candidate for which to check
  * @return true if candidate has enough votes to save deposit
  */
 /*@ also
   @   protected normal_behavior
   @     requires (state == COUNTING) || (state == FINISHED);
-  @     ensures \result <==> (candidate.getOriginalVote() >= depositSavingThreshold) ||
-  @       (isElected (candidate) == true);
+  @     ensures \result <==> (candidateList[index].getOriginalVote() >= depositSavingThreshold) ||
+  @       (isElected (candidateList[index]) == true);
   @*/
-public /*@ pure @*/ boolean isDepositSaved(/*@ non_null @*/ final Candidate candidate){
- 	final int originalVote = candidate.getOriginalVote(); //@ nowarn;
-	final boolean elected = isElected (candidate); //@ nowarn;
+public /*@ pure @*/ boolean isDepositSaved(final int index){
+ 	final int originalVote = candidates[index].getOriginalVote(); //@ nowarn;
+	final boolean elected = isElected (candidates[index]); //@ nowarn;
 	return ((originalVote >= savingThreshold)
 		|| elected);
 }

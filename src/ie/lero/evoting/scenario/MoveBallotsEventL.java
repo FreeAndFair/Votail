@@ -9,10 +9,8 @@ import junit.framework.TestCase;
 
 public class MoveBallotsEventL extends TestCase {
 
-	
-
 	public void testEvent() {
-	  BallotCounting ballotCounting = new BallotCounting();
+	   BallotCounting ballotCounting = new BallotCounting();
 	   Election election = new Election();
 	   election.numberOfCandidates = 3;
 	   election.numberOfSeatsInThisElection = 3;
@@ -29,8 +27,7 @@ public class MoveBallotsEventL extends TestCase {
 	     ballot.setFirstPreference(candidates[i].getCandidateID());
 	     ballotBox.accept(ballot);
 	   }
-	   assertTrue (1 == ballotCounting.countBallotsFor(
-			   candidates[0].getCandidateID()));
+	   
 	   ballotCounting.load(ballotBox);
 	   int firstElected = ballotCounting.findHighestCandidate();
 	   ballotCounting.distributeSurplus(firstElected);
