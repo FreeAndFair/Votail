@@ -141,7 +141,7 @@ public static final int NONTRANSFERABLE = 0;
   /*@ private invariant 0 < nextBallotID;
     @ private constraint \old(nextBallotID) <= nextBallotID;
     @*/
-  protected static int nextBallotID = 1;
+  protected /*@ spec_public @*/ static int nextBallotID = 1;
 
 
   /**
@@ -269,9 +269,8 @@ public static final int NONTRANSFERABLE = 0;
   public /*@ pure @*/ int getCandidateID() {
        if (positionInList < numberOfPreferences) {
     	   return preferenceList[positionInList];
-        } else {
-           return NONTRANSFERABLE;
         }
+        return NONTRANSFERABLE;
   }
     
   /**

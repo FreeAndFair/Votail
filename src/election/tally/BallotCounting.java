@@ -293,7 +293,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @     requires state == PRECOUNT || state == COUNTING;
 	  @		assignable countNumberValue, ballotsToCount, candidateList[*];
 	  @     assignable candidates, candidates[*];
-	  @		assignable totalRemainingSeats;
+	  @		assignable totalRemainingSeats, countStatus;
 	  @		assignable savingThreshold;
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
@@ -382,6 +382,9 @@ public class BallotCounting extends AbstractBallotCounting {
 		status = FINISHED;
 	}
 
+	/*@ requires countStatus != null;
+	  @ assignable countStatus;
+	  @*/
 	public void updateCountStatus(final int countingStatus) {
 		countStatus.changeState(countingStatus);
 	}
@@ -406,8 +409,8 @@ public class BallotCounting extends AbstractBallotCounting {
 		setTotalSumOfSurpluses(sumOfSurpluses);
 	}
 
-	//@ assignable countNumber;
-	//@ ensures \old(countNumber) + 1 == countNumber;
+	//@ assignable countNumberValue;
+	//@ ensures \old(countNumberValue) + 1 == countNumberValue;
 	public void incrementCountNumber() {
 		countNumberValue++;
 		

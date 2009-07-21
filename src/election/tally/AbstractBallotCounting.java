@@ -154,7 +154,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ ==> 
 	  @  (\forall int i; 0 <= i && i < totalCandidates;
 	  @    candidateList[i].getTotalVote() ==
-	  @    getNumberOfVotes (candidateList[i].getCandidateID()));
+	  @    countBallotsFor (candidateList[i].getCandidateID()));
 	  @*/
 
 	/** List of candidates for election */
@@ -773,7 +773,7 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  * 
  * @return Number of votes required to ensure election
  */
-/*@ requires 0 < numberOfSeats;
+/*@ also requires 0 < numberOfSeats;
   @*/
 public /*@ pure @*/ int getQuota() {
   return 1 + (totalNumberOfVotes / (1 + numberOfSeats));
@@ -804,11 +804,12 @@ public void calculateFirstPreferences() {
  * @param candidateID The internal identifier of this candidate
  * @return The number of ballots in this candidate's pile
  */
-/*@ requires ballotsToCount != null;
-  @ requires (\forall int index; 0 <= index && index < totalVotes;
+/*@ also
+  @    requires ballotsToCount != null;
+  @    requires (\forall int index; 0 <= index && index < totalVotes;
   @          ballotsToCount[index] != null); 
   @*/
-public /*@ pure @*/ int countBallotsFor(final int candidateID) {
+public /*@ pure @*/ int countBallotsFor(int candidateID) {
 	int numberOfBallots = 0;
 	for (int b=0; b < totalNumberOfVotes; b++) {
 		if (ballots[b].isAssignedTo(candidateID)) {
@@ -849,7 +850,7 @@ public /*@ pure @*/ int countBallotsFor(final int candidateID) {
 			
 		}
 	return numberOfBallots;
-	} //@ nowarn;
+	} //@ nowarn Post;
 
 /**
  * Gets the status of the algorithm in progress.
@@ -972,7 +973,7 @@ public /*@ pure @*/ byte getStatus(){
     return numberOfVotes;
 	}
 
-protected int getTransferFactor(
+protected /*@ pure @*/ int getTransferFactor(
 		final /*@ non_null @*/ Candidate fromCandidate) {
   return (getSurplus (fromCandidate) / 
 		  getTotalTransferableVotes (fromCandidate)); //@ nowarn;
@@ -1277,7 +1278,7 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candi
   @       getPotentialTransfers (fromCandidate, 
   @       candidateList[i].getCandidateID()));
   @*/
-protected final /*@ pure spec_public @*/ int getTotalTransferableVotes(
+protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
     final /*@ non_null @*/ Candidate fromCandidate) {
     int numberOfTransfers = 0;
  	for (int i = 0; i < totalNumberOfCandidates; i++) {
@@ -1526,13 +1527,13 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
  		totalRemainingSeats--;
 	}
 
-	/*@  
+	/*@ also 
 	  @ requires candidates != null && (\forall int c; 0 <= c && c < totalNumberOfCandidates;
 	  @          candidates[c] != null);
 	  @ ensures \result == (\num_of int i; 0 <= 0 && i < totalNumberOfCandidates;
 	  @         candidates[i].getStatus() == CandidateStatus.CONTINUING);
 	  @*/
-	protected /*@ pure @*/ int getNumberContinuing() {
+	protected /*@ pure spec_public @*/ int getNumberContinuing() {
 		int numberContinuing = 0;
 		
 		for (int i = 0; i < totalNumberOfCandidates; i++) {

@@ -89,6 +89,8 @@ public class Ballot {
    * Default constructor
    */
   /*@ public normal_behavior
+    @   assignable numberOfPreferences, countNumberAtLastTransfer;
+    @   assignable positionInList, ballotID;
     @   ensures numberOfPreferences == 0;
     @   ensures countNumberAtLastTransfer == 0;
     @   ensures positionInList == 0;

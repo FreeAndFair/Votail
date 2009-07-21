@@ -57,8 +57,8 @@ public class ExclusionEventJ extends TestCase {
 		}
 	}
 
-  //@ requires parameters != null;
- 	//@ assignable numberOfCandidates;
+    //@ requires parameters != null;
+ 	//@ assignable candidates, numberOfCandidates;
  	protected void setUpParameters() {
  		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;		
