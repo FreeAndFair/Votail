@@ -923,8 +923,23 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures \result <= candidateList.length;
     @ ensures (\forall Candidate c, d; c != null && d != null;
     @   (getOrder (c) < getOrder (d)) <==> (d.isAfter(c)));
+    @     requires candidates != null && (\forall int c;
+    @              0 <= c && c < totalNumberOfCandidates; candidateList [c] != null);
+    @     ensures 1 <= \result;
+    @     ensures \result <= candidateList.length;
+    @     ensures (\forall Candidate c, d; c != null && d != null;
+    @       (getOrder (c) < getOrder (d)) <==> (d.isAfter(c)));
+    @
+    @ protected pure model int getOrder(non_null Candidate candidate) {
+    @     int order = 1;
+	@     for (int c = 0; c < totalNumberOfCandidates; c++) {
+	@	      if (candidates[c].isAfter(candidate)) {
+	@		      order++;
+	@	      }
+	@     }
+	@     return order;
+    @ }
     @*/
-  protected /*@ pure @*/ int getOrder(/*@ non_null @*/ Candidate candidate);
   
   /**
    * Transfer votes from one candidate to another.

@@ -210,7 +210,7 @@ private static int nextCandidateID = 1;
   } //@ nowarn;
 
 /**
- * Add a number of votes to the candidate's ballot stack.
+ * Add a number of votes to the candidate's ballot pile.
  * 
  * @design This method cannot be called twice for the same candidate
  * in the same round of counting.

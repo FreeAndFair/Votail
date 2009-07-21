@@ -20,8 +20,8 @@ import election.tally.mock.MockBallot;
  */
 public class ExclusionEventJ extends TestCase {
 
-	private /*@ spec_public @*/ int numberOfCandidates;
-	private /*@ spec_public @*/ Candidate[] candidates;
+  private /*@ spec_public @*/ int numberOfCandidates;
+  private /*@ spec_public @*/ Candidate[] candidates;
   private /*@ spec_public @*/ Election parameters;
   private /*@ spec_public @*/ BallotCounting ballotCounting;
   private /*@ spec_public @*/ BallotBox ballotBox;
@@ -33,7 +33,7 @@ public class ExclusionEventJ extends TestCase {
 	public final void testExclusion() {
 	 	
 	  assertTrue (ballotCounting.getStatus() == ElectionStatus.COUNTING);
-	 	final int lowestCandidate = ballotCounting.findLowestCandidate(); //@ nowarn;
+	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
 		ballotCounting.eliminateCandidate(lowestCandidate);
 		assertTrue (5 == ballotCounting.getContinuingCandidates());
  	}

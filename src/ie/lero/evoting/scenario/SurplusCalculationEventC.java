@@ -32,7 +32,6 @@ public class SurplusCalculationEventC extends TestCase{
 		// Generate sample candidates
 	 	Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
 	 	int[] candidateIDList = new int[parameters.numberOfCandidates];
-	 	int numberOfPreferences = parameters.numberOfCandidates;
 	 	
 		for (int i = 0; i < parameters.numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
@@ -45,8 +44,7 @@ public class SurplusCalculationEventC extends TestCase{
 		for (int b = 0; b < numberOfVotes && 
 		        ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
 				MockBallot testBallot = new MockBallot();
-				testBallot.setMultiplePreferences(
-						candidateIDList,numberOfPreferences);
+				testBallot.setMultiplePreferences(candidateIDList);
 				ballotBox.accept(testBallot);
 			
 		}
@@ -60,11 +58,12 @@ public class SurplusCalculationEventC extends TestCase{
 	 
 	 	ballotCounting.setup(parameters);
 	 	ballotCounting.load(ballotBox);
- 	 	//@ assert 3334 == ballotCounting.getQuota();
+ 	 	assertTrue (3334 == ballotCounting.getQuota());
 	 	
 	 	// Find and distribute the first surplus
-	 	final int indexOfHighestCandidate = ballotCounting.findHighestCandidate();
-	 	//@ assert 0 <= indexOfHighestCandidate;
+	 	final int indexOfHighestCandidate = 
+	 		ballotCounting.findHighestCandidate();
+	 	assertTrue (0 <= indexOfHighestCandidate);
 	 	
  		ballotCounting.electCandidate(indexOfHighestCandidate);
  	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);

@@ -29,6 +29,8 @@ public class MoveBallotsEventL extends TestCase {
 	     ballot.setFirstPreference(candidates[i].getCandidateID());
 	     ballotBox.accept(ballot);
 	   }
+	   assertTrue (1 == ballotCounting.countBallotsFor(
+			   candidates[0].getCandidateID()));
 	   ballotCounting.load(ballotBox);
 	   int firstElected = ballotCounting.findHighestCandidate();
 	   ballotCounting.distributeSurplus(firstElected);

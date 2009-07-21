@@ -220,6 +220,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	/**
 	 * Default constructor.
 	 */
+	//@ ensures countStatus != null;
 	public BallotCounting() {
 		super();
 		countStatus = new BallotCountingMachine();
@@ -296,7 +297,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable numberOfSurpluses, sumOfSurpluses;
 	  @     assignable totalNumberOfSurpluses, totalSumOfSurpluses;
 	  @		assignable decisions, decisionsTaken;
-	  @		assignable totalNumberOfContinuingCandidates, remainingSeats, totalRemainingSeats;
+	  @		assignable remainingSeats, totalRemainingSeats;
 	  @     ensures state == FINISHED;
 	  @*/
 	public void count() {
@@ -324,7 +325,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			calculateSurpluses();
 			
 			// Transfer surplus votes from winning candidates
-			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT-1) {
+			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT - 1) {
 				countStatus.changeState(CountStatus.CANDIDATES_HAVE_QUOTA);
 				final int winner = findHighestCandidate();
 				
@@ -381,6 +382,9 @@ public class BallotCounting extends AbstractBallotCounting {
 		countStatus.changeState(countingStatus);
 	}
 
+	/*@ requires \nonnullelements (candidates);
+	  @
+	  @*/
 	//@ assignable numberOfSurpluses, sumOfSurpluses, totalNumberOfSurpluses, totalSumOfSurpluses;
 	public void calculateSurpluses() {
 		int numberOfSurpluses = 0;
@@ -410,7 +414,7 @@ public class BallotCounting extends AbstractBallotCounting {
     return totalRemainingSeats;
   }
 
-  //@ ensures totalNumberOfContinuingCandidates == \result;
+  //@ ensures getNumberContinuing() == \result;
   public /*@ pure @*/ int getContinuingCandidates() {
     return getNumberContinuing();
   }
