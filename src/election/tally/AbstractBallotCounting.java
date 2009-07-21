@@ -773,6 +773,8 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  * 
  * @return Number of votes required to ensure election
  */
+/*@ requires 0 < numberOfSeats;
+  @*/
 public /*@ pure @*/ int getQuota() {
   return 1 + (totalNumberOfVotes / (1 + numberOfSeats));
 }
@@ -936,13 +938,13 @@ public /*@ pure @*/ byte getStatus(){
 /*@ also
   @   protected normal_behavior
   @   requires (state == COUNTING);
-  @   requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
-  @     (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
+  @   requires isElected (fromCandidate) || 
+  @            (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
   @   requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
-  @   ensures ((fromCandidate.getStatus() == CandidateStatus.ELECTED) &&
+  @   ensures (isElected (fromCandidate) &&
   @     (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate)))
   @     ==>
-  @       (\result ==
+  @       (\result == getRoundedFractionalValue (fromCandidate, toCandidate) +
   @       (getSurplus (fromCandidate) *
   @         getPotentialTransfers (fromCandidate,
   @         toCandidate.getCandidateID()) /
@@ -950,25 +952,32 @@ public /*@ pure @*/ byte getStatus(){
   @   ensures ((fromCandidate.getStatus() == Candidate.ELIMINATED) ||
   @     (getTotalTransferableVotes(fromCandidate) <= getSurplus(fromCandidate)))
   @     ==>
-  @       (\result == getRoundedFractionalValue (fromCandidate, toCandidate) +
+  @       (\result == 
   @       (\num_of int j; 0 <= j && j < totalVotes;
   @         ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID()) &&
   @         getNextContinuingPreference(ballotsToCount[j]) ==
   @         toCandidate.getCandidateID()));
   @*/
 	protected /*@ pure spec_public @*/ int getActualTransfers(
-	          Candidate fromCandidate, Candidate toCandidate) {
-		int numberOfVotes = getPotentialTransfers (fromCandidate, toCandidate.getCandidateID()); //@ nowarn;
- 		if (fromCandidate.getStatus() == CandidateStatus.ELECTED && 
-		    (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate))) {
- 			  numberOfVotes *= getTransferFactor(fromCandidate); //@ nowarn;
+	          final /*@ non_null @*/ Candidate fromCandidate, 
+	          final /*@ non_null @*/ Candidate toCandidate) {
+		int numberOfVotes = getPotentialTransfers (fromCandidate, 
+				toCandidate.getCandidateID());
+ 		if (isElected(fromCandidate) && 
+		    (getSurplus(fromCandidate) < getTotalTransferableVotes(
+		    		fromCandidate))) {
+ 			 numberOfVotes *= getTransferFactor(fromCandidate);
+ 			 numberOfVotes += getRoundedFractionalValue(fromCandidate, 
+ 					 toCandidate);
 		}
-		
-    return numberOfVotes + getRoundedFractionalValue (fromCandidate, toCandidate);
-	} //@ nowarn;
 
-protected int getTransferFactor(final /*@ non_null @*/ Candidate fromCandidate) {
-  return (getSurplus (fromCandidate) / getTotalTransferableVotes (fromCandidate)); //@ nowarn;
+    return numberOfVotes;
+	}
+
+protected int getTransferFactor(
+		final /*@ non_null @*/ Candidate fromCandidate) {
+  return (getSurplus (fromCandidate) / 
+		  getTotalTransferableVotes (fromCandidate)); //@ nowarn;
 }
 
 /**
@@ -990,19 +999,23 @@ protected int getTransferFactor(final /*@ non_null @*/ Candidate fromCandidate) 
   @   protected normal_behavior
   @   requires state == COUNTING;
   @   requires isElected (fromCandidate);
-  @   requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
-  @   requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
-  @   ensures (getCandidateOrderByHighestRemainder (fromCandidate,toCandidate) <=
-  @   getTransferShortfall (fromCandidate))
+  @   requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
+  @   requires getSurplus(fromCandidate) < 
+  @            getTotalTransferableVotes(fromCandidate);
+  @   ensures  (getCandidateOrderByHighestRemainder 
+  @            (fromCandidate,toCandidate) <=
+  @            getTransferShortfall (fromCandidate))
   @   ==> \result == 1;
-  @   ensures (getCandidateOrderByHighestRemainder (fromCandidate,toCandidate) >
-  @   getTransferShortfall (fromCandidate))
+  @   ensures (getCandidateOrderByHighestRemainder 
+  @           (fromCandidate,toCandidate) >
+  @           getTransferShortfall (fromCandidate))
   @   ==> \result == 0;
   @*/
 protected /*@ pure spec_public @*/ int getRoundedFractionalValue(
           final /*@ non_null @*/ Candidate fromCandidate, 
           final /*@ non_null @*/ Candidate toCandidate){
- 		return (getCandidateOrderByHighestRemainder (fromCandidate,toCandidate) <= 
+ 		return (getCandidateOrderByHighestRemainder 
+ 				(fromCandidate,toCandidate) <= 
  		  getTransferShortfall (fromCandidate)) ? 1 : 0;
  }
 
@@ -1031,7 +1044,7 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
 			shortfall += getActualTransfers (fromCandidate, candidates[i]); //@ nowarn;
 		}
 	}
-	return shortfall;
+	return shortfall - getSurplus(fromCandidate);
 } //@ nowarn;
 
 /**
