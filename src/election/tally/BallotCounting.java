@@ -63,10 +63,13 @@ public class BallotCounting extends AbstractBallotCounting {
  		 * 
  		 * @return The state of the count.
  		 */
- 		//@ also ensures \result == substate;
+ 		/*@ also ensures \result == substate;
+ 		  @
+ 		  @*/
  		public /*@ pure @*/ int getState() {
 			return substate;
-		} //@ nowarn;
+		}
+ 
 
  		/**
  		 * Move along the next valid transition in state.
