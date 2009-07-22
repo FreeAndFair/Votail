@@ -1344,25 +1344,25 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ requires candidateList != null && (\forall int c;
 	  @          0 <= c && c < totalNumberOfCandidates; candidateList[c] != null);
 	  @ ensures (\max int i; 0 <= i && i < totalCandidates && 
-	  @   candidates[i].getStatus() == Candidate.CONTINUING;
+	  @   candidateList[i].getStatus() == Candidate.CONTINUING;
 	  @   candidateList[i].getTotalVote()) 
 	  @   == candidateList[\result].getTotalVote();
-	  @ ensures (\exists int i; 0 <= i && i < totalCandidates && 
+	  @ ensures \result == -1 || (\exists int i; 0 <= i && i < totalCandidates && 
 	  @   candidates[i].getStatus() == Candidate.CONTINUING; i == \result);
 	  @ ensures 0 <= \result && \result < totalCandidates;
 	  @ ensures candidateList[\result] != null;
 	  @*/
 	public /*@ pure @*/ int findHighestCandidate() {
 		
+	  int highestCandidate = -1;  
 		long mostVotes = 0;
-		int highestCandidate = -1;
 	
 		for (int i=0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 			  if (candidates[i].getTotalVote() > mostVotes) {
 				     mostVotes = candidates[i].getTotalVote();
 				     highestCandidate = i;
-			} else if (candidates[i].getTotalVote() == mostVotes && 0 <= highestCandidate &&
+			  } else if (0 <= highestCandidate && candidates[i].getTotalVote() == mostVotes &&
 				    isHigherThan(candidates[i],candidates[highestCandidate])) {
 					   highestCandidate =  i;
 			  }
@@ -1370,7 +1370,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 		}
 		
 		return highestCandidate;
-	} //@ nowarn;
+	}
 
 	/**
 	 * Who is the lowest continuing candidate?
@@ -1382,21 +1382,21 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ ensures (\forall int i; 
 	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
 	  @   candidateList[i].getTotalVote() >= candidateList[\result].getTotalVote());
-	  @ ensures (\exists int i; 
+	  @ ensures -1 == index || (\exists int i; 
 	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
 	  @   i == \result);
 	  @*/
 	public /*@ pure @*/ int findLowestCandidate() {
 		
 		long leastVotes = MAXVOTES;
-		int index = 0; 
+		int index = -1; 
 
 		for (int i=0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
 			  if (candidates[i].getTotalVote() < leastVotes) {
 				leastVotes = candidates[i].getTotalVote();
 				index = i;
-			  } else if (candidates[i].getTotalVote() == leastVotes &&
+			  } else if (0 <= index && candidates[i].getTotalVote() == leastVotes &&
  				    isHigherThan(candidates[index],candidates[i])) {
 					index = i;
 			  }

@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class TransfersFromSurplusEventD extends TestCase {
 
 	public void testEvent() {
-	  BallotCounting ballotCounting = new BallotCounting();
+	   BallotCounting ballotCounting = new BallotCounting();
 	   Election election = new Election();
 	   election.numberOfCandidates = 20;
 	   election.numberOfSeatsInThisElection = 3;
@@ -38,7 +38,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   ballotCounting.electCandidate(winner);
 	   assertTrue (19 == ballotCounting.getContinuingCandidates());
 	   assertTrue (2 == ballotCounting.getRemainingSeats());
-	   assertTrue (2 == ballotCounting.getQuota());
+	   assertTrue (3 == ballotBox.size());
 	   ballotCounting.count();
 	}
 }

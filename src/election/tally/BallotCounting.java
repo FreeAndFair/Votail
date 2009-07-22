@@ -331,24 +331,28 @@ public class BallotCounting extends AbstractBallotCounting {
 
 			// Calculate surpluses
 			calculateSurpluses();
+			boolean highestCandidateExists = true;
 			
 			// Transfer surplus votes from winning candidates
-			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT - 1) {
+			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT - 1 &&
+			    getNumberContinuing() > totalRemainingSeats && highestCandidateExists) {
 				countStatus.changeState(CountStatus.CANDIDATES_HAVE_QUOTA);
 				final int winner = findHighestCandidate();
+				highestCandidateExists = (0 <= winner);
 				
-				final int countingStatus = CountStatus.CANDIDATE_ELECTED;
-				updateCountStatus(countingStatus);
-				electCandidate(winner);
-
-				countStatus.changeState(CountStatus.SURPLUS_AVAILABLE);
-				distributeSurplus(winner);
-				calculateSurpluses();
+				if (highestCandidateExists) {
+	          final int countingStatus = CountStatus.CANDIDATE_ELECTED;
+				    updateCountStatus(countingStatus);
+				    electCandidate(winner);
+				    countStatus.changeState(CountStatus.SURPLUS_AVAILABLE);
+				    distributeSurplus(winner);
+				    calculateSurpluses();
+				}
 			}
 			
 			// Even if no surplus then elect any candidate with a full quota
 			for (int c = 0; c < totalNumberOfCandidates; c++) {
-				if (hasQuota(candidates[c])) {
+				if (hasQuota(candidates[c]) && !isElected(candidates[c])) {
 					countStatus.changeState(CountStatus.CANDIDATES_HAVE_QUOTA);
 					electCandidate(c);
 					countStatus.changeState(CountStatus.CANDIDATE_ELECTED);
@@ -361,12 +365,13 @@ public class BallotCounting extends AbstractBallotCounting {
 			  countStatus.changeState(CountStatus.NO_SURPLUS_AVAILABLE);	
 			  int loser = findLowestCandidate();
 			
-			  countStatus.changeState(CountStatus.CANDIDATE_EXCLUDED);	
-			  eliminateCandidate(loser);
-			  numberOfCandidatesEliminated++;
-			
-			  countStatus.changeState(CountStatus.READY_TO_MOVE_BALLOTS);	
-			  redistributeBallots(candidates[loser].getCandidateID());
+			  if (0 <= loser) {
+			      countStatus.changeState(CountStatus.CANDIDATE_EXCLUDED);	
+			          eliminateCandidate(loser);
+			      numberOfCandidatesEliminated++;
+			      countStatus.changeState(CountStatus.READY_TO_MOVE_BALLOTS);	
+			      redistributeBallots(candidates[loser].getCandidateID());
+			  }
  			}
 			countNumberValue++;
 		}

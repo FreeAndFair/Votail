@@ -2,7 +2,7 @@ package election.tally.mock;
 
 import election.tally.Candidate;
 
-public class MockCandidate extends Candidate {
+public class MockCandidate {
   
   //@ requires 1 <= n;
   public static Candidate[] generateCandidates(int n) {

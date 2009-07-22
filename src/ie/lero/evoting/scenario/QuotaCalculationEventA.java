@@ -54,7 +54,7 @@ public class QuotaCalculationEventA extends TestCase {
 		int quota = ballotCounting.getQuota();
 		assertTrue (50001 == quota);
 		
-		assertTrue(ballotCounting.hasQuota(candidates[0]));
+		ballotCounting.count();
 	}
 
 }

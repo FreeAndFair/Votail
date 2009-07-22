@@ -32,7 +32,7 @@ public class ExclusionEventJ extends TestCase {
 	//@ requires ballotCounting != null;
 	public final void testExclusion() {
 	 	
-	  assertTrue (ballotCounting.getStatus() == ElectionStatus.COUNTING);
+	  assertTrue (ballotCounting.getStatus() == ElectionStatus.PRECOUNT);
 	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
 		ballotCounting.eliminateCandidate(lowestCandidate);
 		assertTrue (ballotCounting.isDepositSaved(lowestCandidate));
