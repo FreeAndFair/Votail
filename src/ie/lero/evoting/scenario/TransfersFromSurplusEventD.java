@@ -48,10 +48,12 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   assertTrue (ballotBox.size() == 60);
 	   ballotCounting.calculateFirstPreferences();
 	   ballotCounting.calculateSurpluses();
+	   assertTrue (20 == ballotCounting.getContinuingCandidates()); 
 	   int winner = ballotCounting.findHighestCandidate();
 	   assertTrue (41 == ballotCounting.countBallotsFor(candidates[0].getCandidateID()));
+	   assertTrue (0 == winner);
 	   int votesForWinner =
-	     ballotCounting.countBallotsFor(winner);
+	     ballotCounting.countBallotsFor(candidates[winner].getCandidateID());
 	   assertTrue (41 == votesForWinner);
 	   ballotCounting.electCandidate(winner);
 	   assertTrue (ballotCounting.isElected(candidates[winner]));

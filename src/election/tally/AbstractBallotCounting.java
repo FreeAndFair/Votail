@@ -1350,8 +1350,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @          0 <= c && c < totalNumberOfCandidates; candidateList[c] != null);
 	  @ ensures (\max int i; 0 <= i && i < totalCandidates && 
 	  @   candidateList[i].getStatus() == Candidate.CONTINUING;
-	  @   candidateList[i].getTotalVote()) 
-	  @   == candidateList[\result].getTotalVote();
+	  @   countBallotsFor(candidateList[i].getCandidateID())) 
+	  @   == countBallotsFor(candidateList[\result].getCandidateID());
 	  @ ensures \result == -1 || (\exists int i; 0 <= i && i < totalCandidates && 
 	  @   candidates[i].getStatus() == Candidate.CONTINUING; i == \result);
 	  @ ensures 0 <= \result && \result < totalCandidates;
@@ -1364,10 +1364,11 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	
 		for (int i=0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-			  if (candidates[i].getTotalVote() > mostVotes) {
-				     mostVotes = candidates[i].getTotalVote();
+			  final int votes = countBallotsFor(candidates[i].getCandidateID());
+        if (votes > mostVotes) {
+				     mostVotes = votes;
 				     highestCandidate = i;
-			  } else if (0 <= highestCandidate && candidates[i].getTotalVote() == mostVotes &&
+			  } else if (0 <= highestCandidate && votes == mostVotes &&
 				    isHigherThan(candidates[i],candidates[highestCandidate])) {
 					   highestCandidate =  i;
 			  }
@@ -1387,7 +1388,8 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ ensures (\forall int i; 
 	  @   0 <= i && i < totalCandidates && 
 	  @   candidateList[i].getStatus() == CandidateStatus.CONTINUING;
-	  @   candidateList[i].getTotalVote() >= candidateList[\result].getTotalVote());
+	  @   countBallotsFor(candidateList[i].getCandidateID()) >= 
+	  @   countBallotsFor(candidateList[\result].getCandidateID()));
 	  @ ensures -1 == \result || (\exists int i; 
 	  @   0 <= i && i < totalCandidates && 
 	  @   candidateList[i].getStatus() == CandidateStatus.CONTINUING;
@@ -1396,21 +1398,22 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	public /*@ pure @*/ int findLowestCandidate() {
 		
 		long leastVotes = MAXVOTES;
-		int index = -1; 
+		int lowest = -1; 
 
 		for (int i=0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-			  if (candidates[i].getTotalVote() < leastVotes) {
-				leastVotes = candidates[i].getTotalVote();
-				index = i;
-			  } else if (0 <= index && candidates[i].getTotalVote() == leastVotes &&
- 				    isHigherThan(candidates[index],candidates[i])) {
-					index = i;
+			  final int votes = countBallotsFor(candidates[i].getCandidateID());
+			  if (votes < leastVotes) {
+				    leastVotes = votes;
+				    lowest = i;
+			  } else if (0 <= lowest && votes == leastVotes &&
+ 				    isHigherThan(candidates[lowest],candidates[i])) {
+					lowest = i;
 			  }
 			}
 		}
 		
-		return index;
+		return lowest;
 	} //@ nowarn;
 
 	/**
