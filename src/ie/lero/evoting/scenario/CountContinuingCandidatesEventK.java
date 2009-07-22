@@ -3,7 +3,6 @@ package ie.lero.evoting.scenario;
 import junit.framework.TestCase;
 import election.tally.BallotCounting;
 import election.tally.Election;
-import election.tally.mock.MockCandidate;
 
 public class CountContinuingCandidatesEventK extends TestCase {
 
@@ -13,7 +12,7 @@ public class CountContinuingCandidatesEventK extends TestCase {
    election.numberOfCandidates = 4;
    election.numberOfSeatsInThisElection = 3;
    election.totalNumberOfSeats = 3;
-   election.setCandidateList(MockCandidate.generateCandidates(4));
+   election.setCandidateList(Election.generateCandidates(4));
    ballotCounting.setup(election);
 	 assertTrue (4 == ballotCounting.getContinuingCandidates());
 	}

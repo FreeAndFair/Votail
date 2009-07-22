@@ -6,7 +6,6 @@ import election.tally.Candidate;
 import election.tally.CountStatus;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
-import election.tally.mock.MockCandidate;
 import junit.framework.TestCase;
 
 public class TransfersFromExcludedCandidateEventH extends TestCase {
@@ -17,7 +16,7 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	   election.numberOfCandidates = 4;
 	   election.numberOfSeatsInThisElection = 3;
 	   election.totalNumberOfSeats = 3;
-	   Candidate[] candidates = MockCandidate.generateCandidates(election.numberOfCandidates);
+	   Candidate[] candidates = Election.generateCandidates(election.numberOfCandidates);
 	   election.setCandidateList(candidates);
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();

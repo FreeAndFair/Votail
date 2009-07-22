@@ -8,7 +8,6 @@ import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
-import election.tally.mock.MockCandidate;
 import junit.framework.TestCase;
 
 /**
@@ -23,7 +22,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   election.numberOfCandidates = 20;
 	   election.numberOfSeatsInThisElection = 3;
 	   election.totalNumberOfSeats = 3;
-	   Candidate[] candidates = MockCandidate.generateCandidates(
+	   Candidate[] candidates = Election.generateCandidates(
 			   election.numberOfCandidates);
 	   
 	   election.setCandidateList(candidates);
