@@ -30,6 +30,10 @@ outgoing
 part
   "2/2"
 event
+  "A: The quota is calculated"
+involves
+  BALLOT_BOX, BALLOT_COUNTING, ELECTION
+event
   "B: The highest continuing candidate is found"
 involves
   BALLOT_COUNTING

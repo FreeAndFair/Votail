@@ -238,20 +238,19 @@ public class BallotCounting extends AbstractBallotCounting {
 	//@ also
 	//@   requires countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
 	public void distributeSurplus(final int winner) {
- 		for (int i = 0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-				final int numberOfTransfers = 
-					getActualTransfers (candidates[winner], candidates[i]) + 
-					getRoundedFractionalValue(candidates[winner], 
-							candidates[i]);
-				if (0 <= numberOfTransfers) {
-					transferVotes (candidates[winner], 
-							candidates[i], numberOfTransfers);
-				}
-			}
-			
-		}
-		countStatus.changeState(CountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
+ 		if (0 < getSurplus(candidates[winner])) {
+      for (int i = 0; i < totalNumberOfCandidates; i++) {
+        if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
+          final int numberOfTransfers = getActualTransfers(candidates[winner], candidates[i])
+              + getRoundedFractionalValue(candidates[winner],candidates[i]);
+          if (0 <= numberOfTransfers) {
+            transferVotes(candidates[winner], candidates[i], numberOfTransfers);
+          }
+        }
+
+      }
+    }
+    countStatus.changeState(CountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
 	}
 
 	

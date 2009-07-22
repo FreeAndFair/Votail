@@ -89,8 +89,14 @@ public class BallotBox {
 	  @         ballots[b].ballotID == ballot.ballotID);
 	  @*/
 	public void accept (final /*@ non_null @*/ Ballot ballot) {
-		ballots[numberOfBallots++] = ballot; //@ nowarn;
-	} //@ nowarn;
+	  Ballot newBallot = new Ballot();
+	  newBallot.numberOfPreferences = ballot.numberOfPreferences;
+	  newBallot.preferenceList = new int[ballot.numberOfPreferences];
+	  for (int i=0; i < newBallot.numberOfPreferences; i++) {
+	    newBallot.preferenceList[i] = ballot.preferenceList[i];
+	  }
+		ballots[numberOfBallots++] = newBallot;
+	} 
 
 	/**
 	 * Is there another ballot paper?

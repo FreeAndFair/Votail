@@ -28,6 +28,10 @@ scenario_chart VOTAIL
 explanation 
   "Scenarios for ballot counting"
 scenario
+  "01: READY_TO_START"
+description
+  "Ballots, candidate and election data have been loaded"
+scenario
   "02: NO_SEATS_FILLED_YET"
 description
   "No candidates have been elected so far"

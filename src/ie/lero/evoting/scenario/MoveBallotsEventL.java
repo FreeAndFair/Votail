@@ -24,12 +24,16 @@ public class MoveBallotsEventL extends TestCase {
 	   BallotBox ballotBox = new BallotBox();
 	   MockBallot ballot = new MockBallot();
 	   for (int i=0; i<3; i++) {
-	     ballot.setFirstPreference(candidates[i].getCandidateID());
+	     ballot.setFirstPreference(candidates[0].getCandidateID());
 	     ballotBox.accept(ballot);
 	   }
 	   
 	   ballotCounting.load(ballotBox);
+	   assertTrue (3 == ballotBox.size());
 	   int firstElected = ballotCounting.findHighestCandidate();
+	   assertTrue (0 == firstElected);
+	   final int surplus = ballotCounting.getSurplus(candidates[firstElected]);
+     assertTrue (surplus > 0);
 	   ballotCounting.distributeSurplus(firstElected);
 	}
 

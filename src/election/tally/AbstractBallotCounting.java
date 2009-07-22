@@ -962,22 +962,19 @@ public /*@ pure @*/ byte getStatus(){
 	protected /*@ pure spec_public @*/ int getActualTransfers(
 	          final /*@ non_null @*/ Candidate fromCandidate, 
 	          final /*@ non_null @*/ Candidate toCandidate) {
-		int numberOfVotes = getPotentialTransfers (fromCandidate, 
-				toCandidate.getCandidateID());
- 		if (isElected(fromCandidate) && 
-		    (getSurplus(fromCandidate) < getTotalTransferableVotes(
-		    		fromCandidate))) {
- 			 numberOfVotes *= getTransferFactor(fromCandidate);
+		int numberOfVotes = 
+		  getPotentialTransfers (fromCandidate, toCandidate.getCandidateID());
+ 		final int surplus = getSurplus(fromCandidate);
+    final int totalTransferableVotes = 
+      getTotalTransferableVotes(fromCandidate);
+    if (isElected(fromCandidate) && surplus < totalTransferableVotes) {
+ 			 numberOfVotes *= surplus;
+       numberOfVotes /= totalTransferableVotes;
 		}
 
     return numberOfVotes;
 	}
 
-protected /*@ pure @*/ int getTransferFactor(
-		final /*@ non_null @*/ Candidate fromCandidate) {
-  return (getSurplus (fromCandidate) / 
-		  getTotalTransferableVotes (fromCandidate)); //@ nowarn;
-}
 
 /**
  * Determine the rounded value of a fractional transfer.
@@ -1129,16 +1126,14 @@ protected /*@ pure @*/ int getOrder(Ballot ballot){
   @     requires 0 < getSurplus(fromCandidate);
   @     ensures \result ==
   @       getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) -
-  @       ((getActualTransfers(fromCandidate, toCandidate) *
-  @       getTotalTransferableVotes (fromCandidate)) /
-  @       getSurplus(fromCandidate));
+  @       getActualTransfers(fromCandidate, toCandidate);
+  @        
   @*/
 protected /*@ pure spec_public @*/ int getTransferRemainder(
           /*@ non_null @*/ Candidate fromCandidate, 
           /*@ non_null @*/ Candidate toCandidate){
-  return getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) //@ nowarn;
-    - ((getActualTransfers(fromCandidate, toCandidate) * //@ nowarn;
-    		getTotalTransferableVotes (fromCandidate)) / getSurplus(fromCandidate)); //@ nowarn;
+   return getPotentialTransfers(fromCandidate, toCandidate.getCandidateID())
+    - getActualTransfers(fromCandidate, toCandidate);
 }
 
 /**
@@ -1236,23 +1231,33 @@ protected /*@ pure spec_public @*/ int getTransferRemainder(
   @       getActualTransfers(fromCandidate, toCandidate)))) &&
   @       isHigherThan (candidateList[i], toCandidate)));
   @*/
-protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candidate fromCandidate, Candidate toCandidate){
+protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(Candidate fromCandidate, 
+                                                                           Candidate toCandidate){
 	int numberHigherThan = 0;
-	 
+  final int actualTransfers = getActualTransfers(fromCandidate, toCandidate);
+  final int transferRemainder = getTransferRemainder(fromCandidate, toCandidate);
+
 			for(int i=0; i<totalNumberOfCandidates; i++){
-				if(candidates[i].getCandidateID() != toCandidate.getCandidateID()&& candidates[i].getStatus() == CandidateStatus.CONTINUING){
-					if(getTransferRemainder(fromCandidate, candidates[i]) > getTransferRemainder(fromCandidate, toCandidate)){
+				if(candidates[i].getCandidateID() != toCandidate.getCandidateID()&& 
+				    candidates[i].getStatus() == CandidateStatus.CONTINUING){
+          if(getTransferRemainder(fromCandidate, candidates[i]) > transferRemainder){
 						numberHigherThan++;
-					}
-					else if(getTransferRemainder(fromCandidate, candidates[i]) == getTransferRemainder(fromCandidate, toCandidate) &&	
-							getActualTransfers(fromCandidate, candidates[i]) > getActualTransfers(fromCandidate, toCandidate)){
-						numberHigherThan++;
-					}
-					else if(getTransferRemainder(fromCandidate, candidates[i]) == getTransferRemainder(fromCandidate, toCandidate) && 
-							getActualTransfers(fromCandidate, candidates[i]) == getActualTransfers(fromCandidate, toCandidate) && 
-							isHigherThan (candidates[i], toCandidate)){
-						numberHigherThan++;
-					}
+					} else {
+            final boolean equalRemainders = 
+              getTransferRemainder(fromCandidate, candidates[i]) == 
+                transferRemainder;
+            final int transfersToOther = 
+              getActualTransfers(fromCandidate, candidates[i]);
+            if(equalRemainders &&	
+            		transfersToOther > actualTransfers){
+            	numberHigherThan++;
+            }
+            else if(equalRemainders && 
+            		transfersToOther == actualTransfers && 
+            		isHigherThan (candidates[i], toCandidate)){
+            	numberHigherThan++;
+            }
+          }
 					
 				}
 			}
@@ -1380,10 +1385,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	/*@ requires 1 <= totalCandidates;
 	  @ requires \nonnullelements(candidates);
 	  @ ensures (\forall int i; 
-	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
+	  @   0 <= i && i < totalCandidates && 
+	  @   candidateList[i].getStatus() == CandidateStatus.CONTINUING;
 	  @   candidateList[i].getTotalVote() >= candidateList[\result].getTotalVote());
-	  @ ensures -1 == index || (\exists int i; 
-	  @   0 <= i && i < totalCandidates && candidateList[i].getStatus() == Candidate.CONTINUING;
+	  @ ensures -1 == \result || (\exists int i; 
+	  @   0 <= i && i < totalCandidates && 
+	  @   candidateList[i].getStatus() == CandidateStatus.CONTINUING;
 	  @   i == \result);
 	  @*/
 	public /*@ pure @*/ int findLowestCandidate() {
