@@ -58,6 +58,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   assertTrue (41 == votesForWinner);
 	   ballotCounting.electCandidate(winner);
 	   assertTrue (ballotCounting.isElected(candidates[winner]));
+	   assertTrue (candidates[winner].isElected());
 	   assertTrue (1 == ballotCounting.countBallotsFor(candidates[1].getCandidateID()));
 	   ballotCounting.distributeSurplus(winner);
 	   ballotCounting.incrementCountNumber();

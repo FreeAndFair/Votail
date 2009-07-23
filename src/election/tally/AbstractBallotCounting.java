@@ -588,7 +588,7 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
  * 
  * @return the totalNumberOfSurpluses
  */
-protected /*@ pure @*/ int getTotalNumberOfSurpluses() {
+public /*@ pure @*/ int getTotalNumberOfSurpluses() {
 	return totalNumberOfSurpluses;
 } //@ nowarn;
 
@@ -610,7 +610,7 @@ protected void setTotalNumberOfSurpluses(final int quantity) {
  * 
  * @return the totalSumOfSurpluses
  */
-protected /*@ pure @*/ int getTotalSumOfSurpluses() {
+public /*@ pure @*/ int getTotalSumOfSurpluses() {
 	return totalSumOfSurpluses;
 } //@ nowarn;
 
@@ -1065,7 +1065,7 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
   @     ensures (\result == secondCandidate.candidateID) <==>
   @       (secondCandidate.randomNumber < firstCandidate.randomNumber);
   @*/
-protected /*@ pure spec_public @*/ int randomSelection(
+public /*@ pure spec_public @*/ int randomSelection(
 		/*@ non_null @*/ Candidate firstCandidate, 
 		/*@ non_null @*/ Candidate secondCandidate) {
 	
@@ -1089,7 +1089,7 @@ protected /*@ pure spec_public @*/ int randomSelection(
   @     ensures 1 <= \result;
   @     ensures \result <= ballotsToCount.length;
   @*/
-protected /*@ pure @*/ int getOrder(Ballot ballot){
+public /*@ pure @*/ int getOrder(Ballot ballot){
     // Determine the number of ballots with a lower random number
 	  int order = 1;
 	  for (int b = 0; b < totalNumberOfVotes; b++) {
@@ -1499,7 +1499,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ assignable ballot.countNumberAtLastTransfer;
 	  @ assignable ballot.positionInList;
 	  @*/
-	protected void transferBallot(/*@ non_null @*/ Ballot ballot) {
+	public void transferBallot(/*@ non_null @*/ Ballot ballot) {
 		 
 		while ((ballot.getCandidateID() != Ballot.NONTRANSFERABLE) && 
 				(!isContinuingCandidateID(ballot.getCandidateID()))) {
