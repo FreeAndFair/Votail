@@ -82,11 +82,11 @@ public class Candidate extends CandidateStatus {
   protected /*@ spec_public @*/ int lastCountNumber;
   
   /** The count number at which the last set of votes were added */
-  //@ public invariant 0 <= lastSetAddedCountNumber;
-  //@ public initially lastSetAddedCountNumber == 0;
-  //@ public constraint \old(lastSetAddedCountNumber) <= lastSetAddedCountNumber;
-  //@ public invariant lastSetAddedCountNumber <= lastCountNumber;
-  protected /*@ spec_public @*/ int lastSetAddedCountNumber;
+//@ public invariant 0 <= lastSetCount;
+//@ public initially lastSetCount == 0; 
+//@ public constraint \old(lastSetCount) <= lastSetCount;
+//@ public invariant lastSetCount <= lastCountNumber;
+  protected /*@ spec_public @*/ int lastSetCount;
   
   /** Unique random number used to simulate drawing of lots between candidates */
   /*@ public invariant (\forall Candidate a, b; 
@@ -221,10 +221,10 @@ public class Candidate extends CandidateStatus {
     @   requires state == CONTINUING;
     @   requires lastCountNumber < count;
     @   requires votesAdded[count] == 0;
-    @   assignable lastCountNumber, votesAdded[count], lastSetAddedCountNumber;
+    @   assignable lastCountNumber, votesAdded[count], lastSetCount;
     @   ensures votesAdded[count] == numberOfVotes;
     @   ensures lastCountNumber == count;
-    @   ensures lastSetAddedCountNumber == count;
+    @   ensures lastSetCount == count;
     @*/
   public void addVote (int numberOfVotes,  int count);
   
@@ -278,32 +278,41 @@ public class Candidate extends CandidateStatus {
     @*/
   public void declareEliminated() ;
   
-  /** 
+  /**
    * Gets number of votes in last set of votes added
    * 
    * @design In the first round of counting this is the same as
    * the number of first preferences, otherwise it is the most
-   * set of votes received.  The last set of votes received 
-   * are the only votes considered when a surplus is being distributed.
+   * recent set of votes received. The last set of votes received are
+   * the only votes considered when a surplus is being distributed.
    * 
-   * @return The number of votes in the last set added
-   */
-  /*@ public normal_behavior 
-    @   ensures \result == votesAdded[lastSetAddedCountNumber];
+   * @return The number of votes in the last set added 
+   */ 
+  /*@ public normal_behavior
+    @   ensures \result == votesAdded[lastSetCount];
+    @
+    @ public model pure int getNumberOfVotesInLastSet() {
+    @   return votesAdded[lastSetCount];
+    @   }
     @*/
-  public /*@ pure @*/ int getNumberOfVotesInLastSet();
   
-  /** 
+  /**
    * Gets the count number at which the last set of votes was added.
    * 
-   * @design This is needed to check which ballots are in the last set added
+   * @design This is needed to check which ballots are in the last 
+   * set added
+   * 
+   * @see "requirement 19, section 7, item 2, page 19"
    * 
    * @return The last count number at which votes were added
-   */
+   */ 
   /*@ public normal_behavior
-    @   ensures \result == lastSetAddedCountNumber;
+    @   ensures \result == lastSetCount;
+    @
+    @ public model pure int getLastSetAddedCountNumber(){
+    @     return lastSetCount;
+    @ } 
     @*/
-  public /*@ pure @*/ int getLastSetAddedCountNumber();
   
   /**
    * Compares with another candidate's secret random number.

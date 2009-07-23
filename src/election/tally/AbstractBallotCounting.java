@@ -1049,11 +1049,9 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
  * @design This needs to be random but consistent, so that same 
  * result is always given for the same pair of candidates.
  * 
- * @param firstCandidate
- * The first of the candidates to be selected from
+ * @param firstCandidate The first of the candidates to be selected from
  * 
- * @param secondCandidate
- * The second of the candidates to be selected from
+ * @param secondCandidate The second of the candidates to be selected from
  * 
  * @return The candidate ID of the chosen candidate
  */
@@ -1065,7 +1063,7 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
   @     ensures (\result == secondCandidate.candidateID) <==>
   @       (secondCandidate.randomNumber < firstCandidate.randomNumber);
   @*/
-public /*@ pure spec_public @*/ int randomSelection(
+public /*@ pure @*/ int randomSelection(
 		/*@ non_null @*/ Candidate firstCandidate, 
 		/*@ non_null @*/ Candidate secondCandidate) {
 	
@@ -1075,30 +1073,7 @@ public /*@ pure spec_public @*/ int randomSelection(
 		return secondCandidate.candidateID; 
 }
 
-/**
- * List each ballot ID in order by random number used to show how the votes 
- * have been mixed and numbered.
- * 
- * @param ballot Ballot for which to get the order of
- * @return Order of this ballot in numbered list of ballots
- */
-/*@ also
-  @   protected normal_behavior 
-  @     requires ballotsToCount != null && (\forall int b;
-  @              0 <= b && b < totalVotes; ballotsToCount[b] != null);
-  @     ensures 1 <= \result;
-  @     ensures \result <= ballotsToCount.length;
-  @*/
-public /*@ pure @*/ int getOrder(Ballot ballot){
-    // Determine the number of ballots with a lower random number
-	  int order = 1;
-	  for (int b = 0; b < totalNumberOfVotes; b++) {
-		  if (ballots[b].isAfter(ballot)) { //@ nowarn;
-			  order++;
-		  }
-	  }
-	  return order;
-	} //@ nowarn;
+
 
 /**
  * Determine the individuals remainder after integer division by the
@@ -1540,7 +1515,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ ensures \result == (\num_of int i; 0 <= 0 && i < totalNumberOfCandidates;
 	  @         candidates[i].getStatus() == CandidateStatus.CONTINUING);
 	  @*/
-	protected /*@ pure spec_public @*/ int getNumberContinuing() {
+	public /*@ pure @*/ int getNumberContinuing() {
 		int numberContinuing = 0;
 		
 		for (int i = 0; i < totalNumberOfCandidates; i++) {

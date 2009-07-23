@@ -73,6 +73,7 @@ public class ExclusionEventJ extends TestCase {
 			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
 			int numberOfVotes = i*1000;
 			candidates[i].addVote(numberOfVotes, 1);
+			assertTrue (candidates[i].getTotalAtCount(1) == numberOfVotes);
 		}
 		
 		parameters.setCandidateList(candidates);

@@ -165,11 +165,14 @@ private static int nextCandidateID = 1;
 		int originalVote = 0;
 		
  		for (int i = 0; i <= lastCountNumber; i++) {
-			originalVote += votesAdded[i];
+ 		  final int votesAddedThisRound = votesAdded[i];
+      if (0 < votesAddedThisRound) {
+			  originalVote += votesAddedThisRound;
+ 		  }
 		}
  		 
 		return originalVote;
-	} //@ nowarn Post;
+	}
 	
 /**
  * Get status at the current round of counting; {@link #ELECTED}, 
@@ -280,41 +283,7 @@ private static int nextCandidateID = 1;
 	public void declareEliminated(){
 		state = ELIMINATED;
 	} //@ nowarn;
-	
-/**
- * Gets number of votes in last set of votes added
- * 
- * @design In the first round of counting this is the same as
- * the number of first preferences, otherwise it is the most
- * recent set of votes received. The last set of votes received are
- * the only votes considered when a surplus is being distributed.
- * 
- * @return The number of votes in the last set added 
- */	
-/*@ public normal_behavior
-  @   ensures \result == votesAdded[lastSetCount];
-  @*/
-	public /*@ pure @*/ int getNumberOfVotesInLastSet(){
-		return votesAdded[lastSetCount];
-	}
 
-/**
- * Gets the count number at which the last set of votes was added.
- * 
- * @design This is needed to check which ballots are in the last 
- * set added
- * 
- * @see "requirement 19, section 7, item 2, page 19"
- * 
- * @return The last count number at which votes were added
- */	
-/*@ public normal_behavior
-  @   ensures \result == lastSetCount;
-  @*/
-	public /*@ pure @*/ int getLastSetAddedCountNumber(){
-		return lastSetCount;
-	}	
-	
 /**
  * Compares with another candidate's secret random number.
  * 
