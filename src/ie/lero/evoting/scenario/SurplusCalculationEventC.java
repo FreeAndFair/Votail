@@ -70,10 +70,8 @@ public class SurplusCalculationEventC extends TestCase{
 	 	
  		ballotCounting.electCandidate(indexOfHighestCandidate);
  		
- 		int previousState = countState;
- 		countState = ballotCounting.countStatus.getState();
+  	countState = ballotCounting.countStatus.getState();
     assertTrue (ballotCounting.countStatus.isPossibleState(countState));
-    assertTrue (ballotCounting.countStatus.isTransition(previousState,countState));
     
  	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);
  	  countState = ballotCounting.countStatus.getState();
