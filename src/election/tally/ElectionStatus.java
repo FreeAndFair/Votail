@@ -2,7 +2,7 @@ package election.tally;
 
 public class ElectionStatus {
 
-	/** Start state */
+	/** Start */
 	public static final byte EMPTY = 0;
 	/** Setting up candidate list and number of seats to fill*/
 	public static final byte SETTING_UP = 1;

@@ -165,55 +165,6 @@ public static final int NONTRANSFERABLE = 0;
   }
     
   /**
-   * Get the location of the ballot at each count
-   * 
-   * @param countNumber The round of counting which we need to check
-   * @return The candidate ID or the NONTRANSFERABLE constant
-   */    
-  /*@ also public normal_behavior
-    @ requires 0 <= countNumber;
-    @ requires countNumber <= countNumberAtLastTransfer;
-    @ requires countNumber < candidateIDAtCount.length;
-    @ requires countNumber < Candidate.MAXCOUNT;
-    @ ensures \result == candidateIDAtCount[countNumber];
-    @*/
-  public /*@ pure @*/ int getPreferenceAtCount(final int countNumber) {
-    return candidateIDAtCount[countNumber]; //@ nowarn;
-  }
-    
-  /**
-   * Get the count number for the last transfer of this ballot
-   * 
-   * @return The last count at which this ballot was transferred
-   */    
-  /*@ also public normal_behavior
-    @   ensures \result == countNumberAtLastTransfer;
-    @*/
-  public /*@ pure @*/ int getCountNumberAtLastTransfer(){
-    return countNumberAtLastTransfer;
-  }
-    
-  /**
-   * Get the first preference vote from this ballot
-   * 
-   * @design There must always be a first preference vote in each ballot,
-   * otherwise the vote is not included and need not be loaded.
-   * The quota is calculated from the number of first preference votes,
-   * so that empty ballots are not included.
-   * 
-   * @reference http://www.cev.ie/htm/tenders/pdf/1_2.pdf, section3, page 12
-   * @return The candidate ID of the first preference for this ballot
-   */ 
-  /*@ also public normal_behavior
-    @ requires 0 < numberOfPreferences;
-    @ ensures \result != NONTRANSFERABLE;
-    @ ensures \result == preferenceList[0];      
-    @*/
-  public /*@ pure @*/ int getFirstPreference() {
-    return preferenceList[0];
-  }
-    
-  /**
    * Load the ballot details.
    * 
    * @param list List of candidate IDs in order from first preference
@@ -376,27 +327,5 @@ public static final int NONTRANSFERABLE = 0;
   public /*@ pure @*/ int remainingPreferences(){
     return (numberOfPreferences - positionInList);
   }
-    
-  /**
-   * Compares with another ballot paper's secret random number.
-   * 
-   * @design It is intended to be able to compare random numbers without
-   * revealing the exact value of the random number, so that the random
-   * number cannot be manipulated in any way.
-   * 
-   * @param other Other ballot to compare to this ballot
-   * 
-   * @return <code>true</code> if other ballot has a lower random number                                                               
-   */
-  /*@ also 
-    @   public normal_behavior
-    @     requires this.randomNumber != other.randomNumber;
-    @     ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
-  */    
-  public /*@ pure @*/ boolean isAfter(final /*@ non_null @*/ Ballot other){
-    if(this.randomNumber > other.randomNumber ){
-      return true;
-    }
-    return false;
-  }
+ 
 }
