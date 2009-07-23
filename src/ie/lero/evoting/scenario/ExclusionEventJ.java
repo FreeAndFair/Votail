@@ -37,6 +37,13 @@ public class ExclusionEventJ extends TestCase {
 		ballotCounting.eliminateCandidate(lowestCandidate);
 		assertTrue (ballotCounting.isDepositSaved(lowestCandidate));
 		assertTrue (5 == ballotCounting.getContinuingCandidates());
+		final int secondLowest = ballotCounting.findLowestCandidate();
+		assertTrue (secondLowest != lowestCandidate);
+		ballotCounting.eliminateCandidate(secondLowest);
+		ballotCounting.count();
+		assertTrue (candidates[secondLowest].getStatus() == CandidateStatus.ELIMINATED);
+    assertTrue (candidates[lowestCandidate].getStatus() == CandidateStatus.ELIMINATED);
+
  	}
 
   //@ requires candidates != null;

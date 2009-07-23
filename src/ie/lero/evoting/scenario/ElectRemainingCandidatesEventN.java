@@ -12,10 +12,10 @@ public class ElectRemainingCandidatesEventN extends TestCase {
  	public void testEvent() {
  	 BallotCounting ballotCounting = new BallotCounting();
    Election election = new Election();
-   election.numberOfCandidates = 3;
+   election.numberOfCandidates = 4;
    election.numberOfSeatsInThisElection = 3;
    election.totalNumberOfSeats = 3;
-   Candidate[] candidates = Election.generateCandidates(3);
+   Candidate[] candidates = Election.generateCandidates(election.numberOfCandidates);
    election.setCandidateList(candidates);
    ballotCounting.setup(election);		
    BallotBox ballotBox = new BallotBox();

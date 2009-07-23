@@ -279,11 +279,9 @@ public class BallotCounting extends AbstractBallotCounting {
 				(ballots[b].getNextPreference(1) == toCandidateID)) {
 				 
 						ballots[b].transfer(countNumberValue);
-						ballotsMoved++;
-				 
+						ballotsMoved++;	 
 			}
 		}
-		//@ assert (numberOfVotes == ballotsMoved);
 	}
 
 	/**

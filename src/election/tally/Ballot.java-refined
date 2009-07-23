@@ -297,21 +297,4 @@ public class Ballot {
     @*/
   public /*@ pure @*/ int remainingPreferences();
   
-  /**
-   * Compares with another ballot paper's secret random number.
-   * 
-   * @design It is intended to be able to compare random numbers without
-   * revealing the exact value of the random number, so that the random
-   * number cannot be manipulated in any way.
-   * 
-   * @param other
-   *   Other ballot to compare with this ballot
-   *   
-   * @return <code>true</code> if other ballot has lower random number
-   */
-  /*@ public normal_behavior
-    @   requires this.randomNumber != other.randomNumber;
-    @   ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
-    @*/
-  public /*@ pure @*/ boolean isAfter (Ballot other);
 }

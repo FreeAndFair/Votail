@@ -34,11 +34,11 @@ public class QuotaCalculationEventA extends TestCase {
  		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);
 		BallotBox ballotBox = new BallotBox();
 		MockBallot ballot = new MockBallot();
-		for (int i = 0; i < 60000; i++) {
+		for (int i = 0; i < 50001; i++) {
 		  ballot.setFirstPreference(candidates[0].getCandidateID());
 		  ballotBox.accept(ballot);
 		}
-		for (int i = 0; i < 40000; i++) {
+		for (int i = 0; i < 49999; i++) {
 		  ballot.setFirstPreference(candidates[1].getCandidateID());
 		  ballotBox.accept(ballot);
 		}
@@ -55,6 +55,7 @@ public class QuotaCalculationEventA extends TestCase {
 		assertTrue (50001 == quota);
 		
 		ballotCounting.count();
+		assertTrue (quota == ballotCounting.getQuota());
 	}
 
 }
