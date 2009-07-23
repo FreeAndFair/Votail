@@ -104,7 +104,7 @@ public class Ballot {
    * @param countNumber The round of counting which we need to check
    * @return The candidate ID or the NONTRANSFERABLE constant
    */    
-  /*@ also public normal_behavior
+  /*@  public normal_behavior
     @ requires 0 <= countNumber;
     @ requires countNumber <= countNumberAtLastTransfer;
     @ requires countNumber < candidateIDAtCount.length;
@@ -121,7 +121,7 @@ public class Ballot {
    * 
    * @return The last count at which this ballot was transferred
    */    
-  /*@ also public normal_behavior
+  /*@  public normal_behavior
     @   ensures \result == countNumberAtLastTransfer;
     @
     @ public model pure int getCountNumberAtLastTransfer(){
@@ -140,7 +140,7 @@ public class Ballot {
    * @reference http://www.cev.ie/htm/tenders/pdf/1_2.pdf, section3, page 12
    * @return The candidate ID of the first preference for this ballot
    */ 
-  /*@ also public normal_behavior
+  /*@  public normal_behavior
     @ requires 0 < numberOfPreferences;
     @ ensures \result != NONTRANSFERABLE;
     @ ensures \result == preferenceList[0];      
@@ -161,7 +161,7 @@ public class Ballot {
    * 
    * @return <code>true</code> if other ballot has a lower random number                                                               
    */
-  /*@ also 
+  /*@  
     @   public normal_behavior
     @     requires this.randomNumber != other.randomNumber;
     @     ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
