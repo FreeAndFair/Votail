@@ -275,8 +275,8 @@ public static final int NONTRANSFERABLE = 0;
 
 		if (positionInList < numberOfPreferences) {
 			// Update ballot history
-			for (int r = countNumberAtLastTransfer; r < countNumber; r++) {
-				candidateIDAtCount [r] = getCandidateID(); //@ nowarn;
+			for (int r = countNumberAtLastTransfer; r <= countNumber; r++) {
+				candidateIDAtCount [r] = getCandidateID();
 			}
 	 		countNumberAtLastTransfer = countNumber;
  			positionInList++;

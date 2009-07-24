@@ -532,7 +532,7 @@ public AbstractBallotCounting(){
   @     ensures \result <==> (candidate.getTotalVote() >= getQuota());
   @*/
 public /*@ pure @*/ boolean hasQuota(final /*@ non_null @*/ Candidate candidate){
-	return (candidate.getTotalVote() >= getQuota()); //@ nowarn;
+	return (countBallotsFor(candidate.getCandidateID()) >= getQuota());
 }
 
 /**

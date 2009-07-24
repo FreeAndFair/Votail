@@ -315,15 +315,8 @@ private static int nextCandidateID = 1;
   @   ensures \result <==> ((other != null) &&
   @     (other.getCandidateID() == candidateID));
   @*/
-	public /*@ pure @*/ boolean sameAs(final Candidate other) {
-		boolean sameCandidate;
-		if (other == null) {
-			sameCandidate = false;
-		}
-		else {
-			sameCandidate = (other.getCandidateID() == this.candidateID);
-		}
-		return sameCandidate;
+	public /*@ pure @*/ boolean sameAs(/*@ non_null @*/ final Candidate other) {
+		return (other.getCandidateID() == this.candidateID);
 	}
 
 /**

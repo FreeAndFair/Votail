@@ -36,6 +36,8 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 		 ballotCounting.incrementCountNumber();
 		 ballotCounting.updateCountStatus(CountStatus.CANDIDATE_EXCLUDED);
 		 assertTrue(ballotCounting.getContinuingCandidates() == 3);
+		 int countState = ballotCounting.countStatus.getState();
+		 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	}
 
 }
