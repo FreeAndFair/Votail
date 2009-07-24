@@ -13,14 +13,11 @@ FIGSCALE = 0.5
 
 CORECP	= src:specs
 SPECS = ../../specs
-JARS = ../../infrastructure/jars
+JARS = /usr/local/JML/bin
 JMLCP	= $(JARS)/jmlruntime.jar:$(JARS)/jmljunitruntime.jar:$(JARS)/jml-release.jar:$(SPECS)
 JUNITCP	= $(JARS)/junit.jar
-JCECP	= $(JARS)/bcprov-jdk14-129.jar
-FOPCP	= $(JARS)/fop.jar
-MISCCP	= $(JARS)/avalon-framework-4.2.0.jar:$(JARS)/batik.jar
-CHECKSTYLECP	= $(JARS)/checkstyle-optional-4.3.jar:$(JARS)/checkstyle-all-4.3.jar
-ESCJAVA2CP = $(JARS)/esctools2.jar
+#CHECKSTYLECP	= $(JARS)/checkstyle-optional-4.3.jar:$(JARS)/checkstyle-all-4.3.jar
+#ESCJAVA2CP = $(JARS)/esctools2.jar
 
 # local variables for build process
 
@@ -39,10 +36,10 @@ jmlc_path =	jmlc_build
 jmlunit_path =	jmlunit_build
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
-ESCPATH = ../../../ESCJava2
-escjava = $(ESCPATH)/Escjava/escj -source 1.4 -vclimit 2500000
-export ESCTOOLS_ROOT=$(ESCPATH)
-export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx
+#ESCPATH = ../../../ESCJava2
+#escjava = $(ESCPATH)/Escjava/escj -source 1.4 -vclimit 2500000
+#export ESCTOOLS_ROOT=$(ESCPATH)
+#export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx
 
 # Various CLASSPATH constructions
 
@@ -50,15 +47,15 @@ BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
 JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(BASE_CLASSPATH)
-ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(ESCJAVA2CP)
-UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
-CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
+#ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(ESCJAVA2CP)
+UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(buildpath):$(JUNITCP):$(JMLCP)
+#CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
-javapat	=	$(srcpath)/ie/koa/*.java
-javafiles =	$(wildcard $(srcpath)/ie/koa/*.java)
-jmlunitpat =	$(jmlunit_path)/ie/koa/*java
-jmlunitfiles =	$(wildcard $(jmlunit_path)/ie/koa/*.java)
-generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/ie/koa/*_JML_Test.java)
+javapat	=	$(srcpath)/election/tally/*.java
+javafiles =	$(wildcard $(srcpath)/election/tally/*.java)
+jmlunitpat =	$(jmlunit_path)/election/tally/*java
+jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
+generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
 classfiles =	$(foreach javafile,$(javafiles),\
 		$(subst .java,.class,$(javafile)))
 javadocflags =	-version -author -private -source 1.4
@@ -125,11 +122,11 @@ copyright = "Votail<br />&copy; 2006-7 Systems Research Group and University Col
 
 # targets
 
-all:	build source_docs test escjava distr
+all:	build source_docs test distr
 
 build:	classes jml jmlc jmlunit_classes
 
-escjava:	escjava2-typecheck escjava2
+#escjava:	escjava2-typecheck escjava2
 
 test:	jmlrac-tests
 
@@ -200,7 +197,7 @@ jmlunit.stamp:	$(javafiles)
 	$(jmlunit) --destination $(jmlunit_path) \
 		--sourcepath $(specpath):$(srcpath) \
 		--package --source 1.4 \
-		--testLevel=2 $(srcpath)/ie/koa && \
+		--testLevel=2 $(srcpath)/election/tally && \
 	touch jmlunit.stamp
 
 jmlunit_classes:	jmlunit jmlunit_classes.stamp
@@ -213,52 +210,52 @@ jmlunit_classes.stamp:	$(jmlunitfiles)
 
 # targets related to checking software
 
-escjava2-typecheck:	escjava2-typecheck.stamp
+#escjava2-typecheck:	escjava2-typecheck.stamp
+#
+#escjava2-typecheck.stamp:	$(javafiles)
+#	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
+#	$(escjava) -typecheck $(javapat) && \
+#	touch escjava2-typecheck.stamp
+#
+#escjava2:	escjava2.stamp
+#
+#escjava2.stamp:	$(javafiles)
+#	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
+#	$(escjava) $(javapat) && \
+#	touch escjava2.stamp
+#
+#escjava2-current:
+#	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
+#	$(escjava) -bootclasspath $(BOOTCP) \
+#		election/tally/BallotCounting.java
+#
+#escjava2-core:
+#	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
+#	$(escjava) -bootclasspath $(BOOTCP) \
+#		election/tally/BallotCounting.java \
+#		election/tally/Ballot.java \
+#		election/tally/Candidate.java
 
-escjava2-typecheck.stamp:	$(javafiles)
-	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
-	$(escjava) -typecheck $(javapat) && \
-	touch escjava2-typecheck.stamp
-
-escjava2:	escjava2.stamp
-
-escjava2.stamp:	$(javafiles)
-	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
-	$(escjava) $(javapat) && \
-	touch escjava2.stamp
-
-escjava2-current:
-	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
-	$(escjava) -bootclasspath $(BOOTCP) \
-		ie/koa/ElectionAlgorithm.java
-
-escjava2-core:
-	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
-	$(escjava) -bootclasspath $(BOOTCP) \
-		ie/koa/ElectionAlgorithm.java \
-		ie/koa/Ballot.java \
-		ie/koa/Candidate.java
-
-checkstyle.stamp:
-	export CLASSPATH=$(CHECKSTYLE_CLASSPATH); \
-	java com.puppycrawl.tools.checkstyle.Main \
-		-c srg-group.xml $(core_javafiles)
-
-checkstyle:	checkstyle.stamp
+#checkstyle.stamp:
+#	export CLASSPATH=$(CHECKSTYLE_CLASSPATH); \
+#	java com.puppycrawl.tools.checkstyle.Main \
+#		-c srg-group.xml $(core_javafiles)
+#
+#checkstyle:	checkstyle.stamp
 
 # executing the program
 
 main: classes
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
-	java $(main_memory_use) plugin.votail.src.ie.koa.ElectionAlgorithm
+	java $(main_memory_use) election.tally.BallotCounting
 
 main-jmlrac: jmlc
 	export CLASSPATH=$(JMLC_CLASSPATH);\
-	jmlrac $(rac_memory_use) plugin.votail.src.ie.koa.ElectionAlgorithm
+	jmlrac $(rac_memory_use) election.tally.BallotCounting
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jml-junit $(test_memory_use) plugin.votail.test.ie.koa.ElectionAlgorithm_JML_Test
+	jml-junit $(test_memory_use) plugin.votail.test.ie.koa.BallotCounting_JML_Test
 
 jmlrac-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
@@ -266,11 +263,11 @@ jmlrac-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	jmlrac $(test_memory_use) plugin.votail.test.ie.koa.Candidate_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) plugin.votail.test.ie.koa.ElectionAlgorithm_JML_Test
+	jmlrac $(test_memory_use) plugin.votail.test.ie.koa.BallotCounting_JML_Test
 
 jmlrac-tests-current:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) plugin.votail.src.ie.koa.
+	jmlrac $(test_memory_use) election.tally.
 
 # generating source-based documentation
 
@@ -278,27 +275,27 @@ source_docs:	javadoc jmldoc
 
 javadoc:	javadoc.stamp
 
-javadoc.stamp:	$(javafiles) $(srcpath)/ie/koa/package.html $(basedocdir)/overview.html
+javadoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/overview.html
 	mkdir -p $(javadocdir); \
 	export CLASSPATH=$(BASE_CLASSPATH);\
 	$(javadoc) -d $(javadocdir) $(javadocflags) \
 	-sourcepath .:$(srcpath):$(jdksrcpath) \
 	-overview $(basedocdir)/overview.html \
-	-doctitle "Votail: A KOA plugin for the Irish Election System" \
+	-doctitle "Votail: ballot counting for the Irish Election System" \
 	-header $(copyright) \
 	-footer $(copyright) \
-	-subpackages ie.koa; \
+	-subpackages election.tally; \
 	touch javadoc.stamp
 
 jmldoc:		jmldoc.stamp
 
-jmldoc.stamp:	$(javafiles) $(srcpath)/ie/koa/package.html $(basedocdir)/overview.html
+jmldoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/overview.html
 	mkdir -p $(jmldocdir); \
 	export CLASSPATH=$(BASE_CLASSPATH);\
 	$(jmldoc) -d $(jmldocdir) $(jmldocflags) \
 	-sourcepath .:$(srcpath):$(jdksrcpath) \
 	-overview $(basedocdir)/overview.html \
-	-doctitle "Votail: A KOA plugin the Irish Election System" \
+	-doctitle "Votail: ballot counting for the Irish Election System" \
 	-header $(copyright) \
 	-footer $(copyright) \
 	ie.koa;
@@ -321,11 +318,11 @@ distr.stamp: classes clean_distr
 src_distr: src_distr.stamp 
 
 src_distr.stamp: distr clean_src_distr
-	mkdir -p distr/koa/src/ie/koa
+	mkdir -p distr/koa/src/election/tally
 	mkdir -p distr/koa/doc/javadocs
 	mkdir -p distr/koa/doc/jmldocs
-	cp src/ie/koa/*.java distr/koa/src/sos/koa
-	cp src/ie/koa/*.html distr/koa/src/sos/koa
+	cp src/election/tally/*.java distr/koa/src/sos/koa
+	cp src/election/tally/*.html distr/koa/src/sos/koa
 	cp -r doc/javadocs/* distr/koa/doc/javadocs
 	cp -r doc/jmldocs/* distr/koa/doc/jmldocs
 	cp doc/koa.css distr/koa/doc 
@@ -352,7 +349,7 @@ src_distr.stamp: distr clean_src_distr
 	cd distr; echo '' >> $(readme_file)
 	cd distr; echo 'The sources:' >> $(readme_file)
 	cd distr; echo '----' >> $(readme_file)
-	cd distr; unzip -l votail.zip |grep 'src'|grep 'ie/koa' |grep -v 'java'|grep -v 'html' >> $(readme_file)
+	cd distr; unzip -l votail.zip |grep 'src'|grep 'election/tally' |grep -v 'java'|grep -v 'html' >> $(readme_file)
 	cd distr; unzip -l votail.zip |grep 'src'|grep 'lib' >> $(readme_file)
 	cat README.footer >> distr/$(readme_file)
 	cd distr; zip -r votail.zip $(readme_file)
