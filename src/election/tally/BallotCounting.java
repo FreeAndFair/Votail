@@ -238,15 +238,6 @@ public class BallotCounting extends AbstractBallotCounting {
 				}
 			}
 			
-			// Even if no surplus then elect any candidate with a full quota
-			for (int c = 0; c < totalNumberOfCandidates; c++) {
-				if (hasQuota(candidates[c]) && !isElected(candidates[c])) {
-					countStatus.changeState(CountStatus.CANDIDATES_HAVE_QUOTA);
-					electCandidate(c);
-					countStatus.changeState(CountStatus.CANDIDATE_ELECTED);
-				}
-			}
-			
 			// Exclusion of lowest continuing candidate if no surplus
 			if (getNumberContinuing() > totalRemainingSeats && 
 					countNumberValue < Candidate.MAXCOUNT) {

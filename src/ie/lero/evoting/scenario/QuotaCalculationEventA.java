@@ -22,12 +22,13 @@ public class QuotaCalculationEventA extends TestCase {
 	public void testCalculateQuota () {
 	  BallotCounting ballotCounting = new BallotCounting();
 	  Election parameters = new Election();
-	  parameters.numberOfCandidates = 2;
+	  parameters.numberOfCandidates = 3;
 	  parameters.numberOfSeatsInThisElection = 1;
 	  parameters.totalNumberOfSeats = 1;
 	  Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
 	  candidates[0] = new Candidate();
 	  candidates[1] = new Candidate();
+	  candidates[2] = new Candidate();
 	  parameters.setCandidateList(candidates);
 	  ballotCounting.setup(parameters);
 	  
@@ -47,6 +48,9 @@ public class QuotaCalculationEventA extends TestCase {
 		
 		ballotCounting.calculateFirstPreferences();
 		ballotCounting.calculateSurpluses();
+		int countState = ballotCounting.countStatus.getState();
+	 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+	 	
 		assertTrue (ballotCounting.getRemainingSeats() == 1);
 		
 		assertTrue (ballotBox.size() == 100000);
@@ -54,8 +58,17 @@ public class QuotaCalculationEventA extends TestCase {
 		int quota = ballotCounting.getQuota();
 		assertTrue (50001 == quota);
 		
+		// Candidate 0 has the full quota but no surplus
+		assertTrue (quota == 
+			ballotCounting.countBallotsFor(candidates[0].getCandidateID()));
+		assertTrue (ballotCounting.getTotalNumberOfSurpluses() == 0);
+		assertTrue (ballotCounting.getTotalSumOfSurpluses() == 0);
+		
 		ballotCounting.count();
 		assertTrue (quota == ballotCounting.getQuota());
+		countState = ballotCounting.countStatus.getState();
+	 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+	 	assertTrue (candidates[0].isElected());
 	}
 
 }

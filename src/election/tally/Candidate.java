@@ -166,9 +166,7 @@ private static int nextCandidateID = 1;
 		
  		for (int i = 0; i <= lastCountNumber; i++) {
  		  final int votesAddedThisRound = votesAdded[i];
-      if (0 < votesAddedThisRound) {
-			  originalVote += votesAddedThisRound;
- 		  }
+ 			  originalVote += votesAddedThisRound;
 		}
  		 
 		return originalVote;
