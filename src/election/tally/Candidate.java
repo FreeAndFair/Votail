@@ -29,10 +29,6 @@ public static final int MAX_CANDIDATES = 50;
 /** Identifier for the candidate.
  */
 /*@ public invariant 0 <= candidateID;
-  @ public invariant 0 < candidateID;
-  @ public invariant (\forall Candidate a, b;
-  @   a != null && b != null;
-  @   (a.candidateID == b.candidateID) <==> (a.equals(b)));
   @ public constraint candidateID == \old(candidateID);
   @*/
 	protected transient /*@ spec_public @*/ int candidateID;
@@ -222,9 +218,10 @@ private static int nextCandidateID = 1;
 /*@  
   @   public normal_behavior
   @   requires state == CONTINUING;
-  @   requires lastCountNumber < count;
+  @   requires lastCountNumber < count || 
+  @            (lastCountNumber == 0 && count == 0);
   @   requires votesAdded[count] == 0;
-  @   requires 0 < count & count < MAXCOUNT;
+  @   requires 0 <= count && count < MAXCOUNT;
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesAdded[count], lastSetCount;
   @   ensures votesAdded[count] == numberOfVotes;
@@ -235,7 +232,7 @@ private static int nextCandidateID = 1;
        votesAdded[count] = numberOfVotes;
        lastCountNumber = count;
        lastSetCount = count;
-  } //@ nowarn;
+  }
 
 /**
  * Removes a number of votes from a candidates ballot stack.

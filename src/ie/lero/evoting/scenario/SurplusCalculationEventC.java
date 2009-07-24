@@ -39,6 +39,10 @@ public class SurplusCalculationEventC extends TestCase{
 		}
 
 		final int numberOfVotes = 10000;
+		//@ assert candidates[0].state == Candidate.CONTINUING;
+		//@ assert candidates[0].lastCountNumber < 0;
+		//@ assert candidates[0].votesAdded[0] == 0;
+ 		//@ assert 0 <= numberOfVotes;
 		candidates[0].addVote(numberOfVotes, 0);
 		
 		for (int b = 0; b < numberOfVotes && 
@@ -46,7 +50,7 @@ public class SurplusCalculationEventC extends TestCase{
 				MockBallot testBallot = new MockBallot();
 				testBallot.setMultiplePreferences(candidateIDList);
 				ballotBox.accept(testBallot);
-			  assertTrue (0 < testBallot.getBallotID());
+			    assertTrue (0 < testBallot.getBallotID());
 		}
 	 	parameters.setCandidateList(candidates);
 	}
