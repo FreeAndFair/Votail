@@ -134,9 +134,9 @@ public class BallotCounting extends AbstractBallotCounting {
         if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
           final int numberOfTransfers = getActualTransfers(candidates[winner], candidates[i])
               + getRoundedFractionalValue(candidates[winner],candidates[i]);
-          if (0 <= numberOfTransfers) {
+          
             transferVotes(candidates[winner], candidates[i], numberOfTransfers);
-          }
+          
         }
 
       }
@@ -300,8 +300,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	//@ assignable countNumberValue;
 	//@ ensures \old(countNumberValue) + 1 == countNumberValue;
 	public void incrementCountNumber() {
-		countNumberValue++;
-		
+		countNumberValue++;		
 	}
 
 	//@ ensures totalRemainingSeats == \result;
