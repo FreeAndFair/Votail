@@ -58,8 +58,8 @@ jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
 classfiles =	$(foreach javafile,$(javafiles),\
 		$(subst .java,.class,$(javafile)))
-javadocflags =	-version -author -private -source 1.4
-jmldocflags =	-version -author -private --source 1.4
+javadocflags =	-version -author -private -source 1.5
+jmldocflags =	-version -author -private --source 1.5
 javadocdir =	$(basedocdir)/javadocs
 jmldocdir =	$(basedocdir)/jmldocs
 
@@ -67,7 +67,7 @@ main_memory_use =	-ms256M -mx256M
 rac_memory_use =	-ms256M -mx320M
 test_memory_use	=	-ms256M -mx320M
 
-copyright = "Votail<br />&copy; 2006-7 Systems Research Group and University College Dublin<br />All Rights Reserved"
+copyright = "Votail<br />&copy; 2006-9 Systems Research Group and University College Dublin<br />All Rights Reserved"
 
 # implicit rules for paper documentation generation
 
@@ -255,15 +255,15 @@ main-jmlrac: jmlc
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jml-junit $(test_memory_use) plugin.votail.test.ie.koa.BallotCounting_JML_Test
+	jml-junit $(test_memory_use) .election.tally.BallotCounting_JML_Test
 
 jmlrac-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) plugin.votail.test.ie.koa.Ballot_JML_Test
+	jmlrac $(test_memory_use) .election.tally.Ballot_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) plugin.votail.test.ie.koa.Candidate_JML_Test
+	jmlrac $(test_memory_use) .election.tally.Candidate_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) plugin.votail.test.ie.koa.BallotCounting_JML_Test
+	jmlrac $(test_memory_use) .election.tally.BallotCounting_JML_Test
 
 jmlrac-tests-current:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
@@ -298,7 +298,7 @@ jmldoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/
 	-doctitle "Votail: ballot counting for the Irish Election System" \
 	-header $(copyright) \
 	-footer $(copyright) \
-	ie.koa;
+	election.tally;
 	touch jmldoc.stamp
 
 distr: distr.stamp
