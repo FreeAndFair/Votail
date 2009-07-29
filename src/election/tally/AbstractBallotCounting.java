@@ -527,8 +527,10 @@ public AbstractBallotCounting(){
  */
 /*@ also
   @   public normal_behavior
-  @     requires candidate != null;
   @     requires 0 <= countNumber;
+  @     requires ballotsToCount != null;
+  @     requires (\forall int index; 0 <= index && index < totalVotes;
+  @          ballotsToCount[index] != null); 
   @     ensures \result <==> (candidate.getTotalVote() >= getQuota());
   @*/
 public /*@ pure @*/ boolean hasQuota(final /*@ non_null @*/ Candidate candidate){
@@ -830,11 +832,9 @@ public /*@ pure @*/ int countBallotsFor(int candidateID) {
  * @return Number of votes potentially transferable from this candidate to that candidate
  */
 /*@ also
-  @     requires state == COUNTING;
-  @     requires 0 < toCandidateID;
-  @     requires toCandidateID != Ballot.NONTRANSFERABLE;
   @     requires ballotsToCount != null;
-  @     requires (\forall int b; 0 <= b && b < totalVotes; ballotsToCount[b] != null);
+  @     requires (\forall int b; 0 <= b && b < totalVotes; 
+  @         ballotsToCount[b] != null);
   @     ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
   @       (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
   @       (getNextContinuingPreference(ballotsToCount[j]) == toCandidateID));
@@ -843,7 +843,7 @@ public /*@ pure @*/ int countBallotsFor(int candidateID) {
 	  final Candidate fromCandidate, final int toCandidateID) {
 		int numberOfBallots = 0;
  		for (int j = 0; j < totalNumberOfVotes; j++) {
-			if (ballots[j].isAssignedTo(fromCandidate.getCandidateID()) && //@ nowarn;
+			if (ballots[j].isAssignedTo(fromCandidate.getCandidateID()) &&
 			    (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
 					numberOfBallots++;
 				}
@@ -924,7 +924,7 @@ public /*@ pure @*/ byte getStatus(){
 			}
 		}
 		return false;
-	} //@ nowarn;
+	}
 
 /**
  * Determine actual number of votes to transfer to this candidate
@@ -938,10 +938,13 @@ public /*@ pure @*/ byte getStatus(){
  */
 /*@ also
   @   protected normal_behavior
-  @   requires (state == COUNTING);
+  @
   @   requires isElected (fromCandidate) || 
   @            (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
   @   requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
+  @   requires ballotsToCount != null;
+  @     requires (\forall int b; 0 <= b && b < totalVotes; 
+  @         ballotsToCount[b] != null);
   @   ensures (isElected (fromCandidate) &&
   @     (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate)))
   @     ==>
@@ -1163,7 +1166,7 @@ protected /*@ pure spec_public @*/ int getTransferRemainder(
 			count--;
 		}
 		
-		return secondCandidate.isAfter(firstCandidate); //@ nowarn;
+		return secondCandidate.isAfter(firstCandidate);
 	} //@ nowarn;
 
 /**
@@ -1473,6 +1476,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	/*@ requires ballot.countNumberAtLastTransfer <= countNumberValue;
 	  @ assignable ballot.countNumberAtLastTransfer;
 	  @ assignable ballot.positionInList;
+	  @ assignable ballot.candidateIDAtCount[*];
 	  @*/
 	public void transferBallot(/*@ non_null @*/ Ballot ballot) {
 		 

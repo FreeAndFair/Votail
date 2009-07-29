@@ -166,8 +166,8 @@ public class Ballot {
     @     requires this.randomNumber != other.randomNumber;
     @     ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
     @   
-    @ public model pure boolean isAfter(final non_null Ballot other){
-    @     if(this.randomNumber > other.randomNumber ){
+    @ public model pure boolean isAfter (final non_null Ballot other){
+    @     if (this.randomNumber > other.randomNumber) {
     @         return true;
     @     }
     @     return false;
