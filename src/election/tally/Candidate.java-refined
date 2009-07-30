@@ -331,4 +331,12 @@ public class Candidate extends CandidateStatus {
     @   ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
     @*/
   public /*@ pure @*/ boolean isAfter(Candidate other);
+  
+  /**
+   * Maximum possible number of counts
+   * 
+   * @design This value is not set by the legislation; it is chosen so that
+   * fixed length arrays can be used in the specification.  
+   */	
+  	public static final int MAXCOUNT = 100;
 }

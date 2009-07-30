@@ -87,10 +87,6 @@ public static final int NONTRANSFERABLE = 0;
 	
   /** Ballot ID number */
   //@ public invariant (ballotID == 0) || (0 < ballotID);
-  /*@ public instance invariant (\forall Ballot a,b;
-    @                                    a != null && b != null && 0 < a.ballotID && 0 < b.ballotID;
-    @                                    a.ballotID == b.ballotID <==> a==b);
-    @*/
   protected /*@ spec_public @*/ int ballotID;
 	 
   /** Preference list of candidate IDs */	

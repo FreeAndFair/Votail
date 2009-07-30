@@ -235,9 +235,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public model int sumOfSurpluses;
   //@ public invariant 0 <= sumOfSurpluses;
   //@ public invariant sumOfSurpluses <= totalVotes;
-  /*@ invariant (state == COUNTING) ==> sumOfSurpluses == (\sum int i; 0 <= i && 
-	@   i < totalCandidates; getSurplus(candidateList[i])); 
-	@*/
+  //@ invariant (state == COUNTING) ==> sumOfSurpluses == getSumOfSurpluses();
+	
+  /*@ ensures \result == (\sum int i; 0 <= i && 
+	@   i < totalCandidates; getSurplus(candidateList[i]));
+    @
+    @ public pure model int getSumOfSurpluses() {
+    @    int sum = 0;
+    @    for (int i=0; i < totalCandidates; i++) {
+    @       sum += getSurplus(candidateList[i]);   
+    @    }
+    @    return sum;
+    @ }
+    @*/
 	    
   /** Number of seats which remain to be filled */
   //@ public model int remainingSeats; 
@@ -303,11 +313,25 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant 0 <= sumOfOtherContinuingVotes;
   //@ public invariant sumOfOtherContinuingVotes <= totalVotes;
   /*@ invariant (state == COUNTING) ==> sumOfOtherContinuingVotes ==
-	@   (\sum int i; 0 <= i && i < totalCandidates && 
-	@   candidateList[i].getStatus() == Candidate.CONTINUING 
-	@   && candidateList[i].getTotalVote() < highestContinuingVote; 
-	@   candidateList[i].getTotalVote());
+	@     votesForOtherContinuingCandidates();
 	@*/
+	
+   /*@ ensures \result == (\sum int i; 0 <= i && i < totalCandidates &&
+	 @     candidateList[i].getStatus() == CandidateStatus.CONTINUING
+	 @     && candidateList[i].getTotalVote() < highestContinuingVote;
+	 @     candidateList[i].getTotalVote());
+     @
+     @ public pure model int votesForOtherContinuingCandidates() {
+     @    int sum = 0;
+     @    for (int i=0; i < totalCandidates; i++) {
+     @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING
+	 @            && candidateList[i].getTotalVote() < highestContinuingVote) {
+     @                sum += candidateList[i].getTotalVote();
+     @        }
+     @    } 
+     @    return sum;
+     @ }
+     @*/
 	
   /** Number of candidates with equal highest continuing votes */
   //@ public model int numberOfEqualHighestContinuing;
@@ -465,11 +489,22 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   /** @see requirement 2, section 3, item 3, page 12 */
   /*@
-    @ ensures totalVotes == nonTransferableVotes + 
-    @   (\sum int i; 0 <= i && i < totalCandidates; 
-    @   candidateList[i].getTotalVote());
+    @ ensures totalVotes == getNumberOfBallots();
     @*/
     public abstract void distributeSurplus(int candidateWithSurplus);
+    
+    /*@ ensures \result == nonTransferableVotes + 
+      @   (\sum int i; 0 <= i && i < totalCandidates; 
+      @   candidateList[i].getTotalVote());
+      @
+      @ public model pure int getNumberOfBallots() {
+      @    int total = nonTransferableVotes;
+      @    for (int i = 0; i < totalCandidates; i++) {
+      @        total += candidateList[i].getTotalVote();
+      @    }
+      @    return total;
+      @ }
+      @*/
 	
   /**
    * Set up candidate details and number of seats
@@ -569,11 +604,26 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return Number of votes potentially transferable from this candidate
    */
   /*@ requires (state == COUNTING);
-    @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
-    @   getPotentialTransfers (fromCandidate, candidateList[i].getCandidateID()));
+    @ ensures \result == getSumOfTransfers(fromCandidate);
     @*/
   protected /*@ pure spec_public @*/ int getTotalTransferableVotes (
 		  /*@ non_null @*/ Candidate fromCandidate); 
+		  
+		  
+  /*@
+    @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
+    @   getPotentialTransfers (fromCandidate, 
+    @   candidateList[i].getCandidateID()));
+    @ 
+    @ public model pure int getSumOfTransfers(non_null Candidate fromCandidate) {
+    @   int sum = 0;
+    @   for (int i=0; i < totalCandidates; i++) {
+    @    sum += getPotentialTransfers (fromCandidate, 
+    @        candidateList[i].getCandidateID());
+    @    }
+    @   return sum;
+    @ }
+    @*/
   
   /**
    * Gets the next preference continuing candidate.
@@ -696,25 +746,53 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ requires state == COUNTING;
     @ requires isElected (fromCandidate); 
     @ requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
-    @ requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
-    @ ensures \result == (\num_of int i; i <= 0 && i < totalCandidates &&
-    @   candidateList[i].getCandidateID() != toCandidate.getCandidateID() &&
-    @   candidateList[i].getStatus() == election.tally.Candidate.CONTINUING;
-    @   (getTransferRemainder(fromCandidate, candidateList[i]) > 
-    @      getTransferRemainder(fromCandidate, toCandidate)) ||
-    @   ((getTransferRemainder(fromCandidate, candidateList[i]) == 
-    @      getTransferRemainder(fromCandidate, toCandidate)) &&
-    @   (getActualTransfers(fromCandidate, candidateList[i]) >
-    @   getActualTransfers(fromCandidate, toCandidate))) ||
-    @   ((((getTransferRemainder(fromCandidate, candidateList[i]) == 
-    @      getTransferRemainder(fromCandidate, toCandidate)) &&
-    @   (getActualTransfers(fromCandidate, candidateList[i]) ==
-    @   getActualTransfers(fromCandidate, toCandidate)))) &&
-    @   isHigherThan (candidateList[i], toCandidate)));
+    @ requires getSurplus(fromCandidate) < 
+    @     getTotalTransferableVotes(fromCandidate);
+    @ ensures \result == getCandidateRanking (fromCandidate, toCandidate);
     @*/
   protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder (
 		  /*@ non_null @*/ Candidate fromCandidate, 
 		  /*@ non_null @*/ Candidate toCandidate);
+		  
+ /*@ ensures \result == (\num_of int i; i <= 0 && i < totalCandidates &&
+   @   candidateList[i].getCandidateID() != toCandidate.getCandidateID() &&
+   @   candidateList[i].getStatus() == election.tally.Candidate.CONTINUING;
+   @   (getTransferRemainder(fromCandidate, candidateList[i]) > 
+   @      getTransferRemainder(fromCandidate, toCandidate)) ||
+   @   ((getTransferRemainder(fromCandidate, candidateList[i]) == 
+   @      getTransferRemainder(fromCandidate, toCandidate)) &&
+   @   (getActualTransfers(fromCandidate, candidateList[i]) >
+   @   getActualTransfers(fromCandidate, toCandidate))) ||
+   @   ((((getTransferRemainder(fromCandidate, candidateList[i]) == 
+   @      getTransferRemainder(fromCandidate, toCandidate)) &&
+   @   (getActualTransfers(fromCandidate, candidateList[i]) ==
+   @   getActualTransfers(fromCandidate, toCandidate)))) &&
+   @   isHigherThan (candidateList[i], toCandidate)));
+   @
+   @ public pure model int getCandidateRanking (
+   @    Candidate fromCandidate, Candidate toCandidate) {
+   @    int counter = 0;
+   @	for (int i=0; i < totalCandidates; i++) {
+   @        if (candidateList[i].getCandidateID() != 
+   @           toCandidate.getCandidateID() &&
+   @   candidateList[i].getStatus() == election.tally.Candidate.CONTINUING &&
+   @   (getTransferRemainder(fromCandidate, candidateList[i]) > 
+   @      getTransferRemainder(fromCandidate, toCandidate)) ||
+   @   ((getTransferRemainder(fromCandidate, candidateList[i]) == 
+   @      getTransferRemainder(fromCandidate, toCandidate)) &&
+   @   (getActualTransfers(fromCandidate, candidateList[i]) >
+   @   getActualTransfers(fromCandidate, toCandidate))) ||
+   @   ((((getTransferRemainder(fromCandidate, candidateList[i]) == 
+   @      getTransferRemainder(fromCandidate, toCandidate)) &&
+   @   (getActualTransfers(fromCandidate, candidateList[i]) ==
+   @   getActualTransfers(fromCandidate, toCandidate)))) &&
+   @   isHigherThan (candidateList[i], toCandidate))) {
+   @            counter++;
+   @        }
+   @    }
+   @    return counter;
+   @ }
+   @*/
   
   /**
    * Determine if one continuing candidate is higher than another, for the purpose
@@ -831,12 +909,39 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires isElected (fromCandidate); 
     @   requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
     @   ensures \result == getSurplus (fromCandidate) - 
-    @     (\sum int i; 0 <= i && i < totalCandidates &&
-    @     candidateList[i].getStatus() == Candidate.CONTINUING;
-    @     getActualTransfers (fromCandidate, candidateList[i]));
+    @        sumOfTransfers (fromCandidate);
     @*/
   protected /*@ pure spec_public @*/ int getTransferShortfall (
 		  /*@ non_null @*/ Candidate fromCandidate);
+		  
+  /*@ ensures \result == (\sum int i; 0 <= i && i < totalCandidates &&
+    @     candidateList[i].getStatus() == CandidateStatus.CONTINUING;
+    @     getActualTransfers (fromCandidate, candidateList[i]));
+    @
+    @ public pure model int sumOfTransfers (Candidate fromCandidate) {
+    @     int sum = 0;
+    @     for (int i=0; i < totalCandidates; i++) {
+    @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
+    @            sum += getActualTransfers (fromCandidate, candidateList[i]);
+    @        } 
+    @     }
+    @     return sum;
+    @ } 
+    @*/
+    
+  /*@ ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
+    @       getPotentialTransfers (fromCandidate, 
+    @       candidateList[i].getCandidateID()));
+    @
+    @ public pure model int numberTransferable (Candidate fromCandidate) {
+    @     int sum = 0;
+    @     for (int i = 0; i < totalCandidates; i++) {
+ 	@	     sum += getPotentialTransfers(
+ 	@			fromCandidate, candidateList[i].getCandidateID());
+ 	@	  }
+    @     return sum;
+    @ } 
+    @*/
   
   /**
    * Determine if a candidate ID belongs to a continuing candidate.
@@ -903,12 +1008,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @
     @ protected pure model int getOrder(non_null Candidate candidate) {
     @     int order = 1;
-	  @     for (int c = 0; c < totalCandidates; c++) {
-	  @	      if (candidateList[c].isAfter(candidate)) {
-	  @		      order++;
-	  @	      }
-	  @     }
-	  @     return order;
+	@     for (int c = 0; c < totalCandidates; c++) {
+	@	      if (candidateList[c].isAfter(candidate)) {
+	@		      order++;
+	@	      }
+	@     }
+	@     return order;
     @ }
     @*/
   

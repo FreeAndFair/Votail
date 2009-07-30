@@ -15,13 +15,27 @@ public class BallotBox {
   /**
    * @constraint No two ballot IDs in a ballot box are the same.
    */
-  /*@ public invariant (\forall int i, j;
+  /*@ public invariant uniqueness();
+    @*/
+  protected /*@ spec_public non_null @*/ Ballot[] ballots;
+  
+  /*@ ensures \result <==> (\forall int i, j;
     @                   0 <= i & i < numberOfBallots &
     @                   0 <= j & j < numberOfBallots &
     @                   i != j;
     @                   ballots[i].ballotID != ballots[j].ballotID);
+    @
+    @ public model pure boolean uniqueness() {
+    @     for (int i=0; i < numberOfBallots; i++) {
+    @         for (int j=0; j < numberOfBallots; j++) {
+    @             if (i != j && ballots[i].ballotID == ballots[j].ballotID) {
+    @                 return false;
+    @             }
+    @         }
+    @      }
+    @      return true;
+    @ }
     @*/
-  protected /*@ spec_public non_null @*/ Ballot[] ballots;
     
   /**
    * @return the number of ballots in this ballot box.

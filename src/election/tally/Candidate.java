@@ -78,20 +78,16 @@ public static final int MAX_CANDIDATES = 50;
 /**
  * Unique random number used to simulate drawing of lots between candidates.
  */
-/*@ public invariant (\forall Candidate a, b;
-  @   a != null && b != null;
-  @   (a.randomNumber == b.randomNumber) <==> (a.candidateID == b.candidateID));
-  @*/
   protected transient /*@ spec_public @*/ int randomNumber;
   //@ ghost int _randomNumber;
 	
-/**
- * Maximum possible number of counts
- * 
- * @design This value is not set by the legislation; it is chosen so that
- * fixed length arrays can be used in the specification.  
- */	
-	public static final int MAXCOUNT = 100;
+  /**
+   * Maximum possible number of counts
+   * 
+   * @design This value is not set by the legislation; it is chosen so that
+   * fixed length arrays can be used in the specification.  
+   */	
+  	public static final int MAXCOUNT = 100;
 	
 /**
  * Total number of votes this candidate has at any time 
@@ -132,8 +128,7 @@ private static int nextCandidateID = 1;
  * @return Net total of votes received
  */	
 /*@ public normal_behavior
-  @   ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
-  @     ((votesAdded[i]) - (votesRemoved[i])));
+  @   ensures \result == sumOfRetainedVotes();
   @*/
 	public /*@ pure @*/ int getTotalVote() {
 		int totalVote = 0;
@@ -143,7 +138,36 @@ private static int nextCandidateID = 1;
 		}
  		
 		return totalVote;
-	} //@ nowarn Post;
+	}
+	
+/*@ ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
+  @     ((votesAdded[i]) - (votesRemoved[i])));
+  @
+  @ public pure model int sumOfRetainedVotes() {
+  @     int sum = 0;
+  @
+  @     for (int i = 0; i <= lastCountNumber; i++) {
+  @		   sum += votesAdded[i];
+  @        sum -= votesRemoved[i];
+  @		}
+  @
+  @     return sum;
+  @ }
+  @*/
+	
+	/*@ ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
+	  @     (votesAdded[i]));
+	  @
+	  @ public pure model int sumOfAllVotes() {
+	  @     int sum = 0;
+	  @
+	  @     for (int i = 0; i <= lastCountNumber; i++) {
+	  @		   sum += votesAdded[i];
+	  @		}
+	  @
+	  @     return sum;
+	  @ }
+	  @*/
   	
 /**
  * Original number of votes received by this candidate before
@@ -151,18 +175,15 @@ private static int nextCandidateID = 1;
  * 
  * @return Gross total of votes received 
  */	
-/*@ 
-  @   public normal_behavior
-  @   ensures \result == (\sum int i; 0 <= i && i <=lastCountNumber;
-  @     votesAdded[i]); 
+/*@ public normal_behavior
+  @   ensures \result == sumOfAllVotes();
   @   ensures 0 <= \result;
   @*/
 	public /*@ pure @*/ int getOriginalVote() {
 		int originalVote = 0;
 		
  		for (int i = 0; i <= lastCountNumber; i++) {
- 		  final int votesAddedThisRound = votesAdded[i];
- 			  originalVote += votesAddedThisRound;
+ 			  originalVote += votesAdded[i];
 		}
  		 
 		return originalVote;

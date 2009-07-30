@@ -37,10 +37,6 @@ public class Ballot {
 
   /** Ballot ID number */
   //@ public invariant 0 < ballotID;
-  /*@ public instance invariant (\forall Ballot a,b; 
-    @                            a != null && b != null;
-    @                            a.ballotID == b.ballotID <==> a == b);
-    @*/
   protected /*@ spec_public @*/ int ballotID;
 
   /** Preference list of candidate IDs */
@@ -79,10 +75,6 @@ public class Ballot {
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
   
   /** Random number used for propotional distribution of surplus votes */
-  /*@ public invariant (\forall Ballot a, b; a != null && b != null;
-    @   (a.randomNumber == b.randomNumber) <==> (a == b));
-    @ public constraint randomNumber == \old (randomNumber);
-    @*/
   protected /*@ spec_public @*/ int randomNumber;
   
   /**
@@ -108,7 +100,6 @@ public class Ballot {
     @ requires 0 <= countNumber;
     @ requires countNumber <= countNumberAtLastTransfer;
     @ requires countNumber < candidateIDAtCount.length;
-    @ requires countNumber < Candidate.MAXCOUNT;
     @ ensures \result == candidateIDAtCount[countNumber];
     @
     @ public model pure int getPreferenceAtCount(final int countNumber) {
