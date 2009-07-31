@@ -2,8 +2,8 @@
 
 /**
  * This is a Java Modeling Language (JML) design specification of the ballot 
- * counting algorithm for elections to Oireachtas Eireann - the National 
- * Parliament of Ireland.
+ * counting algorithm for elections to Dail Eireann - the lower house of the 
+ * National Parliament of Ireland.
  * 
  * @author Dermot Cochran
  * @copyright 2005-2009 Dermot Cochran

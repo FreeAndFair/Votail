@@ -74,7 +74,7 @@ public class Ballot {
   //@ public initially countNumberAtLastTransfer == 0;
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
   
-  /** Random number used for propotional distribution of surplus votes */
+  /** Random number used for proportional distribution of surplus votes */
   protected /*@ spec_public @*/ int randomNumber;
   
   /**

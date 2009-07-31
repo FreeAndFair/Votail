@@ -106,7 +106,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
 	/** Number of decisions made */
 	/*@ public model int numberOfDecisions;
-	  @ public initially numberOfDecisions == 0 || decisionsMade == null ||
+	  @ public initially numberOfDecisions == 0 ||
 	  @   (\forall int i; 0 <= i && i < numberOfDecisions;
 	  @   decisionsMade[i].decisionTaken == Decision.NO_DECISION);
 	  @ public invariant 0 <= numberOfDecisions;
@@ -122,7 +122,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	* IDs and, once the counting starts, there must be a ballot paper 
 	* associated with each vote held by a candidate.
 	*/
-   //@ public model non_null Candidate[] candidateList;
+   //@ public model Candidate[] candidateList;
 	/*@ public invariant (state == PRELOAD || state == LOADING || 
 	  @   state == PRECOUNT)
 	  @ ==>
@@ -158,12 +158,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @*/
 
 	/** List of candidates for election */
-	protected transient /*@ spec_public non_null @*/ Candidate[] candidates;
+	protected transient /*@ spec_public @*/ Candidate[] candidates;
    //@ protected represents candidateList <- candidates;
 	
 
 	/** List of contents of each ballot paper that will be counted. */
-   //@ public model non_null Ballot[] ballotsToCount;
+   //@ public model Ballot[] ballotsToCount;
 	/*@ protected invariant (state >= PRECOUNT)
 	  @ ==>
 	  @   (\forall int i, j;
@@ -790,7 +790,7 @@ public void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
 		final int candidateID = candidates[c].getCandidateID();
 		final int numberOfBallotsInPile = countBallotsFor(candidateID);
-		candidates[c].addVote(numberOfBallotsInPile, countNumberValue); //@ nowarn;
+		candidates[c].addVote(numberOfBallotsInPile, countNumberValue);
 	}
 }
 
@@ -917,7 +917,7 @@ public /*@ pure @*/ byte getStatus(){
                 return candidateStatus == CandidateStatus.CONTINUING;
 			}
 		}
-		return false;
+		return false; // not a candidate
 	}
 
 /**

@@ -51,7 +51,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		 */
 		public BallotCountingMachine() {
 			substate = READY_TO_COUNT;
-		} //@ nowarn;
+		}
 
 		//@ public invariant isPossibleState (substate);
 		//@ public constraint isTransition(\old(substate), substate);
@@ -119,6 +119,8 @@ public class BallotCounting extends AbstractBallotCounting {
 		super();
 		countStatus = new BallotCountingMachine();
 		countNumberValue = 0;
+		status = ElectionStatus.EMPTY;
+		decisions = new Decision[Decision.MAX_DECISIONS];
 	}
 	 
     /**
