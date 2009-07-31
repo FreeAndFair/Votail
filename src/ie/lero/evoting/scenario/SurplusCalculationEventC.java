@@ -5,6 +5,7 @@ import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
+import election.tally.CandidateStatus;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
 
@@ -36,17 +37,15 @@ public class SurplusCalculationEventC extends TestCase{
 		for (int i = 0; i < parameters.numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
   			candidateIDList[i] = candidates[i].getCandidateID();
+  			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
+  			assertTrue (candidates[i].getTotalAtCount(0) == 0);
 		}
 
 		final int numberOfVotes = 10000;
-		//@ assert candidates[0].state == Candidate.CONTINUING;
-		//@ assert candidates[0].lastCountNumber < 0;
-		//@ assert candidates[0].votesAdded[0] == 0;
- 		//@ assert 0 <= numberOfVotes;
-		candidates[0].addVote(numberOfVotes, 0);
-		
-		for (int b = 0; b < numberOfVotes && 
-		        ballotBox.size() < Ballot.MAX_BALLOTS; b++) {
+				
+		assertTrue (numberOfVotes <= Ballot.MAX_BALLOTS);
+		assertTrue (ballotBox.size() == 0);
+		for (int b = 0; b < numberOfVotes; b++) {
 				MockBallot testBallot = new MockBallot();
 				testBallot.setMultiplePreferences(candidateIDList);
 				ballotBox.accept(testBallot);
@@ -74,15 +73,15 @@ public class SurplusCalculationEventC extends TestCase{
 	 	
  		ballotCounting.electCandidate(indexOfHighestCandidate);
  		
-  	countState = ballotCounting.countStatus.getState();
-    assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+  	    countState = ballotCounting.countStatus.getState();
+        assertTrue (ballotCounting.countStatus.isPossibleState(countState));
     
  	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);
- 	  countState = ballotCounting.countStatus.getState();
-    assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+ 	    countState = ballotCounting.countStatus.getState();
+        assertTrue (ballotCounting.countStatus.isPossibleState(countState));
  	 	
  	 	ballotCounting.count();
- 	  countState = ballotCounting.countStatus.getState();
-    assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+ 	    countState = ballotCounting.countStatus.getState();
+        assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	}
 }

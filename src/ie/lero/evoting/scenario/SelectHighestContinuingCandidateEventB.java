@@ -34,7 +34,8 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     parameters.setCandidateList(candidateList);
     ballotCounting.setup(parameters);
     MockBallot mockBallot = new MockBallot();
-    mockBallot.setFirstPreference(candidateList[candidateToWin].getCandidateID());
+    mockBallot.setFirstPreference(
+    	candidateList[candidateToWin].getCandidateID());
     ballotBox.accept(mockBallot);
     ballotCounting.load(ballotBox);
   }
@@ -43,7 +44,7 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
 	 * Test selection of highest continuing candidate
 	 */
 	public void testEvent () {
-	  ballotCounting.calculateFirstPreferences(); //@ nowarn;
+	    ballotCounting.calculateFirstPreferences();
 		int winner = ballotCounting.findHighestCandidate();
 		assertTrue (winner == candidateToWin);
 		int countState = ballotCounting.countStatus.getState();
