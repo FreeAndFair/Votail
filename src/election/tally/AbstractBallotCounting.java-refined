@@ -57,9 +57,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public invariant COUNTING < FINISHED;
     @ public initially state == EMPTY;
     @ public constraint \old (state) <= state;
-    @ public invariant (state == EMPTY) || (state == SETTING_UP) || (state == PRELOAD) ||
-    @   (state == LOADING) || (state == PRECOUNT) || (state == COUNTING) ||
-    @   (state == FINISHED);
+    @ public invariant (state >= EMPTY) ||  (state <= FINISHED);
     @*/
 	
   /** List of decisions made */
@@ -76,8 +74,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public initially numberOfDecisions == 0;
     @ public invariant 0 <= numberOfDecisions;
     @ public constraint \old (numberOfDecisions) <= numberOfDecisions;
-    @ public constraint (state != COUNTING) ==> 
-    @   numberOfDecisions == \old (numberOfDecisions);
     @*/
 	
   /** List of details for each candidate. 
@@ -86,28 +82,24 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * held by a candidate.
    */
   //@ public model non_null election.tally.Candidate[] candidateList;
-  /*@ public invariant (state == PRELOAD || state == LOADING || state == PRECOUNT) 
+  /*@ public invariant (state >= PRELOAD && state <= PRECOUNT) 
     @   ==> 
     @   (\forall int i; 0 <= i && i < totalCandidates;
-    @   candidateList[i].getStatus() == Candidate.CONTINUING &&
-    @   candidateList[i].getTotalVote() == 0 &&
-    @   candidateList[i].getOriginalVote() == 0);
+    @   candidateList[i].getStatus() == CandidateStatus.CONTINUING);
     @
-    @ public invariant (state == PRELOAD || state == LOADING || state == PRECOUNT ||
-    @   state == COUNTING || state == FINISHED)
+    @ public invariant (state >= PRELOAD)
     @   ==>
     @   (\forall int i, j; 
-    @     0 <= i && i < totalCandidates && i < j && j < totalCandidates;
+    @     0 <= i && i < totalCandidates && i != j && 0 <= j && j < totalCandidates;
     @     candidateList[i].getCandidateID() != candidateList[j].getCandidateID());
     @
-    @ public invariant (state == PRELOAD || state == LOADING || state == PRECOUNT ||
-    @   state == COUNTING || state == FINISHED)
+    @ public invariant (state >= PRELOAD)
     @   ==>
     @   (\forall int i; 
     @     0 <= i && i < totalCandidates;
     @     candidateList[i].getCandidateID() != Ballot.NONTRANSFERABLE);
     @
-    @ protected invariant (state == COUNTING || state == FINISHED)
+    @ protected invariant (state >= COUNTING)
     @   ==> (\forall int i; 0 <= i && i < totalCandidates;
     @   candidateList[i].getTotalVote() == 
     @   countBallotsFor (candidateList[i].getCandidateID()));
@@ -130,7 +122,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   totalCandidates == \old (totalCandidates);
     @ protected invariant (state == FINISHED) ==> totalCandidates == 
     @   numberElected + numberEliminated;
-    @ public invariant (state == COUNTING) ==> 1 <= totalCandidates;
     @*/
 	
   /** Number of candidates elected so far */
@@ -138,20 +129,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant 0 <= numberElected;
   //@ public invariant numberElected <= seats;
   /*@ public invariant (state <= PRECOUNT) ==> numberElected == 0;
-    @ protected invariant (COUNTING <= state && state <= FINISHED)
+    @ protected invariant (COUNTING <= state)
     @   ==> numberElected == (\num_of int i; 0 <= i && i < totalCandidates;
     @       isElected(candidateList[i]));
     @ public invariant (state == FINISHED) ==> 
     @   numberElected == seats;
-    @ public constraint (state == COUNTING) ==> 
-    @   \old(numberElected) <= numberElected;
+    @ public constraint \old(numberElected) <= numberElected;
     @*/
 	
 	
   /** Number of candidates excluded from election so far */
   //@ public model int numberEliminated;
   //@ public invariant 0 <= numberEliminated;
-  //@ public invariant numberEliminated <= totalCandidates - seats;
+  //@ public invariant seats + numberEliminated <= totalCandidates;
   /*@ public invariant (state == COUNTING || state == FINISHED)
     @   ==> numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
     @       candidateList[i].getStatus() == Candidate.ELIMINATED);
@@ -161,9 +151,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public model int seats;
   //@ public invariant 0 <= seats;
   //@ public invariant seats <= totalSeats;
-  /*@ public constraint (state == LOADING || state == COUNTING) ==> 
+  /*@ public constraint (PRELOAD < state) ==> 
     @   seats == \old (seats);
-    @ public invariant (state == COUNTING) ==> 1 <= seats;
     @*/
 	
   /** Total number of seats in this constituency
@@ -222,9 +211,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant 0 <= countNumber;
   //@ public invariant countNumber < Candidate.MAXCOUNT;
   //@ public constraint (state == COUNTING) ==> \old(countNumber) <= countNumber;
-  /*@ public constraint (state == COUNTING) ==> 
-    @   countNumber <= \old (countNumber) + 1;
-    @*/
 	
   /** Number of candidates with surplus votes */
   //@ public model int numberOfSurpluses;
@@ -395,9 +381,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * <li>There is one remaining seat.
    * </ul>
    * 
-   * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_1.pdf">Department of Environment and Local Government, Electronic Vote Counting System, Appendix E</a>
-   * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of Environment and Local Government, Count Requirements and Commentary on Count Rules, sections 3-14</a>
-   * @see <a href="http://www.irishstatutebook.ie/1992_23.html">Sections 48, 118 and 124 of the Electoral Act, 1992</a>
+   * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_1.pdf">
+   * Department of Environment and Local Government, Electronic Vote Counting System, Appendix E</a>
+   * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">
+   * Department of Environment and Local Government, Count Requirements and Commentary on Count Rules, sections 3-14</a>
+   * @see <a href="http://www.irishstatutebook.ie/1992_23.html">
+   * Sections 48, 118 and 124 of the Electoral Act, 1992</a>
    * 
    * @param candidate This candidate
    * @return True if the candidate has been elected
@@ -406,7 +395,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires countNumber >= 1;
     @ requires state == COUNTING;
     @ ensures (\result == true) <==> 
-    @   (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
+    @     (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
     @*/
   public /*@ pure @*/ boolean isElected (election.tally.Candidate candidate);
 	
@@ -425,7 +414,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires candidate != null;
     @ requires 0 <= countNumber;
     @ ensures (hasQuota(candidate) == true) ==> \result == 
-    @ (candidate.getTotalVote() - getQuota());
+    @     (candidate.getTotalVote() - getQuota());
     @ ensures (hasQuota(candidate) == false) ==> \result == 0;
     @ ensures \result >= 0;
     @*/

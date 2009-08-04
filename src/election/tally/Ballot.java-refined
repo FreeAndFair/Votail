@@ -128,16 +128,16 @@ public class Ballot {
    * The quota is calculated from the number of first preference votes,
    * so that empty ballots are not included.
    * 
-   * @reference http://www.cev.ie/htm/tenders/pdf/1_2.pdf, section3, page 12
+   * @reference http://www.cev.ie/htm/tenders/pdf/1_2.pdf, section 3, page 12
    * @return The candidate ID of the first preference for this ballot
    */ 
-  /*@  public normal_behavior
-    @ requires 0 < numberOfPreferences;
-    @ ensures \result != NONTRANSFERABLE;
-    @ ensures \result == preferenceList[0];      
+  /*@ public normal_behavior
+    @   requires 0 < numberOfPreferences;
+    @   ensures \result != NONTRANSFERABLE;
+    @   ensures \result == preferenceList[0];      
     @
     @ public model pure int getFirstPreference() {
-    @    return preferenceList[0];
+    @   return preferenceList[0];
     @ }
     @*/
   

@@ -497,27 +497,27 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   @   public normal_behavior
   @		assignable state, countNumber, numberElected, numberEliminated,
   @       countNumberValue, numberOfCandidatesElected, 
-  @       numberOfCandidatesEliminated, decisions;
+  @       numberOfCandidatesEliminated, decisions, decisionsTaken;
   @     ensures state == EMPTY;
   @     ensures countNumber == 0;
   @     ensures numberElected == 0;
   @*/
 public AbstractBallotCounting(){
-  super();
 	status = EMPTY;
 	countNumberValue = 0;
 	numberOfCandidatesElected = 0;
 	numberOfCandidatesEliminated = 0;
 	decisions = new Decision[0];
-	//@ assume numberOfDecisions == 0;
-} //@ nowarn;
+	decisionsTaken = 0;
+}
 
 /**
  * Determine if the candidate has enough votes to be elected.
  * 
  * @param candidate The candidate in question
  * @return True if the candidate has at least a quota of votes
- * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_1.pdf">CEV guidelines, page 79, paragraph 120(2)</a>
+ * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_1.pdf">
+ * CEV guidelines, page 79, paragraph 120(2)</a>
  * 
  * <BON>query "Has the candidate at least a quota of votes?"</BON>
  */
@@ -574,7 +574,7 @@ public /*@ pure @*/ boolean isElected(final Candidate candidate){
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 	int surplus = 0;
- 	final int totalVote = candidate.getTotalVote(); //@ nowarn;
+ 	final int totalVote = candidate.getTotalVote();
 	if (totalVote > getQuota()) {			
  		surplus = totalVote - getQuota();
 	}
@@ -588,7 +588,7 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
  */
 public /*@ pure @*/ int getTotalNumberOfSurpluses() {
 	return totalNumberOfSurpluses;
-} //@ nowarn;
+}
 
 /**
  * Update the number of candidates with surplus votes for redistribution.

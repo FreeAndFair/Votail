@@ -35,7 +35,8 @@ package election.tally;
  * authors' views and the European Community is not liable for any use that 
  * may be made of the information contained therein.
  * 
- * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">Formal Verification and Risk Analysis for Remote Voting Systems</a>
+ * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
+ * Formal Verification and Risk Analysis for Remote Voting Systems</a>
  *
  */
 public class BallotCounting extends AbstractBallotCounting {
@@ -114,13 +115,9 @@ public class BallotCounting extends AbstractBallotCounting {
 	/**
 	 * Default constructor.
 	 */
-	//@ ensures countStatus != null;
 	public BallotCounting() {
 		super();
 		countStatus = new BallotCountingMachine();
-		countNumberValue = 0;
-		status = ElectionStatus.EMPTY;
-		decisions = new Decision[Decision.MAX_DECISIONS];
 	}
 	 
     /**

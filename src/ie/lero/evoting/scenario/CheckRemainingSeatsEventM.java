@@ -16,7 +16,7 @@ public class CheckRemainingSeatsEventM extends TestCase {
 		election.numberOfSeatsInThisElection = 3;
 		election.totalNumberOfSeats = 3;
 		Candidate[] candidates = Election.generateCandidates(4);
-    election.setCandidateList(candidates);
+        election.setCandidateList(candidates);
 		ballotCounting.setup(election);
 		assertTrue (election.numberOfSeatsInThisElection == ballotCounting.getRemainingSeats());
 		BallotBox ballotBox = new BallotBox();
@@ -24,8 +24,8 @@ public class CheckRemainingSeatsEventM extends TestCase {
 		ballot.setFirstPreference(candidates[0].getCandidateID());
 		ballotBox.accept(ballot);
 		ballotCounting.load(ballotBox);
-    assertTrue (election.numberOfSeatsInThisElection == ballotCounting.getRemainingSeats());
-    ballotCounting.count();
-    assertTrue (0 == ballotCounting.getRemainingSeats());
+        assertTrue (election.numberOfSeatsInThisElection == ballotCounting.getRemainingSeats());
+        ballotCounting.count();
+        assertTrue (0 == ballotCounting.getRemainingSeats());
 	}
 }
