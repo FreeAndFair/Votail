@@ -253,6 +253,12 @@ public class BallotCounting extends AbstractBallotCounting {
 	}
 
 
+	/*@ requires state == PRECOUNT;
+	  @ assignable state, countStatus, countNumberValue, totalRemainingSeats,
+	  @   savingThreshold, numberOfCandidatesElected, 
+	  @   numberOfCandidatesEliminated, totalofNonTransferableVotes;
+	  @ ensures state == COUNTING;
+	  @*/
 	public void startCounting() {
 		status = COUNTING;
 		countNumberValue = 0;
