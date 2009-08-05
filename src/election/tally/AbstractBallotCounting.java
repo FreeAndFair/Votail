@@ -112,8 +112,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ public invariant 0 <= numberOfDecisions;
 	  @ public constraint 
 	  @   \old (numberOfDecisions) <= numberOfDecisions;
-	  @ public constraint (state != COUNTING) ==>
-	  @   numberOfDecisions == \old (numberOfDecisions);
 	  @*/
 	//@ represents numberOfDecisions <- decisions.length;
 	
@@ -174,11 +172,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ protected represents ballotsToCount <- ballots;
 	
 	/** Total number of candidates for election */
-   //@ public model int totalCandidates;
-   //@ public invariant 0 <= totalCandidates;
-   //@ public invariant totalCandidates <= candidateList.length;
+    //@ public model int totalCandidates;
+    //@ public invariant 0 <= totalCandidates;
+    //@ public invariant totalCandidates <= candidateList.length;
 	/*@ public constraint (state >= LOADING) ==>
-	  @ totalCandidates == \old (totalCandidates);
+	  @   totalCandidates == \old (totalCandidates);
 	  @ protected invariant (state == FINISHED) ==> totalCandidates ==
 	  @   numberElected + numberEliminated;
 	  @ public invariant (state == COUNTING) ==> 1 <= totalCandidates;
@@ -221,7 +219,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public model int seats;
    //@ public invariant 0 <= seats;
    //@ public invariant seats <= totalSeats;
-	/*@ public constraint (state == LOADING || state == COUNTING) ==>
+	/*@ public constraint (PRELOAD <= state) ==>
 	  @   (seats == \old (seats));
 	  @ public invariant (state == COUNTING) ==> (1 <= seats);
 	  @*/
@@ -237,7 +235,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public model int totalSeats;
    //@ public invariant 0 <= totalSeats;
 	/*@ public constraint (LOADING <= state) ==>
-	  @   (totalSeats == \old (totalSeats)) && (1 <= totalSeats);
+	  @   (totalSeats == \old (totalSeats));
 	  @*/
 	/** Number of seats in this constituency */
 	protected transient int totalNumberOfSeats;
@@ -245,6 +243,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
 	/** Total number of valid votes in this election */
    //@ public model int totalVotes;
+   //@ public initially totalVotes == 0;
    //@ public invariant 0 <= totalVotes;
    /*@ public invariant (state == PRECOUNT || state == COUNTING || state == FINISHED)
      @   ==> totalVotes <= ballotsToCount.length;

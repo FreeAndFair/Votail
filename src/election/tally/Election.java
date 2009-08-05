@@ -55,7 +55,7 @@ public class Election {
   @   0 <= i && i < numberOfCandidates &&
   @   0 <= j && j < numberOfCandidates &&
   @   i != j;
-  @   candidateList[i].candidateID != (candidateList[j]).candidateID); 
+  @   candidateList[i].candidateID != candidateList[j].candidateID); 
   @*/	
 	protected transient /*@ spec_public non_null @*/ Candidate[] candidateList;
 	

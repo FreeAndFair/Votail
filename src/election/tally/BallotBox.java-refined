@@ -20,14 +20,14 @@ public class BallotBox {
   protected /*@ spec_public non_null @*/ Ballot[] ballots;
   
   /*@ ensures \result <==> (\forall int i, j;
-    @                   0 <= i & i < numberOfBallots &
-    @                   0 <= j & j < numberOfBallots &
+    @                   0 <= i & i < size() &
+    @                   0 <= j & j < size() &
     @                   i != j;
     @                   ballots[i].ballotID != ballots[j].ballotID);
     @
     @ public model pure boolean uniqueness() {
-    @     for (int i=0; i < numberOfBallots; i++) {
-    @         for (int j=0; j < numberOfBallots; j++) {
+    @     for (int i=0; i < size(); i++) {
+    @         for (int j=0; j < size(); j++) {
     @             if (i != j && ballots[i].ballotID == ballots[j].ballotID) {
     @                 return false;
     @             }
@@ -41,14 +41,15 @@ public class BallotBox {
    * @return the number of ballots in this ballot box.
    */
   //@ ensures 0 <= \result;
+  //@ ensures numberOfBallots == \result;
   public /*@ pure @*/ int size();
 
   // ...and therefore change the visibility of numberOfBallots to private
   // and abstract these invariants to use the pure method.
 
-  //@ public invariant 0 <= numberOfBallots;
-  //@ public initially numberOfBallots == 0;
-  //@ public constraint numberOfBallots >= \old (numberOfBallots);
+  //@ public invariant 0 <= size();
+  //@ public initially size() == 0;
+  //@ public constraint size() >= \old (size());
   private /*@ spec_public @*/ int numberOfBallots;
     
   public /*@ pure @*/ BallotBox();

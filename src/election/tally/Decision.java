@@ -57,7 +57,7 @@ public static final int MAX_DECISIONS = 100;
   @   (decisionTaken == ROUND_UP_FRACTION) || (decisionTaken == DISTRIBUTE_SURPLUS)
   @   || (decisionTaken == DEEM_ELECTED);
   @ public constraint (\old(decisionTaken) != NO_DECISION) ==>
-  @ decisionTaken == \old(decisionTaken);
+  @   decisionTaken == \old(decisionTaken);
   @*/
 	public byte decisionTaken;
 	
