@@ -44,7 +44,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	/**
 	 * Inner class for state machine
 	 */
-	public class BallotCountingMachine implements CountStatus {
+	public class BallotCountingMachine extends CountStatus {
 		
 		// Initial state
 		/**
