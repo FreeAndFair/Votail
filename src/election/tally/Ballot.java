@@ -154,8 +154,8 @@ public static final int NONTRANSFERABLE = 0;
  	  numberOfPreferences = 0;
 	  countNumberAtLastTransfer = 0;
 	  positionInList = 0;
-	  ballotID = nextBallotID++; //@ nowarn;
-      randomNumber = this.hashCode(); //@ nowarn;
+	  ballotID = nextBallotID++;
+      randomNumber = this.hashCode();
 	  //@ set _randomNumber = randomNumber;
       preferenceList = new int [Candidate.MAX_CANDIDATES];
   }
