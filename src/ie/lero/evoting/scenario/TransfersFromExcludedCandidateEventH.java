@@ -3,7 +3,7 @@ package ie.lero.evoting.scenario;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
-import election.tally.CountStatus;
+import election.tally.AbstractCountStatus;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
 import junit.framework.TestCase;
@@ -29,15 +29,17 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	     ballot.setMultiplePreferences(preferences);
 	     ballotBox.accept(ballot);
 	   }
+	   
 	   ballotCounting.load(ballotBox);
+	   ballotCounting.startCounting();
 	   ballotCounting.calculateSurpluses();
-		 int loser = ballotCounting.findLowestCandidate();
-		 ballotCounting.eliminateCandidate(loser);
-		 ballotCounting.incrementCountNumber();
-		 ballotCounting.updateCountStatus(CountStatus.CANDIDATE_EXCLUDED);
-		 assertTrue(ballotCounting.getContinuingCandidates() == 3);
-		 int countState = ballotCounting.countStatus.getState();
-		 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+	   int loser = ballotCounting.findLowestCandidate();
+	   ballotCounting.eliminateCandidate(loser);
+	   ballotCounting.incrementCountNumber();
+	   ballotCounting.updateCountStatus(AbstractCountStatus.CANDIDATE_EXCLUDED);
+	   assertTrue(ballotCounting.getContinuingCandidates() == 3);
+	   int countState = ballotCounting.countStatus.getState();
+	   assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	}
 
 }

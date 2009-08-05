@@ -34,6 +34,7 @@ public class MoveBallotsEventL extends TestCase {
 	   assertTrue (0 == firstElected);
 	   final int surplus = ballotCounting.getSurplus(candidates[firstElected]);
        assertTrue (surplus > 0);
+       ballotCounting.startCounting();
 	   ballotCounting.distributeSurplus(firstElected);
 	}
 

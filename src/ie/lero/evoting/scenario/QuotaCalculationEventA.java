@@ -44,6 +44,7 @@ public class QuotaCalculationEventA extends TestCase {
 		  ballotBox.accept(ballot);
 		}
 		
+		ballotCounting.startCounting();
 		ballotCounting.load(ballotBox);
 		
 		ballotCounting.calculateFirstPreferences();

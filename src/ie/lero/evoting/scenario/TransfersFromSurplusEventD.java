@@ -46,6 +46,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   }
 	  
 	   ballotCounting.load(ballotBox);
+	   ballotCounting.startCounting();
 	   assertTrue (ballotBox.size() == 60);
 	   ballotCounting.calculateFirstPreferences();
 	   ballotCounting.calculateSurpluses();
@@ -65,16 +66,16 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   int numberContinuing = ballotCounting.getContinuingCandidates();
 	   assertTrue (19 == numberContinuing);
 	   assertTrue (21 == ballotCounting.countBallotsFor(candidates[1].getCandidateID()));
-     int secondPlace = ballotCounting.findHighestCandidate();
-     assertTrue (0 <= secondPlace);
-     int votesForSecondPlace = 
-       ballotCounting.countBallotsFor(candidates[secondPlace].getCandidateID());
-     assertTrue (ballotCounting.randomSelection(candidates[0], candidates[1]) ==
-       ballotCounting.randomSelection(candidates[1], candidates[0]));
+       int secondPlace = ballotCounting.findHighestCandidate();
+       assertTrue (0 <= secondPlace);
+       int votesForSecondPlace = 
+         ballotCounting.countBallotsFor(candidates[secondPlace].getCandidateID());
+       assertTrue (ballotCounting.randomSelection(candidates[0], candidates[1]) ==
+         ballotCounting.randomSelection(candidates[1], candidates[0]));
 
-     assertTrue (votesForWinner == 41);
-     assertTrue (votesForSecondPlace == 21);
-     assertTrue (16 == ballotCounting.getQuota());
+       assertTrue (votesForWinner == 41);
+       assertTrue (votesForSecondPlace == 21);
+       assertTrue (16 == ballotCounting.getQuota());
 	   assertTrue (0 == winner);
 	   assertTrue (19 == ballotCounting.getContinuingCandidates());
 	   assertTrue (2 == ballotCounting.getRemainingSeats());

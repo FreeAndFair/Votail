@@ -44,13 +44,13 @@ public class BallotCounting extends AbstractBallotCounting {
 	/**
 	 * Inner class for state machine
 	 */
-	public class BallotCountingMachine extends CountStatus {
+	public class CountStatus implements AbstractCountStatus {
 		
 		// Initial state
 		/**
 		 * Inner state machine for counting of Dail election ballots.
 		 */
-		public BallotCountingMachine() {
+		public CountStatus() {
 			substate = READY_TO_COUNT;
 		}
 
@@ -110,15 +110,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	}
 
 	// Model of the ballot counting process
-	public CountStatus countStatus;
-	
-	/**
-	 * Default constructor.
-	 */
-	public BallotCounting() {
-		super();
-		countStatus = new BallotCountingMachine();
-	}
+	public AbstractCountStatus countStatus;
 	 
     /**
      * Distribute the surplus of an elected Dail candidate.
@@ -140,7 +132,7 @@ public class BallotCounting extends AbstractBallotCounting {
 
       }
     }
-    countStatus.changeState(CountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
+    countStatus.changeState(AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
 	}
 
 	
@@ -198,23 +190,14 @@ public class BallotCounting extends AbstractBallotCounting {
 	public void count() {
 		
 		// Start or else resume the counting of ballots
-		if (status == PRECOUNT) {
-			status = COUNTING;
-			countNumberValue = 0;
-			countStatus.changeState(CountStatus.NO_SEATS_FILLED_YET);
-			
-			// Reset all initial values if not already started or if doing a full recount
- 			totalRemainingSeats = numberOfSeats;
-			savingThreshold = 1 + ((totalNumberOfVotes / (1 + totalNumberOfSeats)) / 4);
-			numberOfCandidatesElected = 0;
-			numberOfCandidatesEliminated = 0;
-			totalofNonTransferableVotes = 0;
+		if (status < COUNTING) {
+			startCounting();
 		}
 		
 		while (getNumberContinuing() > totalRemainingSeats && 
 				countNumberValue < Candidate.MAXCOUNT) {
 			countStatus.changeState(
-					CountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
+					AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
 
 			// Calculate surpluses
 			calculateSurpluses();
@@ -223,15 +206,15 @@ public class BallotCounting extends AbstractBallotCounting {
 			// Transfer surplus votes from winning candidates
 			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT - 1 &&
 			    getNumberContinuing() > totalRemainingSeats && highestCandidateExists) {
-				countStatus.changeState(CountStatus.CANDIDATES_HAVE_QUOTA);
+				countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
 				final int winner = findHighestCandidate();
 				highestCandidateExists = (0 <= winner);
 				
 				if (highestCandidateExists) {
-	          final int countingStatus = CountStatus.CANDIDATE_ELECTED;
+	          final int countingStatus = AbstractCountStatus.CANDIDATE_ELECTED;
 				    updateCountStatus(countingStatus);
 				    electCandidate(winner);
-				    countStatus.changeState(CountStatus.SURPLUS_AVAILABLE);
+				    countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
 				    distributeSurplus(winner);
 				    calculateSurpluses();
 				}
@@ -240,14 +223,14 @@ public class BallotCounting extends AbstractBallotCounting {
 			// Exclusion of lowest continuing candidate if no surplus
 			if (getNumberContinuing() > totalRemainingSeats && 
 					countNumberValue < Candidate.MAXCOUNT) {
-			  countStatus.changeState(CountStatus.NO_SURPLUS_AVAILABLE);	
+			  countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);	
 			  int loser = findLowestCandidate();
 			
 			  if (0 <= loser) {
-			      countStatus.changeState(CountStatus.CANDIDATE_EXCLUDED);	
+			      countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);	
 			          eliminateCandidate(loser);
 			      numberOfCandidatesEliminated++;
-			      countStatus.changeState(CountStatus.READY_TO_MOVE_BALLOTS);	
+			      countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);	
 			      redistributeBallots(candidates[loser].getCandidateID());
 			  }
  			}
@@ -256,7 +239,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		
 		// Filling of last seats
 		if (getNumberContinuing() == totalRemainingSeats) {
-			countStatus.changeState(CountStatus.LAST_SEAT_BEING_FILLED);	
+			countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED);	
 			for (int c = 0; c < totalNumberOfCandidates; c++) {
 				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
 					electCandidate(c);
@@ -265,8 +248,23 @@ public class BallotCounting extends AbstractBallotCounting {
 			}
 				
 		}
-		countStatus.changeState(CountStatus.END_OF_COUNT);	
+		countStatus.changeState(AbstractCountStatus.END_OF_COUNT);	
 		status = FINISHED;
+	}
+
+
+	public void startCounting() {
+		status = COUNTING;
+		countNumberValue = 0;
+		countStatus = new CountStatus();
+		countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
+		
+		// Reset all initial values if not already started or if doing a full recount
+		totalRemainingSeats = numberOfSeats;
+		savingThreshold = 1 + ((totalNumberOfVotes / (1 + totalNumberOfSeats)) / 4);
+		numberOfCandidatesElected = 0;
+		numberOfCandidatesEliminated = 0;
+		totalofNonTransferableVotes = 0;
 	}
 
 	/*@ requires countStatus != null;

@@ -68,6 +68,7 @@ public class SurplusCalculationEventC extends TestCase{
 	 		ballotCounting.findHighestCandidate();
 	 	assertTrue (0 <= indexOfHighestCandidate);
 	 	
+	 	ballotCounting.startCounting();
 	 	int countState = ballotCounting.countStatus.getState();
 	 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	 	

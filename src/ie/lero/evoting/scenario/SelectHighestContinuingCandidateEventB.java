@@ -47,6 +47,7 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
 	    ballotCounting.calculateFirstPreferences();
 		int winner = ballotCounting.findHighestCandidate();
 		assertTrue (winner == candidateToWin);
+		ballotCounting.startCounting();
 		int countState = ballotCounting.countStatus.getState();
 	 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 		// Test election without surplus
