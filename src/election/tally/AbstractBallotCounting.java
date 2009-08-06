@@ -61,34 +61,7 @@ package election.tally;
  */
 //@ refine "AbstractBallotCounting.java-refined";
 public abstract class AbstractBallotCounting extends ElectionStatus {
-	/**
-	 * Outer level of Abstract State Machine for Election Algorithm.
-	 */
-	/*@ public model byte state;
-	  @ public invariant EMPTY < SETTING_UP;
-	  @ public invariant SETTING_UP < PRELOAD;
-	  @ public invariant PRELOAD < LOADING;
-	  @ public invariant LOADING < PRECOUNT;
-	  @ public invariant PRECOUNT < COUNTING;
-	  @ public invariant COUNTING < FINISHED;
-	  @ public initially state == EMPTY;
-	  @ public constraint \old (state) <= state;
-	  @ public invariant (state == EMPTY) || (state == SETTING_UP) || 
-	  @   (state == PRELOAD) ||
-	  @   (state == LOADING) || (state == PRECOUNT) || 
-	  @   (state == COUNTING) ||
-	  @   (state == FINISHED);
-	  @*/
-	
-	protected transient /*@ spec_public @*/ byte status; //@ in state;
-  //@ public represents state <- status;
-	/*@
-	  @ public invariant status == EMPTY ||status == SETTING_UP || 
-	  @   status == PRELOAD ||
-	  @   status == LOADING || status == PRECOUNT || status == COUNTING ||
-	  @   status == FINISHED;
-	  @*/
-	
+
 	/** List of decisions made */
 	/*@ public model non_null election.tally.Decision[] decisionsMade;
 	  @ public invariant 

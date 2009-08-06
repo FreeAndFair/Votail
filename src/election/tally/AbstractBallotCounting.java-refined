@@ -34,32 +34,7 @@
  */
 
 public abstract class AbstractBallotCounting extends ElectionStatus {
-	
-  /**  
-   * Abstract State Machine for Election Algorithm.
-   * <p>
-   * The election count algorithm is modeled as a two tier state machine with 
-   * state values and transitions between those states. The normal path for the 
-   * outer tier of the state machine is: 
-   * <p>
-   * EMPTY --> SETUP --> PRELOAD --> LOADING --> PRECOUNT --> 
-   * COUNTING --> FINISHED --> REPORT 
-   * <p>
-   * The inner state machine models the status of the count.
-   */
-   
-  /*@ public model byte state;
-    @ public invariant EMPTY < SETTING_UP;
-    @ public invariant SETTING_UP < PRELOAD;
-    @ public invariant PRELOAD < LOADING;
-    @ public invariant LOADING < PRECOUNT;
-    @ public invariant PRECOUNT < COUNTING;
-    @ public invariant COUNTING < FINISHED;
-    @ public initially state == EMPTY;
-    @ public constraint \old (state) <= state;
-    @ public invariant (state >= EMPTY) ||  (state <= FINISHED);
-    @*/
-	
+
   /** List of decisions made */
   /*@ public model Decision[] decisionsMade;
     @ public invariant (state == COUNTING) ==>
