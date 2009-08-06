@@ -109,21 +109,27 @@ public class BallotCounting extends AbstractBallotCounting {
 		
 	}
 
-	// Model of the ballot counting process
-	public AbstractCountStatus countStatus;
+	// Status of the ballot counting process
+	/*@ public invariant (state == COUNTING) ==>
+	  @  countStatus != null;
+	  @*/
+	public CountStatus countStatus;
 	 
     /**
      * Distribute the surplus of an elected Dail candidate.
      * 
      * @param winner The elected Dail candidate
      */
-	//@ also
-	//@   requires countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
+	/*@ also
+	  @   requires state == COUNTING && 
+	  @     countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
+	  @*/
 	public void distributeSurplus(final int winner) {
  		if (0 < getSurplus(candidates[winner])) {
       for (int i = 0; i < totalNumberOfCandidates; i++) {
         if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-          final int numberOfTransfers = getActualTransfers(candidates[winner], candidates[i])
+          final int numberOfTransfers = getActualTransfers(
+              candidates[winner], candidates[i])
               + getRoundedFractionalValue(candidates[winner],candidates[i]);
           
             transferVotes(candidates[winner], candidates[i], numberOfTransfers);
@@ -273,7 +279,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		totalofNonTransferableVotes = 0;
 	}
 
-	/*@ requires countStatus != null;
+	/*@ requires state == COUNTING && countStatus != null;
 	  @ assignable countStatus;
 	  @*/
 	public void updateCountStatus(final int countingStatus) {
