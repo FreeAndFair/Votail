@@ -98,7 +98,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @   (\exists int k; 0 <= k && k < totalCandidates;
 	  @     decisionsMade[i].candidateID == 
 	  @     candidateList[k].getCandidateID()));
-	  @ protected invariant numberOfDecisions < decisions.length;
+	  @ protected invariant numberOfDecisions <= decisions.length;
 	  @*/
 	
 	protected transient /*@ spec_public @*/ Decision[] decisions;
@@ -120,7 +120,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	* IDs and, once the counting starts, there must be a ballot paper 
 	* associated with each vote held by a candidate.
 	*/
-   //@ public model Candidate[] candidateList;
+    //@ public model Candidate[] candidateList;
 	/*@ public invariant (state == PRELOAD || state == LOADING || 
 	  @   state == PRECOUNT)
 	  @ ==>
@@ -174,8 +174,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/** Total number of candidates for election */
     //@ public model int totalCandidates;
     //@ public invariant 0 <= totalCandidates;
-    //@ public invariant totalCandidates <= candidateList.length;
-	/*@ public constraint (state >= LOADING) ==>
+    /*@ public invariant (PRELOAD <= state) ==> 
+      @   (totalCandidates <= candidateList.length);
+	  @ public constraint (state >= LOADING) ==>
 	  @   totalCandidates == \old (totalCandidates);
 	  @ protected invariant (state == FINISHED) ==> totalCandidates ==
 	  @   numberElected + numberEliminated;
@@ -201,16 +202,17 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/** Number of candidates elected so far */
 	protected transient /*@ spec_public @*/ int numberOfCandidatesElected;
    //@ public represents numberElected <- numberOfCandidatesElected;
-	
+
 	/** Number of candidates excluded from election so far */
    //@ public model int numberEliminated;
    //@ protected invariant 0 <= numberEliminated;
-   //@ protected invariant numberEliminated <= totalCandidates - seats;
-	/*@ protected invariant (state == COUNTING || state == FINISHED)
-	  @ ==> 
-	  @  numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
-	  @  candidateList[i].getStatus() == Candidate.ELIMINATED);
-	  @*/
+   /*@ protected invariant (COUNTING <= state) ==>
+     @   numberEliminated <= totalCandidates - seats;
+     @ protected invariant (state == COUNTING || state == FINISHED)
+     @   ==> 
+     @  numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
+     @  candidateList[i].getStatus() == Candidate.ELIMINATED);
+     @*/
 	/** Number of candidates excluded from election so far */
 	protected transient /*@ spec_public @*/ int numberOfCandidatesEliminated;
    //@ public represents numberEliminated <- numberOfCandidatesEliminated;
@@ -261,7 +263,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	   @*/
 	
    /** Total number of valid ballot papers */
-	protected transient int totalNumberOfVotes;
+	protected /*@ spec_public @*/ transient int totalNumberOfVotes;
    
    /** 
     * Article 16 of the constitution of the Republic or Ireland specifies 
@@ -271,8 +273,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     */
 	final protected static int MAXVOTES = 150000;
    
-   //@ protected represents totalVotes <- totalNumberOfVotes;
-	
+   //@ public represents totalVotes <- totalNumberOfVotes;
+
 	/** Number of votes so far which did not have a transfer to
 	 * a continuing candidate */
    //@ public model int nonTransferableVotes;
@@ -308,13 +310,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public model int countNumber;
    //@ public initially countNumber == 0;
    //@ public invariant 0 <= countNumber;
-   //@ public invariant countNumber < Candidate.MAXCOUNT;
-	/*@ public constraint (state == COUNTING) ==> 
-	  @   \old(countNumber) <= countNumber;
-	  @
-	  @ public constraint (state == COUNTING) ==>
-	  @   countNumber <= \old (countNumber) + 1;
-	  @*/
+   /*@ public invariant (PRELOAD <= state) ==>
+     @   countNumber < Candidate.MAXCOUNT;
+     @ public constraint (state == COUNTING) ==> 
+     @   \old(countNumber) <= countNumber;
+     @ public constraint (state == COUNTING) ==>
+     @   countNumber <= \old (countNumber) + 1;
+     @*/
 	protected transient /*@ spec_public @*/ int countNumberValue;
    //@ protected represents countNumber <- countNumberValue;
 
@@ -373,25 +375,25 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
 	/** The lowest non-zero number of votes held by a continuing candidate */
    //@ public model int lowestContinuingVote;
-   //@ public invariant 0 < lowestContinuingVote;
-	/*@ public invariant
-	  @   (\exists int k; 0 <= k && k < totalCandidates;
-	  @     candidateList[k].getStatus() == Candidate.CONTINUING &&
-	  @     0 < candidateList[k].getTotalVote())
-	  @ ==> lowestContinuingVote ==
-	  @   (\min int i; 0 <= i && i < totalCandidates &&
-	  @     candidateList[i].getStatus() == Candidate.CONTINUING &&
-	  @     0 < candidateList[i].getTotalVote();
-	  @     candidateList[i].getTotalVote());
-	  @*/
+   //@ public invariant 0 <= lowestContinuingVote;
+   /*@ public invariant (state == COUNTING) ==>
+     @   ((\exists int k; 0 <= k && k < totalCandidates;
+     @     candidateList[k].getStatus() == Candidate.CONTINUING &&
+     @     0 < candidateList[k].getTotalVote())
+     @   ==> lowestContinuingVote ==
+     @     (\min int i; 0 <= i && i < totalCandidates &&
+     @       candidateList[i].getStatus() == Candidate.CONTINUING &&
+     @       0 < candidateList[i].getTotalVote();
+     @       candidateList[i].getTotalVote()));
+     @*/
 	/** Lowest continuing vote */
 	protected int lowestVote;
    //@ protected represents lowestContinuingVote <- lowestVote;
 
 	/** The second lowest non-zero number of votes held by a continuing candidate */
    //@ public model int nextHighestVote;
-   //@ public invariant lowestContinuingVote < nextHighestVote;
-	/*@ public invariant
+   //@ public invariant (state == COUNTING) ==> lowestContinuingVote < nextHighestVote;
+	/*@ public invariant (state == COUNTING) ==
 	  @   (\exists int k; 0 <= k && k < totalCandidates;
 	  @     candidateList[k].getStatus() == Candidate.CONTINUING &&
 	  @     lowestContinuingVote < candidateList[k].getTotalVote())
@@ -408,8 +410,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
 	/** The highest number of votes held by a continuing candidate */
    //@ public model int highestContinuingVote;
-   //@ public invariant highestContinuingVote < getQuota();
-	/*@ public invariant (0 < getNumberContinuing())
+   /*@ public invariant (state == COUNTING) ==> 
+     @   highestContinuingVote < getQuota();
+     @*/
+	/*@ public invariant (0 < getNumberContinuing() && state == COUNTING)
 	  @ ==> highestContinuingVote ==
 	  @   (\max int i; 0 < i && i < totalCandidates &&
 	  @     candidateList[i].getStatus() == Candidate.CONTINUING;
@@ -445,27 +449,30 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/** Number of candidates with equal highest continuing votes */
    //@ public model int numberOfEqualHighestContinuing;
    //@ public invariant 0 <= numberOfEqualHighestContinuing;
-	/*@ public invariant
-	  @ numberOfEqualHighestContinuing <= getNumberContinuing();
-	  @ public invariant (state == COUNTING) ==> numberOfEqualHighestContinuing ==
-	  @ (\num_of int i; 0 <= i && i < totalCandidates &&
-	  @ candidateList[i].getStatus() == Candidate.CONTINUING;
-	  @ candidateList[i].getTotalVote() == highestContinuingVote);
-	  @*/
+   /*@ public invariant (state == COUNTING) ==>
+     @   numberOfEqualHighestContinuing <= getNumberContinuing();
+     @ public invariant (state == COUNTING) ==> 
+     @   numberOfEqualHighestContinuing ==
+     @   (\num_of int i; 0 <= i && i < totalCandidates &&
+     @     candidateList[i].getStatus() == Candidate.CONTINUING;
+     @     candidateList[i].getTotalVote() == highestContinuingVote);
+     @*/
 	/** Number of candidates with equal highest continuing votes */
 	protected int totalNumberOfEqualHighestContinuing;
-   //@ protected represents numberOfEqualHighestContinuing <- totalNumberOfEqualHighestContinuing;
-	
+   /*@ protected represents numberOfEqualHighestContinuing <- 
+     @   totalNumberOfEqualHighestContinuing;
+     @*/
+
 	/** Number of candidates with equal lowest non-zero votes */
    //@ public model int numberOfEqualLowestContinuing;
    //@ public invariant 0 <= numberOfEqualLowestContinuing;
-	/*@ public invariant
-	  @ numberOfEqualLowestContinuing <= getNumberContinuing();
-	  @ public invariant (state == COUNTING) ==> numberOfEqualLowestContinuing ==
-	  @ (\num_of int i; 0 <= i && i < totalCandidates &&
-	  @   candidateList[i].getStatus() == Candidate.CONTINUING;
-	  @   candidateList[i].getTotalVote() == lowestContinuingVote);
-	  @*/
+   /*@ public invariant (state == COUNTING) ==>
+     @ numberOfEqualLowestContinuing <= getNumberContinuing();
+     @ public invariant (state == COUNTING) ==> numberOfEqualLowestContinuing ==
+     @ (\num_of int i; 0 <= i && i < totalCandidates &&
+     @   candidateList[i].getStatus() == Candidate.CONTINUING;
+     @   candidateList[i].getTotalVote() == lowestContinuingVote);
+     @*/
 	/**  Number of candidates with equal lowest non-zero votes */
 	protected int totalNumberOfEqualLowestContinuing;
    /*@ protected represents numberOfEqualLowestContinuing <- 
@@ -494,9 +501,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
  */
 /*@ also
   @   public normal_behavior
-  @		assignable state, countNumber, numberElected, numberEliminated,
-  @       countNumberValue, numberOfCandidatesElected, 
-  @       numberOfCandidatesEliminated, decisions, decisionsTaken;
+  @     assignable state, countNumber, numberElected, numberEliminated,
+  @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
+  @       totalVotes,numberOfCandidatesEliminated, decisions, decisionsTaken,
+  @       totalNumberOfVotes;
   @     ensures state == EMPTY;
   @     ensures countNumber == 0;
   @     ensures numberElected == 0;
@@ -508,6 +516,8 @@ public AbstractBallotCounting(){
 	numberOfCandidatesEliminated = 0;
 	decisions = new Decision[0];
 	decisionsTaken = 0;
+    totalNumberOfVotes = 0;
+    numberOfSeats = 0;
 }
 
 /**
@@ -764,11 +774,16 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
 }
 
 /**
- * Droop quota
+ * Droop quota; number of votes needed to guarantee election.
  * 
  * @return Number of votes required to ensure election
  */
-/*@ also requires 0 < numberOfSeats;
+/*@ also 
+  @   requires 0 < numberOfSeats;
+  @   ensures 0 <= \result;
+  @   ensures \result <= totalVotes;
+  @   ensures (state >= COUNTING) ==>
+  @   \result == 1 + (totalVotes / (seats + 1));
   @*/
 public /*@ pure @*/ int getQuota() {
   return 1 + (totalNumberOfVotes / (1 + numberOfSeats));
