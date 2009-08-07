@@ -62,19 +62,13 @@ package election.tally;
 //@ refine "AbstractBallotCounting.java-refined";
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
-	/** List of decisions made */
-	/*@ public model non_null election.tally.Decision[] decisionsMade;
-	  @ protected invariant numberOfDecisions <= decisions.length;
-	  @*/
-	
-	protected transient /*@ spec_public @*/ Decision[] decisions;
+    /** List of decisions made */
+    protected transient /*@ spec_public @*/ Decision[] decisions;
    //@ protected represents decisionsMade <- decisions;
 
 	/** Number of decisions made */
 	/*@ public model int numberOfDecisions;
-	  @ public initially numberOfDecisions == 0 ||
-	  @   (\forall int i; 0 <= i && i < numberOfDecisions;
-	  @   decisionsMade[i].decisionTaken == Decision.NO_DECISION);
+	  @ public initially numberOfDecisions == 0;
 	  @ public invariant 0 <= numberOfDecisions;
 	  @ public constraint 
 	  @   \old (numberOfDecisions) <= numberOfDecisions;
