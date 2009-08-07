@@ -113,7 +113,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	/*@ public invariant (state == COUNTING) ==>
 	  @  countStatus != null;
 	  @*/
-	public CountStatus countStatus;
+	public /*@ nullable @*/ CountStatus countStatus;
 	 
     /**
      * Distribute the surplus of an elected Dail candidate.

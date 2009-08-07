@@ -64,13 +64,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
 	/** List of decisions made */
 	/*@ public model non_null election.tally.Decision[] decisionsMade;
-	  @ public invariant 
-	  @   (\forall int i; 0 <= i && i < numberOfDecisions;
-	  @   decisionsMade[i].decisionTaken != Decision.NO_DECISION &&
-	  @   decisionsMade[i].atCountNumber < countNumber &&
-	  @   (\exists int k; 0 <= k && k < totalCandidates;
-	  @     decisionsMade[i].candidateID == 
-	  @     candidateList[k].getCandidateID()));
 	  @ protected invariant numberOfDecisions <= decisions.length;
 	  @*/
 	

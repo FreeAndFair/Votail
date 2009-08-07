@@ -37,12 +37,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /** List of decisions made */
   /*@ public model Decision[] decisionsMade;
-    @ public invariant (state == COUNTING) ==>
-    @   (\forall int i; 0 <= i && i < numberOfDecisions;  
-    @   decisionsMade[i].decisionTaken != Decision.NO_DECISION &&
-    @   decisionsMade[i].atCountNumber < countNumber && 
-    @   (\exists int k; 0 <= k && k < totalCandidates;
-    @      decisionsMade[i].candidateID == candidateList[k].getCandidateID()));
+    @ public invariant (state == COUNTING && 0 < numberOfDecisions) ==>
+    @   (\forall int i; 0 <= i && i < numberOfDecisions &&
+    @     decisionsMade[i].decisionTaken != Decision.NO_DECISION;
+    @     decisionsMade[i].atCountNumber <= countNumber && 
+    @     (\exists int k; 0 <= k && k < totalCandidates;
+    @     decisionsMade[i].candidateID == candidateList[k].getCandidateID()));
     @*/
 	
   /** Number of decisions made */
