@@ -201,7 +201,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		}
 		
 		while (getNumberContinuing() > totalRemainingSeats && 
-				countNumberValue < Candidate.MAXCOUNT) {
+				countNumberValue < AbstractBallotCounting.MAXCOUNT) {
 			countStatus.changeState(
 					AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
 
@@ -210,7 +210,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			boolean highestCandidateExists = true;
 			
 			// Transfer surplus votes from winning candidates
-			while (totalNumberOfSurpluses > 0 && countNumberValue < Candidate.MAXCOUNT - 1 &&
+			while (totalNumberOfSurpluses > 0 && countNumberValue < AbstractBallotCounting.MAXCOUNT - 1 &&
 			    getNumberContinuing() > totalRemainingSeats && highestCandidateExists) {
 				countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
 				final int winner = findHighestCandidate();
@@ -228,7 +228,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			
 			// Exclusion of lowest continuing candidate if no surplus
 			if (getNumberContinuing() > totalRemainingSeats && 
-					countNumberValue < Candidate.MAXCOUNT) {
+					countNumberValue < AbstractBallotCounting.MAXCOUNT) {
 			  countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);	
 			  int loser = findLowestCandidate();
 			

@@ -39,7 +39,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ public model Decision[] decisionsMade;
     @ public invariant (state == COUNTING && 0 < numberOfDecisions) ==>
     @   (\forall int i; 0 <= i && i < numberOfDecisions &&
-    @     decisionsMade[i].decisionTaken != Decision.NO_DECISION;
+    @     decisionsMade[i].decisionTaken != DecisionStatus.NO_DECISION;
     @     decisionsMade[i].atCountNumber <= countNumber && 
     @     (\exists int k; 0 <= k && k < totalCandidates;
     @     decisionsMade[i].candidateID == candidateList[k].getCandidateID()));
@@ -189,7 +189,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public model int countNumber;
   //@ public initially countNumber == 0;
   //@ public invariant 0 <= countNumber;
-  //@ public invariant countNumber < Candidate.MAXCOUNT;
   //@ public constraint (state == COUNTING) ==> \old(countNumber) <= countNumber;
 	
   /** Number of candidates with surplus votes */

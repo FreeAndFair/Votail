@@ -9,43 +9,9 @@ package election.tally;
  * @author Dermot Cochran
  * @copyright 2005-2009 Dermot Cochran
  */
-public class Decision {
+public class Decision extends DecisionStatus {
 	
 /**
- * State value of decision to declare this candidate elected by
- * reaching the quota
- */	
-	public final static byte ELECT_BY_QUOTA = 0;
-	
-/**
- * State value for decision to eliminate this candidate as the lowest
- * continuing candidate
- */	
-	public final static byte EXCLUDE = 1;
-	
-/**
- * Default state value to indicate that no decision has been taken
- */	
-	public final static byte NO_DECISION = 2;
-	
-/**
- * State value for decision to round up a fractional transfer of votes
- * to this candidate
- */	
-	public final static byte ROUND_UP_FRACTION = 3;
-	
-/**
- * State value for decision to distribute the surplus of this candidate
- */	
-	public final static byte DISTRIBUTE_SURPLUS = 4;
-
-/**
- * State value for the decision to deem this candidate elected as one
- * of the highest continuing candidates for the last remaining seats 
- */	
-	public final static byte DEEM_ELECTED = 5;
-
-	/**
 	 * Maximum number of decision points 
 	 */
 public static final int MAX_DECISIONS = 100;
@@ -96,7 +62,7 @@ public static final int MAX_DECISIONS = 100;
 	public /*@ pure @*/ Decision(){
 		decisionTaken = NO_DECISION;
 		atCountNumber = 0;
-		candidateID = 0;
+		candidateID = Candidate.NO_CANDIDATE;
 		chosenByLot = false;	
 	}
 }

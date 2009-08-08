@@ -34,20 +34,20 @@ public static final int MAX_CANDIDATES = 50;
 	protected transient /*@ spec_public @*/ int candidateID;
 	
 /** Number of votes added at each count */
-/*@ public invariant (\forall int i; 0 < i && i < MAXCOUNT;
+/*@ public invariant (\forall int i; 0 < i && i < votesAdded.length;
   @   0 <= votesAdded[i]);
-  @ public initially (\forall int i; 0 < i && i < MAXCOUNT;
+  @ public initially (\forall int i; 0 < i && i < votesAdded.length;
   @   votesAdded[i] == 0);	
-  @ public invariant votesAdded.length == MAXCOUNT;
+  @ public invariant votesAdded.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
   protected transient /*@ spec_public non_null @*/ int[] votesAdded;
 	
 /** Number of votes removed at each count */
-/*@ public invariant (\forall int i; 0 < i && i < MAXCOUNT;
+/*@ public invariant (\forall int i; 0 < i && i < votesRemoved.length;
   @                                  0 <= votesRemoved[i]);
-  @ public initially (\forall int i; 0 < i && i < MAXCOUNT;
+  @ public initially (\forall int i; 0 < i && i < votesRemoved.length;
   @                                  votesRemoved[i] == 0);
-  @ public invariant votesRemoved.length == MAXCOUNT;
+  @ public invariant votesRemoved.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
   protected transient /*@ spec_public non_null @*/ int[] votesRemoved;
 
@@ -60,41 +60,35 @@ public static final int MAX_CANDIDATES = 50;
   @ public initially state == CONTINUING;
   @*/      
 	protected transient /*@ spec_public @*/ byte state;
-	
+
 /** The number of rounds of counting so far */
 //@ public invariant 0 <= lastCountNumber;
 //@ public initially lastCountNumber == 0;
 //@ public constraint \old(lastCountNumber) <= lastCountNumber;
-//@ public invariant lastCountNumber < MAXCOUNT;
+//@ public invariant lastCountNumber <= AbstractBallotCounting.MAXCOUNT;
 	protected transient /*@ spec_public @*/ int lastCountNumber;
-	
+
 /** The count number at which the last set of votes were added */
 //@ public invariant 0 <= lastSetCount;
 //@ public initially lastSetCount == 0;	
 //@ public constraint \old(lastSetCount) <= lastSetCount;
 //@ public invariant lastSetCount <= lastCountNumber;
 	protected transient /*@ spec_public @*/ int lastSetCount;
-	
+
 /**
  * Unique random number used to simulate drawing of lots between candidates.
  */
   protected transient /*@ spec_public @*/ int randomNumber;
   //@ ghost int _randomNumber;
-	
+
   /**
-   * Maximum possible number of counts
-   * 
-   * @design This value is not set by the legislation; it is chosen so that
-   * fixed length arrays can be used in the specification.  
-   */	
-  	public static final int MAXCOUNT = 100;
-	
-/**
  * Total number of votes this candidate has at any time 
  * 
  * @design This variable was added as to provide easy access from other classes.
  */
 	public int total;
+
+public static final int NO_CANDIDATE = 0;
 
 	/**
 	 * Next available value for candidate ID number. 
@@ -113,7 +107,7 @@ private static int nextCandidateID = 1;
  */	
 /*@ 
   @   public normal_behavior
-  @     requires 0 <= count && count < MAXCOUNT;
+  @     requires 0 <= count && count <= AbstractBallotCounting.MAXCOUNT;
   @     requires count <= lastCountNumber;
   @     ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
@@ -220,8 +214,8 @@ private static int nextCandidateID = 1;
  */	
   public Candidate(){
     state = CONTINUING;
-    votesAdded = new int [MAXCOUNT];
-    votesRemoved = new int [MAXCOUNT];
+    votesAdded = new int [AbstractBallotCounting.MAXCOUNT];
+    votesRemoved = new int [AbstractBallotCounting.MAXCOUNT];
     randomNumber = this.hashCode(); //@ nowarn;
     candidateID = nextCandidateID++;
     //@ set _randomNumber = randomNumber;
@@ -242,7 +236,7 @@ private static int nextCandidateID = 1;
   @   requires lastCountNumber < count || 
   @            (lastCountNumber == 0 && count == 0);
   @   requires votesAdded[count] == 0;
-  @   requires 0 <= count && count < MAXCOUNT;
+  @   requires 0 <= count && count <= AbstractBallotCounting.MAXCOUNT;
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesAdded[count], lastSetCount;
   @   ensures votesAdded[count] == numberOfVotes;
@@ -269,7 +263,7 @@ private static int nextCandidateID = 1;
   @   requires state == ELIMINATED || state == ELECTED;
   @   requires lastCountNumber < count;
   @   requires votesRemoved[count] == 0;
-  @   requires 0 < count & count < MAXCOUNT;
+  @   requires 0 <= count & count <= AbstractBallotCounting.MAXCOUNT;
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesRemoved[count];
   @   ensures votesRemoved[count] == numberOfVotes;

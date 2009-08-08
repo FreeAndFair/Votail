@@ -115,13 +115,13 @@ public static final int NONTRANSFERABLE = 0;
   protected /*@ spec_public @*/ int positionInList;
    
   /** Candidate ID to which the vote is assigned at the end of each count */
-  //@ public invariant candidateIDAtCount.length <= Candidate.MAXCOUNT;
+  //@ public invariant candidateIDAtCount.length <= AbstractBallotCounting.MAXCOUNT;
   protected /*@ spec_public non_null @*/ int[] candidateIDAtCount = 
-    new int [Candidate.MAXCOUNT];
+    new int [AbstractBallotCounting.MAXCOUNT];
 
   /** Last count number in which this ballot was transferred */
   //@ public invariant 0 <= countNumberAtLastTransfer;
-  //@ public invariant countNumberAtLastTransfer < Candidate.MAXCOUNT;
+  //@ public invariant countNumberAtLastTransfer <= AbstractBallotCounting.MAXCOUNT;
   //@ public initially countNumberAtLastTransfer == 0;  
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
     

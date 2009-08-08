@@ -271,7 +271,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public initially countNumber == 0;
    //@ public invariant 0 <= countNumber;
    /*@ public invariant (PRELOAD <= state) ==>
-     @   countNumber < Candidate.MAXCOUNT;
+     @   countNumber <= MAXCOUNT;
      @ public constraint (state == COUNTING) ==> 
      @   \old(countNumber) <= countNumber;
      @ public constraint (state == COUNTING) ==>
@@ -445,6 +445,14 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	 */
 	//@ public invariant decisionsTaken <= decisions.length;
 	protected transient /*@ spec_public @*/ int decisionsTaken;
+
+	/**
+	   * Maximum possible number of counts
+	   * 
+	   * @design This value is not set by the legislation; it is chosen so that
+	   * fixed length arrays can be used in the specification.  
+	   */	
+	  	public static final int MAXCOUNT = 100;
 	
 /**
  * @design The election count algorithm is modeled as a two tier abstract state
@@ -1375,7 +1383,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 
 		candidates[loser].declareEliminated(); //@ nowarn;
 		redistributeBallots(candidateID); //@ nowarn;
-		auditDecision(Decision.EXCLUDE, candidateID);
+		auditDecision(DecisionStatus.EXCLUDE, candidateID);
 	}
 
 	/**
@@ -1465,7 +1473,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	//@ ensures \old(remainingSeats) == 1 + remainingSeats;
 	public void electCandidate(int winner) {
 	  candidates[winner].declareElected();
-		auditDecision(Decision.DEEM_ELECTED,candidates[winner].getCandidateID()); //@ nowarn;
+		auditDecision(DecisionStatus.DEEM_ELECTED,candidates[winner].getCandidateID()); //@ nowarn;
 		numberOfCandidatesElected++;
  		totalRemainingSeats--;
 	}
