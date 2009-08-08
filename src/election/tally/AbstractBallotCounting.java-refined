@@ -43,7 +43,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     decisionsMade[i].atCountNumber <= countNumber && 
     @     (\exists int k; 0 <= k && k < totalCandidates;
     @     decisionsMade[i].candidateID == candidateList[k].getCandidateID()));
-    @ public initially decisionsMade.length == 0;
     @*/
 	
   /** Number of decisions made */
@@ -52,7 +51,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public invariant (state <= PRECOUNT) ==> numberOfDecisions == 0;
     @ public invariant 0 <= numberOfDecisions;
     @ public constraint \old (numberOfDecisions) <= numberOfDecisions;
-    @ protected invariant numberOfDecisions <= decisionsMade.length;
+    @ protected invariant (COUNTING <= state) ==> 
+    @   numberOfDecisions <= decisionsMade.length;
     @*/
 	
   /** List of details for each candidate. 
