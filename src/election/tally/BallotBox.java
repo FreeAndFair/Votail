@@ -77,8 +77,8 @@ public class BallotBox {
 	public /*@ pure @*/ BallotBox(){
 		numberOfBallots = 0;
 		ballots = new Ballot[Ballot.MAX_BALLOTS];
-	} //@ nowarn;
-	
+	}
+
 	/**
 	 * Accept a ballot paper.
 	 * @param ballot The ballot paper

@@ -84,6 +84,8 @@ public class Ballot {
  * section 7, pages 23-27</a>
  */
 public static final int NONTRANSFERABLE = 0;
+
+private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 	
   /** Ballot ID number */
   //@ public invariant (ballotID == 0) || (0 < ballotID);
@@ -157,7 +159,7 @@ public static final int NONTRANSFERABLE = 0;
 	  ballotID = nextBallotID++;
       randomNumber = this.hashCode();
 	  //@ set _randomNumber = randomNumber;
-      preferenceList = new int [Candidate.MAX_CANDIDATES];
+      preferenceList = new int [MAX_PREFERENCES];
   }
     
   /**

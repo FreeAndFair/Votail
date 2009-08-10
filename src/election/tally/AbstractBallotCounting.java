@@ -73,7 +73,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ public constraint 
 	  @   \old (numberOfDecisions) <= numberOfDecisions;
 	  @*/
-	//@ represents numberOfDecisions <- decisions.length;
+	//@ represents numberOfDecisions <- decisionsTaken;
 	
 	/** List of details for each candidate.
 	* @constraint There are no duplicates in the list of candidate 
@@ -482,10 +482,14 @@ public AbstractBallotCounting(){
 	countNumberValue = 0;
 	numberOfCandidatesElected = 0;
 	numberOfCandidatesEliminated = 0;
-	decisions = new Decision[0];
-	decisionsTaken = 0;
+	createDecisionTable();
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
+}
+
+private void createDecisionTable() {
+	decisions = new Decision[Decision.MAX_DECISIONS];
+	decisionsTaken = 0;
 }
 
 /**
