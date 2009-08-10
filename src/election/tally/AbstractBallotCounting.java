@@ -487,6 +487,10 @@ public AbstractBallotCounting(){
     numberOfSeats = 0;
 }
 
+/*@ assignable decisions, decisionsTaken;
+  @ ensures numberOfDecisions == 0;
+  @ ensures \nonnullelements (decisionsMade);
+  @*/
 private void createDecisionTable() {
 	decisions = new Decision[Decision.MAX_DECISIONS];
 	decisionsTaken = 0;
