@@ -58,16 +58,16 @@ public class Election {
   @   candidateList[i].candidateID != candidateList[j].candidateID); 
   @*/	
 	protected transient /*@ spec_public non_null @*/ Candidate[] candidateList;
-	
-	/**
-	 * 
-	 */
+
+    /**
+     * Election parameters e.g. number of seats
+     */
 	public Election(){	
 		totalNumberOfSeats = 0;
 		numberOfCandidates = 0;
-		numberOfSeatsInThisElection = 0;
-		candidateList = new Candidate[numberOfCandidates];
-	} //@ nowarn;
+		numberOfSeatsInThisElection = totalNumberOfSeats;
+        candidateList = new Candidate[Candidate.MAX_CANDIDATES];
+    }
 
 	/**
 	 * Set the list of candidates.
@@ -101,11 +101,10 @@ public class Election {
 	  @*/	
 	public void setCandidateList(final /*@ non_null @*/ Candidate[] listOfCandidates) {
 		numberOfCandidates = listOfCandidates.length;
-		candidateList = new Candidate[numberOfCandidates];
 		for (int i = 0; i < numberOfCandidates; i++) {
 		  this.candidateList[i] = listOfCandidates[i];
 		}
-	} //@ nowarn;
+    }
 
 	/**
 	 * Get the <code>Candidate</code> object.
