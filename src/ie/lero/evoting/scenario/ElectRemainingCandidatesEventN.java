@@ -12,22 +12,20 @@ public class ElectRemainingCandidatesEventN extends TestCase {
  	public void testEvent() {
  	 BallotCounting ballotCounting = new BallotCounting();
    Election election = new Election();
-   election.numberOfCandidates = 4;
    election.numberOfSeatsInThisElection = 3;
    election.totalNumberOfSeats = 3;
-   Candidate[] candidates = Election.generateCandidates(election.numberOfCandidates);
-   election.setCandidateList(candidates);
+   election.generateCandidates(4);
    ballotCounting.setup(election);		
    BallotBox ballotBox = new BallotBox();
    MockBallot ballot = new MockBallot();
    for (int i=0; i<3; i++) {
-     ballot.setFirstPreference(candidates[i].getCandidateID());
+     ballot.setFirstPreference(election.getCandidate(i).getCandidateID());
      ballotBox.accept(ballot);
    }
    ballotCounting.load(ballotBox);
    ballotCounting.count();
    for (int i=0; i<3; i++) {
-     assertTrue (ballotCounting.isElected(candidates[i]));
+     assertTrue (ballotCounting.isElected(election.getCandidate(i)));
    }
 	}
 

@@ -57,7 +57,7 @@ public class Election {
   @   i != j;
   @   candidateList[i].candidateID != candidateList[j].candidateID); 
   @*/	
-	protected transient /*@ spec_public non_null @*/ Candidate[] candidateList;
+	protected transient /*@ spec_public nullable @*/ Candidate[] candidateList;
 
     /**
      * Election parameters e.g. number of seats
@@ -117,12 +117,17 @@ public class Election {
 		return candidateList[index];
 	}
 
+  /**
+   * Add <code>n</code> empty objects to the array of candidates.
+   * 
+   * @param n The number of candidates to add
+   */
   //@ requires 1 <= n;
-  public static Candidate[] generateCandidates(int n) {
-    Candidate[] candidates = new Candidate[n];
-    for (int i=0; i<n; i++) {
-        candidates[i] = new Candidate();
+  //@ ensures n == numberOfCandidates;
+  public void generateCandidates(int n) {
+    for (int i = 0; i < n; i++) {
+        candidateList[i] = new Candidate();
     }
-    return candidates;
+    numberOfCandidates = n;
   }
-	}
+}

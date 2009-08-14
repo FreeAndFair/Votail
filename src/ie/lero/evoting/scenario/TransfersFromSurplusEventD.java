@@ -19,27 +19,24 @@ public class TransfersFromSurplusEventD extends TestCase {
 	public void testEvent() {
 	   BallotCounting ballotCounting = new BallotCounting();
 	   Election election = new Election();
-	   election.numberOfCandidates = 20;
 	   election.numberOfSeatsInThisElection = 3;
 	   election.totalNumberOfSeats = 3;
-	   Candidate[] candidates = Election.generateCandidates(
-			   election.numberOfCandidates);
+	   election.generateCandidates(20);
 	   
-	   election.setCandidateList(candidates);
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();
 	   MockBallot ballot = new MockBallot();
-	   int[] preferences = {candidates[0].getCandidateID(), candidates[1].getCandidateID(),
-	                        candidates[2].getCandidateID()};
+	   int[] preferences = {election.getCandidate(0).getCandidateID(), election.getCandidate(1).getCandidateID(),
+	                        election.getCandidate(2).getCandidateID()};
 	   
 	   // Candidate 0 has 41 first preferences of which 20 are second preferences for candidate 1
 	   // Candidate 0 has a surplus of 25 of which 20 should transfer to candidate 1
 	   // Candidate 1 will then have a surplus of 5 votes which will go to candidate 2
 	   for (int i=0; i<election.numberOfCandidates; i++) {
-	     assertTrue (candidates[i].sameAs((candidates[i])));
-	     ballot.setFirstPreference(candidates[0].getCandidateID());
+	     assertTrue (election.getCandidate(i).sameAs((election.getCandidate(i))));
+	     ballot.setFirstPreference(election.getCandidate(0).getCandidateID());
        ballotBox.accept(ballot);
-	     ballot.setFirstPreference(candidates[i].getCandidateID());
+	     ballot.setFirstPreference(election.getCandidate(i).getCandidateID());
 	     ballotBox.accept(ballot);
 	     ballot.setMultiplePreferences(preferences);
 	     ballotBox.accept(ballot);
@@ -52,28 +49,25 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   ballotCounting.calculateSurpluses();
 	   assertTrue (20 == ballotCounting.getContinuingCandidates()); 
 	   int winner = ballotCounting.findHighestCandidate();
-	   assertTrue (41 == ballotCounting.countBallotsFor(candidates[0].getCandidateID()));
+	   assertTrue (41 == ballotCounting.countBallotsFor(election.getCandidate(0).getCandidateID()));
 	   assertTrue (0 == winner);
-	   int votesForWinner =
-	     ballotCounting.countBallotsFor(candidates[winner].getCandidateID());
-	   assertTrue (41 == votesForWinner);
+	   assertTrue (41 == ballotCounting.countBallotsFor(election.getCandidate(winner).getCandidateID()));
 	   ballotCounting.electCandidate(winner);
-	   assertTrue (ballotCounting.isElected(candidates[winner]));
-	   assertTrue (candidates[winner].isElected());
-	   assertTrue (1 == ballotCounting.countBallotsFor(candidates[1].getCandidateID()));
+	   assertTrue (ballotCounting.isElected(election.getCandidate(winner)));
+	   assertTrue (election.getCandidate(winner).isElected());
+	   assertTrue (1 == ballotCounting.countBallotsFor(election.getCandidate(1).getCandidateID()));
 	   ballotCounting.distributeSurplus(winner);
 	   ballotCounting.incrementCountNumber();
 	   int numberContinuing = ballotCounting.getContinuingCandidates();
 	   assertTrue (19 == numberContinuing);
-	   assertTrue (21 == ballotCounting.countBallotsFor(candidates[1].getCandidateID()));
+	   assertTrue (21 == ballotCounting.countBallotsFor(election.getCandidate(1).getCandidateID()));
        int secondPlace = ballotCounting.findHighestCandidate();
        assertTrue (0 <= secondPlace);
        int votesForSecondPlace = 
-         ballotCounting.countBallotsFor(candidates[secondPlace].getCandidateID());
-       assertTrue (ballotCounting.randomSelection(candidates[0], candidates[1]) ==
-         ballotCounting.randomSelection(candidates[1], candidates[0]));
+         ballotCounting.countBallotsFor(election.getCandidate(secondPlace).getCandidateID());
+       assertTrue (ballotCounting.randomSelection(election.getCandidate(0), election.getCandidate(1)) ==
+         ballotCounting.randomSelection(election.getCandidate(1), election.getCandidate(0)));
 
-       assertTrue (votesForWinner == 41);
        assertTrue (votesForSecondPlace == 21);
        assertTrue (16 == ballotCounting.getQuota());
 	   assertTrue (0 == winner);
@@ -86,6 +80,6 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   
 	   // Test that the count completes normally
 	   ballotCounting.count();
-	   assertTrue (candidates[2].isElected());
+	   assertTrue (election.getCandidate(2).isElected());
 	}
 }

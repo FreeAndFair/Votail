@@ -21,10 +21,10 @@ import election.tally.mock.MockBallot;
 public class ExclusionEventJ extends TestCase {
 
   private /*@ spec_public @*/ int numberOfCandidates;
-  private /*@ spec_public @*/ Candidate[] candidates;
-  private /*@ spec_public @*/ Election parameters;
-  private /*@ spec_public @*/ BallotCounting ballotCounting;
-  private /*@ spec_public @*/ BallotBox ballotBox;
+  private /*@ spec_public nullable @*/ Candidate[] candidates;
+  private /*@ spec_public nullable @*/ Election parameters;
+  private /*@ spec_public nullable @*/ BallotCounting ballotCounting;
+  private /*@ spec_public nullable @*/ BallotBox ballotBox;
 
 	/**
 	 * Execute this scenario.

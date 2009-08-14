@@ -18,7 +18,7 @@ import election.tally.mock.MockBallot;
 public class SelectHighestContinuingCandidateEventB extends TestCase {
   
     private static final int candidateToWin = 0;
-    private BallotCounting ballotCounting;
+    private /*@ nullable @*/ BallotCounting ballotCounting;
 
     protected void setUp() throws Exception {
     super.setUp();

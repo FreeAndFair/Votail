@@ -15,16 +15,17 @@ public class CheckRemainingSeatsEventM extends TestCase {
 		election.numberOfCandidates = 4;
 		election.numberOfSeatsInThisElection = 3;
 		election.totalNumberOfSeats = 3;
-		Candidate[] candidates = Election.generateCandidates(4);
-        election.setCandidateList(candidates);
+		election.generateCandidates(4);
 		ballotCounting.setup(election);
-		assertTrue (election.numberOfSeatsInThisElection == ballotCounting.getRemainingSeats());
+		assertTrue (election.numberOfSeatsInThisElection 
+            == ballotCounting.getRemainingSeats());
 		BallotBox ballotBox = new BallotBox();
 		MockBallot ballot = new MockBallot();
-		ballot.setFirstPreference(candidates[0].getCandidateID());
+		ballot.setFirstPreference(election.getCandidate(0).getCandidateID());
 		ballotBox.accept(ballot);
 		ballotCounting.load(ballotBox);
-        assertTrue (election.numberOfSeatsInThisElection == ballotCounting.getRemainingSeats());
+        assertTrue (election.numberOfSeatsInThisElection 
+            == ballotCounting.getRemainingSeats());
         ballotCounting.count();
         assertTrue (0 == ballotCounting.getRemainingSeats());
 	}

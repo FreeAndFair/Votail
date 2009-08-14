@@ -40,7 +40,7 @@ public static final int MAX_CANDIDATES = 50;
   @   votesAdded[i] == 0);	
   @ public invariant votesAdded.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public non_null @*/ int[] votesAdded 
+  protected transient /*@ spec_public nullable @*/ int[] votesAdded 
     = new int [AbstractBallotCounting.MAXCOUNT];
 	
 /** Number of votes removed at each count */
@@ -50,7 +50,7 @@ public static final int MAX_CANDIDATES = 50;
   @                                  votesRemoved[i] == 0);
   @ public invariant votesRemoved.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public non_null @*/ int[] votesRemoved 
+  protected transient /*@ spec_public nullable @*/ int[] votesRemoved 
     = new int [AbstractBallotCounting.MAXCOUNT];
 
 //@ public invariant votesAdded != votesRemoved;
