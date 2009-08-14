@@ -40,7 +40,8 @@ public static final int MAX_CANDIDATES = 50;
   @   votesAdded[i] == 0);	
   @ public invariant votesAdded.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public non_null @*/ int[] votesAdded;
+  protected transient /*@ spec_public non_null @*/ int[] votesAdded 
+    = new int [AbstractBallotCounting.MAXCOUNT];
 	
 /** Number of votes removed at each count */
 /*@ public invariant (\forall int i; 0 < i && i < votesRemoved.length;
@@ -49,7 +50,8 @@ public static final int MAX_CANDIDATES = 50;
   @                                  votesRemoved[i] == 0);
   @ public invariant votesRemoved.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public non_null @*/ int[] votesRemoved;
+  protected transient /*@ spec_public non_null @*/ int[] votesRemoved 
+    = new int [AbstractBallotCounting.MAXCOUNT];
 
 //@ public invariant votesAdded != votesRemoved;
 //@ public invariant votesRemoved != votesAdded;
@@ -214,12 +216,10 @@ private static int nextCandidateID = 1;
  */	
   public Candidate(){
     state = CONTINUING;
-    votesAdded = new int [AbstractBallotCounting.MAXCOUNT];
-    votesRemoved = new int [AbstractBallotCounting.MAXCOUNT];
-    randomNumber = this.hashCode(); //@ nowarn;
+    randomNumber = this.hashCode();
     candidateID = nextCandidateID++;
     //@ set _randomNumber = randomNumber;
-  } //@ nowarn;
+  }
 
 /**
  * Add a number of votes to the candidate's ballot pile.
@@ -236,7 +236,7 @@ private static int nextCandidateID = 1;
   @   requires lastCountNumber < count || 
   @            (lastCountNumber == 0 && count == 0);
   @   requires votesAdded[count] == 0;
-  @   requires 0 <= count && count <= AbstractBallotCounting.MAXCOUNT;
+  @   requires 0 <= count && count <= votesAdded.length;
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesAdded[count], lastSetCount;
   @   ensures votesAdded[count] == numberOfVotes;
@@ -258,22 +258,22 @@ private static int nextCandidateID = 1;
  * @param numberOfVotes Number of votes to remove from this candidate
  * @param count The round of counting at which the votes were removed 
  */	
-/*@ 
-  @   public normal_behavior
+/*@ public normal_behavior
   @   requires state == ELIMINATED || state == ELECTED;
-  @   requires lastCountNumber < count;
+  @   requires lastCountNumber <= count;
   @   requires votesRemoved[count] == 0;
-  @   requires 0 <= count & count <= AbstractBallotCounting.MAXCOUNT;
+  @   requires 0 <= count & count < votesRemoved.length;
   @   requires 0 <= numberOfVotes;
+  @   requires numberOfVotes <= getTotalVote();
   @   assignable lastCountNumber, votesRemoved[count];
-  @   ensures votesRemoved[count] == numberOfVotes;
+  @   ensures \old(getTotalVote()) == getTotalVote() + numberOfVotes;
   @   ensures lastCountNumber == count;
   @*/
   public void removeVote(final int numberOfVotes, final int count){
         votesRemoved[count] = numberOfVotes;
         lastCountNumber = count;
-    } //@ nowarn;
-	
+    }
+
 /** Declares the candidate to be elected */
 /*@ public normal_behavior
   @   requires state == CONTINUING;

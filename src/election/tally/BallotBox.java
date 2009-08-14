@@ -36,31 +36,32 @@ public class BallotBox {
 /*@ public invariant (\forall int i, j;
   @   0 <= i && i < numberOfBallots &&
   @   0 <= j && j < numberOfBallots &&
-  @   i != j && ballots[i] != null && ballots[j] != null;
+  @   i != j;
   @   ballots[i].ballotID != ballots[j].ballotID);
   @*/	
-	protected /*@ spec_public non_null @*/ Ballot[] ballots;
-	
-/**
- * Get the number of ballots in this box.
- * 
- * @return the number of ballots in this ballot box
- */	
-/*@ also 
-  @ public normal_behavior
-  @   ensures 0 <= \result;
-  @   ensures \result == numberOfBallots;
-  @*/
-   public /*@ pure @*/ int size(){
-		return numberOfBallots;
-	}
+  protected /*@ spec_public @*/ Ballot[] ballots 
+      = new Ballot[Ballot.MAX_BALLOTS];
+
+    /**
+     * Get the number of ballots in this box.
+     * 
+     * @return the number of ballots in this ballot box
+     */	
+   /*@ also 
+     @ public normal_behavior
+     @   ensures 0 <= \result;
+     @   ensures \result == numberOfBallots;
+     @*/
+    public /*@ pure @*/ int size(){
+        return numberOfBallots;
+    }
 	
   /**
    * The total number of ballots in this ballot box.
    */
-  //@ public invariant 0 <= numberOfBallots;
-  //@ public initially numberOfBallots == 0;
-  //@ public invariant numberOfBallots <= ballots.length;
+  //@ public invariant 0 <= size();
+  //@ public initially size() == 0;
+  //@ public invariant size() <= ballots.length;
 	private /*@ spec_public @*/ int numberOfBallots;
 	
 	/**
@@ -76,7 +77,6 @@ public class BallotBox {
 	 */
 	public /*@ pure @*/ BallotBox(){
 		numberOfBallots = 0;
-		ballots = new Ballot[Ballot.MAX_BALLOTS];
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class BallotBox {
 	  newBallot.numberOfPreferences = ballot.numberOfPreferences;
 	  newBallot.preferenceList = new int[ballot.numberOfPreferences];
 	  for (int i=0; i < newBallot.numberOfPreferences; i++) {
-	    newBallot.preferenceList[i] = ballot.preferenceList[i];
+	    newBallot.setPreference(i,ballot.getPreference(i));
 	  }
 		ballots[numberOfBallots++] = newBallot;
 	} 

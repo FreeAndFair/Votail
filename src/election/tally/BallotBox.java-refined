@@ -8,16 +8,13 @@ package election.tally;
 
 /** Data transfer structure for set of all valid votes */
 public class BallotBox {
-	  
-  /** List of valid ballot papers */
-  //@ public invariant \nonnullelements (ballots);
 
   /**
    * @constraint No two ballot IDs in a ballot box are the same.
    */
   /*@ public invariant uniqueness();
     @*/
-  protected /*@ spec_public non_null @*/ Ballot[] ballots;
+  protected /*@ spec_public @*/ Ballot[] ballots;
   
   /*@ ensures \result <==> (\forall int i, j;
     @                   0 <= i & i < size() &

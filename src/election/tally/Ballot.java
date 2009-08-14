@@ -101,8 +101,9 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @   preferenceList[i] != preferenceList[j]);
     @ public invariant preferenceList.length >= numberOfPreferences;
     @*/
-  protected /*@ spec_public non_null @*/ int[] preferenceList;
-	
+  protected /*@ spec_public @*/ int[] preferenceList 
+      = new int [MAX_PREFERENCES];
+
   /** Total number of valid preferences on this ballot paper */
   //@ public invariant 0 <= numberOfPreferences;
   // @design numberOfPreferences == 0 means an empty ballot.
@@ -117,8 +118,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   protected /*@ spec_public @*/ int positionInList;
    
   /** Candidate ID to which the vote is assigned at the end of each count */
-  //@ public invariant candidateIDAtCount.length <= AbstractBallotCounting.MAXCOUNT;
-  protected /*@ spec_public non_null @*/ int[] candidateIDAtCount = 
+  protected /*@ spec_public @*/ int[] candidateIDAtCount = 
     new int [AbstractBallotCounting.MAXCOUNT];
 
   /** Last count number in which this ballot was transferred */
@@ -159,7 +159,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 	  ballotID = nextBallotID++;
       randomNumber = this.hashCode();
 	  //@ set _randomNumber = randomNumber;
-      preferenceList = new int [MAX_PREFERENCES];
+      
   }
     
   /**
@@ -191,16 +191,15 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @     (preferenceList[i] == list[i]));
     @*/
    public void load(final /*@ non_null @*/ int[] list) {
-	        
-    preferenceList = new int [list.length];
+
     for(int i = 0; i < list.length; i++) {
  		    preferenceList[i] = list[i];
  	}
     
-    numberOfPreferences = preferenceList.length; //@ nowarn;
-    candidateIDAtCount [countNumberAtLastTransfer] = getCandidateID(); //@ nowarn;
-  } //@ nowarn;
-    
+    numberOfPreferences = list.length;
+    candidateIDAtCount [countNumberAtLastTransfer] = getCandidateID();
+  }
+
   /**
    * Get candidate ID to which the ballot is assigned 
    * 
@@ -209,17 +208,13 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   /*@ also public normal_behavior
     @   requires 0 <= positionInList;
     @   requires positionInList <= numberOfPreferences;
-    @   requires preferenceList != null;
     @   ensures (positionInList == numberOfPreferences) ==>
     @     (\result == NONTRANSFERABLE);
     @   ensures (positionInList < numberOfPreferences) ==>
     @     (\result == preferenceList[positionInList]);
     @*/   
   public /*@ pure @*/ int getCandidateID() {
-       if (positionInList < numberOfPreferences) {
-    	   return preferenceList[positionInList];
-        }
-        return NONTRANSFERABLE;
+      return getPreference(positionInList);
   }
     
   /**
@@ -325,5 +320,23 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   public /*@ pure @*/ int remainingPreferences(){
     return (numberOfPreferences - positionInList);
   }
+
+//@ requires 0 <= i;
+//@ ensures (i < numberOfPreferences) ==> preferenceList[i] == \result;
+//@ ensures (numberOfPreferences <= i) ==> \result == Ballot.NONTRANSFERABLE;
+public /*@ pure @*/ int getPreference(int i) {
+    if (i < numberOfPreferences) {
+       return preferenceList[i];
+    }
+    return Ballot.NONTRANSFERABLE;	
+}
+
+//@ requires 0 <= i;
+//@ requires i < numberOfPreferences;
+//@ assignable preferenceList[*];
+//@ ensures preference == preferenceList[i];
+public void setPreference(int i, int preference) {
+    preferenceList[i] = preference;	
+}
  
 }

@@ -63,7 +63,8 @@ package election.tally;
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
     /** List of decisions made */
-    protected transient /*@ spec_public @*/ Decision[] decisions;
+    protected transient /*@ spec_public @*/ Decision[] decisions 
+        = new Decision[Decision.MAX_DECISIONS];
    //@ protected represents decisionsMade <- decisions;
 
 	/** Number of decisions made */
@@ -76,10 +77,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	//@ represents numberOfDecisions <- decisionsTaken;
 	
 	/** List of details for each candidate.
-	* @constraint There are no duplicates in the list of candidate 
-	* IDs and, once the counting starts, there must be a ballot paper 
-	* associated with each vote held by a candidate.
-	*/
+	 * @constraint There are no duplicates in the list of candidate 
+	 * IDs and, once the counting starts, there must be a ballot paper 
+	 * associated with each vote held by a candidate.
+	 */
     //@ public model Candidate[] candidateList;
 	/*@ public invariant (state == PRELOAD || state == LOADING || 
 	  @   state == PRECOUNT)
@@ -116,7 +117,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @*/
 
 	/** List of candidates for election */
-	protected transient /*@ spec_public @*/ Candidate[] candidates;
+	protected transient /*@ spec_public @*/ Candidate[] candidates 
+	  = new Candidate[Candidate.MAX_CANDIDATES];
    //@ protected represents candidateList <- candidates;
 	
 
@@ -128,7 +130,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @     0 <= i && i < totalVotes && i < j && j < totalVotes;
 	  @     ballotsToCount[i].getBallotID() != ballotsToCount[j].getBallotID());
 	  @*/
-	protected transient Ballot[] ballots;
+	protected transient Ballot[] ballots = new Ballot[Ballot.MAX_BALLOTS];
    //@ protected represents ballotsToCount <- ballots;
 	
 	/** Total number of candidates for election */
@@ -482,18 +484,16 @@ public AbstractBallotCounting(){
 	countNumberValue = 0;
 	numberOfCandidatesElected = 0;
 	numberOfCandidatesEliminated = 0;
-	createDecisionTable();
+    createDecisionTable();
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
 }
 
 /*@ assignable decisions, decisionsTaken;
   @ ensures numberOfDecisions == 0;
-  @ ensures \nonnullelements (decisionsMade);
   @*/
-private void createDecisionTable() {
-	decisions = new Decision[Decision.MAX_DECISIONS];
-	decisionsTaken = 0;
+private void createDecisionTable() { 
+    decisionsTaken = 0;
 }
 
 /**
@@ -716,11 +716,9 @@ public void setup(final /*@ non_null @*/ Election electionParameters){
 	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection; //@ nowarn;
 	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; //@ nowarn;
 	this.status = PRELOAD;
-	this.candidates = new Candidate[totalNumberOfCandidates]; //@ nowarn;
 	for (int i = 0; i < totalNumberOfCandidates; i++) {
 		this.candidates[i] = electionParameters.getCandidate(i); //@ nowarn;
 	}
-	decisions = new Decision[Decision.MAX_DECISIONS]; //@ nowarn;
 	this.totalRemainingSeats = this.numberOfSeats; //@ nowarn;
  }
 
@@ -738,7 +736,6 @@ public void setup(final /*@ non_null @*/ Election electionParameters){
   @*/
 public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  	totalNumberOfVotes = ballotBox.size(); //@ nowarn;
- 	ballots = new Ballot[totalNumberOfVotes]; //@ nowarn;
  	int index = 0;
  	while (index < totalNumberOfVotes && ballotBox.isNextBallot()) {
  		ballots[index++] = ballotBox.getNextBallot(); //@ nowarn;
