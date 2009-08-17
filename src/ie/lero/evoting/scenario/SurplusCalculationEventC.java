@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
-import election.tally.Candidate;
 import election.tally.CandidateStatus;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
@@ -15,7 +14,7 @@ import election.tally.mock.MockBallot;
  */
 public class SurplusCalculationEventC extends TestCase{
 	
-  BallotCounting ballotCounting;
+  /*@ nullable @*/ BallotCounting ballotCounting;
   Election parameters;
   BallotBox ballotBox;
 

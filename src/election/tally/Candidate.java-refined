@@ -40,37 +40,30 @@ public class Candidate extends CandidateStatus {
    * mirror that of Ballot's id stuff.
    */
   //@ public invariant 0 <= candidateID;
-  //@ public invariant (state != UNASSIGNED) ==> 0 < candidateID;
-  /*@ public invariant (\forall Candidate a, b; 
-    @   a != null && b != null && a.state != UNASSIGNED && b.state != UNASSIGNED;
-    @   (a.candidateID == b.candidateID) <==> (a == b));
-    @ public constraint (state != UNASSIGNED) ==>
-    @   candidateID == \old (candidateID);
-    @*/
   protected /*@ spec_public @*/ int candidateID;
 
   /** Number of votes added at each count */
-  /*@ public invariant (\forall int i; 0 <= i && i < MAXCOUNT;
+  /*@ public invariant (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
     @   0 <= votesAdded[i]);
     @*/
-  /*@ public initially (\forall int i; 0 <= i && i < MAXCOUNT;
+  /*@ public initially (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
     @   votesAdded[i] == 0);
     @*/
   protected /*@ spec_public non_null @*/ int[] votesAdded;
   
   /** Number of votes removed at each count */
-  /*@ public invariant (\forall int i; 0 <= i && i < MAXCOUNT;
+  /*@ public invariant (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
     @   0 <= votesRemoved[i]);
     @*/
-  /*@ public initially (\forall int i; 0 <= i && i < MAXCOUNT;
+  /*@ public initially (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
     @   votesRemoved[i] == 0);
     @*/
   protected /*@ spec_public non_null @*/ int[] votesRemoved;
 	
   /** The status of the candidate at the latest count */
   /*@ public invariant state == ELECTED || state == ELIMINATED || 
-    @                  state == CONTINUING || state == UNASSIGNED;
-    @ public initially state == UNASSIGNED;
+    @                  state == CONTINUING;
+    @ public initially state == CONTINUING;
     @*/
   protected /*@ spec_public @*/ byte state;
   
@@ -78,7 +71,7 @@ public class Candidate extends CandidateStatus {
   //@ public invariant 0 <= lastCountNumber;
   //@ public initially lastCountNumber == 0;
   //@ public constraint \old(lastCountNumber) <= lastCountNumber;
-  //@ public invariant lastCountNumber < MAXCOUNT;
+  //@ public invariant lastCountNumber < CountConfiguration.MAXCOUNT;
   protected /*@ spec_public @*/ int lastCountNumber;
   
   /** The count number at which the last set of votes were added */
@@ -89,12 +82,6 @@ public class Candidate extends CandidateStatus {
   protected /*@ spec_public @*/ int lastSetCount;
   
   /** Unique random number used to simulate drawing of lots between candidates */
-  /*@ public invariant (\forall Candidate a, b; 
-    @   a != null && b != null && a.state != UNASSIGNED && b.state != UNASSIGNED;
-    @   (a.randomNumber == b.randomNumber) <==> (a == b));
-    @ public constraint (state != UNASSIGNED) ==> 
-    @   randomNumber == \old (randomNumber);
-    @*/
   protected /*@ spec_public @*/ int randomNumber;
   
   /** State value for a candidate neither elected nor eliminated yet. */
@@ -113,25 +100,10 @@ public class Candidate extends CandidateStatus {
    */
   public static final byte ELIMINATED;
   
-  /** State value for a candidate object without a valid ID */
-  public static final byte UNASSIGNED;
-  
   /** State value for a candidate defeated at the last round of election e.g. the
    * second highest remaining candidate when the last seat is being filled
    */
   public static final byte DEFEATED;
-
-  /** Maximum possible number of counts 
-   * @design An assumption is made that the maximum number of counts will never 
-   * exceed one hundred.  This depends on the number of candidates.  In a five seat 
-   * constituency the deposit saving threshold would be five percent of the vote; 
-   * this implies an average of twenty candidates or four per seat.  If we assume 
-   * five major parties then there could be five candidates per seat, or a total of 
-   * twenty five, plus some independent candidates, maybe about thirty candidates in 
-   * total.  Also, it is possible for several candidates to be eliminated in the
-   * same count if their combined votes are low enough.
-   */
-  public static final int MAXCOUNT;
   
   /**
    * Gets number of votes added or removed in this round count.
@@ -142,10 +114,9 @@ public class Candidate extends CandidateStatus {
    *   the candidate was eliminated and votes transfered to another
    */
   /*@ public normal_behavior
-    @   requires state != UNASSIGNED;
     @   requires 0 <= count;
     @   requires count <= lastCountNumber;
-    @   requires count < MAXCOUNT;
+    @   requires count < CountConfiguration.MAXCOUNT;
     @   ensures \result == votesAdded[count] - votesRemoved[count];
     @*/
   public /*@ pure @*/ int getVoteAtCount (int count);
@@ -158,7 +129,6 @@ public class Candidate extends CandidateStatus {
    * @return Net total of votes received
    */
   /*@ public normal_behavior
-    @   requires state != UNASSIGNED;
     @   ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
     @     ((votesAdded[i]) - (votesRemoved[i])));
     @*/
@@ -171,7 +141,6 @@ public class Candidate extends CandidateStatus {
    * @return Gross total of votes received
    */
   /*@ public normal_behavior
-    @   requires state != UNASSIGNED;
     @   ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
     @     (votesAdded[i]));
     @*/
@@ -194,7 +163,6 @@ public class Candidate extends CandidateStatus {
    * @return The candidate ID number
    */
   /*@ public normal_behavior
-    @   requires state != UNASSIGNED;
     @   ensures \result == candidateID;
     @*/
   public /*@ pure @*/ int getCandidateID();
@@ -204,7 +172,6 @@ public class Candidate extends CandidateStatus {
    */
   /*@ public normal_behavior
     @   assignable state;
-    @   ensures state == UNASSIGNED;
     @*/
   public Candidate();
   
@@ -252,7 +219,6 @@ public class Candidate extends CandidateStatus {
    * @design The candidate ID must be assigned by the client object because the 
    * client object must know who the candidate is */
   /*@ public normal_behavior
-    @   requires state == UNASSIGNED;
     @   requires 0 < candidateIDToAssign;
     @   requires (\forall Candidate other; other != null;
     @   other.candidateID != candidateIDToAssign);
@@ -327,16 +293,7 @@ public class Candidate extends CandidateStatus {
    * @return <code>true</code> if other candidate has lower random number
    */
   /*@ public normal_behavior
-    @   requires state != UNASSIGNED;
     @   ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
     @*/
   public /*@ pure @*/ boolean isAfter(Candidate other);
-  
-  /**
-   * Maximum possible number of counts
-   * 
-   * @design This value is not set by the legislation; it is chosen so that
-   * fixed length arrays can be used in the specification.  
-   */	
-  	public static final int MAXCOUNT = 100;
 }

@@ -7,6 +7,7 @@ import election.tally.Candidate;
 import election.tally.CandidateStatus;
 import election.tally.Election;
 import election.tally.ElectionStatus;
+import election.tally.exception.NullCandidateException;
 import election.tally.mock.MockBallot;
 
 /**
@@ -35,7 +36,12 @@ public class ExclusionEventJ extends TestCase {
 	  assertTrue (ballotCounting.getStatus() == ElectionStatus.PRECOUNT);
 	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
 		ballotCounting.eliminateCandidate(lowestCandidate);
-		assertTrue (ballotCounting.isDepositSaved(lowestCandidate));
+		try {
+			assertTrue (ballotCounting.isDepositSaved(lowestCandidate));
+		} catch (NullCandidateException e) {
+			fail("Candidate list should not be null.");
+			e.printStackTrace();
+		}
 		assertTrue (5 == ballotCounting.getContinuingCandidates());
 		final int secondLowest = ballotCounting.findLowestCandidate();
 		assertTrue (secondLowest != lowestCandidate);

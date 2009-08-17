@@ -3,7 +3,6 @@ package ie.lero.evoting.scenario;
 import junit.framework.TestCase;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
-import election.tally.Candidate;
 import election.tally.Election;
 import election.tally.mock.MockBallot;
 

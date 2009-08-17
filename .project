@@ -25,6 +25,11 @@
 				</dictionary>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>ch.ethz.inf.pm.jml.plugin.CheckerBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
@@ -32,5 +37,6 @@
 		<nature>ie.ucd.bon.plugin.boncnature</nature>
 		<nature>mobius.escjava2.plugin.autocheckEscjavaNature</nature>
 		<nature>net.sourceforge.metrics.nature</nature>
+		<nature>ch.ethz.inf.pm.jml.plugin.CheckerNature</nature>
 	</natures>
 </projectDescription>

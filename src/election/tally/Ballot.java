@@ -119,7 +119,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    
   /** Candidate ID to which the vote is assigned at the end of each count */
   protected /*@ spec_public @*/ int[] candidateIDAtCount = 
-    new int [AbstractBallotCounting.MAXCOUNT];
+    new int [CountConfiguration.MAXCOUNT];
 
   /** Last count number in which this ballot was transferred */
   //@ public invariant 0 <= countNumberAtLastTransfer;
@@ -331,12 +331,16 @@ public /*@ pure @*/ int getPreference(int i) {
     return Ballot.NONTRANSFERABLE;	
 }
 
-//@ requires 0 <= i;
-//@ requires i < numberOfPreferences;
-//@ assignable preferenceList[*];
-//@ ensures preference == preferenceList[i];
-public void setPreference(int i, int preference) {
-    preferenceList[i] = preference;	
+//@ public normal_behavior
+//@   requires 0 <= index;
+//@   requires index < numberOfPreferences;
+//@   requires index < preferenceList.length;
+//@   assignable preferenceList[index];
+//@   ensures candidateID == preferenceList[index];
+public void setPreference(int index, int candidateID) {
+	if (preferenceList != null) {
+      preferenceList[index] = candidateID;
+	}
 }
  
 }

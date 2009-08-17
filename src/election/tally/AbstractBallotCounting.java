@@ -1,5 +1,7 @@
 package election.tally;
 
+import election.tally.exception.NullCandidateException;
+
 /**
  * Ballot counting algorithm for elections to Oireachtas Eireann - the National 
  * Parliament of Ireland.
@@ -60,7 +62,7 @@ package election.tally;
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
-public abstract class AbstractBallotCounting extends ElectionStatus {
+public abstract class AbstractBallotCounting extends CountConfiguration {
 
     /** List of decisions made */
     protected transient /*@ spec_public @*/ Decision[] decisions 
@@ -117,7 +119,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @*/
 
 	/** List of candidates for election */
-	protected transient /*@ spec_public @*/ Candidate[] candidates 
+	protected transient /*@ spec_public nullable @*/ Candidate[] candidates 
 	  = new Candidate[Candidate.MAX_CANDIDATES];
    //@ protected represents candidateList <- candidates;
 	
@@ -136,7 +138,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/** Total number of candidates for election */
     //@ public model int totalCandidates;
     //@ public invariant 0 <= totalCandidates;
-    /*@ public invariant (PRELOAD <= state) ==> 
+    /*@ public invariant (PRELOAD <= state && candidateList != null) ==> 
       @   (totalCandidates <= candidateList.length);
 	  @ public constraint (state >= LOADING) ==>
 	  @   totalCandidates == \old (totalCandidates);
@@ -209,8 +211,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    //@ public model int totalVotes;
    //@ public initially totalVotes == 0;
    //@ public invariant 0 <= totalVotes;
-   /*@ public invariant (state == PRECOUNT || state == COUNTING || state == FINISHED)
-     @   ==> totalVotes <= ballotsToCount.length;
+   /*@ public invariant (ballotsToCount != null) &&
+     @   (state == PRECOUNT || state == COUNTING || state == FINISHED)
+     @   ==> (totalVotes <= ballotsToCount.length);
 	   @ public invariant (state == EMPTY || state == SETTING_UP || 
 	   @   state == PRELOAD)
 	   @ ==> 
@@ -227,17 +230,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    /** Total number of valid ballot papers */
 	protected /*@ spec_public @*/ transient int totalNumberOfVotes;
    
-   /** 
-    * Article 16 of the constitution of the Republic or Ireland specifies 
-    * a maximum of 30,000 people per seat, and the current electoral laws 
-    * specify a maximum of five seats per national constituency, so the 
-    * maximum possible number of ballots is 150,000. 
-    */
-	final protected static int MAXVOTES = 150000;
-   
-   //@ public represents totalVotes <- totalNumberOfVotes;
-
-	/** Number of votes so far which did not have a transfer to
+   /** Number of votes so far which did not have a transfer to
 	 * a continuing candidate */
    //@ public model int nonTransferableVotes;
    //@ public invariant 0 <= nonTransferableVotes;
@@ -445,28 +438,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/**
 	 * Number of decisions taken.
 	 */
-	//@ public invariant decisionsTaken <= decisions.length;
+	//@ public invariant (decisions != null) ==> (decisionsTaken <= decisions.length);
 	protected transient /*@ spec_public @*/ int decisionsTaken;
 
 	/**
-	   * Maximum possible number of counts
-	   * 
-	   * @design This value is not set by the legislation; it is chosen so that
-	   * fixed length arrays can be used in the specification.  
-	   */	
-	  	public static final int MAXCOUNT = 100;
-	
-/**
- * @design The election count algorithm is modeled as a two tier abstract state
- * machine with states and transitions between those states:
- * 
- *  <p> The normal path for the outer tier is:
- *  <p> Empty --> SETUP --> PRELOAD --> LOADING -->
- *  PRECOUNT --> COUNTING --> FINISHED
- *   
- */	
-
-/**
  * Default Constructor.
  */
 /*@ also
@@ -621,18 +596,27 @@ protected void setTotalSumOfSurpluses(final int sum) {
  * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV commentary on count rules, section 3 page 13, section 4 page 17 and section 14</a>
  * @param index The candidate for which to check
  * @return true if candidate has enough votes to save deposit
+ * @throws NullCandidateException  if candidate object cannot be found
  */
 /*@ also
-  @   protected normal_behavior
+  @  public normal_behavior
   @     requires (state == COUNTING) || (state == FINISHED);
-  @     ensures \result <==> (candidateList[index].getOriginalVote() >= depositSavingThreshold) ||
+  @     requires \nonnullelements (candidateList);
+  @     requires 0 <= index;
+  @     requires index < totalNumberOfCandidates;
+  @     requires index < candidateList.length;
+  @     ensures \result <==> 
+  @       (candidateList[index].getOriginalVote() >= depositSavingThreshold) ||
   @       (isElected (candidateList[index]) == true);
   @*/
-public /*@ pure @*/ boolean isDepositSaved(final int index){
- 	final int originalVote = candidates[index].getOriginalVote(); //@ nowarn;
-	final boolean elected = isElected (candidates[index]); //@ nowarn;
-	return ((originalVote >= savingThreshold)
-		|| elected);
+public /*@ pure @*/ boolean isDepositSaved(final int index) throws NullCandidateException{
+	if (candidates == null) {
+		throw new NullCandidateException();
+	}
+	final Candidate candidate = candidates[index];
+	final int originalVote = candidate.getOriginalVote();
+	final boolean elected = isElected (candidate);
+	return ((originalVote >= savingThreshold) || elected);
 }
 
 /**
@@ -697,10 +681,10 @@ public /*@ pure @*/ boolean isDepositSaved(final int index){
 /*@ also
   @   protected normal_behavior
   @     requires state == EMPTY;
-  @     requires electionParameters.candidateList != null;
   @     requires (\forall int c; 0 <= c && c < electionParameters.numberOfCandidates;
   @              electionParameters.candidateList[c] != null);
-  @     requires electionParameters.numberOfCandidates <= electionParameters.candidateList.length;
+  @     requires electionParameters.candidateList != null &&
+  @       electionParameters.numberOfCandidates <= electionParameters.candidateList.length;
   @     assignable status; 
   @     assignable totalNumberOfCandidates;
   @     assignable numberOfSeats, totalRemainingSeats;

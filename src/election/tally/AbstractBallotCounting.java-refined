@@ -33,7 +33,7 @@
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>
  */
 
-public abstract class AbstractBallotCounting extends ElectionStatus {
+public abstract class AbstractBallotCounting extends CountConfiguration {
 
   /** List of decisions made */
   /*@ public model Decision[] decisionsMade;

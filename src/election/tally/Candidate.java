@@ -40,8 +40,8 @@ public static final int MAX_CANDIDATES = 50;
   @   votesAdded[i] == 0);	
   @ public invariant votesAdded.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public nullable @*/ int[] votesAdded 
-    = new int [AbstractBallotCounting.MAXCOUNT];
+  protected transient /*@ spec_public non_null @*/ int[] votesAdded 
+    = new int [CountConfiguration.MAXCOUNT];
 	
 /** Number of votes removed at each count */
 /*@ public invariant (\forall int i; 0 < i && i < votesRemoved.length;
@@ -50,8 +50,8 @@ public static final int MAX_CANDIDATES = 50;
   @                                  votesRemoved[i] == 0);
   @ public invariant votesRemoved.length <= AbstractBallotCounting.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public nullable @*/ int[] votesRemoved 
-    = new int [AbstractBallotCounting.MAXCOUNT];
+  protected transient /*@ spec_public non_null @*/ int[] votesRemoved 
+    = new int [CountConfiguration.MAXCOUNT];
 
 //@ public invariant votesAdded != votesRemoved;
 //@ public invariant votesRemoved != votesAdded;
@@ -111,8 +111,7 @@ private static int nextCandidateID = 1;
   @   public normal_behavior
   @     requires votesAdded != null;
   @     requires votesRemoved != null;
-  @     requires 0 <= count && count < votesAdded.length;
-  @     requires count < votesRemoved.length;
+  @     requires 0 <= count;
   @     requires count <= lastCountNumber;
   @     ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
@@ -222,6 +221,9 @@ private static int nextCandidateID = 1;
     randomNumber = this.hashCode();
     candidateID = nextCandidateID++;
     //@ set _randomNumber = randomNumber;
+    if (votesAdded == null) {
+    	votesAdded = new int[CountConfiguration.MAXCOUNT];
+    }
   }
 
 /**
@@ -264,8 +266,9 @@ private static int nextCandidateID = 1;
 /*@ public normal_behavior
   @   requires state == ELIMINATED || state == ELECTED;
   @   requires lastCountNumber <= count;
-  @   requires votesRemoved[count] == 0;
-  @   requires 0 <= count & count < votesRemoved.length;
+  @   requires votesRemoved != null && votesRemoved[count] == 0;
+  @   requires 0 <= count;
+  @   requires votesRemoved != null && count < votesRemoved.length;
   @   requires 0 <= numberOfVotes;
   @   requires numberOfVotes <= getTotalVote();
   @   assignable lastCountNumber, votesRemoved[count];
