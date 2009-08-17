@@ -109,7 +109,10 @@ private static int nextCandidateID = 1;
  */	
 /*@ 
   @   public normal_behavior
-  @     requires 0 <= count && count <= AbstractBallotCounting.MAXCOUNT;
+  @     requires votesAdded != null;
+  @     requires votesRemoved != null;
+  @     requires 0 <= count && count < votesAdded.length;
+  @     requires count < votesRemoved.length;
   @     requires count <= lastCountNumber;
   @     ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
