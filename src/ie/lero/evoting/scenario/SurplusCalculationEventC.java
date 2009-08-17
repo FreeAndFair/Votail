@@ -28,17 +28,15 @@ public class SurplusCalculationEventC extends TestCase{
 		parameters = new Election();
 		parameters.totalNumberOfSeats = 2;
 		parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
-		parameters.numberOfCandidates = 3;
+		parameters.generateCandidates(3);
 		
 		// Generate sample candidates
-	 	Candidate[] candidates = new Candidate[parameters.numberOfCandidates];
-	 	int[] candidateIDList = new int[parameters.numberOfCandidates];
+	 	int[] candidateIDList = new int[3];
 	 	
-		for (int i = 0; i < parameters.numberOfCandidates; i++) {
-			candidates[i] = new Candidate();
-  			candidateIDList[i] = candidates[i].getCandidateID();
-  			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
-  			assertTrue (candidates[i].getTotalAtCount(0) == 0);
+		for (int i = 0; i < 3; i++) {
+  			candidateIDList[i] = parameters.getCandidate(i).getCandidateID();
+  			assertTrue (parameters.getCandidate(i).getStatus() == CandidateStatus.CONTINUING);
+  			assertTrue (parameters.getCandidate(i).getTotalAtCount(0) == 0);
 		}
 
 		final int numberOfVotes = 10000;
@@ -51,7 +49,6 @@ public class SurplusCalculationEventC extends TestCase{
 				ballotBox.accept(testBallot);
 			    assertTrue (0 < testBallot.getBallotID());
 		}
-	 	parameters.setCandidateList(candidates);
 	}
 	 
 	/**

@@ -32,7 +32,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   // Candidate 0 has 41 first preferences of which 20 are second preferences for candidate 1
 	   // Candidate 0 has a surplus of 25 of which 20 should transfer to candidate 1
 	   // Candidate 1 will then have a surplus of 5 votes which will go to candidate 2
-	   for (int i=0; i<election.numberOfCandidates; i++) {
+	   for (int i=0; i<20; i++) {
 	     assertTrue (election.getCandidate(i).sameAs((election.getCandidate(i))));
 	     ballot.setFirstPreference(election.getCandidate(0).getCandidateID());
        ballotBox.accept(ballot);

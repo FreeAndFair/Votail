@@ -25,17 +25,13 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     BallotBox ballotBox = new BallotBox();
     ballotCounting = new BallotCounting();
     Election parameters = new Election();
-    parameters.numberOfCandidates = 2;
     parameters.numberOfSeatsInThisElection = 1;
     parameters.totalNumberOfSeats = 3;
-    Candidate[] candidateList = new Candidate[parameters.numberOfCandidates];
-    candidateList[0] = new Candidate();
-    candidateList[1] = new Candidate();
-    parameters.setCandidateList(candidateList);
+    parameters.generateCandidates(2);
     ballotCounting.setup(parameters);
     MockBallot mockBallot = new MockBallot();
     mockBallot.setFirstPreference(
-    	candidateList[candidateToWin].getCandidateID());
+    	parameters.getCandidate(candidateToWin).getCandidateID());
     ballotBox.accept(mockBallot);
     ballotCounting.load(ballotBox);
   }

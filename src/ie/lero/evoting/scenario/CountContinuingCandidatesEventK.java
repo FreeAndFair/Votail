@@ -9,7 +9,6 @@ public class CountContinuingCandidatesEventK extends TestCase {
  	public void testEvent() {
  	 BallotCounting ballotCounting = new BallotCounting();
    Election election = new Election();
-   election.numberOfCandidates = 4;
    election.numberOfSeatsInThisElection = 3;
    election.totalNumberOfSeats = 3;
    election.generateCandidates(4);
