@@ -1,6 +1,6 @@
 package election.tally;
 
-public class CountConfiguration extends ElectionStatus {
+public class CountConfiguration {
 
 	/** 
 	    * Article 16 of the constitution of the Republic or Ireland specifies 
@@ -16,9 +16,4 @@ public class CountConfiguration extends ElectionStatus {
 	   * fixed length arrays can be used in the specification.  
 	   */
 	public static final int MAXCOUNT = 100;
-
-	public CountConfiguration() {
-		super();
-	}
-
 }

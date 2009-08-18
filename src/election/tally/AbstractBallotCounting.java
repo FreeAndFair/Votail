@@ -47,7 +47,7 @@ import election.tally.exception.NullCandidateException;
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
-public abstract class AbstractBallotCounting extends CountConfiguration {
+public abstract class AbstractBallotCounting extends ElectionStatus {
 
     // TODO require naming convention for fields that represent model fields
 
@@ -114,19 +114,6 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
      @           numberOfSeats - numberOfCandidatesElected;
      @*/
 
-	/** The lowest non-zero number of votes held by a continuing candidate */
-   //@ public model int lowestContinuingVote;
-   //@ public invariant 0 <= lowestContinuingVote;
-   /*@ public invariant (state == COUNTING) ==>
-     @   ((\exists int k; 0 <= k && k < totalCandidates;
-     @     candidateList[k].getStatus() == Candidate.CONTINUING &&
-     @     0 < candidateList[k].getTotalVote())
-     @   ==> lowestContinuingVote ==
-     @     (\min int i; 0 <= i && i < totalCandidates &&
-     @       candidateList[i].getStatus() == Candidate.CONTINUING &&
-     @       0 < candidateList[i].getTotalVote();
-     @       candidateList[i].getTotalVote()));
-     @*/
 	/** Lowest continuing vote */
 	protected int lowestVote;
    //@ protected represents lowestContinuingVote <- lowestVote;
@@ -236,12 +223,12 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
   @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
   @       totalVotes,numberOfCandidatesEliminated, decisions, decisionsTaken,
   @       totalNumberOfVotes;
-  @     ensures state == EMPTY;
+  @     ensures state == ElectionStatus.EMPTY;
   @     ensures countNumber == 0;
   @     ensures numberElected == 0;
   @*/
 public AbstractBallotCounting(){
-	status = EMPTY;
+	status = ElectionStatus.EMPTY;
 	countNumberValue = 0;
 	numberOfCandidatesElected = 0;
 	numberOfCandidatesEliminated = 0;
@@ -1108,7 +1095,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @*/
 	public /*@ pure @*/ int findLowestCandidate() {
 		
-		long leastVotes = MAXVOTES;
+		long leastVotes = CountConfiguration.MAXVOTES;
 		int lowest = -1; 
 
 		for (int i=0; i < totalNumberOfCandidates; i++) {

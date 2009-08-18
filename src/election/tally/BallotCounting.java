@@ -191,12 +191,12 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @     assignable totalNumberOfSurpluses, totalSumOfSurpluses;
 	  @		assignable decisions, decisionsTaken;
 	  @		assignable remainingSeats, totalRemainingSeats;
-	  @     ensures state == FINISHED;
+	  @     ensures state == ElectionStatus.FINISHED;
 	  @*/
 	public void count() {
 		
 		// Start or else resume the counting of ballots
-		if (status < COUNTING) {
+		if (status < ElectionStatus.COUNTING) {
 			startCounting();
 		}
 		
@@ -255,7 +255,7 @@ public class BallotCounting extends AbstractBallotCounting {
 				
 		}
 		countStatus.changeState(AbstractCountStatus.END_OF_COUNT);	
-		status = FINISHED;
+		status = ElectionStatus.FINISHED;
 	}
 
 
@@ -266,7 +266,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @ ensures state == COUNTING;
 	  @*/
 	public void startCounting() {
-		status = COUNTING;
+		status = ElectionStatus.COUNTING;
 		countNumberValue = 0;
 		countStatus = new CountStatus();
 		countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
