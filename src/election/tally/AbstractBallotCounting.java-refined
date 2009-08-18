@@ -7,7 +7,7 @@
  * 
  * @author Dermot Cochran
  * @copyright 2005-2009 Dermot Cochran
- * @reviewer Joe Kiniry
+ * @reviewer Prof. Joseph R. Kiniry
  * 
  * This work was supported, in part, by Science Foundation Ireland
  * grant 03/CE2/I303_1 to Lero - the Irish Software Engineering
@@ -16,20 +16,12 @@
  * and the Community is not liable for any use that may be made of the 
  * information contained therein.
  * 
- * @design This JML specification and associated Java code is intended
- * to be checkable using ESC/Java2 (the Extended Static Checker for 
- * Java, version 2).
- * 
  * @see <a href="http://www.irishstatutebook.ie/1992_23.html">Part XIX of the 
  * Electoral Act, 1992</a>
  * @see Requirements for this specification are taken from 
  * <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of 
  * Environment and Local Government, Commentary on Count 
  * Rules, sections 3-16, pages 12-65</a>
- * @see <a href="http://secure.ucd.ie/products/opensource/KOA/">The KOA Remote 
- * Voting System</a>
- * @see <a href="http://secure.ucd.ie/products/opensource/ESCJava2/">ESCJava/2 
- * Homepage</a>
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>
  */
 
@@ -46,10 +38,13 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
     @*/
 	
   /** Number of decisions made */
-  /*@ public model int numberOfDecisions;
-    @ public initially numberOfDecisions == 0;
-    @ public invariant (state <= PRECOUNT) ==> numberOfDecisions == 0;
-    @ public invariant 0 <= numberOfDecisions;
+	/*@ public model int numberOfDecisions;
+	  @ public initially numberOfDecisions == 0;
+	  @ public invariant 0 <= numberOfDecisions;
+	  @ public constraint 
+	  @   \old (numberOfDecisions) <= numberOfDecisions;
+	  @*/
+  /*@ public invariant (state <= PRECOUNT) ==> numberOfDecisions == 0;
     @ public constraint \old (numberOfDecisions) <= numberOfDecisions;
     @ protected invariant (decisionsMade != null) ==> 
     @   numberOfDecisions <= decisionsMade.length;
@@ -60,29 +55,40 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
    * counting starts, there must be a ballot paper associated with each vote
    * held by a candidate.
    */
-  //@ public model non_null election.tally.Candidate[] candidateList;
-  /*@ public invariant (state >= PRELOAD && state <= PRECOUNT) 
-    @   ==> 
-    @   (\forall int i; 0 <= i && i < totalCandidates;
-    @   candidateList[i].getStatus() == CandidateStatus.CONTINUING);
-    @
-    @ public invariant (state >= PRELOAD)
-    @   ==>
-    @   (\forall int i, j; 
-    @     0 <= i && i < totalCandidates && i != j && 0 <= j && j < totalCandidates;
-    @     candidateList[i].getCandidateID() != candidateList[j].getCandidateID());
-    @
-    @ public invariant (state >= PRELOAD)
-    @   ==>
-    @   (\forall int i; 
-    @     0 <= i && i < totalCandidates;
-    @     candidateList[i].getCandidateID() != Ballot.NONTRANSFERABLE);
-    @
-    @ protected invariant (state >= COUNTING)
-    @   ==> (\forall int i; 0 <= i && i < totalCandidates;
-    @   candidateList[i].getTotalVote() == 
-    @   countBallotsFor (candidateList[i].getCandidateID()));
-    @*/
+    //@ public model Candidate[] candidateList;
+	/*@ public invariant (state == PRELOAD || state == LOADING || 
+	  @   state == PRECOUNT)
+	  @ ==>
+	  @ (\forall int i; 0 <= i && i < totalCandidates;
+	  @   candidateList[i].getStatus() == Candidate.CONTINUING &&
+	  @   candidateList[i].getTotalVote() == 0 &&
+	  @   candidateList[i].getOriginalVote() == 0);
+	  @
+	  @ public invariant (state == PRELOAD || state == LOADING ||   
+	  @   state == PRECOUNT ||
+	  @   state == COUNTING || state == FINISHED)
+	  @ ==>
+	  @   (\forall int i, j;
+	  @     0 <= i && i < totalCandidates && 
+	  @     i < j && j < totalCandidates;
+	  @     candidateList[i].getCandidateID() != 
+	  @     candidateList[j].getCandidateID());
+	  @
+	  @ public invariant (state == PRELOAD || state == LOADING || 
+	  @   state == PRECOUNT ||
+	  @   state == COUNTING || state == FINISHED)
+	  @ ==>
+	  @   (\forall int i;
+	  @     0 <= i && i < totalCandidates;
+	  @     candidateList[i].getCandidateID() != 
+	  @     Ballot.NONTRANSFERABLE);
+	  @
+	  @ protected invariant (state == COUNTING || state == FINISHED)
+	  @ ==> 
+	  @  (\forall int i; 0 <= i && i < totalCandidates;
+	  @    candidateList[i].getTotalVote() ==
+	  @    countBallotsFor (candidateList[i].getCandidateID()));
+	  @*/
 	
   /** List of contents of each ballot paper that will be counted. */
   //@ public model non_null election.tally.Ballot[] ballotsToCount;
@@ -100,8 +106,10 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
     @   totalCandidates <= candidateList.length;
     @ public constraint (state >= LOADING) ==> 
     @   totalCandidates == \old (totalCandidates);
-    @ protected invariant (state == FINISHED) ==> totalCandidates == 
-    @   numberElected + numberEliminated;
+    @ protected invariant (state == FINISHED) ==> 
+    @   totalCandidates == numberElected + numberEliminated;
+    @ public invariant (state == COUNTING) ==> 
+    @   1 <= totalCandidates;
     @*/
 	
   /** Number of candidates elected so far */
@@ -133,6 +141,7 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
   //@ public invariant seats <= totalSeats;
   /*@ public constraint (PRELOAD < state) ==> 
     @   seats == \old (seats);
+    @ public invariant (state == COUNTING) ==> (1 <= seats);
     @*/
 	
   /** Total number of seats in this constituency
@@ -175,7 +184,7 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
     @   ==> nonTransferableVotes == (\num_of int i; 0 <= i && i < totalVotes;
     @   ballotsToCount[i].getCandidateID() == Ballot.NONTRANSFERABLE);
     @*/
-	
+
   /** Minimum number of votes needed to save deposit unless elected */
   //@ public model int depositSavingThreshold;
   //@ public invariant 0 <= depositSavingThreshold;
@@ -184,13 +193,19 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
   /*@ invariant (PRECOUNT < state) ==> depositSavingThreshold == 
     @   (((totalVotes / (totalSeats + 1)) + 1) / 4) + 1;
     @*/
-	
+
   /** Number of rounds of counting so far */
   //@ public model int countNumber;
   //@ public initially countNumber == 0;
   //@ public invariant 0 <= countNumber;
-  //@ public constraint (state == COUNTING) ==> \old(countNumber) <= countNumber;
-	
+  /*@ public invariant (PRELOAD <= state) ==>
+    @   countNumber <= MAXCOUNT;
+    @ public constraint (state == COUNTING) ==> 
+    @   \old(countNumber) <= countNumber;
+    @ public constraint (state == COUNTING) ==>
+    @   countNumber <= \old (countNumber) + 1;
+    @*/
+
   /** Number of candidates with surplus votes */
   //@ public model int numberOfSurpluses;
   //@ public invariant 0 <= numberOfSurpluses;
@@ -1036,7 +1051,27 @@ public abstract class AbstractBallotCounting extends CountConfiguration {
     @*/
   public /*@ pure @*/ int countBallotsFor(int candidateID);
   
+  /** Number of votes needed to guarantee election */
+  //@ requires 1 <= seats;
+  //@ ensures 0 <= \result;
+  //@ ensures \result <= totalVotes;
+  /*@ ensures (state == COUNTING) ==>
+    @   \result == 1 + (totalVotes / (seats + 1));
+    @*/
   public /*@ pure @*/ int getQuota();
   
+  /** Number of candidates neither elected nor excluded from election 
+   *  There must be at least one continuing candidate for each remaining seat
+   *  @see requirement 11, section 4, item 4, page 16
+   */
+  /*@ ensures 0 <= \result;
+    @ ensures \result <= totalCandidates;
+    @ ensures (state == FINISHED) ==>
+    @   \result == 0;
+    @ ensures (state == COUNTING) ==>  
+    @   \result == totalCandidates - (numberElected + numberEliminated);
+    @ ensures (state == COUNTING) ==>
+    @   remainingSeats <= \result;
+    @*/
   public /*@ pure @*/ int getNumberContinuing();
 }

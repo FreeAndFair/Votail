@@ -36,19 +36,6 @@ import election.tally.exception.NullCandidateException;
  * authors' views and the European Community is not liable for any use that 
  * may be made of the information contained therein.
  * 
- * @design
- * This Java package <code>election.tally</code> is designed to be used with 
- * either an optical ballot scan system or else a remote online voting system 
- * that supplies a valid set of ballots and candidate IDs to be counted by this 
- * algorithm and takes care of system level issues such as security, 
- * authentication and data storage.
- * 
- * @process
- * This JML specification and associated Java code is intended 
- * to be verifiable using the Extended Static Checking for Java
- * version 2 tool (ESCJava2), the Mobius Program Verification Environment (PVE),
- * JML4 and other JML software engineering tools. The BON specification
- * is intended to be checkable with the BONc tool.
  * 
  * @see <a href="http://www.irishstatuebook.ie/1992_23.html">Part XIX of the 
    Electoral Act, 1992</a>
@@ -56,277 +43,76 @@ import election.tally.exception.NullCandidateException;
    Environment and Local Government: Count Requirements and Commentary on Count
    Rules, sections 3-16</a>
  * @see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
- * Formal Verification of Remote Voting</a> 
- * @see <a href="http://kind.ucd.ie/products/opensource/ESCJava2/">
- * ESCJava/2 static checker for Java</a>
+ * Formal Verification of Voting</a> 
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
 //@ refine "AbstractBallotCounting.java-refined";
 public abstract class AbstractBallotCounting extends CountConfiguration {
 
+    // TODO require naming convention for fields that represent model fields
+
     /** List of decisions made */
     protected transient /*@ spec_public @*/ Decision[] decisions 
         = new Decision[Decision.MAX_DECISIONS];
    //@ protected represents decisionsMade <- decisions;
-
-	/** Number of decisions made */
-	/*@ public model int numberOfDecisions;
-	  @ public initially numberOfDecisions == 0;
-	  @ public invariant 0 <= numberOfDecisions;
-	  @ public constraint 
-	  @   \old (numberOfDecisions) <= numberOfDecisions;
-	  @*/
-	//@ represents numberOfDecisions <- decisionsTaken;
-	
-	/** List of details for each candidate.
-	 * @constraint There are no duplicates in the list of candidate 
-	 * IDs and, once the counting starts, there must be a ballot paper 
-	 * associated with each vote held by a candidate.
-	 */
-    //@ public model Candidate[] candidateList;
-	/*@ public invariant (state == PRELOAD || state == LOADING || 
-	  @   state == PRECOUNT)
-	  @ ==>
-	  @ (\forall int i; 0 <= i && i < totalCandidates;
-	  @   candidateList[i].getStatus() == Candidate.CONTINUING &&
-	  @   candidateList[i].getTotalVote() == 0 &&
-	  @   candidateList[i].getOriginalVote() == 0);
-	  @
-	  @ public invariant (state == PRELOAD || state == LOADING ||   
-	  @   state == PRECOUNT ||
-	  @   state == COUNTING || state == FINISHED)
-	  @ ==>
-	  @   (\forall int i, j;
-	  @     0 <= i && i < totalCandidates && 
-	  @     i < j && j < totalCandidates;
-	  @     candidateList[i].getCandidateID() != 
-	  @     candidateList[j].getCandidateID());
-	  @
-	  @ public invariant (state == PRELOAD || state == LOADING || 
-	  @   state == PRECOUNT ||
-	  @   state == COUNTING || state == FINISHED)
-	  @ ==>
-	  @   (\forall int i;
-	  @     0 <= i && i < totalCandidates;
-	  @     candidateList[i].getCandidateID() != 
-	  @     Ballot.NONTRANSFERABLE);
-	  @
-	  @ protected invariant (state == COUNTING || state == FINISHED)
-	  @ ==> 
-	  @  (\forall int i; 0 <= i && i < totalCandidates;
-	  @    candidateList[i].getTotalVote() ==
-	  @    countBallotsFor (candidateList[i].getCandidateID()));
-	  @*/
+   //@ represents numberOfDecisions <- decisionsTaken;
 
 	/** List of candidates for election */
-	protected transient /*@ spec_public nullable @*/ Candidate[] candidates 
+	protected transient /*@ spec_public @*/ Candidate[] candidates 
 	  = new Candidate[Candidate.MAX_CANDIDATES];
    //@ protected represents candidateList <- candidates;
-	
 
 	/** List of contents of each ballot paper that will be counted. */
-   //@ public model Ballot[] ballotsToCount;
-	/*@ protected invariant (state >= PRECOUNT)
-	  @ ==>
-	  @   (\forall int i, j;
-	  @     0 <= i && i < totalVotes && i < j && j < totalVotes;
-	  @     ballotsToCount[i].getBallotID() != ballotsToCount[j].getBallotID());
-	  @*/
 	protected transient Ballot[] ballots = new Ballot[Ballot.MAX_BALLOTS];
    //@ protected represents ballotsToCount <- ballots;
 	
 	/** Total number of candidates for election */
-    //@ public model int totalCandidates;
-    //@ public invariant 0 <= totalCandidates;
-    /*@ public invariant (PRELOAD <= state && candidateList != null) ==> 
-      @   (totalCandidates <= candidateList.length);
-	  @ public constraint (state >= LOADING) ==>
-	  @   totalCandidates == \old (totalCandidates);
-	  @ protected invariant (state == FINISHED) ==> totalCandidates ==
-	  @   numberElected + numberEliminated;
-	  @ public invariant (state == COUNTING) ==> 1 <= totalCandidates;
-	  @*/
 	protected transient /*@ spec_public @*/ int totalNumberOfCandidates;
    //@ public represents totalCandidates <- totalNumberOfCandidates;
-	
-	/** Number of candidates elected so far */
-   //@ public model int numberElected;
-   //@ protected invariant 0 <= numberElected;
-   //@ protected invariant numberElected <= seats;
-	/*@ protected invariant (state <= PRECOUNT) ==> numberElected == 0;
-	  @ protected invariant (COUNTING <= state && state <= FINISHED)
-	  @ ==> 
-	  @   numberElected == (\num_of int i; 0 <= i && i < totalCandidates;
-	  @   isElected(candidateList[i]));
-	  @ protected invariant (state == FINISHED) ==>
-	  @   numberElected == seats;
-	  @ protected constraint (state == COUNTING) ==>
-	  @   \old(numberElected) <= numberElected;
-	  @*/
+
 	/** Number of candidates elected so far */
 	protected transient /*@ spec_public @*/ int numberOfCandidatesElected;
    //@ public represents numberElected <- numberOfCandidatesElected;
 
 	/** Number of candidates excluded from election so far */
-   //@ public model int numberEliminated;
-   //@ protected invariant 0 <= numberEliminated;
-   /*@ protected invariant (COUNTING <= state) ==>
-     @   numberEliminated <= totalCandidates - seats;
-     @ protected invariant (state == COUNTING || state == FINISHED)
-     @   ==> 
-     @  numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
-     @  candidateList[i].getStatus() == Candidate.ELIMINATED);
-     @*/
-	/** Number of candidates excluded from election so far */
 	protected transient /*@ spec_public @*/ int numberOfCandidatesEliminated;
    //@ public represents numberEliminated <- numberOfCandidatesEliminated;
 
-	/** Number of seats to be filled in this election */
-   //@ public model int seats;
-   //@ public invariant 0 <= seats;
-   //@ public invariant seats <= totalSeats;
-	/*@ public constraint (PRELOAD <= state) ==>
-	  @   (seats == \old (seats));
-	  @ public invariant (state == COUNTING) ==> (1 <= seats);
-	  @*/
 	/** Number of seats in this election */
 	protected transient /*@ spec_public @*/ int numberOfSeats;
    //@ public represents seats <- numberOfSeats;
-	
-	/** Total number of seats in this constituency
-	 * @design The constitution and laws of Ireland do not allow less than three or
-	 * more than five seats in each Dail constituency, but this could change in
-	 * future and is not an essential part of the specification.
-	 */
-   //@ public model int totalSeats;
-   //@ public invariant 0 <= totalSeats;
-	/*@ public constraint (LOADING <= state) ==>
-	  @   (totalSeats == \old (totalSeats));
-	  @*/
+
 	/** Number of seats in this constituency */
 	protected transient int totalNumberOfSeats;
   //@ protected represents totalSeats <- totalNumberOfSeats;
 
-	/** Total number of valid votes in this election */
-   //@ public model int totalVotes;
-   //@ public initially totalVotes == 0;
-   //@ public invariant 0 <= totalVotes;
-   /*@ public invariant (ballotsToCount != null) &&
-     @   (state == PRECOUNT || state == COUNTING || state == FINISHED)
-     @   ==> (totalVotes <= ballotsToCount.length);
-	   @ public invariant (state == EMPTY || state == SETTING_UP || 
-	   @   state == PRELOAD)
-	   @ ==> 
-	   @   totalVotes == 0;
-	   @ public constraint (state == LOADING)
-	   @ ==> 
-	   @   \old (totalVotes) <= totalVotes;
-	   @ public constraint (state == PRECOUNT || state == COUNTING ||
-	   @   state == FINISHED)
-	   @ ==> 
-	   @  totalVotes == \old (totalVotes);
-	   @*/
-	
    /** Total number of valid ballot papers */
-	protected /*@ spec_public @*/ transient int totalNumberOfVotes;
+   protected /*@ spec_public @*/ transient int totalNumberOfVotes;
    
    /** Number of votes so far which did not have a transfer to
 	 * a continuing candidate */
-   //@ public model int nonTransferableVotes;
-   //@ public invariant 0 <= nonTransferableVotes;
-   //@ public invariant nonTransferableVotes <= totalVotes;
-	/*@ protected invariant (state == COUNTING || state == FINISHED)
-	  @ ==> nonTransferableVotes == 
-	  @   (\num_of int i; 0 <= i && i < totalVotes;
-	  @     ballotsToCount[i].getCandidateID() == Ballot.NONTRANSFERABLE);
-	  @*/
 	protected /*@ spec_public @*/ int totalofNonTransferableVotes;
    //@ protected represents nonTransferableVotes <- totalofNonTransferableVotes;
 
-	/** Number of votes needed to guarantee election */
-  //@ public invariant 0 <= getQuota();
-  //@ public invariant getQuota() <= totalVotes;
-	/*@ public invariant (state == COUNTING) ==>
-	  @   getQuota() == 1 + (totalVotes / (seats + 1));
-	  @*/
- 
-	/** Number of votes needed to save deposit unless elected */
-   //@ public model int depositSavingThreshold;
-   //@ public invariant 0 <= depositSavingThreshold;
-   //@ public invariant depositSavingThreshold <= totalVotes;
-	/*@ public invariant (state == COUNTING) 
-	  @ ==> depositSavingThreshold ==
-	  @   (((totalVotes / (totalSeats + 1)) + 1) / 4) + 1;
-	  @*/
+   /** Number of votes needed to save deposit unless elected */
 	protected transient /*@ spec_public @*/ int savingThreshold;
    //@ protected represents depositSavingThreshold <- savingThreshold;
 
-	/** Number of rounds of counting so far */
-   //@ public model int countNumber;
-   //@ public initially countNumber == 0;
-   //@ public invariant 0 <= countNumber;
-   /*@ public invariant (PRELOAD <= state) ==>
-     @   countNumber <= MAXCOUNT;
-     @ public constraint (state == COUNTING) ==> 
-     @   \old(countNumber) <= countNumber;
-     @ public constraint (state == COUNTING) ==>
-     @   countNumber <= \old (countNumber) + 1;
-     @*/
 	protected transient /*@ spec_public @*/ int countNumberValue;
    //@ protected represents countNumber <- countNumberValue;
 
 	/** Number of candidates with surplus votes */
-   //@ public model int numberOfSurpluses;
-   //@ public invariant 0 <= numberOfSurpluses;
-   //@ protected invariant numberOfSurpluses <= numberElected;
 	protected /*@ spec_public @*/ int totalNumberOfSurpluses;
    //@ protected represents numberOfSurpluses <- totalNumberOfSurpluses;
 
 	/** Total number of undistributed surplus votes */
-   //@ public model int sumOfSurpluses;
-   //@ public invariant 0 <= sumOfSurpluses;
-   //@ public invariant sumOfSurpluses <= totalVotes;
-	/*@ invariant (state == COUNTING) 
-	  @ ==> sumOfSurpluses == getSumOfSurpluses();
-	  @*/
-	/** Number of candidates with surplus votes */
 	protected /*@ spec_public @*/ int totalSumOfSurpluses;
    //@ protected represents sumOfSurpluses <- totalSumOfSurpluses;
-	
-   //@ public model int remainingSeats;
-   //@ public invariant 0 <= remainingSeats;
-   //@ public invariant remainingSeats <= seats;
-	/*@ public invariant (state <= PRECOUNT) ==> 
-	  @   remainingSeats == seats;
-	  @ public invariant (state == FINISHED) ==>
-	  @   remainingSeats == 0;
-	  @ protected invariant (state == COUNTING) ==>
-	  @   remainingSeats == (seats - numberElected);
-	  @*/
 	
 	protected transient /*@ spec_public @*/ int totalRemainingSeats;
    /*@ protected represents remainingSeats <- 
      @           numberOfSeats - numberOfCandidatesElected;
      @*/
-
-	/** Number of candidates neither elected nor excluded from election */
-  //@ public invariant 0 <= getNumberContinuing();
-	/*@ public invariant 
-	  @   getNumberContinuing() <= totalCandidates;
-	  @
-	  @ public invariant (state == FINISHED) ==>
-	  @   getNumberContinuing() == 0;
-	  @ invariant (state == COUNTING) ==>  
-	  @   getNumberContinuing() ==
-	  @   (totalCandidates - numberElected) - numberEliminated;
-	  @*/
-  	
-	/** There must be at least one continuing candidate for each remaining seat
-	 * @see requirement 11, section 4, item 4, page 16
-	 */
-	/*@ invariant (state == COUNTING) ==>
-	  @   remainingSeats <= getNumberContinuing();
-	  @*/
 
 	/** The lowest non-zero number of votes held by a continuing candidate */
    //@ public model int lowestContinuingVote;
@@ -735,13 +521,6 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  * 
  * @return Number of votes required to ensure election
  */
-/*@ also 
-  @   requires 0 < numberOfSeats;
-  @   ensures 0 <= \result;
-  @   ensures \result <= totalVotes;
-  @   ensures (state >= COUNTING) ==>
-  @   \result == 1 + (totalVotes / (seats + 1));
-  @*/
 public /*@ pure @*/ int getQuota() {
   return 1 + (totalNumberOfVotes / (1 + numberOfSeats));
 }
