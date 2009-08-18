@@ -49,7 +49,7 @@ import election.tally.exception.NullCandidateException;
 //@ refine "AbstractBallotCounting.java-refined";
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
-    // TODO require naming convention for fields that represent model fields
+    // TODO naming convention for fields that represent model fields
 
     /** List of decisions made */
     protected transient /*@ spec_public @*/ Decision[] decisions 
@@ -118,47 +118,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	protected int lowestVote;
    //@ protected represents lowestContinuingVote <- lowestVote;
 
-	/** The second lowest non-zero number of votes held by a continuing candidate */
-   //@ public model int nextHighestVote;
-   //@ public invariant (state == COUNTING) ==> lowestContinuingVote < nextHighestVote;
-	/*@ public invariant (state == COUNTING) ==
-	  @   (\exists int k; 0 <= k && k < totalCandidates;
-	  @     candidateList[k].getStatus() == Candidate.CONTINUING &&
-	  @     lowestContinuingVote < candidateList[k].getTotalVote())
-	  @ ==> nextHighestVote ==
-	  @   (\min int i; 0 <= i && i < totalCandidates &&
-	  @     candidateList[i].getStatus() == Candidate.CONTINUING &&
-	  @     lowestContinuingVote < candidateList[i].getTotalVote();
-	  @     candidateList[i].getTotalVote());
-	  @*/
 	/** The second lowest non-zero number of votes held by a continuing
 	                          candidate */
 	protected int nextHighest;
    //@ protected represents nextHighestVote <- nextHighest;
 
 	/** The highest number of votes held by a continuing candidate */
-   //@ public model int highestContinuingVote;
-   /*@ public invariant (state == COUNTING) ==> 
-     @   highestContinuingVote < getQuota();
-     @*/
-	/*@ public invariant (0 < getNumberContinuing() && state == COUNTING)
-	  @ ==> highestContinuingVote ==
-	  @   (\max int i; 0 < i && i < totalCandidates &&
-	  @     candidateList[i].getStatus() == Candidate.CONTINUING;
-	  @     candidateList[i].getTotalVote());
-	  @*/
-	/** The highest number of votes held by a continuing candidate */
 	protected int highestContinuing;
    //@ protected represents highestContinuingVote <- highestContinuing;
 
-	/** Highest available surplus for distribution */
-   //@ public model int highestSurplus;
-   //@ public invariant 0 <= highestSurplus;
-   //@ public invariant highestSurplus <= sumOfSurpluses;
-	/*@ invariant (state == COUNTING) ==> highestSurplus ==
-	  @   (\max int i; 0 < i && i < totalCandidates; 
-	  @   getSurplus(candidateList[i]));
-	  @*/
 	/** The highest number of votes held by a continuing candidate */
 	protected int highestAvailableSurplus;
    //@ protected represents highestSurplus <- highestAvailableSurplus;
@@ -173,41 +141,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    /*@ protected represents sumOfOtherContinuingVotes <- 
 	 @    totalSumOfOtherContinuingVotes;
 	 @*/
-	
-	/** Number of candidates with equal highest continuing votes */
-   //@ public model int numberOfEqualHighestContinuing;
-   //@ public invariant 0 <= numberOfEqualHighestContinuing;
-   /*@ public invariant (state == COUNTING) ==>
-     @   numberOfEqualHighestContinuing <= getNumberContinuing();
-     @ public invariant (state == COUNTING) ==> 
-     @   numberOfEqualHighestContinuing ==
-     @   (\num_of int i; 0 <= i && i < totalCandidates &&
-     @     candidateList[i].getStatus() == Candidate.CONTINUING;
-     @     candidateList[i].getTotalVote() == highestContinuingVote);
-     @*/
+
 	/** Number of candidates with equal highest continuing votes */
 	protected int totalNumberOfEqualHighestContinuing;
    /*@ protected represents numberOfEqualHighestContinuing <- 
      @   totalNumberOfEqualHighestContinuing;
      @*/
 
-	/** Number of candidates with equal lowest non-zero votes */
-   //@ public model int numberOfEqualLowestContinuing;
-   //@ public invariant 0 <= numberOfEqualLowestContinuing;
-   /*@ public invariant (state == COUNTING) ==>
-     @ numberOfEqualLowestContinuing <= getNumberContinuing();
-     @ public invariant (state == COUNTING) ==> numberOfEqualLowestContinuing ==
-     @ (\num_of int i; 0 <= i && i < totalCandidates &&
-     @   candidateList[i].getStatus() == Candidate.CONTINUING;
-     @   candidateList[i].getTotalVote() == lowestContinuingVote);
-     @*/
 	/**  Number of candidates with equal lowest non-zero votes */
 	protected int totalNumberOfEqualLowestContinuing;
    /*@ protected represents numberOfEqualLowestContinuing <- 
      @                      totalNumberOfEqualLowestContinuing;
-     @ 
      @*/
-	
+
 	/**
 	 * Number of decisions taken.
 	 */
