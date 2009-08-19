@@ -26,31 +26,49 @@
 
 package election.tally;
 
-/** Data transfer structure for set of all valid votes */
-//@ refine "BallotBox.java-refined";
+/** Data transfer structure for set of all valid ballots */
 public class BallotBox {
 	
 /**
  * List of valid ballot papers.
  */
-/*@ public invariant (\forall int i, j;
-  @   0 <= i && i < numberOfBallots &&
-  @   0 <= j && j < numberOfBallots &&
-  @   i != j;
-  @   ballots[i].ballotID != ballots[j].ballotID);
-  @*/	
   protected /*@ spec_public @*/ Ballot[] ballots 
       = new Ballot[Ballot.MAX_BALLOTS];
+  
+  /**
+   * No two ballot IDs in a ballot box are the same.
+   */
+  /*@ public invariant uniqueness();
+    @
+    @ ensures \result <==> (\forall int i, j;
+    @                   0 <= i & i < size() &
+    @                   0 <= j & j < size() &
+    @                   i != j;
+    @                   ballots[i].getBallotID() 
+    @                   != ballots[j].getBallotID());
+    @
+    @ public model pure boolean uniqueness() {
+    @     for (int i=0; i < size(); i++) {
+    @         for (int j=0; j < size(); j++) {
+    @             if (i != j && ballots[i].getBallotID() == 
+    @                           ballots[j].getBallotID()) {
+    @                 return false;
+    @             }
+    @         }
+    @      }
+    @      return true;
+    @ }
+    @*/
 
     /**
      * Get the number of ballots in this box.
      * 
      * @return the number of ballots in this ballot box
      */	
-   /*@ also 
-     @ public normal_behavior
+   /*@ public normal_behavior
      @   ensures 0 <= \result;
      @   ensures \result == numberOfBallots;
+     @   ensures (ballots == null) ==> \result == 0;
      @*/
     public /*@ pure @*/ int size(){
         return numberOfBallots;
@@ -59,16 +77,17 @@ public class BallotBox {
   /**
    * The total number of ballots in this ballot box.
    */
-  //@ public invariant 0 <= size();
-  //@ public initially size() == 0;
-  //@ public invariant size() <= ballots.length;
+    /*@ public invariant 0 <= numberOfBallots;
+      @ public invariant numberOfBallots <= Ballot.MAX_BALLOTS;
+      @ public constraint \old (numberOfBallots) <= numberOfBallots;
+      @*/
 	private /*@ spec_public @*/ int numberOfBallots;
 	
 	/**
 	 * Number of ballots copied from box
 	 */
 	//@ public initially index == 0;
-	//@ public invariant index <= numberOfBallots;
+	//@ public invariant index <= size();
 	//@ public constraint \old(index) <= index;
  	private /*@ spec_public @*/ int index;
 	
@@ -115,7 +134,7 @@ public class BallotBox {
 	//@ requires isNextBallot();
 	//@ assignable index;
 	//@ ensures \result == ballots[\old(index)];
-	public Ballot getNextBallot() {
-		return ballots[index++];
-	} //@ nowarn;
+    public Ballot getNextBallot() {
+        return ballots[index++];
+    }
 }

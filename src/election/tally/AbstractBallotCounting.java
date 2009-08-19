@@ -183,7 +183,7 @@ public AbstractBallotCounting(){
     numberOfSeats = 0;
 }
 
-/*@ assignable decisions, decisionsTaken;
+/*@ assignable decisionsTaken;
   @ ensures numberOfDecisions == 0;
   @*/
 private void createDecisionTable() { 
