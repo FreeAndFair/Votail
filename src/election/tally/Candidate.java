@@ -38,9 +38,9 @@ public static final int MAX_CANDIDATES = 50;
   @   0 <= votesAdded[i]);
   @ public initially (\forall int i; 0 < i && i < votesAdded.length;
   @   votesAdded[i] == 0);	
-  @ public invariant votesAdded.length <= AbstractBallotCounting.MAXCOUNT;
+  @ public invariant votesAdded.length <= CountConfiguration.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public non_null @*/ int[] votesAdded 
+  protected /*@ spec_public non_null @*/ int[] votesAdded 
     = new int [CountConfiguration.MAXCOUNT];
 	
 /** Number of votes removed at each count */
@@ -48,9 +48,9 @@ public static final int MAX_CANDIDATES = 50;
   @                                  0 <= votesRemoved[i]);
   @ public initially (\forall int i; 0 < i && i < votesRemoved.length;
   @                                  votesRemoved[i] == 0);
-  @ public invariant votesRemoved.length <= AbstractBallotCounting.MAXCOUNT;
+  @ public invariant votesRemoved.length <= CountConfiguration.MAXCOUNT;
   @*/
-  protected transient /*@ spec_public non_null @*/ int[] votesRemoved 
+  protected /*@ spec_public non_null @*/ int[] votesRemoved 
     = new int [CountConfiguration.MAXCOUNT];
 
 //@ public invariant votesAdded != votesRemoved;
@@ -67,7 +67,7 @@ public static final int MAX_CANDIDATES = 50;
 //@ public invariant 0 <= lastCountNumber;
 //@ public initially lastCountNumber == 0;
 //@ public constraint \old(lastCountNumber) <= lastCountNumber;
-//@ public invariant lastCountNumber <= AbstractBallotCounting.MAXCOUNT;
+//@ public invariant lastCountNumber <= CountConfiguration.MAXCOUNT;
 	protected transient /*@ spec_public @*/ int lastCountNumber;
 
 /** The count number at which the last set of votes were added */
@@ -117,25 +117,6 @@ private static int nextCandidateID = 1;
   @*/
 	public /*@ pure @*/ int getVoteAtCount(final int count){
 		return (votesAdded[count] - votesRemoved[count]);
-	}
-	
-/**
- * Total vote received by this candidate less transfers to 
- * other candidates.
- * 
- * @return Net total of votes received
- */	
-/*@ public normal_behavior
-  @   ensures \result == sumOfRetainedVotes();
-  @*/
-	public /*@ pure @*/ int getTotalVote() {
-		int totalVote = 0;
-		
- 		for (int i = 0; i <= lastCountNumber; i++) {
-			totalVote += (votesAdded[i] - votesRemoved[i]);
-		}
- 		
-		return totalVote;
 	}
 	
 /*@ ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
@@ -221,9 +202,6 @@ private static int nextCandidateID = 1;
     randomNumber = this.hashCode();
     candidateID = nextCandidateID++;
     //@ set _randomNumber = randomNumber;
-    if (votesAdded == null) {
-    	votesAdded = new int[CountConfiguration.MAXCOUNT];
-    }
   }
 
 /**
@@ -249,7 +227,7 @@ private static int nextCandidateID = 1;
   @   ensures lastSetCount == count;
   @*/
   public void addVote(final int numberOfVotes, final int count){
-       votesAdded[count] = numberOfVotes;
+       votesAdded[count] += numberOfVotes;
        lastCountNumber = count;
        lastSetCount = count;
   }
@@ -276,7 +254,7 @@ private static int nextCandidateID = 1;
   @   ensures lastCountNumber == count;
   @*/
   public void removeVote(final int numberOfVotes, final int count){
-        votesRemoved[count] = numberOfVotes;
+        votesRemoved[count] += numberOfVotes;
         lastCountNumber = count;
     }
 

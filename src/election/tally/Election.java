@@ -57,7 +57,7 @@ public class Election {
   @   i != j;
   @   candidateList[i].candidateID != candidateList[j].candidateID); 
   @*/	
-	protected transient /*@ spec_public nullable @*/ Candidate[] candidateList;
+  protected transient /*@ spec_public non_null @*/ Candidate[] candidateList;
 
     /**
      * Election parameters e.g. number of seats
@@ -66,7 +66,7 @@ public class Election {
 		totalNumberOfSeats = 0;
 		numberOfCandidates = 0;
 		numberOfSeatsInThisElection = totalNumberOfSeats;
-        candidateList = new Candidate[Candidate.MAX_CANDIDATES];
+		candidateList = new Candidate [Candidate.MAX_CANDIDATES];
     }
 
 	/**

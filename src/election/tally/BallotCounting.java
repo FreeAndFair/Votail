@@ -216,8 +216,8 @@ public class BallotCounting extends AbstractBallotCounting {
 				final int winner = findHighestCandidate();
 				highestCandidateExists = (0 <= winner);
 				
-				if (highestCandidateExists) {
-	          final int countingStatus = AbstractCountStatus.CANDIDATE_ELECTED;
+                if (highestCandidateExists) {
+                    final int countingStatus = AbstractCountStatus.CANDIDATE_ELECTED;
 				    updateCountStatus(countingStatus);
 				    electCandidate(winner);
 				    countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
@@ -286,17 +286,14 @@ public class BallotCounting extends AbstractBallotCounting {
 		countStatus.changeState(countingStatus);
 	}
 
-	/*@ requires \nonnullelements (candidates);
-	  @
-	  @*/
+	//@ requires \nonnullelements (candidates);
 	//@ assignable numberOfSurpluses, sumOfSurpluses, totalNumberOfSurpluses, totalSumOfSurpluses;
 	public void calculateSurpluses() {
 		int numberOfSurpluses = 0;
 		int sumOfSurpluses = 0;
-		int surplus = 0;
 	
 		for (int c=0; c < totalNumberOfCandidates; c++) {
-			surplus = getSurplus(candidates[c]);
+			int surplus = getSurplus(candidates[c]);
 			if (surplus > 0) {
 				numberOfSurpluses++;
 				sumOfSurpluses += numberOfSurpluses;

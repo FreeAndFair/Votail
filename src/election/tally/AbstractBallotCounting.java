@@ -253,9 +253,10 @@ public /*@ pure @*/ boolean isElected(final Candidate candidate){
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 	int surplus = 0;
- 	final int totalVote = candidate.getTotalVote();
-	if (totalVote > getQuota()) {			
- 		surplus = totalVote - getQuota();
+ 	final int totalVote = countBallotsFor(candidate.getCandidateID());
+	final int quota = getQuota();
+	if (totalVote > quota) {			
+ 		surplus = totalVote - quota;
 	}
 	return surplus;
 }
@@ -289,7 +290,7 @@ protected void setTotalNumberOfSurpluses(final int quantity) {
  */
 public /*@ pure @*/ int getTotalSumOfSurpluses() {
 	return totalSumOfSurpluses;
-} //@ nowarn;
+}
 
 /**
  * Update the total number of surplus votes available for redistribution.
@@ -472,8 +473,8 @@ public /*@ pure @*/ int getQuota() {
 public void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
 		final int candidateID = candidates[c].getCandidateID();
-		final int numberOfBallotsInPile = countBallotsFor(candidateID);
-		candidates[c].addVote(numberOfBallotsInPile, countNumberValue);
+		final int numberOfBallotsInPile = countFirstPreferences(candidateID);
+		candidates[c].addVote(numberOfBallotsInPile, 0);
 	}
 }
 
@@ -492,6 +493,27 @@ public /*@ pure @*/ int countBallotsFor(int candidateID) {
 	int numberOfBallots = 0;
 	for (int b=0; b < totalNumberOfVotes; b++) {
 		if (ballots[b].isAssignedTo(candidateID)) {
+			numberOfBallots++;
+		}
+	}
+	return numberOfBallots;
+}
+
+/**
+ * Count the number of first preferences for this candidate.
+ * 
+ * @param candidateID The internal identifier of this candidate
+ * @return The number of ballots in this candidate's pile
+ */
+/*@ also
+  @    requires ballotsToCount != null;
+  @    requires (\forall int index; 0 <= index && index < totalVotes;
+  @          ballotsToCount[index] != null); 
+  @*/
+public /*@ pure @*/ int countFirstPreferences(int candidateID) {
+	int numberOfBallots = 0;
+	for (int b=0; b < totalNumberOfVotes; b++) {
+		if (ballots[b].isFirstPreference(candidateID)) {
 			numberOfBallots++;
 		}
 	}
@@ -527,7 +549,7 @@ public /*@ pure @*/ int countBallotsFor(int candidateID) {
 			
 		}
 	return numberOfBallots;
-	} //@ nowarn Post;
+	}
 
 /**
  * Gets the status of the algorithm in progress.

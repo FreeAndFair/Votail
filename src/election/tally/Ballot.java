@@ -101,8 +101,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @   preferenceList[i] != preferenceList[j]);
     @ public invariant preferenceList.length >= numberOfPreferences;
     @*/
-  protected /*@ spec_public @*/ int[] preferenceList 
-      = new int [MAX_PREFERENCES];
+  protected /*@ spec_public non_null @*/ int[] preferenceList;
 
   /** Total number of valid preferences on this ballot paper */
   //@ public invariant 0 <= numberOfPreferences;
@@ -123,7 +122,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 
   /** Last count number in which this ballot was transferred */
   //@ public invariant 0 <= countNumberAtLastTransfer;
-  //@ public invariant countNumberAtLastTransfer <= AbstractBallotCounting.MAXCOUNT;
+  //@ public invariant countNumberAtLastTransfer <= CountConfiguration.MAXCOUNT;
   //@ public initially countNumberAtLastTransfer == 0;  
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
     
@@ -159,7 +158,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 	  ballotID = nextBallotID++;
       randomNumber = this.hashCode();
 	  //@ set _randomNumber = randomNumber;
-      
+      preferenceList = new int [MAX_PREFERENCES];
   }
     
   /**
@@ -197,7 +196,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
  	}
     
     numberOfPreferences = list.length;
-    candidateIDAtCount [countNumberAtLastTransfer] = getCandidateID();
+    candidateIDAtCount [countNumberAtLastTransfer] = list[0];
   }
 
   /**
@@ -269,12 +268,12 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 		if (positionInList < numberOfPreferences) {
 			// Update ballot history
 			for (int r = countNumberAtLastTransfer; r <= countNumber; r++) {
-				candidateIDAtCount [r] = getCandidateID();
+				candidateIDAtCount [r] = preferenceList[positionInList];
 			}
 	 		countNumberAtLastTransfer = countNumber;
  			positionInList++;
 		}
-	} //@ nowarn;
+	}
     
   /**
    * Get ballot ID number
@@ -338,9 +337,11 @@ public /*@ pure @*/ int getPreference(int i) {
 //@   assignable preferenceList[index];
 //@   ensures candidateID == preferenceList[index];
 public void setPreference(int index, int candidateID) {
-	if (preferenceList != null) {
       preferenceList[index] = candidateID;
-	}
+}
+
+public boolean isFirstPreference(int candidateID) {
+	return candidateID == preferenceList[0];
 }
  
 }
