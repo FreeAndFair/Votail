@@ -108,13 +108,7 @@ public class BallotBox {
 	  @         ballots[b].ballotID == ballot.ballotID);
 	  @*/
 	public void accept (final /*@ non_null @*/ Ballot ballot) {
-	  Ballot newBallot = new Ballot();
-	  newBallot.numberOfPreferences = ballot.numberOfPreferences;
-	  newBallot.preferenceList = new int[ballot.numberOfPreferences];
-	  for (int i=0; i < newBallot.numberOfPreferences; i++) {
-	    newBallot.setPreference(i,ballot.getPreference(i));
-	  }
-		ballots[numberOfBallots++] = newBallot;
+		ballots[numberOfBallots++] = new Ballot(ballot);
 	} 
 
 	/**

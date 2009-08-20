@@ -5,9 +5,8 @@ public class MockBallot extends election.tally.Ballot {
     //@ requires firstPreferenceID != NONTRANSFERABLE;
 	//@ requires 0 < firstPreferenceID;
 	public void setFirstPreference(final int firstPreferenceID) {
-		numberOfPreferences = 1;
-		preferenceList[0] = firstPreferenceID;
-		ballotID = nextBallotID++; // new ballot paper
+        int[] list = {firstPreferenceID};
+        setMultiplePreferences(list);
 	} //@ nowarn;
 
 	/*@ requires (\forall int i; 0 <= i && i < list.length;

@@ -62,7 +62,9 @@ package election.tally;
 
 
 public class Ballot {
-  /**
+  private static final int[] CANDIDATE_ID_LIST = new int [CountConfiguration.MAXCOUNT];
+
+/**
    * Maximum possible number of ballots based on maximum population size for
    * a five seat constituency i.e. at most 30,000 people per elected representative.
    * 
@@ -86,6 +88,8 @@ public class Ballot {
 public static final int NONTRANSFERABLE = 0;
 
 private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
+
+private static final int[] BLANK_PREFERENCE_LIST = new int [MAX_PREFERENCES];
 	
   /** Ballot ID number */
   //@ public invariant (ballotID == 0) || (0 < ballotID);
@@ -101,7 +105,8 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @   preferenceList[i] != preferenceList[j]);
     @ public invariant preferenceList.length >= numberOfPreferences;
     @*/
-  protected /*@ spec_public non_null @*/ int[] preferenceList;
+  protected /*@ spec_public non_null @*/ int[] preferenceList 
+       = BLANK_PREFERENCE_LIST;
 
   /** Total number of valid preferences on this ballot paper */
   //@ public invariant 0 <= numberOfPreferences;
@@ -118,7 +123,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    
   /** Candidate ID to which the vote is assigned at the end of each count */
   protected /*@ spec_public @*/ int[] candidateIDAtCount = 
-    new int [CountConfiguration.MAXCOUNT];
+    CANDIDATE_ID_LIST;
 
   /** Last count number in which this ballot was transferred */
   //@ public invariant 0 <= countNumberAtLastTransfer;
@@ -158,10 +163,27 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 	  ballotID = nextBallotID++;
       randomNumber = this.hashCode();
 	  //@ set _randomNumber = randomNumber;
-      preferenceList = new int [MAX_PREFERENCES];
+      preferenceList = BLANK_PREFERENCE_LIST;
+      candidateIDAtCount = CANDIDATE_ID_LIST;
   }
     
   /**
+   * Copy the <em>contents</em> of a ballot.
+   * @param ballot Ballot to be copied.
+   */
+  public Ballot(Ballot ballot) {
+	  numberOfPreferences = ballot.numberOfPreferences;
+	  preferenceList = ballot.preferenceList;
+	  candidateIDAtCount = CANDIDATE_ID_LIST;
+	  countNumberAtLastTransfer = 0;
+	  positionInList = 0;
+	  ballotID = nextBallotID++;
+      randomNumber = this.hashCode();
+	  //@ set _randomNumber = randomNumber;
+	
+}
+
+/**
    * Load the ballot details.
    * 
    * @param list List of candidate IDs in order from first preference
@@ -328,16 +350,6 @@ public /*@ pure @*/ int getPreference(int i) {
        return preferenceList[i];
     }
     return Ballot.NONTRANSFERABLE;	
-}
-
-//@ public normal_behavior
-//@   requires 0 <= index;
-//@   requires index < numberOfPreferences;
-//@   requires index < preferenceList.length;
-//@   assignable preferenceList[index];
-//@   ensures candidateID == preferenceList[index];
-public void setPreference(int index, int candidateID) {
-      preferenceList[index] = candidateID;
 }
 
 public boolean isFirstPreference(int candidateID) {
