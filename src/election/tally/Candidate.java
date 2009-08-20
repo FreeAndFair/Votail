@@ -83,13 +83,6 @@ public static final int MAX_CANDIDATES = 50;
   protected transient /*@ spec_public @*/ int randomNumber;
   //@ ghost int _randomNumber;
 
-  /**
- * Total number of votes this candidate has at any time 
- * 
- * @design This variable was added as to provide easy access from other classes.
- */
-	public int total;
-
 public static final int NO_CANDIDATE = 0;
 
 	/**
@@ -202,6 +195,10 @@ private static int nextCandidateID = 1;
     randomNumber = this.hashCode();
     candidateID = nextCandidateID++;
     //@ set _randomNumber = randomNumber;
+    votesAdded = new int [CountConfiguration.MAXCOUNT];
+    votesRemoved = new int [CountConfiguration.MAXCOUNT];
+    lastCountNumber = 0;
+    lastSetCount = 0;
   }
 
 /**
