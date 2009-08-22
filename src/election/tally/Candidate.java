@@ -40,8 +40,7 @@ public static final int MAX_CANDIDATES = 50;
   @   votesAdded[i] == 0);	
   @ public invariant votesAdded.length <= CountConfiguration.MAXCOUNT;
   @*/
-  protected /*@ spec_public non_null @*/ int[] votesAdded 
-    = new int [CountConfiguration.MAXCOUNT];
+  protected /*@ spec_public non_null @*/ int[] votesAdded;
 	
 /** Number of votes removed at each count */
 /*@ public invariant (\forall int i; 0 < i && i < votesRemoved.length;
@@ -50,8 +49,7 @@ public static final int MAX_CANDIDATES = 50;
   @                                  votesRemoved[i] == 0);
   @ public invariant votesRemoved.length <= CountConfiguration.MAXCOUNT;
   @*/
-  protected /*@ spec_public non_null @*/ int[] votesRemoved 
-    = new int [CountConfiguration.MAXCOUNT];
+  protected /*@ spec_public non_null @*/ int[] votesRemoved;
 
 //@ public invariant votesAdded != votesRemoved;
 //@ public invariant votesRemoved != votesAdded;
@@ -245,9 +243,10 @@ private static int nextCandidateID = 1;
   @   requires 0 <= count;
   @   requires votesRemoved != null && count < votesRemoved.length;
   @   requires 0 <= numberOfVotes;
-  @   requires numberOfVotes <= getTotalVote();
+  @   requires numberOfVotes <= getTotalAtCount(count);
   @   assignable lastCountNumber, votesRemoved[count];
-  @   ensures \old(getTotalVote()) == getTotalVote() + numberOfVotes;
+  @   ensures \old(getTotalAtCount(count)) == 
+  @     getTotalAtCount(count) + numberOfVotes;
   @   ensures lastCountNumber == count;
   @*/
   public void removeVote(final int numberOfVotes, final int count){
@@ -263,7 +262,7 @@ private static int nextCandidateID = 1;
   @*/
 	public void declareElected(){
 		state = ELECTED;
-	} //@ nowarn;
+	}
 	
 /** Declares the candidate to be eliminated */
 /*@ public normal_behavior

@@ -61,7 +61,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ ==>
 	  @ (\forall int i; 0 <= i && i < totalCandidates;
 	  @   candidateList[i].getStatus() == Candidate.CONTINUING &&
-	  @   candidateList[i].getTotalVote() == 0 &&
 	  @   candidateList[i].getOriginalVote() == 0);
 	  @
 	  @ public invariant (state == PRELOAD || state == LOADING ||   
@@ -86,7 +85,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ protected invariant (state == COUNTING || state == FINISHED)
 	  @ ==> 
 	  @  (\forall int i; 0 <= i && i < totalCandidates;
-	  @    candidateList[i].getTotalVote() ==
+	  @    candidateList[i].getTotalAtCount(countNumber) ==
 	  @    countBallotsFor (candidateList[i].getCandidateID()));
 	  @*/
 	
@@ -199,7 +198,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public initially countNumber == 0;
   //@ public invariant 0 <= countNumber;
   /*@ public invariant (PRELOAD <= state) ==>
-    @   countNumber <= MAXCOUNT;
+    @   countNumber <= CountConfiguration.MAXCOUNT;
     @ public constraint (state == COUNTING) ==> 
     @   \old(countNumber) <= countNumber;
     @ public constraint (state == COUNTING) ==>
@@ -248,26 +247,28 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ public invariant (state == COUNTING) ==> 
     @   (\exists int k; 0 <= k && k < totalCandidates;  
 	@   candidateList[k].getStatus() == Candidate.CONTINUING &&
-	@   0 < candidateList[k].getTotalVote())
+	@   0 < candidateList[k].getOriginalVote())
     @   ==> lowestContinuingVote == 
 	@   (\min int i; 0 <= i && i < totalCandidates && 
 	@   candidateList[i].getStatus() == Candidate.CONTINUING &&
-	@   0 < candidateList[i].getTotalVote();
-	@   candidateList[i].getTotalVote());
+	@   0 < candidateList[i].getOriginalVote();
+	@   candidateList[i].getOriginalVote());
 	@*/
  	
   /** The second lowest non-zero number of votes held by a continuing candidate */
   //@ public model int nextHighestVote;
   //@ public invariant lowestContinuingVote <= nextHighestVote;
-  /*@ public invariant  (state == COUNTING) ==>
+  /*@ public invariant  (state == COUNTING) &&
     @   (\exists int k; 0 <= k && k < totalCandidates;  
 	@   candidateList[k].getStatus() == Candidate.CONTINUING &&
-	@   lowestContinuingVote < candidateList[k].getTotalVote()) 
+	@   lowestContinuingVote < 
+	@     countBallotsFor(candidateList[k].getCandidateID())) 
 	@   ==> nextHighestVote == 
     @   (\min int i; 0 <= i && i < totalCandidates && 
     @   candidateList[i].getStatus() == Candidate.CONTINUING &&
-    @   lowestContinuingVote < candidateList[i].getTotalVote(); 
-    @   candidateList[i].getTotalVote()); 
+    @   lowestContinuingVote < 
+    @     countBallotsFor(candidateList[i].getCandidateID()); 
+    @   countBallotsFor(candidateList[i].getCandidateID())); 
     @*/
 	
   /** The highest number of votes held by a continuing candidate */
@@ -277,7 +278,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   ==> highestContinuingVote == 
     @   (\max int i; 0 < i && i < totalCandidates && 
     @   candidateList[i].getStatus() == Candidate.CONTINUING; 
-    @   candidateList[i].getTotalVote());   
+    @   countBallotsFor (candidateList[i].getCandidateID()));   
     @*/
 	
   /** Highest available surplus for distribution */
@@ -299,15 +300,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires state == COUNTING;
     @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates &&
     @     candidateList[i].getStatus() == CandidateStatus.CONTINUING
-    @     && candidateList[i].getTotalVote() < highestContinuingVote;
-    @     candidateList[i].getTotalVote());
+    @     && candidateList[i].getOriginalVote() < highestContinuingVote;
+    @     candidateList[i].getOriginalVote());
     @
     @ public pure model int votesForOtherContinuingCandidates() {
     @    int sum = 0;
     @    for (int i=0; i < totalCandidates; i++) {
     @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING
-    @            && candidateList[i].getTotalVote() < highestContinuingVote) {
-    @                sum += candidateList[i].getTotalVote();
+    @            && candidateList[i].getOriginalVote() < highestContinuingVote) {
+    @                sum += candidateList[i].getOriginalVote();
     @        }
     @    } 
     @    return sum;
@@ -323,7 +324,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @  numberOfEqualHighestContinuing == 
     @  (\num_of int i; 0 <= i && i < totalCandidates && 
     @    candidateList[i].getStatus() == Candidate.CONTINUING; 
-    @    candidateList[i].getTotalVote() == highestContinuingVote);
+    @    candidateList[i].getOriginalVote() == highestContinuingVote);
     @*/
 
   /** Number of candidates with equal lowest non-zero votes */
@@ -334,7 +335,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public invariant (state == COUNTING) ==> numberOfEqualLowestContinuing == 
     @   (\num_of int i; 0 <= i && i < totalCandidates && 
     @   candidateList[i].getStatus() == Candidate.CONTINUING; 
-    @   candidateList[i].getTotalVote() == lowestContinuingVote);
+    @   candidateList[i].getOriginalVote() == lowestContinuingVote);
 	@*/
   
    /**
@@ -349,10 +350,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return True if the candidate has at least a quota of votes
    * @see "http://www.cev.ie/htm/tenders/pdf/1_1.pdf, page 79, paragraph 120 (2)"
    */
-  /*@ requires candidate != null;
-    @ requires countNumber >= 1;
-    @ requires state == COUNTING;
-    @ ensures \result == (candidate.getTotalVote() >= getQuota());
+  /*@ requires COUNTING <= state;
+    @ ensures \result == 
+    @   (countBallotsFor(candidate.getCandidateID()) >= getQuota());
     @*/
   public /*@ pure @*/ boolean hasQuota (election.tally.Candidate candidate);
 
@@ -410,7 +410,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires candidate != null;
     @ requires 0 <= countNumber;
     @ ensures (hasQuota(candidate) == true) ==> \result == 
-    @     (candidate.getTotalVote() - getQuota());
+    @     (candidate.getOriginalVote() - getQuota());
     @ ensures (hasQuota(candidate) == false) ==> \result == 0;
     @ ensures \result >= 0;
     @*/
@@ -480,12 +480,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     /*@ ensures \result == nonTransferableVotes + 
       @   (\sum int i; 0 <= i && i < totalCandidates; 
-      @   candidateList[i].getTotalVote());
+      @   countBallotsFor(candidateList[i].getCandidateID()));
       @
       @ public model pure int getNumberOfBallots() {
       @    int total = nonTransferableVotes;
       @    for (int i = 0; i < totalCandidates; i++) {
-      @        total += candidateList[i].getTotalVote();
+      @        total += countBallotsFor(candidateList[i].getCandidateID());
       @    }
       @    return total;
       @ }
@@ -1012,10 +1012,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires toCandidate.getStatus() == Candidate.CONTINUING;
     @ requires numberOfVotes == getActualTransfers (fromCandidate, toCandidate) +
     @   getRoundedFractionalValue (fromCandidate, toCandidate);
-    @ ensures fromCandidate.getTotalVote() == 
-    @   \old (fromCandidate.getTotalVote()) - numberOfVotes;
-    @ ensures toCandidate.getTotalVote() ==
-    @   \old (toCandidate.getTotalVote()) + numberOfVotes;
+    @ ensures countBallotsFor(fromCandidate.getCandidateID()) == 
+    @   \old (countBallotsFor(fromCandidate.getCandidateID())) - numberOfVotes;
+    @ ensures countBallotsFor(toCandidate.getCandidateID()) ==
+    @   \old (countBallotsFor(toCandidate.getCandidateID())) + numberOfVotes;
     @*/
   public abstract void transferVotes(
 		  /*@ non_null @*/ Candidate fromCandidate,

@@ -1,6 +1,7 @@
 package election.tally;
 
-import election.tally.exception.NullCandidateException;
+//@ refine "AbstractBallotCounting.java-refined";
+
 
 /**
  * Ballot counting algorithm for elections to Oireachtas Eireann - the National 
@@ -46,7 +47,6 @@ import election.tally.exception.NullCandidateException;
  * Formal Verification of Voting</a> 
  * @see <a href="http://www.jmlspecs.org/">JML Homepage</a>  
  */
-//@ refine "AbstractBallotCounting.java-refined";
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
     // TODO naming convention for fields that represent model fields
@@ -88,6 +88,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
    /** Total number of valid ballot papers */
    protected /*@ spec_public @*/ transient int totalNumberOfVotes;
+   //@ protected represents totalVotes <- totalNumberOfVotes;
    
    /** Number of votes so far which did not have a transfer to
 	 * a continuing candidate */
@@ -205,8 +206,9 @@ private void createDecisionTable() {
   @     requires 0 <= countNumber;
   @     requires ballotsToCount != null;
   @     requires (\forall int index; 0 <= index && index < totalVotes;
-  @          ballotsToCount[index] != null); 
-  @     ensures \result <==> (candidate.getTotalVote() >= getQuota());
+  @       ballotsToCount[index] != null); 
+  @     ensures \result <==> 
+  @       (countBallotsFor(candidate.getCandidateID()) >= getQuota());
   @*/
 public /*@ pure @*/ boolean hasQuota(final /*@ non_null @*/ Candidate candidate){
 	return (countBallotsFor(candidate.getCandidateID()) >= getQuota());
@@ -247,7 +249,7 @@ public /*@ pure @*/ boolean isElected(final Candidate candidate){
   @     requires 0 <= countNumber;
   @     requires COUNTING == state;
   @     ensures (hasQuota(candidate) == true) ==> \result ==
-  @       (candidate.getTotalVote() - getQuota());
+  @       (countBallotsFor(candidate.getCandidateID()) - getQuota());
   @     ensures (hasQuota(candidate) == false) ==> \result == 0;
   @     ensures \result >= 0;
   @*/
@@ -316,7 +318,6 @@ protected void setTotalSumOfSurpluses(final int sum) {
  * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV commentary on count rules, section 3 page 13, section 4 page 17 and section 14</a>
  * @param index The candidate for which to check
  * @return true if candidate has enough votes to save deposit
- * @throws NullCandidateException  if candidate object cannot be found
  */
 /*@ also
   @  public normal_behavior
@@ -329,10 +330,7 @@ protected void setTotalSumOfSurpluses(final int sum) {
   @       (candidateList[index].getOriginalVote() >= depositSavingThreshold) ||
   @       (isElected (candidateList[index]) == true);
   @*/
-public /*@ pure @*/ boolean isDepositSaved(final int index) throws NullCandidateException{
-	if (candidates == null) {
-		throw new NullCandidateException();
-	}
+public /*@ pure @*/ boolean isDepositSaved(final int index) {
 	final Candidate candidate = candidates[index];
 	final int originalVote = candidate.getOriginalVote();
 	final boolean elected = isElected (candidate);
@@ -505,10 +503,8 @@ public /*@ pure @*/ int countBallotsFor(int candidateID) {
  * @param candidateID The internal identifier of this candidate
  * @return The number of ballots in this candidate's pile
  */
-/*@ also
-  @    requires ballotsToCount != null;
-  @    requires (\forall int index; 0 <= index && index < totalVotes;
-  @          ballotsToCount[index] != null); 
+/*@ requires PRECOUNT <= state;
+  @ ensures (countNumber == 0) ==> \result == countBallotsFor (candidateID);
   @*/
 public /*@ pure @*/ int countFirstPreferences(int candidateID) {
 	int numberOfBallots = 0;
@@ -975,10 +971,6 @@ protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
   @     requires numberOfVotes == getActualTransfers (fromCandidate,toCandidate) +
   @       getRoundedFractionalValue (fromCandidate, toCandidate);
   @		assignable ballotsToCount;
-  @     ensures fromCandidate.getTotalVote() ==
-  @       \old (fromCandidate.getTotalVote()) - numberOfVotes;
-  @     ensures toCandidate.getTotalVote() ==
-  @       \old (toCandidate.getTotalVote()) + numberOfVotes;
   @*/
 public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate, 
 		/*@ non_null @*/ Candidate toCandidate, int numberOfVotes);

@@ -7,7 +7,6 @@ import election.tally.Candidate;
 import election.tally.CandidateStatus;
 import election.tally.Election;
 import election.tally.ElectionStatus;
-import election.tally.exception.NullCandidateException;
 import election.tally.mock.MockBallot;
 
 /**
@@ -25,23 +24,17 @@ public class ExclusionEventJ extends TestCase {
   private /*@ spec_public nullable @*/ Candidate[] candidates;
   private /*@ spec_public nullable @*/ Election parameters;
   private /*@ spec_public nullable @*/ BallotCounting ballotCounting;
-  private /*@ spec_public nullable @*/ BallotBox ballotBox;
+  private BallotBox ballotBox;
 
 	/**
 	 * Execute this scenario.
 	 */
-	//@ requires ballotCounting != null;
 	public final void testExclusion() {
 	 	
 	  assertTrue (ballotCounting.getStatus() == ElectionStatus.PRECOUNT);
 	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
 		ballotCounting.eliminateCandidate(lowestCandidate);
-		try {
-			assertTrue (ballotCounting.isDepositSaved(lowestCandidate));
-		} catch (NullCandidateException e) {
-			fail("Candidate list should not be null.");
-			e.printStackTrace();
-		}
+		assertTrue (ballotCounting.isDepositSaved(lowestCandidate));
 		assertTrue (5 == ballotCounting.getContinuingCandidates());
 		final int secondLowest = ballotCounting.findLowestCandidate();
 		assertTrue (secondLowest != lowestCandidate);
@@ -52,8 +45,7 @@ public class ExclusionEventJ extends TestCase {
 
  	}
 
-  //@ requires candidates != null;
-	//@ requires numberOfCandidates < candidates.length;
+ 
  	protected void setUpBallotBox() {
  	  int numberOfVotes;
  	  MockBallot ballot = new MockBallot();
