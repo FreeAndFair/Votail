@@ -6,7 +6,7 @@ package election.tally;
  * (PRSTV) system.
  * 
  * @author Dermot Cochran
- * @copyright 2005-2008
+ * @copyright 2005-2009
  * @reviewer Joe Kiniry
  * 
  * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of 
@@ -43,7 +43,9 @@ public class Ballot {
   protected /*@ spec_public @*/ int[] preferenceList;
   
   /** Total number of valid preferences on the ballot paper */
-  //@ public invariant 0 < numberOfPreferences;
+  //@ public invariant 0 <= numberOfPreferences;
+  // @design numberOfPreferences == 0 means an empty ballot.
+  // @see #ballotID invariant
   protected /*@ spec_public @*/ int numberOfPreferences;
   
   /** Position within preference list */
@@ -88,11 +90,11 @@ public class Ballot {
    * @param countNumber The round of counting which we need to check
    * @return The candidate ID or the NONTRANSFERABLE constant
    */    
-  /*@  public normal_behavior
-    @ requires 0 <= countNumber;
-    @ requires countNumber <= countNumberAtLastTransfer;
-    @ requires countNumber < candidateIDAtCount.length;
-    @ ensures \result == candidateIDAtCount[countNumber];
+  /*@ public normal_behavior
+    @   requires 0 <= countNumber;
+    @   requires countNumber <= countNumberAtLastTransfer;
+    @   requires countNumber < candidateIDAtCount.length;
+    @   ensures \result == candidateIDAtCount[countNumber];
     @
     @ public model pure int getPreferenceAtCount(final int countNumber) {
     @     return candidateIDAtCount[countNumber];
@@ -104,7 +106,7 @@ public class Ballot {
    * 
    * @return The last count at which this ballot was transferred
    */    
-  /*@  public normal_behavior
+  /*@ public normal_behavior
     @   ensures \result == countNumberAtLastTransfer;
     @
     @ public model pure int getCountNumberAtLastTransfer(){

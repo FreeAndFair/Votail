@@ -96,9 +96,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
        = new int [MAX_PREFERENCES];
 
   /** Total number of valid preferences on this ballot paper */
-  //@ public invariant 0 <= numberOfPreferences;
-  // @design numberOfPreferences == 0 means an empty ballot.
-  // @see #ballotID invariant
   protected /*@ spec_public @*/ int numberOfPreferences;
   
   /** Position within preference list */
