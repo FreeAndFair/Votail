@@ -169,8 +169,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	@   ==> totalVotes == 0;
     @ public constraint (state == LOADING) 
     @   ==> \old (totalVotes) <= totalVotes;
-    @ public constraint (state == PRECOUNT || state == COUNTING || 
-    @   state == FINISHED) 
+    @ public constraint (state == COUNTING || state == FINISHED) 
     @   ==> totalVotes == \old (totalVotes);
     @*/
 	

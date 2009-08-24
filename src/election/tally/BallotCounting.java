@@ -286,7 +286,6 @@ public class BallotCounting extends AbstractBallotCounting {
 		countStatus.changeState(countingStatus);
 	}
 
-	//@ requires \nonnullelements (candidates);
 	//@ assignable numberOfSurpluses, sumOfSurpluses, totalNumberOfSurpluses, totalSumOfSurpluses;
 	public void calculateSurpluses() {
 		int numberOfSurpluses = 0;
