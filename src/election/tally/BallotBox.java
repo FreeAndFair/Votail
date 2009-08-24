@@ -32,8 +32,7 @@ public class BallotBox {
 /**
  * List of valid ballot papers.
  */
-  protected /*@ spec_public @*/ Ballot[] ballots 
-      = new Ballot[Ballot.MAX_BALLOTS];
+  protected /*@ spec_public @*/ Ballot[] ballots;
   
   /**
    * No two ballot IDs in a ballot box are the same.
@@ -81,7 +80,7 @@ public class BallotBox {
       @ public invariant numberOfBallots <= Ballot.MAX_BALLOTS;
       @ public constraint \old (numberOfBallots) <= numberOfBallots;
       @*/
-	private /*@ spec_public @*/ int numberOfBallots;
+	protected /*@ spec_public @*/ int numberOfBallots;
 	
 	/**
 	 * Number of ballots copied from box
@@ -89,23 +88,26 @@ public class BallotBox {
 	//@ public initially index == 0;
 	//@ public invariant index <= size();
 	//@ public constraint \old(index) <= index;
- 	private /*@ spec_public @*/ int index;
+ 	protected /*@ spec_public @*/ int index;
 	
 	/**
 	 * Create an empty ballot box.
 	 */
 	public /*@ pure @*/ BallotBox(){
+		index = 0;
 		numberOfBallots = 0;
+		ballots = new Ballot[Ballot.MAX_BALLOTS];
 	}
 
 	/**
-	 * Accept a ballot paper.
+	 * Accept an anonymous ballot paper.
+	 * <p>
+	 * The ballot ID number is regenerated.
+	 * <p>
 	 * @param ballot The ballot paper
 	 */
 	/*@ requires numberOfBallots < ballots.length;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
-	  @ ensures (\exists int b; 0 <= b && b < numberOfBallots;
-	  @         ballots[b].ballotID == ballot.ballotID);
 	  @*/
 	public void accept (final /*@ non_null @*/ Ballot ballot) {
 		ballots[numberOfBallots++] = new Ballot(ballot);

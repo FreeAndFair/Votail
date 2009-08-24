@@ -190,7 +190,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @   requires positionInList == 0;
     @	assignable numberOfPreferences, ballotID, preferenceList, nextBallotID, positionInList, candidateIDAtCount[*];
     @   ensures numberOfPreferences == list.length;
-    @   ensures preferenceList.length == list.length;
     @   ensures (\forall int i; 0 <= i && i < list.length;
     @     (preferenceList[i] == list[i]));
     @*/
