@@ -334,7 +334,7 @@ public /*@ pure @*/ int getPreference(int i) {
     return Ballot.NONTRANSFERABLE;	
 }
 
-public boolean isFirstPreference(int candidateID) {
+public /*@ pure @*/ boolean isFirstPreference(int candidateID) {
 	return candidateID == preferenceList[0];
 }
  
