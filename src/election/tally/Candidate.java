@@ -211,13 +211,12 @@ private static int nextCandidateID = 1;
 /*@  
   @   public normal_behavior
   @   requires state == CONTINUING;
-  @   requires lastCountNumber < count || 
+  @   requires lastCountNumber <= count || 
   @            (lastCountNumber == 0 && count == 0);
-  @   requires votesAdded[count] == 0;
   @   requires 0 <= count && count <= votesAdded.length;
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesAdded[count], lastSetCount;
-  @   ensures votesAdded[count] == numberOfVotes;
+  @   ensures votesAdded[count] == \old(votesAdded[count]) + numberOfVotes;
   @   ensures lastCountNumber == count;
   @   ensures lastSetCount == count;
   @*/

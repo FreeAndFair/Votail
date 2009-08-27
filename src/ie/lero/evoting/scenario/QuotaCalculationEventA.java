@@ -29,11 +29,11 @@ public class QuotaCalculationEventA extends TestCase {
  		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);
 		BallotBox ballotBox = new BallotBox();
 		MockBallot ballot = new MockBallot();
-		for (int i = 0; i < 501; i++) {
+		for (int i = 0; i < 51; i++) {
 		  ballot.setFirstPreference(parameters.getCandidate(0).getCandidateID());
 		  ballotBox.accept(ballot);
 		}
-		for (int i = 0; i < 499; i++) {
+		for (int i = 0; i < 49; i++) {
 		  ballot.setFirstPreference(parameters.getCandidate(1).getCandidateID());
 		  ballotBox.accept(ballot);
 		}
@@ -48,10 +48,10 @@ public class QuotaCalculationEventA extends TestCase {
 	 	
 		assertTrue (ballotCounting.getRemainingSeats() == 1);
 		
-		assertTrue (ballotBox.size() == 1000);
+		assertTrue (ballotBox.size() == 100);
 		
 		int quota = ballotCounting.getQuota();
-		assertTrue (501 == quota);
+		assertTrue (51 == quota);
 		
 		// Candidate 0 has the full quota but no surplus
 		assertTrue (quota == 

@@ -247,11 +247,11 @@ public /*@ pure @*/ boolean isElected(final Candidate candidate){
 /*@ also
   @   protected normal_behavior
   @     requires 0 <= countNumber;
-  @     requires COUNTING == state;
+  @     requires PRECOUNT <= state;
   @     ensures (hasQuota(candidate) == true) ==> \result ==
   @       (countBallotsFor(candidate.getCandidateID()) - getQuota());
   @     ensures (hasQuota(candidate) == false) ==> \result == 0;
-  @     ensures \result >= 0;
+  @     ensures 0 <= \result;
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
 	int surplus = 0;
@@ -278,7 +278,6 @@ public /*@ pure @*/ int getTotalNumberOfSurpluses() {
  * @param totalNumberOfSurpluses the totalNumberOfSurpluses to set
  */
 //@ requires 0 <= quantity;
-//@ requires quantity <= numberElected;
 //@ assignable totalNumberOfSurpluses;
 //@ ensures quantity == totalNumberOfSurpluses;
 protected void setTotalNumberOfSurpluses(final int quantity) {

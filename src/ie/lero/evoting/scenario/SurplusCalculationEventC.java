@@ -14,7 +14,7 @@ import election.tally.mock.MockBallot;
  */
 public class SurplusCalculationEventC extends TestCase{
 	
-  /*@ nullable @*/ BallotCounting ballotCounting;
+  BallotCounting ballotCounting;
   Election parameters;
   BallotBox ballotBox;
 
