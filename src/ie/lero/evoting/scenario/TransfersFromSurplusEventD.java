@@ -4,6 +4,7 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.AbstractCountStatus;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
@@ -55,6 +56,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   assertTrue (ballotCounting.isElected(election.getCandidate(winner)));
 	   assertTrue (election.getCandidate(winner).isElected());
 	   assertTrue (1 == ballotCounting.countBallotsFor(election.getCandidate(1).getCandidateID()));
+	   ballotCounting.countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
 	   ballotCounting.distributeSurplus(winner);
 	   ballotCounting.incrementCountNumber();
 	   int numberContinuing = ballotCounting.getContinuingCandidates();

@@ -349,8 +349,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return True if the candidate has at least a quota of votes
    * @see "http://www.cev.ie/htm/tenders/pdf/1_1.pdf, page 79, paragraph 120 (2)"
    */
-  /*@ requires COUNTING <= state;
-    @ ensures \result == 
+  /*@ ensures \result == 
     @   (countBallotsFor(candidate.getCandidateID()) >= getQuota());
     @*/
   public /*@ pure @*/ boolean hasQuota (election.tally.Candidate candidate);
@@ -405,14 +404,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return The undistributed surplus for that candidate, or zero if the 
    * candidate has less than a quota of votes
    */
-  /*@ requires state == COUNTING;
-    @ requires candidate != null;
-    @ requires 0 <= countNumber;
-    @ ensures (hasQuota(candidate) == true) ==> \result == 
-    @     (candidate.getOriginalVote() - getQuota());
-    @ ensures (hasQuota(candidate) == false) ==> \result == 0;
-    @ ensures \result >= 0;
-    @*/
   public /*@ pure @*/ int getSurplus (election.tally.Candidate candidate);
 	
   /** 
@@ -623,7 +614,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ requires state == COUNTING;
     @ ensures (\result == Ballot.NONTRANSFERABLE) <=!=>
     @   (\exists int k; 1 <= k && k <= ballot.remainingPreferences(); 
-    @     (\result == ballot.getNextPreference(k)) &&
+    @     (\result == ballot.getNextPreference(k)) ==>
     @     (\forall int i; 1 <= i && i < k;
     @       isContinuingCandidateID(ballot.getNextPreference(i)) == false)
     @   );
@@ -654,10 +645,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures ((fromCandidate.getStatus() == Candidate.ELECTED) && 
     @   (getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate)))
     @   ==>
-    @   (\result == 
-    @               (getSurplus (fromCandidate) * 
-    @               getPotentialTransfers (fromCandidate, 
-    @                                     toCandidate.getCandidateID()) /
+    @   (\result == (getSurplus (fromCandidate) * 
+    @               getPotentialTransfers (fromCandidate, toCandidate.getCandidateID()) /
     @               getTotalTransferableVotes (fromCandidate)));
     @ ensures ((fromCandidate.getStatus() == Candidate.ELIMINATED) ||
     @   (getTotalTransferableVotes(fromCandidate) <= getSurplus (fromCandidate)))

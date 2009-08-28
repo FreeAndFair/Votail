@@ -204,9 +204,6 @@ private void createDecisionTable() {
 /*@ also
   @   public normal_behavior
   @     requires 0 <= countNumber;
-  @     requires ballotsToCount != null;
-  @     requires (\forall int index; 0 <= index && index < totalVotes;
-  @       ballotsToCount[index] != null); 
   @     ensures \result <==> 
   @       (countBallotsFor(candidate.getCandidateID()) >= getQuota());
   @*/
@@ -245,7 +242,7 @@ public /*@ pure @*/ boolean isElected(final Candidate candidate){
  * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_1.pdf">CEV guidelines, page 79, paragraph 120(2)</a>
  */
 /*@ also
-  @   protected normal_behavior
+  @   public normal_behavior
   @     requires 0 <= countNumber;
   @     requires PRECOUNT <= state;
   @     ensures (hasQuota(candidate) == true) ==> \result ==
@@ -254,11 +251,9 @@ public /*@ pure @*/ boolean isElected(final Candidate candidate){
   @     ensures 0 <= \result;
   @*/
 public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
-	int surplus = 0;
- 	final int totalVote = countBallotsFor(candidate.getCandidateID());
-	final int quota = getQuota();
-	if (totalVote > quota) {			
- 		surplus = totalVote - quota;
+ 	final int surplus = countBallotsFor(candidate.getCandidateID()) - getQuota();
+	if (surplus < 0) {			
+ 		return 0;
 	}
 	return surplus;
 }
@@ -568,7 +563,8 @@ public /*@ pure @*/ byte getStatus(){
  * 
  * @return Internal ID of next continuing candidate or <code>NONTRANSFERABLE</code>
  */
-	protected /*@ pure spec_public @*/ int getNextContinuingPreference(final /*@ non_null @*/ Ballot ballot) {
+	protected /*@ pure spec_public @*/ int getNextContinuingPreference(
+	      final /*@ non_null @*/ Ballot ballot) {
 		int result = Ballot.NONTRANSFERABLE;
 
   		for (int i = 1; i < ballot.remainingPreferences(); i++) {
@@ -1184,21 +1180,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	}
 
 	/**
-	 * Get the number of continuing candidates, neither elected nor
-	 * excluded yet.
+	 * Get the number of continuing candidates, neither elected nor eliminated yet.
 	 * 
 	 * @return The number of continuing candidates.
 	 */
 	public /*@ pure @*/ int getNumberContinuing() {
-		int numberContinuing = 0;
-		
-		for (int i = 0; i < totalNumberOfCandidates; i++) {
-			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-				numberContinuing++;
-			}
-		}
-		
- 		return numberContinuing;
+ 		return totalNumberOfCandidates - (numberOfCandidatesElected + numberOfCandidatesEliminated);
 	}
 	
 }
