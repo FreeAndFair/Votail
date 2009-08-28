@@ -641,8 +641,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @design The votes in a surplus are transfered in proportion to
    *   the number of transfers available throughout the candidates ballot stack.
    *   If not all transferable votes are accounted for the highest remainders 
-   *   for each continuing candidate need to be examined, unless we are 
-   *   allowing for fractional transfers by rewighting of votes.
+   *   for each continuing candidate need to be examined.
    * 
    * @param fromCandidate Candidate from which to count the transfers
    * @param toCandidate Continuing candidate eligible to receive votes

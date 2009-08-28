@@ -235,7 +235,6 @@ public class BallotCounting extends AbstractBallotCounting {
 			  if (0 <= loser) {
 			      countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);	
 			          eliminateCandidate(loser);
-			      numberOfCandidatesEliminated++;
 			      countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);	
 			      redistributeBallots(candidates[loser].getCandidateID());
 			  }

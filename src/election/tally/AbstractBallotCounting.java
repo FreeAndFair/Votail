@@ -568,28 +568,18 @@ public /*@ pure @*/ byte getStatus(){
  * 
  * @return Internal ID of next continuing candidate or <code>NONTRANSFERABLE</code>
  */
-/*@ also 
-  @   protected normal_behavior
-  @     requires state == COUNTING;
-  @     ensures (\result == Ballot.NONTRANSFERABLE) <=!=>
-  @       (\exists int k; 1 <= k && k < ballot.remainingPreferences();
-  @       (\result == ballot.getNextPreference(k)) &&
-  @       (\forall int i; 1 <= i && i < k;
-  @         isContinuingCandidateID(ballot.getNextPreference(i)) == false));
-  @*/
 	protected /*@ pure spec_public @*/ int getNextContinuingPreference(final /*@ non_null @*/ Ballot ballot) {
 		int result = Ballot.NONTRANSFERABLE;
 
   		for (int i = 1; i < ballot.remainingPreferences(); i++) {
 			    final int nextPreference = ballot.getNextPreference(i);
 			    if (isContinuingCandidateID(nextPreference)) {
-			        result = nextPreference;
-				      break;
+			        return nextPreference;
 			    }
 		  }
 		
 		return result;
-	} //@ nowarn;
+	}
 
 /**
  * Determine if a candidate ID belongs to a continuing candidate.
@@ -1084,6 +1074,7 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	  @ requires 0 <= loser && loser < getNumberContinuing();
 	  @ assignable candidateList, decisions[*], decisionsTaken;
 	  @ assignable candidateList[loser];
+	  @ assignable numberOfCandidatesEliminated;
 	  @ ensures remainingSeats <= getNumberContinuing();
 	  @ ensures numberElected <= seats;
 	  @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
@@ -1094,9 +1085,10 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
 	public void eliminateCandidate(final int loser) {
 		final int candidateID = candidates[loser].getCandidateID();
 
-		candidates[loser].declareEliminated(); //@ nowarn;
-		redistributeBallots(candidateID); //@ nowarn;
+		candidates[loser].declareEliminated();
+		redistributeBallots(candidateID);
 		auditDecision(DecisionStatus.EXCLUDE, candidateID);
+		numberOfCandidatesEliminated++;
 	}
 
 	/**
@@ -1191,12 +1183,12 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
  		totalRemainingSeats--;
 	}
 
-	/*@ also 
-	  @ requires candidates != null && 
-	  @          (\forall int c; 0 <= c && c < totalNumberOfCandidates;
-	  @          candidates[c] != null);
-	  @ ensures \result == numberOfContinuingCandidates();
-	  @*/
+	/**
+	 * Get the number of continuing candidates, neither elected nor
+	 * excluded yet.
+	 * 
+	 * @return The number of continuing candidates.
+	 */
 	public /*@ pure @*/ int getNumberContinuing() {
 		int numberContinuing = 0;
 		
@@ -1209,20 +1201,4 @@ public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate,
  		return numberContinuing;
 	}
 	
-	/*@ ensures \result == (\num_of int i; i <= 0 && 
-	  @         i < totalNumberOfCandidates;
-	  @         candidateList[i].getStatus() == CandidateStatus.CONTINUING);
-	  @
-	  @ public pure model int numberOfContinuingCandidates() {
-	  @ int numberContinuing = 0;
-	  @	
-	  @	for (int i = 0; i < totalNumberOfCandidates; i++) {
-	  @		if (candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
-	  @			numberContinuing++;
-	  @		}
-	  @	}
-	  @	
- 	  @	return numberContinuing;
-	  @ }
-	  @*/
 }

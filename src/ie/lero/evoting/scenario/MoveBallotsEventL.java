@@ -1,6 +1,7 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.AbstractCountStatus;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
@@ -27,8 +28,9 @@ public class MoveBallotsEventL extends TestCase {
 	   int firstElected = ballotCounting.findHighestCandidate();
 	   assertTrue (0 == firstElected);
 	   final int surplus = ballotCounting.getSurplus(election.getCandidate(firstElected));
-       assertTrue (surplus > 0);
-       ballotCounting.startCounting();
+     assertTrue (surplus > 0);
+     ballotCounting.startCounting();
+     ballotCounting.countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
 	   ballotCounting.distributeSurplus(firstElected);
 	}
 
