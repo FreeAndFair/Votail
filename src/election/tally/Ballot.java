@@ -239,9 +239,9 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @*/
 
   public /*@ pure @*/ int getNextPreference(final int offset){
-        if(positionInList + offset < numberOfPreferences){
-          return preferenceList[positionInList + offset];
-        }
+    if (positionInList + offset < numberOfPreferences){
+      return preferenceList[positionInList + offset];
+    }
 		return NONTRANSFERABLE;
   }
  

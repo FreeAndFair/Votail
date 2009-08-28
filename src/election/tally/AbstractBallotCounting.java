@@ -567,7 +567,7 @@ public /*@ pure @*/ byte getStatus(){
 	      final /*@ non_null @*/ Ballot ballot) {
 		int result = Ballot.NONTRANSFERABLE;
 
-  		for (int i = 1; i < ballot.remainingPreferences(); i++) {
+  		for (int i = 1; i <= ballot.remainingPreferences(); i++) {
 			    final int nextPreference = ballot.getNextPreference(i);
 			    if (isContinuingCandidateID(nextPreference)) {
 			        return nextPreference;
