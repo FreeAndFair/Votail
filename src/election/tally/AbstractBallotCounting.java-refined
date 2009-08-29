@@ -513,13 +513,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @design This is the method that starts the counting process.
    * @see requirement 1, section 3, item 2, page 12
    */
-  /*@ public normal_behavior 
-    @   requires remainingSeats == seats;
-    @   requires numberElected == 0;
-    @   requires nonTransferableVotes == 0;
+  /*@ public normal_behavior
     @   requires state == PRECOUNT || state == COUNTING;
-    @   requires getNumberContinuing() == totalCandidates;
-    @   requires countNumber == 0;
     @   ensures state == FINISHED;
     @   assignable state, countNumber, numberElected,
     @       remainingSeats, numberOfSurpluses, candidateList,
@@ -527,13 +522,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       nextHighestVote, nonTransferableVotes, ballotsToCount;
     @   ensures remainingSeats == 0;
     @   ensures numberElected == seats;
-    @   ensures getNumberContinuing() == 0;
-    @   ensures countNumber >= 0;
-    @ also
-    @   protected normal_behavior
-    @   requires numberEliminated == 0; 
-    @   assignable numberEliminated;
-    @   ensures numberEliminated == totalCandidates - numberElected;
     @*/
   public abstract void count();
   
