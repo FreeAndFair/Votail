@@ -603,7 +603,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Gets the next preference continuing candidate.
    * 
-   * @design This is the _nearest_ next preference i.e.
+   * This is the _nearest_ next preference i.e.
    * filter the list of preferences to contain continuing candidates and then
    * get the next preference to a continuing candidate, if any.
    * 
@@ -612,12 +612,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return Candidate ID of next continuing candidate or NONTRANSFERABLE
    */
   /*@ requires state == COUNTING;
-    @ ensures (\result == Ballot.NONTRANSFERABLE) <=!=>
+    @ ensures (\result == Ballot.NONTRANSFERABLE) ||
     @   (\exists int k; 1 <= k && k <= ballot.remainingPreferences(); 
-    @     (\result == ballot.getNextPreference(k)) ==>
-    @     (\forall int i; 1 <= i && i < k;
-    @       isContinuingCandidateID(ballot.getNextPreference(i)) == false)
-    @   );
+    @     \result == ballot.getNextPreference(k));
+    @ ensures (isContinuingCandidateID(\result)) || (\result == Ballot.NONTRANSFERABLE);
     @*/
   protected /*@ pure spec_public @*/ int getNextContinuingPreference(
 		  /*@ non_null @*/ Ballot ballot);
@@ -1052,13 +1050,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *  @see requirement 11, section 4, item 4, page 16
    */
   /*@ ensures 0 <= \result;
-    @ ensures \result <= totalCandidates;
-    @ ensures (state == FINISHED) ==>
-    @   \result == 0;
-    @ ensures (state == COUNTING) ==>  
-    @   \result == totalCandidates - (numberElected + numberEliminated);
-    @ ensures (state == COUNTING) ==>
-    @   remainingSeats <= \result;
+    @ ensures \result == totalCandidates - (numberElected + numberEliminated);
     @*/
   public /*@ pure @*/ int getNumberContinuing();
 }

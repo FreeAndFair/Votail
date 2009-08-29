@@ -681,21 +681,15 @@ public /*@ pure @*/ byte getStatus(){
   @   requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
   @   requires getSurplus(fromCandidate) < 
   @            getTotalTransferableVotes(fromCandidate);
-  @   ensures  (getCandidateOrderByHighestRemainder 
-  @            (fromCandidate,toCandidate) <=
-  @            getTransferShortfall (fromCandidate))
-  @   ==> \result == 1;
-  @   ensures (getCandidateOrderByHighestRemainder 
-  @           (fromCandidate,toCandidate) >
-  @           getTransferShortfall (fromCandidate))
-  @   ==> \result == 0;
   @*/
 protected /*@ pure spec_public @*/ int getRoundedFractionalValue(
           final /*@ non_null @*/ Candidate fromCandidate, 
           final /*@ non_null @*/ Candidate toCandidate){
- 		return (getCandidateOrderByHighestRemainder 
- 				(fromCandidate,toCandidate) <= 
- 		  getTransferShortfall (fromCandidate)) ? 1 : 0;
+ 		if (getCandidateOrderByHighestRemainder 
+ 				(fromCandidate,toCandidate) <= getTransferShortfall (fromCandidate)) { 
+ 		  return 1;
+ 		  } 
+ 		return 0;
  }
 
 /**
