@@ -125,17 +125,17 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @     countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
 	  @*/
 	public void distributeSurplus(final int winner) {
- 		if (0 < getSurplus(candidates[winner])) {
+ 		final int surplus = getSurplus(candidates[winner]);
+    if (0 < surplus) {
       for (int i = 0; i < totalNumberOfCandidates; i++) {
         if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-          final int numberOfTransfers = getActualTransfers(
-              candidates[winner], candidates[i])
-              + getRoundedFractionalValue(candidates[winner],candidates[i]);
+          int numberOfTransfers = getActualTransfers(candidates[winner], candidates[i]);
           
-            transferVotes(candidates[winner], candidates[i], numberOfTransfers);
-          
+          if (surplus < getTotalTransferableVotes(candidates[winner])) {
+              numberOfTransfers += getRoundedFractionalValue(candidates[winner],candidates[i]);
+          }
+          transferVotes(candidates[winner], candidates[i], numberOfTransfers);
         }
-
       }
     }
     countStatus.changeState(AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
