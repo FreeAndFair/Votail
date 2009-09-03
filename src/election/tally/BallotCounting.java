@@ -121,19 +121,21 @@ public class BallotCounting extends AbstractBallotCounting {
      */
 	/*@ also
 	  @   requires state == COUNTING;
-	  @   requires countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
+	  @   requires countStatus.getState() == AbstractCountStatus.SURPLUS_AVAILABLE;
+	  @   requires isElected (candidateList[winner]);
 	  @*/
 	public void distributeSurplus(final int winner) {
  		final int surplus = getSurplus(candidates[winner]);
     if (0 < surplus) {
       for (int i = 0; i < totalNumberOfCandidates; i++) {
-        if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
+        if ((i != winner) && 
+          (candidates[i].getStatus() == CandidateStatus.CONTINUING)) {
           int numberOfTransfers = 
             getActualTransfers(candidates[winner], candidates[i]);
           
           if (surplus < getTotalTransferableVotes(candidates[winner])) {
-              numberOfTransfers += 
-                getRoundedFractionalValue(candidates[winner],candidates[i]);
+            numberOfTransfers += 
+              getRoundedFractionalValue(candidates[winner],candidates[i]);
           }
           countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
           transferVotes(candidates[winner], candidates[i], numberOfTransfers);
@@ -298,7 +300,8 @@ public class BallotCounting extends AbstractBallotCounting {
 		countStatus.changeState(countingStatus);
 	}
 
-	//@ assignable numberOfSurpluses, sumOfSurpluses, totalNumberOfSurpluses, totalSumOfSurpluses;
+	//@ assignable numberOfSurpluses, sumOfSurpluses, totalNumberOfSurpluses;
+	//@ assignable totalSumOfSurpluses;
 	public void calculateSurpluses() {
 		int numberOfSurpluses = 0;
 		int sumOfSurpluses = 0;

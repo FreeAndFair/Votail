@@ -15,6 +15,10 @@ import election.tally.mock.MockBallot;
  */
 public class SurplusCalculationEventC extends TestCase{
 	
+  private static final int QUOTA = 26;
+  private static final int NUM_BALLOTS = 100;
+  private static final int NUM_SEATS = 3;
+  private static final int NUM_CANDIDATES = 7;
   BallotCounting ballotCounting;
   Election parameters;
   BallotBox ballotBox;
@@ -26,20 +30,20 @@ public class SurplusCalculationEventC extends TestCase{
 		ballotCounting = new BallotCounting();
 		ballotBox = new BallotBox();
 		parameters = new Election();
-		parameters.totalNumberOfSeats = 2;
+		parameters.totalNumberOfSeats = NUM_SEATS;
 		parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
-		parameters.generateCandidates(3);
+		parameters.generateCandidates(NUM_CANDIDATES);
 		
 		// Generate sample candidates
-	 	int[] candidateIDList = new int[3];
+	 	int[] candidateIDList = new int[NUM_CANDIDATES];
 	 	
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < NUM_CANDIDATES; i++) {
   			candidateIDList[i] = parameters.getCandidate(i).getCandidateID();
   			assertTrue (parameters.getCandidate(i).getStatus() == CandidateStatus.CONTINUING);
   			assertTrue (parameters.getCandidate(i).getTotalAtCount(0) == 0);
 		}
 
-		final int numberOfVotes = 100;
+		final int numberOfVotes = NUM_BALLOTS;
 				
 		assertTrue (numberOfVotes <= Ballot.MAX_BALLOTS);
 		assertTrue (ballotBox.size() == 0);
@@ -58,11 +62,11 @@ public class SurplusCalculationEventC extends TestCase{
 	 
 	 	ballotCounting.setup(parameters);
 	 	ballotCounting.load(ballotBox);
- 	 	assertTrue (34 == ballotCounting.getQuota());
+ 	 	assertTrue (QUOTA == ballotCounting.getQuota());
 	 	
 	 	// Find and distribute the first surplus
 	 	final int indexOfHighestCandidate = 
-	 		ballotCounting.findHighestCandidate();
+	 	ballotCounting.findHighestCandidate();
 	 	assertTrue (0 <= indexOfHighestCandidate);
 	 	
 	 	ballotCounting.startCounting();
@@ -71,16 +75,19 @@ public class SurplusCalculationEventC extends TestCase{
 	 	
  		ballotCounting.electCandidate(indexOfHighestCandidate);
  		
-  	    countState = ballotCounting.countStatus.getState();
-        assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+    countState = ballotCounting.countStatus.getState();
+    assertTrue (ballotCounting.countStatus.isPossibleState(countState));
     
-    ballotCounting.countStatus.changeState(AbstractCountStatus.READY_TO_ALLOCATE_SURPLUS);
+    ballotCounting.calculateSurpluses();
+    
+    ballotCounting.countStatus.changeState(
+      AbstractCountStatus.READY_TO_ALLOCATE_SURPLUS);
  	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);
- 	    countState = ballotCounting.countStatus.getState();
-        assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+    countState = ballotCounting.countStatus.getState();
+    assertTrue (ballotCounting.countStatus.isPossibleState(countState));
  	 	
  	 	ballotCounting.count();
- 	    countState = ballotCounting.countStatus.getState();
-        assertTrue (ballotCounting.countStatus.isPossibleState(countState));
+    countState = ballotCounting.countStatus.getState();
+    assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	}
 }

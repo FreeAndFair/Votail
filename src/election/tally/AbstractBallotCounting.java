@@ -455,18 +455,11 @@ public /*@ pure @*/ int getQuota() {
 /**
  * Calculate the first preference counts for each candidate.
  */
-/*@ requires candidates != null;
-  @ requires (\forall int index; 0 <= index && index < totalNumberOfCandidates;
-  @          candidates[index] != null);
-  @ requires ballotsToCount != null;
-  @ requires (\forall int index; 0 <= index && index < totalVotes;
-  @          ballotsToCount[index] != null); 
-  @ assignable candidates[*];
-  @*/
+//@ assignable candidates[*];
 public void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
-		final int candidateID = candidates[c].getCandidateID();
-		final int numberOfBallotsInPile = countFirstPreferences(candidateID);
+		int candidateID = candidates[c].getCandidateID();
+		int numberOfBallotsInPile = countFirstPreferences(candidateID);
 		candidates[c].addVote(numberOfBallotsInPile, 0);
 	}
 }

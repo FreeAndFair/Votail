@@ -211,9 +211,8 @@ private static int nextCandidateID = 1;
 /*@  
   @   public normal_behavior
   @   requires state == CONTINUING;
-  @   requires lastCountNumber <= count || 
-  @            (lastCountNumber == 0 && count == 0);
-  @   requires 0 <= count && count <= votesAdded.length;
+  @   requires lastCountNumber <= count;
+  @   requires 0 <= count && count <= CountConfiguration.MAXCOUNT;
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesAdded[count], lastSetCount;
   @   ensures votesAdded[count] == \old(votesAdded[count]) + numberOfVotes;
@@ -238,9 +237,8 @@ private static int nextCandidateID = 1;
 /*@ public normal_behavior
   @   requires state == ELIMINATED || state == ELECTED;
   @   requires lastCountNumber <= count;
-  @   requires votesRemoved != null && votesRemoved[count] == 0;
   @   requires 0 <= count;
-  @   requires votesRemoved != null && count < votesRemoved.length;
+  @   requires count < CountConfiguration.MAXCOUNT;
   @   requires 0 <= numberOfVotes;
   @   requires numberOfVotes <= getTotalAtCount(count);
   @   assignable lastCountNumber, votesRemoved[count];
