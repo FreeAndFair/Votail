@@ -52,7 +52,7 @@ public class ExclusionEventJ extends TestCase {
  		for (int i = 0; i < numberOfCandidates; i++) {
 			 
 			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
-			numberOfVotes = i*1000;
+			numberOfVotes = i*10;
 			 
 			// Generate first preference ballots
 			for (int b = 0; b < numberOfVotes; b++) {
@@ -76,7 +76,7 @@ public class ExclusionEventJ extends TestCase {
 		for (int i = 0; i < numberOfCandidates; i++) {
 			candidates[i] = new Candidate();
 			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
-			int numberOfVotes = i*1000;
+			int numberOfVotes = i*10;
 			candidates[i].addVote(numberOfVotes, 1);
 			assertTrue (candidates[i].getTotalAtCount(1) == numberOfVotes);
 		}

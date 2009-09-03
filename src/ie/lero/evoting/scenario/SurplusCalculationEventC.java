@@ -1,6 +1,7 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.AbstractCountStatus;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
@@ -38,7 +39,7 @@ public class SurplusCalculationEventC extends TestCase{
   			assertTrue (parameters.getCandidate(i).getTotalAtCount(0) == 0);
 		}
 
-		final int numberOfVotes = 10000;
+		final int numberOfVotes = 100;
 				
 		assertTrue (numberOfVotes <= Ballot.MAX_BALLOTS);
 		assertTrue (ballotBox.size() == 0);
@@ -57,7 +58,7 @@ public class SurplusCalculationEventC extends TestCase{
 	 
 	 	ballotCounting.setup(parameters);
 	 	ballotCounting.load(ballotBox);
- 	 	assertTrue (3334 == ballotCounting.getQuota());
+ 	 	assertTrue (34 == ballotCounting.getQuota());
 	 	
 	 	// Find and distribute the first surplus
 	 	final int indexOfHighestCandidate = 
@@ -73,6 +74,7 @@ public class SurplusCalculationEventC extends TestCase{
   	    countState = ballotCounting.countStatus.getState();
         assertTrue (ballotCounting.countStatus.isPossibleState(countState));
     
+    ballotCounting.countStatus.changeState(AbstractCountStatus.READY_TO_ALLOCATE_SURPLUS);
  	 	ballotCounting.distributeSurplus(indexOfHighestCandidate);
  	    countState = ballotCounting.countStatus.getState();
         assertTrue (ballotCounting.countStatus.isPossibleState(countState));

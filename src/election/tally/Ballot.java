@@ -87,13 +87,12 @@ public static final int NONTRANSFERABLE = 0;
 
 private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 
-/** Ballot ID number */
+  /** Ballot ID number */
   //@ public invariant (ballotID == 0) || (0 < ballotID);
   protected /*@ spec_public @*/ int ballotID;
 	 
   /** Preference list of candidate IDs */	
-  protected /*@ spec_public */ int[] preferenceList 
-       = new int [MAX_PREFERENCES];
+  protected /*@ spec_public non_null */ int[] preferenceList;
 
   /** Total number of valid preferences on this ballot paper */
   protected /*@ spec_public @*/ int numberOfPreferences;
@@ -106,8 +105,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   protected /*@ spec_public @*/ int positionInList;
    
   /** Candidate ID to which the vote is assigned at the end of each count */
-  protected /*@ spec_public @*/ int[] candidateIDAtCount = 
-    new int [Candidate.MAX_CANDIDATES];
+  protected /*@ spec_public non_null @*/ int[] candidateIDAtCount;
 
   /** Last count number in which this ballot was transferred */
   //@ public invariant 0 <= countNumberAtLastTransfer;
@@ -145,7 +143,9 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 	  countNumberAtLastTransfer = 0;
 	  positionInList = 0;
 	  ballotID = nextBallotID++;
-      randomNumber = this.hashCode();
+	  preferenceList = new int [MAX_PREFERENCES];
+	  candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
+    randomNumber = this.hashCode();
 	  //@ set _randomNumber = randomNumber;
   }
     
@@ -155,9 +155,12 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    */
   public Ballot(final Ballot ballot) {
 	  numberOfPreferences = ballot.numberOfPreferences;
+	  preferenceList = new int [MAX_PREFERENCES];
 	  for (int p = 0; p < numberOfPreferences; p++) {
-		preferenceList[p] = ballot.getPreference(p);
+		  preferenceList[p] = ballot.getPreference(p);
 	  }
+	  candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
+	  candidateIDAtCount[0] = preferenceList[0];
 	  countNumberAtLastTransfer = 0;
 	  positionInList = 0;
 	  ballotID = nextBallotID++;
@@ -327,7 +330,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 //@ requires 0 <= i;
 //@ ensures (i < numberOfPreferences) ==> preferenceList[i] == \result;
 //@ ensures (numberOfPreferences <= i) ==> \result == Ballot.NONTRANSFERABLE;
-public /*@ pure @*/ int getPreference(int i) {
+protected /*@ spec_public pure @*/ int getPreference(int i) {
     if (i < numberOfPreferences) {
        return preferenceList[i];
     }

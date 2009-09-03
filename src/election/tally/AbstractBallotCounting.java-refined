@@ -28,7 +28,7 @@
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /** List of decisions made */
-  /*@ public model Decision[] decisionsMade;
+  /*@ public model non_null Decision[] decisionsMade;
     @ public invariant (\nonnullelements (decisionsMade)) ==>
     @   (\forall int i; 0 <= i && i < numberOfDecisions &&
     @     decisionsMade[i].decisionTaken != DecisionStatus.NO_DECISION;
@@ -55,7 +55,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * counting starts, there must be a ballot paper associated with each vote
    * held by a candidate.
    */
-    //@ public model Candidate[] candidateList;
+    //@ public model non_null Candidate[] candidateList;
 	/*@ public invariant (state == PRELOAD || state == LOADING || 
 	  @   state == PRECOUNT)
 	  @ ==>
@@ -440,7 +440,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @see requirements 14-18, section 5, item 2, page 18
    * @see requirement 8, section 4, item 2, page 15
    */
-  /*@ requires getSurplus (candidateList[candidateWithSurplus]) > 0;
+  /*@ requires isElected (candidateList[candidateWithSurplus]) 
+    @   && getSurplus (candidateList[candidateWithSurplus]) > 0;
     @ requires state == COUNTING;
     @ requires getNumberContinuing() > remainingSeats;
     @ requires (getNumberContinuing() > remainingSeats + 1) ||
@@ -981,20 +982,18 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param toCandidate Continuing candidate
    * @param numberOfVotes Number of votes to be transfered
    */
-  /*@ requires fromCandidate.getStatus() != Candidate.CONTINUING;
-    @ requires toCandidate.getStatus() == Candidate.CONTINUING;
-    @ requires numberOfVotes == getActualTransfers (fromCandidate, toCandidate) +
-    @   getRoundedFractionalValue (fromCandidate, toCandidate);
+  /*@ requires fromCandidate.getStatus() != CandidateStatus.CONTINUING;
+    @ requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
     @ ensures countBallotsFor(fromCandidate.getCandidateID()) == 
     @   \old (countBallotsFor(fromCandidate.getCandidateID())) - numberOfVotes;
     @ ensures countBallotsFor(toCandidate.getCandidateID()) ==
     @   \old (countBallotsFor(toCandidate.getCandidateID())) + numberOfVotes;
     @*/
   public abstract void transferVotes(
-		  /*@ non_null @*/ Candidate fromCandidate,
-		  /*@ non_null @*/ Candidate toCandidate,
-		  int numberOfVotes);
-  
+		  final /*@ non_null @*/ Candidate fromCandidate,
+		  final /*@ non_null @*/ Candidate toCandidate,
+		  final int numberOfVotes);
+
   /**
    * Update list of decision events.
    */

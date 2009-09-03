@@ -40,7 +40,7 @@ public class Ballot {
   protected /*@ spec_public @*/ int ballotID;
 
   /** Preference list of candidate IDs */
-  protected /*@ spec_public @*/ int[] preferenceList;
+  protected /*@ spec_public non_null @*/ int[] preferenceList;
   
   /** Total number of valid preferences on the ballot paper */
   //@ public invariant 0 <= numberOfPreferences;
@@ -56,12 +56,11 @@ public class Ballot {
   protected /*@ spec_public @*/ int positionInList;
  
 
-  /** @review kiniry 8 Feb 2006 - I presume that these arrays should
-   * be non_null.  Note that in the latest JML tools release, and in
-   * the upcoming ESC/Java2 release, non_null is the default semantics
-   * of references. */
   /** Candidate ID to which the vote is assigned at the end of each count */
-  protected /*@ spec_public @*/ int[] candidateIDAtCount;
+  /*@ public invariant (0 < numberOfPreferences) ==> 
+    @   candidateIDAtCount[0] == preferenceList[0];
+    @*/
+  protected /*@ spec_public non_null @*/ int[] candidateIDAtCount;
   
   /** Last count number in which this ballot was transfered */
   //@ public invariant 0 <= countNumberAtLastTransfer;

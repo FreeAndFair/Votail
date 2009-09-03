@@ -110,10 +110,9 @@ public class BallotCounting extends AbstractBallotCounting {
 	}
 
 	// Status of the ballot counting process
-	/*@ public invariant (state == COUNTING) ==>
-	  @  countStatus != null;
+	/*@ public invariant (state == COUNTING) ==> countStatus != null;
 	  @*/
-	public /*@ nullable @*/ CountStatus countStatus;
+	public CountStatus countStatus;
 	 
     /**
      * Distribute the surplus of an elected Dail candidate.
@@ -121,19 +120,22 @@ public class BallotCounting extends AbstractBallotCounting {
      * @param winner The elected Dail candidate
      */
 	/*@ also
-	  @   requires state == COUNTING && 
-	  @     countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
+	  @   requires state == COUNTING;
+	  @   requires countStatus.getState() == CountStatus.SURPLUS_AVAILABLE;
 	  @*/
 	public void distributeSurplus(final int winner) {
  		final int surplus = getSurplus(candidates[winner]);
     if (0 < surplus) {
       for (int i = 0; i < totalNumberOfCandidates; i++) {
         if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-          int numberOfTransfers = getActualTransfers(candidates[winner], candidates[i]);
+          int numberOfTransfers = 
+            getActualTransfers(candidates[winner], candidates[i]);
           
           if (surplus < getTotalTransferableVotes(candidates[winner])) {
-              numberOfTransfers += getRoundedFractionalValue(candidates[winner],candidates[i]);
+              numberOfTransfers += 
+                getRoundedFractionalValue(candidates[winner],candidates[i]);
           }
+          countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
           transferVotes(candidates[winner], candidates[i], numberOfTransfers);
         }
       }
@@ -150,7 +152,8 @@ public class BallotCounting extends AbstractBallotCounting {
 	 * @param numberOfVotes The number of votes to be transferred
 	 */
 	//@ also
-	//@   requires countStatus.getState() == CountStatus.READY_TO_MOVE_BALLOTS;
+	//@   requires state == COUNTING;
+	//@   requires countStatus.getState() == AbstractCountStatus.READY_TO_MOVE_BALLOTS;
 	public void transferVotes(final /*@ non_null @*/ Candidate fromCandidate,
 			final /*@ non_null @*/ Candidate toCandidate, final int numberOfVotes) {
 		
@@ -267,8 +270,6 @@ public class BallotCounting extends AbstractBallotCounting {
 	public void startCounting() {
 		status = ElectionStatus.COUNTING;
 		countNumberValue = 0;
-		countStatus = new CountStatus();
-		countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
 		
 		// Reset all initial values if not already started or if doing a full recount
 		totalRemainingSeats = numberOfSeats;
@@ -277,6 +278,18 @@ public class BallotCounting extends AbstractBallotCounting {
 		numberOfCandidatesEliminated = 0;
 		totalofNonTransferableVotes = 0;
 	}
+
+
+	/**
+	 * Default constructor for BallotCounting.
+	 * 
+	 * Creates and initialises the inner state machine for count status.
+	 */
+  public BallotCounting() {
+    super();
+    countStatus = new CountStatus();
+		countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
+  }
 
 	/*@ requires state == COUNTING && countStatus != null;
 	  @ assignable countStatus;

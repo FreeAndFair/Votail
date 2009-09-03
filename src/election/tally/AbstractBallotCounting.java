@@ -50,6 +50,7 @@ package election.tally;
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
     // TODO naming convention for fields that represent model fields
+    // TODO naming convention for constants than define upper bounds for fields
 
     /** List of decisions made */
     protected transient /*@ spec_public @*/ Decision[] decisions 
@@ -158,7 +159,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/**
 	 * Number of decisions taken.
 	 */
-	//@ public invariant (decisions != null) ==> (decisionsTaken <= decisions.length);
+	//@ public invariant decisionsTaken <= Decision.MAX_DECISIONS;
 	protected transient /*@ spec_public @*/ int decisionsTaken;
 
 	/**
@@ -947,12 +948,12 @@ protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
   @   protected normal_behavior
   @     requires fromCandidate.getStatus() != Candidate.CONTINUING;
   @     requires toCandidate.getStatus() == Candidate.CONTINUING;
-  @     requires numberOfVotes == getActualTransfers (fromCandidate,toCandidate) +
-  @       getRoundedFractionalValue (fromCandidate, toCandidate);
-  @		assignable ballotsToCount;
+  @     assignable ballotsToCount;
   @*/
-public abstract void transferVotes(/*@ non_null @*/ Candidate fromCandidate, 
-		/*@ non_null @*/ Candidate toCandidate, int numberOfVotes);
+public abstract void transferVotes (
+  final /*@ non_null @*/ Candidate fromCandidate, 
+  final /*@ non_null @*/ Candidate toCandidate, 
+  final int numberOfVotes);
 
 /**
  * Update list of decision events.
