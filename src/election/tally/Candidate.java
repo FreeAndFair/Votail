@@ -188,6 +188,10 @@ private static int nextCandidateID = 1;
 /**
  * This is the default constructor method for a <code>Candidate</code>
  */	
+	/*@ ensures state == CONTINUING;
+	  @ ensures lastCountNumber == 0;
+	  @ ensures lastSetCount == 0;
+	  @*/
   public Candidate(){
     state = CONTINUING;
     randomNumber = this.hashCode();
@@ -208,8 +212,7 @@ private static int nextCandidateID = 1;
  * @param numberOfVotes Number of votes to add
  * @param count The round of counting at which the votes were added
  */	
-/*@  
-  @   public normal_behavior
+/*@ public normal_behavior
   @   requires state == CONTINUING;
   @   requires lastCountNumber <= count;
   @   requires 0 <= count && count <= CountConfiguration.MAXCOUNT;

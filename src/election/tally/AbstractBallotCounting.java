@@ -440,7 +440,7 @@ public void load(final /*@ non_null @*/ BallotBox ballotBox) {
  	status = PRECOUNT;
  	
  	// Number of first preferences for each candidate
- 	calculateFirstPreferences(); //@ nowarn;
+ 	calculateFirstPreferences();
 }
 
 /**
@@ -460,7 +460,10 @@ public void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
 		int candidateID = candidates[c].getCandidateID();
 		int numberOfBallotsInPile = countFirstPreferences(candidateID);
-		candidates[c].addVote(numberOfBallotsInPile, 0);
+		if (0 < numberOfBallotsInPile) {
+		  //@ assert candidateList[c].state == CandidateStatus.CONTINUING;
+		  candidates[c].addVote(numberOfBallotsInPile, countNumberValue);
+		}
 	}
 }
 

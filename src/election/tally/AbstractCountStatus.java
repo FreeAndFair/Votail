@@ -1,6 +1,6 @@
 package election.tally;
 
-public interface AbstractCountStatus {
+public abstract class AbstractCountStatus {
 
 	// States within the ballot counting machine
 	public static final int READY_TO_COUNT = 1;
@@ -23,7 +23,7 @@ public interface AbstractCountStatus {
 	 * Get the current stage of counting.
 	 */
 	 //@ ensures isPossibleState(\result);
-	public /*@ pure @*/ int getState();
+	public abstract /*@ pure @*/ int getState();
 
 	/**
 	 * Move to the next stage of counting.
@@ -33,7 +33,7 @@ public interface AbstractCountStatus {
 	//@ requires isPossibleState (newState);
 	//@ requires isTransition (getState(), newState);
 	//@ ensures getState() == newState;
-	public void changeState(int newState);
+	public abstract void changeState(int newState);
 
 	/**
 	 * Confirm that this value is a valid stage of counting.
