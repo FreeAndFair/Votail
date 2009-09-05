@@ -46,7 +46,6 @@ public class ExclusionEventJ extends TestCase {
 
  	}
 
- 
  	protected void setUpBallotBox() {
  	  int numberOfVotes;
  	  MockBallot ballot = new MockBallot();
@@ -64,9 +63,9 @@ public class ExclusionEventJ extends TestCase {
 		}
 	}
 
-    //@ requires parameters != null;
- 	//@ assignable candidates, numberOfCandidates;
- 	protected void setUpParameters() {
+  //@ requires parameters != null;
+  //@ assignable candidates, numberOfCandidates;
+  protected void setUpParameters() {
  		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;		
 		

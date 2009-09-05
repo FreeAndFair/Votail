@@ -127,13 +127,15 @@ public class BallotCounting extends AbstractBallotCounting {
 	public void distributeSurplus(final int winner) {
  		final int surplus = getSurplus(candidates[winner]);
     if (0 < surplus) {
+      final int totalTransferableVotes = 
+        getTotalTransferableVotes(candidates[winner]);
       for (int i = 0; i < totalNumberOfCandidates; i++) {
         if ((i != winner) && 
           (candidates[i].getStatus() == CandidateStatus.CONTINUING)) {
           int numberOfTransfers = 
             getActualTransfers(candidates[winner], candidates[i]);
           
-          if (surplus < getTotalTransferableVotes(candidates[winner])) {
+          if (surplus < totalTransferableVotes) {
             numberOfTransfers += 
               getRoundedFractionalValue(candidates[winner],candidates[i]);
           }
@@ -142,7 +144,8 @@ public class BallotCounting extends AbstractBallotCounting {
         }
       }
     }
-    countStatus.changeState(AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
+    countStatus.changeState(
+      AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
 	}
 
 	

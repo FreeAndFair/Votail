@@ -757,7 +757,7 @@ public /*@ pure @*/ int randomSelection(
  * use floating point numbers, which could introduce rounding errors.
  * 
  * @param fromCandidate Elected candidate from which to count to transfers
- * @param tocandidate Continuing candidate eligible to receive votes
+ * @param toCandidate Continuing candidate eligible to receive votes
  * 
  * @return The size of the quotient remainder 
  */
@@ -773,10 +773,6 @@ public /*@ pure @*/ int randomSelection(
   @       getTotalTransferableVotes(fromCandidate);
   @     requires 0 <= getTransferShortfall (fromCandidate);
   @     requires 0 < getSurplus(fromCandidate);
-  @     ensures \result ==
-  @       getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) -
-  @       getActualTransfers(fromCandidate, toCandidate);
-  @        
   @*/
 protected /*@ pure spec_public @*/ int getTransferRemainder(
           /*@ non_null @*/ Candidate fromCandidate, 
@@ -803,7 +799,7 @@ protected /*@ pure spec_public @*/ int getTransferRemainder(
  * @param secondCandidate
  * The second of the candidates to be compared
  *  
- * @return <code>true</code> if the first candidate is deemed to have recieved more
+ * @return <code>true</code> if the first candidate is deemed to have receIved more
  * votes than the second 
  */
 /*@ also
@@ -907,7 +903,7 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(
 /**
  * Get the maximum number of votes transferable to continuing candidates.
  * 
- * @param fromCandidate Candidate ID fromwhich to check the transfers
+ * @param fromCandidate Candidate ID from which to check the transfers
  * 
  * @return Number of votes potentially transferable from this candidate
  */
@@ -915,8 +911,8 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(
   @   protected normal_behavior
   @     requires (state == COUNTING);
   @     requires candidateList != null && (\forall int i;
-  @              0 <= i && i < totalNumberOfCandidates; 
-  @              candidateList[i] != null);
+  @       0 <= i && i < totalNumberOfCandidates;
+  @       candidateList[i] != null);
   @     requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
   @       (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
   @     ensures \result == numberTransferable (fromCandidate);
@@ -924,12 +920,13 @@ protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder(
 protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
     final /*@ non_null @*/ Candidate fromCandidate) {
     int numberOfTransfers = 0;
- 	for (int i = 0; i < totalNumberOfCandidates; i++) {
- 		numberOfTransfers += getPotentialTransfers(
- 				fromCandidate, candidates[i].getCandidateID());
- 	}
-	return numberOfTransfers;
-} 
+    for (int i = 0; i < totalNumberOfCandidates; i++) {
+      if (candidates[i].getStatus() == CandidateStatus.CONTINUING)
+        numberOfTransfers += getPotentialTransfers(fromCandidate,
+          candidates[i].getCandidateID());
+    }
+    return numberOfTransfers;
+  } 
 
 /**
  * Transfer votes from one candidate to another.

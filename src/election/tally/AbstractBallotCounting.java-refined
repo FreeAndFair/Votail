@@ -844,11 +844,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
     @ requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
     @ requires 0 <= getTransferShortfall (fromCandidate);
-    @ ensures \result == 
-    @   getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) -
-    @   ((getActualTransfers(fromCandidate, toCandidate) * 
-    @     getTotalTransferableVotes (fromCandidate)) /
-    @     getSurplus(fromCandidate)); 
+    @ ensures \result ==
+    @  getPotentialTransfers(fromCandidate, toCandidate.getCandidateID()) -
+    @  getActualTransfers(fromCandidate, toCandidate);
     @*/
   protected /*@ pure spec_public @*/ int getTransferRemainder (
 		  /*@ non_null @*/ Candidate fromCandidate, 
