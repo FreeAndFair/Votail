@@ -57,7 +57,6 @@ public class QuotaCalculationEventA extends TestCase {
 		assertTrue (quota == 
 			ballotCounting.countBallotsFor(
 			parameters.getCandidate(0).getCandidateID()));
-		assertTrue (ballotCounting.getTotalNumberOfSurpluses() == 0);
 		assertTrue (ballotCounting.getTotalSumOfSurpluses() == 0);
 		
 		ballotCounting.count();

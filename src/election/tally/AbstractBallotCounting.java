@@ -52,6 +52,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     // TODO naming convention for fields that represent model fields
     // TODO naming convention for constants than define upper bounds for fields
 
+    protected static final int NONE_FOUND_YET = -1;
+
     /** List of decisions made */
     protected transient /*@ spec_public @*/ Decision[] decisions 
         = new Decision[Decision.MAX_DECISIONS];
@@ -102,10 +104,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
 	protected transient /*@ spec_public @*/ int countNumberValue;
    //@ protected represents countNumber <- countNumberValue;
-
-	/** Number of candidates with surplus votes */
-	protected /*@ spec_public @*/ int totalNumberOfSurpluses;
-   //@ protected represents numberOfSurpluses <- totalNumberOfSurpluses;
 
 	/** Total number of undistributed surplus votes */
 	protected /*@ spec_public @*/ int totalSumOfSurpluses;
@@ -257,27 +255,6 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
  		return 0;
 	}
 	return surplus;
-}
-
-/**
- * How many elected candidates have surplus votes available for redistribution?
- * 
- * @return the totalNumberOfSurpluses
- */
-public /*@ pure @*/ int getTotalNumberOfSurpluses() {
-	return totalNumberOfSurpluses;
-}
-
-/**
- * Update the number of candidates with surplus votes for redistribution.
- * 
- * @param totalNumberOfSurpluses the totalNumberOfSurpluses to set
- */
-//@ requires 0 <= quantity;
-//@ assignable totalNumberOfSurpluses;
-//@ ensures quantity == totalNumberOfSurpluses;
-protected void setTotalNumberOfSurpluses(final int quantity) {
-	this.totalNumberOfSurpluses = quantity;
 }
 
 /**
@@ -806,35 +783,28 @@ protected /*@ pure spec_public @*/ int getTransferRemainder(
   @   protected normal_behavior
   @     requires firstCandidate.getStatus() == Candidate.CONTINUING;
   @     requires secondCandidate.getStatus() == Candidate.CONTINUING;
-  @     ensures \result <==> 
-  @       (\exists int i; 0 <= i && i < countNumber;
-  @         (firstCandidate.getVoteAtCount(i) > secondCandidate.getVoteAtCount(i)) &&
-  @         (\forall int j; i < j && j < countNumber;
-  @           firstCandidate.getVoteAtCount(j) == secondCandidate.getVoteAtCount(j))) 
-  @      ||
-  @      ((randomSelection (firstCandidate, secondCandidate) ==
-  @        firstCandidate.getCandidateID()) &&
-  @        (\forall int k; 0 < k && k < countNumber;
-  @          firstCandidate.getVoteAtCount(k) == secondCandidate.getVoteAtCount(k)));
   @*/
-	protected /*@ pure spec_public @*/ boolean isHigherThan(Candidate firstCandidate, Candidate secondCandidate) {
-		
-		int count = countNumberValue;
-		while (0 <= count) {
-			
-			final int firstNumberOfVotes = firstCandidate.getVoteAtCount(count); //@ nowarn;
-			final int secondNumberOfVotes = secondCandidate.getVoteAtCount(count); //@ nowarn;
-			if (firstNumberOfVotes > secondNumberOfVotes) {
-				return true;
-			}
-			else if (secondNumberOfVotes > firstNumberOfVotes) {
-				return false;
-			}
-			count--;
-		}
-		
-		return secondCandidate.isAfter(firstCandidate);
-	} //@ nowarn;
+	protected /*@ pure spec_public @*/ boolean isHigherThan(
+    final /*@ non_null @*/ Candidate firstCandidate,
+    final /*@ non_null @*/ Candidate secondCandidate) {
+
+    int firstNumberOfVotes;
+    int secondNumberOfVotes;
+    int count = countNumberValue;
+    while (0 <= count) {
+
+      firstNumberOfVotes = firstCandidate.getTotalAtCount(count);
+      secondNumberOfVotes = secondCandidate.getTotalAtCount(count);
+      if (firstNumberOfVotes > secondNumberOfVotes) {
+        return true;
+      } else if (secondNumberOfVotes > firstNumberOfVotes) {
+        return false;
+      }
+      count--;
+    }
+
+    return secondCandidate.isAfter(firstCandidate);
+  }
 
 /**
  * Determine the number of continuing candidates with a higher remainder in
@@ -990,7 +960,7 @@ public abstract void transferVotes (
 	  @*/
 	public /*@ pure @*/ int findHighestCandidate() {
 		
-	  int highestCandidate = -1;  
+	  int highestCandidate = AbstractBallotCounting.NONE_FOUND_YET;  
 		long mostVotes = 0;
 	
 		for (int i=0; i < totalNumberOfCandidates; i++) {
@@ -1028,7 +998,7 @@ public abstract void transferVotes (
 	public /*@ pure @*/ int findLowestCandidate() {
 		
 		long leastVotes = CountConfiguration.MAXVOTES;
-		int lowest = -1; 
+		int lowest = AbstractBallotCounting.NONE_FOUND_YET; 
 
 		for (int i=0; i < totalNumberOfCandidates; i++) {
 			if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
@@ -1052,7 +1022,7 @@ public abstract void transferVotes (
 	 * @param loser The candidate to be excluded
 	 */
 	/*@ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
-	  @ requires candidateList[loser] != null;
+	  @ requires hasQuota (candidateList[loser]) == false;
 	  @ requires remainingSeats < getNumberContinuing();
 	  @ requires (state == COUNTING);
 	  @ requires 0 <= loser && loser < getNumberContinuing();
@@ -1064,7 +1034,8 @@ public abstract void transferVotes (
 	  @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
 	  @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
 	  @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
-	  @   ballotsToCount[b].getCandidateID() != candidateList[loser].getCandidateID());
+	  @   ballotsToCount[b].getCandidateID() != 
+	  @   candidateList[loser].getCandidateID());
 	  @*/
 	public void eliminateCandidate(final int loser) {
 		final int candidateID = candidates[loser].getCandidateID();
@@ -1148,11 +1119,12 @@ public abstract void transferVotes (
 	 * @param winner The candidate with enough votes to win
 	 */
 	//@ requires 0 <= winner && winner < totalCandidates;
-	//@ requires candidateList[winner] != null;
 	//@ requires candidateList[winner].getStatus() == Candidate.CONTINUING;
 	//@ requires numberElected < seats;
-	//@ requires 0 < getNumberContinuing();
 	//@ requires 0 < remainingSeats;
+  /*@ requires (hasQuota(candidateList[winner])) 
+    @   || (winner == findHighestCandidate());
+    @*/
 	//@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
 	//@ assignable totalRemainingSeats;
 	//@ assignable candidates[winner], candidates[winner].state;

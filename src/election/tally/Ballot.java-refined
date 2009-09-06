@@ -36,7 +36,8 @@ public class Ballot {
    * expressed in an invariant.  These examples are below. */
 
   /** Ballot ID number */
-  //@ public invariant 0 < ballotID;
+  //@ public static final ghost int NO_ID = 0;
+  //@ public invariant (ballotID == NO_ID) || (0 < ballotID);
   protected /*@ spec_public @*/ int ballotID;
 
   /** Preference list of candidate IDs */
@@ -57,14 +58,16 @@ public class Ballot {
  
 
   /** Candidate ID to which the vote is assigned at the end of each count */
-  /*@ public invariant (0 < numberOfPreferences) ==> 
-    @   candidateIDAtCount[0] == preferenceList[0];
-    @*/
   protected /*@ spec_public non_null @*/ int[] candidateIDAtCount;
   
   /** Last count number in which this ballot was transfered */
-  //@ public invariant 0 <= countNumberAtLastTransfer;
-  //@ public initially countNumberAtLastTransfer == 0;
+  /*@ public invariant 0 <= countNumberAtLastTransfer;
+    @ public initially countNumberAtLastTransfer == 0;
+    @ public invariant countNumberAtLastTransfer <
+    @   CountConfiguration.MAXCOUNT;
+    @ public constraint \old(countNumberAtLastTransfer) <=
+    @   countNumberAtLastTransfer;
+    @*/
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
   
   /** Random number used for proportional distribution of surplus votes */
@@ -79,7 +82,6 @@ public class Ballot {
     @   ensures numberOfPreferences == 0;
     @   ensures countNumberAtLastTransfer == 0;
     @   ensures positionInList == 0;
-    @   ensures ballotID > 0;
     @*/
   public Ballot();
   
@@ -235,8 +237,6 @@ public class Ballot {
     @   requires positionInList <= numberOfPreferences;
     @   requires countNumberAtLastTransfer <= countNumber;
     @   assignable countNumberAtLastTransfer, positionInList;
-    @   ensures countNumberAtLastTransfer == countNumber;
-    @   ensures \old(positionInList) <= positionInList;
     @   ensures (positionInList == \old(positionInList) + 1) ||
     @     (positionInList == numberOfPreferences); 
     @*/

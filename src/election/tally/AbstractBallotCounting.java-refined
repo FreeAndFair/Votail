@@ -203,11 +203,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public constraint (state == COUNTING) ==>
     @   countNumber <= \old (countNumber) + 1;
     @*/
-
-  /** Number of candidates with surplus votes */
-  //@ public model int numberOfSurpluses;
-  //@ public invariant 0 <= numberOfSurpluses;
-  //@ public invariant numberOfSurpluses <= numberElected;
 	
   /** Total number of undistributed surplus votes */
   //@ public model int sumOfSurpluses;
@@ -518,7 +513,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires state == PRECOUNT || state == COUNTING;
     @   ensures state == FINISHED;
     @   assignable state, countNumber, numberElected,
-    @       remainingSeats, numberOfSurpluses, candidateList,
+    @       remainingSeats, candidateList,
     @       sumOfSurpluses, highestContinuingVote, lowestContinuingVote,
     @       nextHighestVote, nonTransferableVotes, ballotsToCount;
     @   ensures remainingSeats == 0;
@@ -735,7 +730,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    @        if (candidateList[i].getCandidateID() != 
    @           toCandidate.getCandidateID() &&
    @   candidateList[i].getStatus() == election.tally.Candidate.CONTINUING &&
-   @   (getTransferRemainder(fromCandidate, candidateList[i]) > 
+   @   ((getTransferRemainder(fromCandidate, candidateList[i]) > 
    @      getTransferRemainder(fromCandidate, toCandidate)) ||
    @   ((getTransferRemainder(fromCandidate, candidateList[i]) == 
    @      getTransferRemainder(fromCandidate, toCandidate)) &&
@@ -745,7 +740,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    @      getTransferRemainder(fromCandidate, toCandidate)) &&
    @   (getActualTransfers(fromCandidate, candidateList[i]) ==
    @   getActualTransfers(fromCandidate, toCandidate)))) &&
-   @   isHigherThan (candidateList[i], toCandidate))) {
+   @   isHigherThan (candidateList[i], toCandidate)))) {
    @            counter++;
    @        }
    @    }
@@ -776,14 +771,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ requires firstCandidate.getStatus() == Candidate.CONTINUING;
     @ requires secondCandidate.getStatus() == Candidate.CONTINUING;
-    @ ensures \result == (\exists int i; 0 <= i && i < countNumber;
-    @   (firstCandidate.getVoteAtCount(i) > secondCandidate.getVoteAtCount(i)) &&
-    @   (\forall int j; 0 <= j && j < i;
-    @   firstCandidate.getVoteAtCount(j) == secondCandidate.getVoteAtCount(j))) ||
-    @   ((randomSelection (firstCandidate, secondCandidate) == 
-    @     firstCandidate.getCandidateID()) && 
-    @     (\forall int k; 0 <= k && k < countNumber;
-    @     firstCandidate.getVoteAtCount(k) == secondCandidate.getVoteAtCount(k)));
+    @ ensures \result == (\exists int i; 0 <= i && i <= countNumber;
+    @   (firstCandidate.getTotalAtCount(i) > secondCandidate.getTotalAtCount(i)) 
+    @   && 
+    @   (\forall int j; i < j && j <= countNumber;
+    @     firstCandidate.getTotalAtCount(j) 
+    @     == secondCandidate.getTotalAtCount(j))) 
+    @     ||
+    @     ((randomSelection (firstCandidate, secondCandidate) == 
+    @     firstCandidate.getCandidateID()) 
+    @     && 
+    @     (\forall int k; 0 <= k && k <= countNumber;
+    @       firstCandidate.getTotalAtCount(k) 
+    @       == secondCandidate.getTotalAtCount(k)));
     @*/
   protected /*@ pure spec_public @*/ boolean isHigherThan (
 		  /*@ non_null @*/ Candidate firstCandidate,

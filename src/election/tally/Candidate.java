@@ -98,30 +98,26 @@ private static int nextCandidateID = 1;
  * a negative number if the candidate's surplus was distributed or 
  * the candidate was eliminated and votes transfered to another. 
  */	
-/*@ 
-  @   public normal_behavior
-  @     requires votesAdded != null;
-  @     requires votesRemoved != null;
-  @     requires 0 <= count;
-  @     requires count <= lastCountNumber;
-  @     ensures \result == votesAdded[count] - votesRemoved[count];
+/*@ protected normal_behavior
+  @   requires 0 <= count;
+  @   requires count <= CountConfiguration.MAXCOUNT;
+  @   ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
-	public /*@ pure @*/ int getVoteAtCount(final int count){
+	protected /*@ pure @*/ int getVoteAtCount(final int count){
 		return (votesAdded[count] - votesRemoved[count]);
 	}
 	
 /*@ ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
-  @     ((votesAdded[i]) - (votesRemoved[i])));
+  @   ((votesAdded[i]) - (votesRemoved[i])));
   @
   @ public pure model int sumOfRetainedVotes() {
-  @     int sum = 0;
+  @   int sum = 0;
   @
-  @     for (int i = 0; i <= lastCountNumber; i++) {
-  @		   sum += votesAdded[i];
-  @        sum -= votesRemoved[i];
-  @		}
+  @   for (int i = 0; i <= lastCountNumber; i++) {
+  @     sum += votesAdded[i] - votesRemoved[i];
+  @   }
   @
-  @     return sum;
+  @   return sum;
   @ }
   @*/
 	
@@ -315,8 +311,8 @@ private static int nextCandidateID = 1;
  * @param count The round of counting
  * @return The total number of votes received so far
  */
-public /*@ pure @*/ long getTotalAtCount(final int count) {
-	long totalAtCount = 0;
+public /*@ pure @*/ int getTotalAtCount(final int count) {
+	int totalAtCount = 0;
 	
 	for (int i = 0; i <= count; i++) {
 		totalAtCount += getVoteAtCount(i);

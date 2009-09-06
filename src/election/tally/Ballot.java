@@ -88,7 +88,6 @@ public static final int NONTRANSFERABLE = 0;
 private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 
   /** Ballot ID number */
-  //@ public invariant (ballotID == 0) || (0 < ballotID);
   protected /*@ spec_public @*/ int ballotID;
 	 
   /** Preference list of candidate IDs */	
@@ -98,19 +97,12 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   protected /*@ spec_public @*/ int numberOfPreferences;
   
   /** Position within preference list */
-  //@ public initially positionInList == 0;
-  //@ public invariant 0 <= positionInList;
-  //@ public invariant positionInList <= numberOfPreferences;
-  //@ public constraint \old(positionInList) <= positionInList;
   protected /*@ spec_public @*/ int positionInList;
    
   /** Candidate ID to which the vote is assigned at the end of each count */
   protected /*@ spec_public non_null @*/ int[] candidateIDAtCount;
 
   /** Last count number in which this ballot was transferred */
-  //@ public invariant 0 <= countNumberAtLastTransfer;
-  //@ public invariant countNumberAtLastTransfer <= CountConfiguration.MAXCOUNT;
-  //@ public initially countNumberAtLastTransfer == 0;  
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
     
   /** Random number used for proportional distribution of surplus votes */
@@ -127,16 +119,12 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @*/
   protected /*@ spec_public @*/ static int nextBallotID = 1;
 
-
   /**
    * Generate an empty ballot paper for use by a voter.
    */
 /*@ also public normal_behavior
   @	  assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
   @     ballotID, positionInList, randomNumber, nextBallotID, preferenceList;
-  @   ensures numberOfPreferences == 0;
-  @   ensures countNumberAtLastTransfer == 0;
-  @   ensures positionInList == 0;
   @*/
   public Ballot () {
  	  numberOfPreferences = 0;
@@ -151,23 +139,24 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     
   /**
    * Copy the <em>contents</em> of a ballot.
+   * 
    * @param ballot Ballot to be copied.
    */
-  public Ballot(final Ballot ballot) {
-	  numberOfPreferences = ballot.numberOfPreferences;
-	  preferenceList = new int [MAX_PREFERENCES];
-	  for (int p = 0; p < numberOfPreferences; p++) {
-		  preferenceList[p] = ballot.getPreference(p);
-	  }
-	  candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
-	  candidateIDAtCount[0] = preferenceList[0];
-	  countNumberAtLastTransfer = 0;
-	  positionInList = 0;
-	  ballotID = nextBallotID++;
-      randomNumber = this.hashCode();
-	  //@ set _randomNumber = randomNumber;
-	
-}
+  protected Ballot(final Ballot ballot) {
+    numberOfPreferences = ballot.numberOfPreferences;
+    preferenceList = new int[MAX_PREFERENCES];
+    for (int p = 0; p < numberOfPreferences; p++) {
+      preferenceList[p] = ballot.getPreference(p);
+    }
+    candidateIDAtCount = new int[CountConfiguration.MAXCOUNT];
+    candidateIDAtCount[0] = preferenceList[0];
+    countNumberAtLastTransfer = 0;
+    positionInList = 0;
+    ballotID = nextBallotID++;
+    randomNumber = this.hashCode();
+    // @ set _randomNumber = randomNumber;
+
+  }
 
 /**
    * Load the ballot details.
@@ -262,8 +251,10 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @   requires positionInList <= numberOfPreferences;
     @   requires positionInList < preferenceList.length;
     @   requires countNumberAtLastTransfer <= countNumber;
+    @   requires countNumber < CountConfiguration.MAXCOUNT;
     @   requires countNumber < candidateIDAtCount.length;
-    @   assignable countNumberAtLastTransfer, positionInList, candidateIDAtCount[*];
+    @   assignable countNumberAtLastTransfer, positionInList, 
+    @     candidateIDAtCount[*];
     @   ensures (countNumberAtLastTransfer == countNumber) || 
     @           (positionInList == numberOfPreferences);
     @   ensures \old(positionInList) <= positionInList;
@@ -272,15 +263,15 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @*/
   public void transfer(final int countNumber) {
 
-		if (positionInList < numberOfPreferences) {
-			// Update ballot history
-			for (int r = countNumberAtLastTransfer; r <= countNumber; r++) {
-				candidateIDAtCount [r] = preferenceList[positionInList];
-			}
-	 		countNumberAtLastTransfer = countNumber;
- 			positionInList++;
-		}
-	}
+    if (positionInList < numberOfPreferences) {
+      // Update ballot history
+      for (int r = 1 + countNumberAtLastTransfer; r <= countNumber; r++) {
+        candidateIDAtCount[r] = preferenceList[positionInList];
+      }
+      countNumberAtLastTransfer = countNumber;
+      positionInList++;
+    }
+  }
     
   /**
    * Get ballot ID number
