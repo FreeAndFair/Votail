@@ -38,18 +38,16 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
   /**
 	 * Test selection of highest continuing candidate
 	 */
-	public void testEvent () {
-	    ballotCounting.calculateFirstPreferences();
-		int winner = ballotCounting.findHighestCandidate();
-		assertTrue (winner == candidateToWin);
-		ballotCounting.startCounting();
-		assertTrue (ballotCounting.countStatus != null);
-		int countState = ballotCounting.countStatus.getState();
-	 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
-		// Test election without surplus
-		ballotCounting.calculateSurpluses();
-		assertTrue (ballotCounting.getTotalSumOfSurpluses() == 0);
-	}
+	public void testEvent() {
+    ballotCounting.startCounting();
+    int winner = ballotCounting.findHighestCandidate();
+    assertTrue(winner == candidateToWin);
+    int countState = ballotCounting.countStatus.getState();
+    assertTrue(ballotCounting.countStatus.isPossibleState(countState));
+    // Test election without surplus
+    ballotCounting.calculateSurpluses();
+    assertTrue(ballotCounting.getTotalSumOfSurpluses() == 0);
+  }
 
  	
 

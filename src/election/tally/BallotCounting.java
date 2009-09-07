@@ -114,18 +114,19 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @*/
 	public CountStatus countStatus;
 	 
-    /**
-     * Distribute the surplus of an elected Dail candidate.
-     * 
-     * @param winner The elected Dail candidate
-     */
+  /**
+   * Distribute the surplus of an elected candidate.
+   *
+   * @param winner The elected candidate
+   */
 	/*@ also
 	  @   requires state == COUNTING;
-	  @   requires countStatus.getState() == AbstractCountStatus.SURPLUS_AVAILABLE;
+	  @   requires countStatus.getState() 
+	  @     == AbstractCountStatus.SURPLUS_AVAILABLE;
 	  @   requires isElected (candidateList[winner]);
 	  @*/
 	public void distributeSurplus(final int winner) {
- 		final int surplus = getSurplus(candidates[winner]);
+    final int surplus = getSurplus(candidates[winner]);
     if (0 < surplus) {
       final int totalTransferableVotes = 
         getTotalTransferableVotes(candidates[winner]);
@@ -224,10 +225,19 @@ public class BallotCounting extends AbstractBallotCounting {
         final int winner = findHighestCandidate();
 
         if (winner == NONE_FOUND_YET) {
-          break;
+          break;  // No more continuing candidates to elect
         }
         
+        // Elect highest continuing candidate
         updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
+        //@ assert 0 <= winner && winner < totalCandidates;
+        //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
+        //@ assert numberElected < seats;
+        //@ assert 0 < remainingSeats;
+        /*@ assert (hasQuota(candidateList[winner])) 
+          @   || (winner == findHighestCandidate())
+          @   || (getNumberContinuing() == totalRemainingSeats);
+          @*/
         electCandidate(winner);
         countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
         distributeSurplus(winner);
@@ -243,7 +253,7 @@ public class BallotCounting extends AbstractBallotCounting {
         final int loser = findLowestCandidate();
         
         if (loser == NONE_FOUND_YET) {
-          break;
+          break; // No more continuing candidates to eliminate
         }
           
         countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);

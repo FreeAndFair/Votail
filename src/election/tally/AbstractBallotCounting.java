@@ -114,46 +114,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
      @           numberOfSeats - numberOfCandidatesElected;
      @*/
 
-	/** Lowest continuing vote */
-	protected int lowestVote;
-   //@ protected represents lowestContinuingVote <- lowestVote;
-
-	/** The second lowest non-zero number of votes held by a continuing
-	                          candidate */
-	protected int nextHighest;
-   //@ protected represents nextHighestVote <- nextHighest;
-
-	/** The highest number of votes held by a continuing candidate */
-	protected int highestContinuing;
-   //@ protected represents highestContinuingVote <- highestContinuing;
-
-	/** The highest number of votes held by a continuing candidate */
-	protected int highestAvailableSurplus;
-   //@ protected represents highestSurplus <- highestAvailableSurplus;
-
-	/** Sum of continuing votes other than the highest */
-   //@ public model int sumOfOtherContinuingVotes;
-   //@ public invariant 0 <= sumOfOtherContinuingVotes;
-   //@ public invariant sumOfOtherContinuingVotes <= totalVotes;
-   
-	/** The highest number of votes held by a continuing candidate */
-	protected int totalSumOfOtherContinuingVotes;
-   /*@ protected represents sumOfOtherContinuingVotes <- 
-	 @    totalSumOfOtherContinuingVotes;
-	 @*/
-
-	/** Number of candidates with equal highest continuing votes */
-	protected int totalNumberOfEqualHighestContinuing;
-   /*@ protected represents numberOfEqualHighestContinuing <- 
-     @   totalNumberOfEqualHighestContinuing;
-     @*/
-
-	/**  Number of candidates with equal lowest non-zero votes */
-	protected int totalNumberOfEqualLowestContinuing;
-   /*@ protected represents numberOfEqualLowestContinuing <- 
-     @                      totalNumberOfEqualLowestContinuing;
-     @*/
-
 	/**
 	 * Number of decisions taken.
 	 */
@@ -312,56 +272,19 @@ public /*@ pure @*/ boolean isDepositSaved(final int index) {
 /**
  * Redistribute ballots from the highest available surplus.
  * 
- * <BON>
- *   command
- *     "Calculate transfer factor",
- *     "Calculate non-fractional transfers",
- *     "Calculate fractional differences for each candidate",
- *     "Calculate adjusted number of transfers",
- *     "Move the ballots"
- * </BON>
- * 
- * @param candidateWithSurplus The elected candidate whose surplus is to be transferred
- * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV Commentary on Count Rules, section 12, page 47</a>
+ * @param candidateWithSurplus The elected candidate with highest surplus
+ * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">
+ *   CEV Commentary on Count Rules, section 12, page 47</a>
  */
 /*@ also
   @   protected normal_behavior
   @   requires getSurplus (candidateList[candidateWithSurplus]) > 0;
   @   requires state == COUNTING;
   @   requires getNumberContinuing() > remainingSeats;
-  @   requires (getNumberContinuing() > remainingSeats + 1) ||
-  @     (sumOfSurpluses + lowestContinuingVote > nextHighestVote) ||
-  @     (numberOfEqualLowestContinuing > 1);
-  @   requires remainingSeats > 0;
-  @   requires (remainingSeats > 1) ||
-  @     ((highestContinuingVote < sumOfOtherContinuingVotes + sumOfSurpluses) &&
-  @     (numberOfEqualHighestContinuing == 1));
-  @   requires getSurplus (candidateList[candidateWithSurplus]) == highestSurplus;
-  @   requires (sumOfSurpluses + highestContinuingVote >= getQuota()) ||
-  @     (sumOfSurpluses + lowestContinuingVote > nextHighestVote) ||
-  @     (numberOfEqualLowestContinuing > 1) ||
-  @     ((sumOfSurpluses + lowestContinuingVote >= depositSavingThreshold) &&
-  @     (lowestContinuingVote < depositSavingThreshold));
   @   assignable candidates;
   @   ensures getSurplus (candidateList[candidateWithSurplus]) == 0;
-  @   ensures countNumber == \old (countNumber) + 1;
-  @   ensures (state == COUNTING) || (state == FINISHED);
-  @   ensures totalVotes == getNumberOfBallots();
   @*/
 	public abstract void distributeSurplus(int candidateWithSurplus);
-
-/**
- * Elimination of a candidate and transfer of votes.
- * 
- * <BON>
- *   command
- *     "Calculate transfers",
- *     "Move ballots"
- * </BON>
- * 
- * @param candidatesToEliminate One or more candidates to be excluded from the 
- *   election in this count
- */
 
 /**
  * Load candidate details and number of seats.
@@ -433,7 +356,7 @@ public /*@ pure @*/ int getQuota() {
  * Calculate the first preference counts for each candidate.
  */
 //@ assignable candidates[*];
-public void calculateFirstPreferences() {
+protected void calculateFirstPreferences() {
 	for (int c = 0; c < totalNumberOfCandidates; c++) {
 		int candidateID = candidates[c].getCandidateID();
 		int numberOfBallotsInPile = countFirstPreferences(candidateID);
@@ -1031,7 +954,6 @@ public abstract void transferVotes (
 	  @ assignable numberOfCandidatesEliminated;
 	  @ ensures remainingSeats <= getNumberContinuing();
 	  @ ensures numberElected <= seats;
-	  @ ensures \old(lowestContinuingVote) <= lowestContinuingVote;
 	  @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
 	  @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
 	  @   ballotsToCount[b].getCandidateID() != 
