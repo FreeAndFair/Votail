@@ -1123,7 +1123,8 @@ public abstract void transferVotes (
 	//@ requires numberElected < seats;
 	//@ requires 0 < remainingSeats;
   /*@ requires (hasQuota(candidateList[winner])) 
-    @   || (winner == findHighestCandidate());
+    @   || (winner == findHighestCandidate())
+    @   || (getNumberContinuing() == totalRemainingSeats);
     @*/
 	//@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
 	//@ assignable totalRemainingSeats;
