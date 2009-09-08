@@ -51,11 +51,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
 	
   /** List of details for each candidate. 
-   * @constraint There are no duplicates in the list of candidate IDs and, once the 
-   * counting starts, there must be a ballot paper associated with each vote
-   * held by a candidate.
+   * @constraint There are no duplicates in the list of candidate IDs and, 
+   * once the counting starts, there must be a ballot paper associated with 
+   * each vote held by a candidate.
    */
-    //@ public model non_null Candidate[] candidateList;
+  //@ public model non_null Candidate[] candidateList;
 	/*@ public invariant (state == PRELOAD || state == LOADING || 
 	  @   state == PRECOUNT)
 	  @ ==>
@@ -99,16 +99,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
 	
   /** Total number of candidates for election */
-  //@ public model int totalCandidates;
-  //@ public invariant 0 <= totalCandidates;
-  /*@ public invariant (PRELOAD <= state) ==>
-    @   totalCandidates <= candidateList.length;
-    @ public constraint (state >= LOADING) ==> 
-    @   totalCandidates == \old (totalCandidates);
-    @ protected invariant (state == FINISHED) ==> 
-    @   totalCandidates == numberElected + numberEliminated;
-    @ public invariant (state == COUNTING) ==> 
-    @   1 <= totalCandidates;
+  /*@ public model int totalCandidates;
+    @ public invariant 0 <= totalCandidates;
+    @ public invariant totalCandidates <= candidateList.length;
+    @ public invariant numberElected + numberEliminated <= totalCandidates;
     @*/
 	
   /** Number of candidates elected so far */
@@ -166,7 +160,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant 0 <= totalVotes;
   //@ public invariant totalVotes <= ballotsToCount.length;
   /*@ public invariant (state == EMPTY || state == SETTING_UP || state == PRELOAD) 
-	@   ==> totalVotes == 0;
+    @   ==> totalVotes == 0;
     @ public constraint (state == LOADING) 
     @   ==> \old (totalVotes) <= totalVotes;
     @ public constraint (state == COUNTING || state == FINISHED) 
@@ -209,29 +203,31 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant 0 <= sumOfSurpluses;
   //@ public invariant sumOfSurpluses <= totalVotes;
   //@ invariant (state == COUNTING) ==> sumOfSurpluses == getSumOfSurpluses();
-	
-  /*@ ensures \result == (\sum int i; 0 <= i && 
-	@   i < totalCandidates; getSurplus(candidateList[i]));
+
+  /*@ requires state == COUNTING;
+    @ requires totalCandidates <= candidateList.length;
+    @ ensures \result == (\sum int i; 0 <= i && 
+    @   i < totalCandidates; getSurplus(candidateList[i]));
     @
     @ public pure model int getSumOfSurpluses() {
-    @    int sum = 0;
-    @    for (int i=0; i < totalCandidates; i++) {
-    @       sum += getSurplus(candidateList[i]);   
-    @    }
-    @    return sum;
+    @   int sum = 0;
+    @   for (int i=0; i < totalCandidates; i++) {
+    @     sum += getSurplus(candidateList[i]);
+    @   }
+    @   return sum;
     @ }
     @*/
-	    
+
   /** Number of seats which remain to be filled */
   //@ public model int remainingSeats; 
   //@ public invariant 0 <= remainingSeats;
   //@ public invariant remainingSeats <= seats;
   //@ public invariant (state <= PRECOUNT) ==> remainingSeats == seats;
   /*@ public invariant (state == FINISHED) ==> 
-	@   remainingSeats == 0;
-	@ public invariant (state == COUNTING) ==> 
-	@   remainingSeats == (seats - numberElected);
-	@*/
+    @   remainingSeats == 0;
+    @ public invariant (state == COUNTING) ==> 
+    @   remainingSeats == (seats - numberElected);
+    @*/
 
    public AbstractBallotCounting();
 	
@@ -429,10 +425,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures \result == getSumOfTransfers(fromCandidate);
     @*/
   protected /*@ pure spec_public @*/ int getTotalTransferableVotes (
-		  /*@ non_null @*/ Candidate fromCandidate); 
-		  
-		  
-  /*@
+    /*@ non_null @*/ Candidate fromCandidate); 
+
+  /*@ requires state == COUNTING;
+    @ requires totalCandidates <= candidateList.length;
     @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
     @   getPotentialTransfers (fromCandidate, 
     @   candidateList[i].getCandidateID()));
@@ -440,9 +436,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public model pure int getSumOfTransfers(non_null Candidate fromCandidate) {
     @   int sum = 0;
     @   for (int i=0; i < totalCandidates; i++) {
-    @    sum += getPotentialTransfers (fromCandidate, 
-    @        candidateList[i].getCandidateID());
-    @    }
+    @     sum += getPotentialTransfers (fromCandidate, 
+    @       candidateList[i].getCandidateID());
+    @     }
     @   return sum;
     @ }
     @*/
@@ -779,32 +775,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   candidateList[i].getStatus() == Candidate.CONTINUING);
     */
   public /*@ pure @*/ boolean isContinuingCandidateID (int candidateID);
-  
-  /**
-   * List each ballot ID in order by random number used to show how the votes 
-   * have been mixed and numbered.
-   * 
-   * @param ballot Ballot for which to get the order of
-   * @return Order of this ballot in numbered list of ballots
-   */
-  /*@ public normal_behavior 
-    @     requires ballotsToCount != null && (\forall int b;
-    @              0 <= b && b < totalVotes; ballotsToCount[b] != null);
-    @     ensures 1 <= \result;
-    @     ensures \result <= ballotsToCount.length;
-    @
-    @ public model pure int getOrder(Ballot ballot) {
-    @   
-    @ int order = 1;
-    @  for (int b = 0; b < totalVotes; b++) {
-    @    if (ballotsToCount[b].randomNumber < ballot.randomNumber) {
-    @      order++;
-    @    }
-    @  }
-    @  return order;
-    @ }
-    @*/
-  
+
   /**
    * List each candidate ID in order by random number to show how lots would be have
    * been chosen.

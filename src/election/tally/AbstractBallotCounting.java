@@ -133,22 +133,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   @     ensures countNumber == 0;
   @     ensures numberElected == 0;
   @*/
-public AbstractBallotCounting(){
-	status = ElectionStatus.EMPTY;
-	countNumberValue = 0;
-	numberOfCandidatesElected = 0;
-	numberOfCandidatesEliminated = 0;
-    createDecisionTable();
+  public AbstractBallotCounting() {
+    status = ElectionStatus.EMPTY;
+    countNumberValue = 0;
+    numberOfCandidatesElected = 0;
+    numberOfCandidatesEliminated = 0;
+    decisionsTaken = 0;
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
-}
-
-/*@ assignable decisionsTaken;
-  @ ensures numberOfDecisions == 0;
-  @*/
-private void createDecisionTable() { 
-    decisionsTaken = 0;
-}
+  }
 
 /**
  * Determine if the candidate has enough votes to be elected.
@@ -222,20 +215,20 @@ public /*@ pure @*/ int getSurplus(final /*@ non_null @*/ Candidate candidate){
  * 
  * @return the totalSumOfSurpluses
  */
-public /*@ pure @*/ int getTotalSumOfSurpluses() {
+public final /*@ pure @*/ int getTotalSumOfSurpluses() {
 	return totalSumOfSurpluses;
 }
 
 /**
  * Update the total number of surplus votes available for redistribution.
  * 
- * @param totalSumOfSurpluses the totalSumOfSurpluses to set
+ * @param sum the totalSumOfSurpluses to set
  */
 //@ requires 0 <= sum;
 //@ requires sum <= totalVotes;
 //@ assignable totalSumOfSurpluses;
 //@ ensures sum == totalSumOfSurpluses;
-protected void setTotalSumOfSurpluses(final int sum) {
+protected final void setTotalSumOfSurpluses(final int sum) {
 	this.totalSumOfSurpluses = sum;
 }
 
@@ -309,19 +302,20 @@ public /*@ pure @*/ boolean isDepositSaved(final int index) {
   @     ensures totalSeats == electionParameters.totalNumberOfSeats;
   @*/
 public void setup(final /*@ non_null @*/ Election electionParameters){
-	this.totalNumberOfCandidates = electionParameters.numberOfCandidates; //@ nowarn;
-	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection; //@ nowarn;
-	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats; //@ nowarn;
+	this.totalNumberOfCandidates = electionParameters.numberOfCandidates;
+	this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
+	this.totalNumberOfSeats = electionParameters.totalNumberOfSeats;
 	this.status = PRELOAD;
 	for (int i = 0; i < totalNumberOfCandidates; i++) {
-		this.candidates[i] = electionParameters.getCandidate(i); //@ nowarn;
+		this.candidates[i] = electionParameters.getCandidate(i);
 	}
-	this.totalRemainingSeats = this.numberOfSeats; //@ nowarn;
+	this.totalRemainingSeats = this.numberOfSeats;
  }
 
 /**
  * Open the ballot box for counting.
- * @param ballotBox The ballots to be counted
+ * 
+ * @param ballotBox The ballots to be counted, already "shuffled and mixed".
  */
 /*@ also
   @   protected normal_behavior
@@ -332,10 +326,10 @@ public void setup(final /*@ non_null @*/ Election electionParameters){
   @     ensures totalVotes == ballotBox.numberOfBallots;
   @*/
 public void load(final /*@ non_null @*/ BallotBox ballotBox) {
- 	totalNumberOfVotes = ballotBox.size(); //@ nowarn;
+ 	totalNumberOfVotes = ballotBox.size();
  	int index = 0;
  	while (index < totalNumberOfVotes && ballotBox.isNextBallot()) {
- 		ballots[index++] = ballotBox.getNextBallot(); //@ nowarn;
+ 		ballots[index++] = ballotBox.getNextBallot();
  	}
  	status = PRECOUNT;
  	
@@ -373,11 +367,6 @@ protected void calculateFirstPreferences() {
  * @param candidateID The internal identifier of this candidate
  * @return The number of ballots in this candidate's pile
  */
-/*@ also
-  @    requires ballotsToCount != null;
-  @    requires (\forall int index; 0 <= index && index < totalVotes;
-  @          ballotsToCount[index] != null); 
-  @*/
 public /*@ pure @*/ int countBallotsFor(int candidateID) {
 	int numberOfBallots = 0;
 	for (int b=0; b < totalNumberOfVotes; b++) {
@@ -610,12 +599,12 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
           /*@ non_null @*/ Candidate fromCandidate){
 	int shortfall = 0;
  	for (int i=0; i < totalNumberOfCandidates; i++) {
-		if (candidates[i].getStatus() == CandidateStatus.CONTINUING) { //@ nowarn;
-			shortfall += getActualTransfers (fromCandidate, candidates[i]); //@ nowarn;
+		if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
+			shortfall += getActualTransfers (fromCandidate, candidates[i]);
 		}
 	}
 	return shortfall - getSurplus(fromCandidate);
-} //@ nowarn;
+}
 
 /**
  * Simulate random selection between two candidates.
@@ -937,7 +926,7 @@ public abstract void transferVotes (
 		}
 		
 		return lowest;
-	} //@ nowarn;
+	}
 
 	/**
 	 * Exclude one candidate from the election.
@@ -990,7 +979,7 @@ public abstract void transferVotes (
 		decision.candidateID = candidateID;
 		decision.chosenByLot = false;
 		decision.decisionTaken = decisionType;
-		updateDecisions(decision); //@ nowarn;
+		updateDecisions(decision);
 	}
 
 	/**
@@ -1011,10 +1000,10 @@ public abstract void transferVotes (
 		for (int b = 0; b < totalNumberOfVotes; b++) {
 			if (ballots[b].getCandidateID() == candidateID) {
 				
-				transferBallot(ballots[b]); //@ nowarn;
+				transferBallot(ballots[b]);
 			}
 		}
-	} //@ nowarn;
+	}
 
 	/**
 	 * Transfer the ballot until non-transferable or a continuing candidate is found.
@@ -1058,7 +1047,8 @@ public abstract void transferVotes (
 	//@ ensures \old(remainingSeats) == 1 + remainingSeats;
 	public void electCandidate(int winner) {
 	  candidates[winner].declareElected();
-		auditDecision(DecisionStatus.DEEM_ELECTED,candidates[winner].getCandidateID()); //@ nowarn;
+		auditDecision(DecisionStatus.DEEM_ELECTED,
+		  candidates[winner].getCandidateID());
 		numberOfCandidatesElected++;
  		totalRemainingSeats--;
 	}

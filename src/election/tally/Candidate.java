@@ -268,7 +268,7 @@ private static int nextCandidateID = 1;
   @*/
 	public void declareEliminated(){
 		state = ELIMINATED;
-	} //@ nowarn;
+	}
 
 /**
  * Compares with another candidate's secret random number.

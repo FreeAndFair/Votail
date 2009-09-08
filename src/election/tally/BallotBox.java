@@ -131,6 +131,6 @@ public class BallotBox {
 	//@ assignable index;
 	//@ ensures \result == ballots[\old(index)];
     public Ballot getNextBallot() {
-        return ballots[index++];
+      return ballots[index++];
     }
 }

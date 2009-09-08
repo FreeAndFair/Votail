@@ -105,12 +105,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   /** Last count number in which this ballot was transferred */
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
     
-  /** Random number used for proportional distribution of surplus votes */
-  //@ public constraint randomNumber == \old (randomNumber);
-  //@ public ghost int _randomNumber;
-
-  protected /*@ spec_public @*/ int randomNumber;
-
   /**
    * Next available value for ballot ID number.
    */
@@ -123,8 +117,9 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    * Generate an empty ballot paper for use by a voter.
    */
 /*@ also public normal_behavior
-  @	  assignable _randomNumber, numberOfPreferences, countNumberAtLastTransfer,
-  @     ballotID, positionInList, randomNumber, nextBallotID, preferenceList;
+  @	  assignable numberOfPreferences, countNumberAtLastTransfer,
+  @     ballotID, positionInList, nextBallotID, preferenceList,
+  @     candidateIDAtCount;
   @*/
   public Ballot () {
  	  numberOfPreferences = 0;
@@ -133,8 +128,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 	  ballotID = nextBallotID++;
 	  preferenceList = new int [MAX_PREFERENCES];
 	  candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
-    randomNumber = this.hashCode();
-	  //@ set _randomNumber = randomNumber;
   }
     
   /**
@@ -153,8 +146,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     countNumberAtLastTransfer = 0;
     positionInList = 0;
     ballotID = nextBallotID++;
-    randomNumber = this.hashCode();
-    // @ set _randomNumber = randomNumber;
 
   }
 

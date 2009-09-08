@@ -17,7 +17,7 @@ import election.tally.mock.MockBallot;
 public class SelectHighestContinuingCandidateEventB extends TestCase {
   
     private static final int candidateToWin = 0;
-    private /*@ nullable @*/ BallotCounting ballotCounting;
+    private BallotCounting ballotCounting;
 
     protected void setUp() throws Exception {
     super.setUp();
@@ -30,7 +30,7 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     ballotCounting.setup(parameters);
     MockBallot mockBallot = new MockBallot();
     mockBallot.setFirstPreference(
-    	parameters.getCandidate(candidateToWin).getCandidateID());
+    parameters.getCandidate(candidateToWin).getCandidateID());
     ballotBox.accept(mockBallot);
     ballotCounting.load(ballotBox);
   }

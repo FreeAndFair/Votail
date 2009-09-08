@@ -33,6 +33,7 @@ public class Election {
 
 /** Number of candidates for election in this constituency */
 //@ public invariant 0 <= numberOfCandidates;
+//@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
 	protected /*@ spec_public @*/ transient int numberOfCandidates;
 	
 /** Number of seats to be filled in this election */

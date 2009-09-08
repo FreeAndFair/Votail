@@ -80,7 +80,7 @@ public class BallotCounting extends AbstractBallotCounting {
  		//@ also ensures newState == getState();
 		public void changeState(final int newState) {
 			substate = newState;
-		} //@ nowarn;
+		}
 
 		/**
 		 * Is this a valid state for the count to be in?
@@ -105,8 +105,7 @@ public class BallotCounting extends AbstractBallotCounting {
  					(ALL_SEATS_FILLED == value) ||
  					(END_OF_COUNT == value) ||
  					(ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
-		} //@ nowarn;
-		
+		}
 	}
 
 	// Status of the ballot counting process

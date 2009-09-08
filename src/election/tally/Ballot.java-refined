@@ -69,10 +69,7 @@ public class Ballot {
     @   countNumberAtLastTransfer;
     @*/
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
-  
-  /** Random number used for proportional distribution of surplus votes */
-  protected /*@ spec_public @*/ int randomNumber;
-  
+
   /**
    * Default constructor
    */
@@ -128,35 +125,12 @@ public class Ballot {
    */ 
   /*@ public normal_behavior
     @   requires 0 < numberOfPreferences;
+    @   requires 0 < preferenceList.length;
     @   ensures \result != NONTRANSFERABLE;
-    @   ensures \result == preferenceList[0];      
+    @   ensures \result == preferenceList[0];
     @
     @ public model pure int getFirstPreference() {
     @   return preferenceList[0];
-    @ }
-    @*/
-  
-  /**
-   * Compares with another ballot paper's secret random number.
-   * 
-   * @design It is intended to be able to compare random numbers without
-   * revealing the exact value of the random number, so that the random
-   * number cannot be manipulated in any way.
-   * 
-   * @param other Other ballot to compare to this ballot
-   * 
-   * @return <code>true</code> if other ballot has a lower random number                                                               
-   */
-  /*@  
-    @   public normal_behavior
-    @     requires this.randomNumber != other.randomNumber;
-    @     ensures (\result == true) <==> (this.randomNumber > other.randomNumber);
-    @   
-    @ public model pure boolean isAfter (final non_null Ballot other){
-    @     if (this.randomNumber > other.randomNumber) {
-    @         return true;
-    @     }
-    @     return false;
     @ }
     @*/
   
