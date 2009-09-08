@@ -948,7 +948,8 @@ public abstract void transferVotes (
 	  @ requires hasQuota (candidateList[loser]) == false;
 	  @ requires remainingSeats < getNumberContinuing();
 	  @ requires (state == COUNTING);
-	  @ requires 0 <= loser && loser < getNumberContinuing();
+	  @ requires 0 <= loser && loser < totalCandidates;
+	  @ requires loser == findLowestCandidate();
 	  @ assignable candidateList, decisions[*], decisionsTaken;
 	  @ assignable candidateList[loser];
 	  @ assignable numberOfCandidatesEliminated;

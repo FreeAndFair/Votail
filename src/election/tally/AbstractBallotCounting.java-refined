@@ -340,20 +340,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures getSurplus (candidateList[candidateWithSurplus]) == 0;
     @*/
     public abstract void distributeSurplus(int candidateWithSurplus);
-    
-    /*@ ensures \result == nonTransferableVotes + 
-      @   (\sum int i; 0 <= i && i < totalCandidates; 
-      @   countBallotsFor(candidateList[i].getCandidateID()));
-      @
-      @ public model pure int getNumberOfBallots() {
-      @    int total = nonTransferableVotes;
-      @    for (int i = 0; i < totalCandidates; i++) {
-      @        total += countBallotsFor(candidateList[i].getCandidateID());
-      @    }
-      @    return total;
-      @ }
-      @*/
-	
+
   /**
    * Set up candidate details and number of seats
    */

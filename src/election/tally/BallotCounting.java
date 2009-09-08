@@ -127,9 +127,9 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @*/
 	public void distributeSurplus(final int winner) {
     final int surplus = getSurplus(candidates[winner]);
+    final int totalTransferableVotes = 
+      getTotalTransferableVotes(candidates[winner]);
     if (0 < surplus) {
-      final int totalTransferableVotes = 
-        getTotalTransferableVotes(candidates[winner]);
       for (int i = 0; i < totalNumberOfCandidates; i++) {
         if ((i != winner) && 
           (candidates[i].getStatus() == CandidateStatus.CONTINUING)) {
@@ -145,8 +145,26 @@ public class BallotCounting extends AbstractBallotCounting {
         }
       }
     }
+    
+    // Move non-transferable part of surplus
+    if (surplus > totalTransferableVotes) {
+      int nonTransferables = surplus - totalTransferableVotes;
+      final int fromCandidateID = candidates[winner].getCandidateID();
+      for (int b = 0; b < totalNumberOfVotes; b++) {
+        if ((ballots[b].getCandidateID() == fromCandidateID) &&
+          (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
+          transferBallot (ballots[b]);
+          nonTransferables--;
+          if (nonTransferables == 0) {
+            break;
+          }
+        }
+      }
+    }
+
     countStatus.changeState(
       AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
+    //@ assert getSurplus (candidateList[winner]) == 0;
 	}
 
 	
@@ -164,21 +182,23 @@ public class BallotCounting extends AbstractBallotCounting {
 			final /*@ non_null @*/ Candidate toCandidate, final int numberOfVotes) {
 		
 		// Update the totals for each candidate
-		fromCandidate.removeVote(numberOfVotes, countNumberValue);
-		toCandidate.addVote(numberOfVotes, countNumberValue);
-		
-		// Transfer the required number of ballots
-		final int fromCandidateID = fromCandidate.getCandidateID();
-		final int toCandidateID = toCandidate.getCandidateID();
-		int ballotsMoved = 0;
-		for (int b = 0; b < totalNumberOfVotes && ballotsMoved < numberOfVotes; b++) {
-			if ((ballots[b].getCandidateID() == fromCandidateID) &&
-				(ballots[b].getNextPreference(1) == toCandidateID)) {
-				 
-						ballots[b].transfer(countNumberValue);
-						ballotsMoved++;	 
-			}
-		}
+    fromCandidate.removeVote(numberOfVotes, countNumberValue);
+    toCandidate.addVote(numberOfVotes, countNumberValue);
+
+    // Transfer the required number of ballots
+    final int fromCandidateID = fromCandidate.getCandidateID();
+    final int toCandidateID = toCandidate.getCandidateID();
+    int ballotsMoved = 0;
+    for (int b = 0; b < totalNumberOfVotes; b++) {
+      if ((ballots[b].getCandidateID() == fromCandidateID) &&
+        (getNextContinuingPreference(ballots[b]) == toCandidateID)) {
+        transferBallot (ballots[b]);
+        ballotsMoved++;
+        if (ballotsMoved == numberOfVotes) {
+          break;
+        }
+      }
+    }
 	}
 
 	/**
