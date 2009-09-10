@@ -58,7 +58,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     protected transient /*@ spec_public @*/ Decision[] decisions 
         = new Decision[Decision.MAX_DECISIONS];
    //@ protected represents decisionsMade <- decisions;
-   //@ represents numberOfDecisions <- decisionsTaken;
 
 	/** List of candidates for election */
 	protected transient /*@ spec_public @*/ Candidate[] candidates 
@@ -102,23 +101,24 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	protected transient /*@ spec_public @*/ int savingThreshold;
    //@ protected represents depositSavingThreshold <- savingThreshold;
 
-	protected transient /*@ spec_public @*/ int countNumberValue;
-   //@ protected represents countNumber <- countNumberValue;
+	/** Number of rounds of counting so far. */
+  protected transient /*@ spec_public @*/ int countNumberValue;
+  //@ protected represents countNumber <- countNumberValue;
 
 	/** Total number of undistributed surplus votes */
-	protected /*@ spec_public @*/ int totalSumOfSurpluses;
-   //@ protected represents sumOfSurpluses <- totalSumOfSurpluses;
+  protected /*@ spec_public @*/ int totalSumOfSurpluses;
+  //@ protected represents sumOfSurpluses <- totalSumOfSurpluses;
 	
+  /** Number of seats remaining to be filled */
 	protected transient /*@ spec_public @*/ int totalRemainingSeats;
    /*@ protected represents remainingSeats <- 
      @           numberOfSeats - numberOfCandidatesElected;
      @*/
 
-	/**
-	 * Number of decisions taken.
-	 */
+	/** Number of decisions taken. */
 	//@ public invariant decisionsTaken <= Decision.MAX_DECISIONS;
 	protected transient /*@ spec_public @*/ int decisionsTaken;
+  //@ represents numberOfDecisions <- decisionsTaken;
 
 	/**
  * Default Constructor.
@@ -127,7 +127,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   @   public normal_behavior
   @     assignable state, countNumber, numberElected, numberEliminated,
   @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
-  @       totalVotes,numberOfCandidatesEliminated, decisions, decisionsTaken,
+  @       totalVotes, numberOfCandidatesEliminated, decisions, decisionsTaken,
   @       totalNumberOfVotes;
   @     ensures state == ElectionStatus.EMPTY;
   @     ensures countNumber == 0;

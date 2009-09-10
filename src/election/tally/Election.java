@@ -68,43 +68,10 @@ public class Election {
 		numberOfCandidates = 0;
 		numberOfSeatsInThisElection = totalNumberOfSeats;
 		candidateList = new Candidate [Candidate.MAX_CANDIDATES];
-    }
-
-	/**
-	 * Set the list of candidates.
-	 * <p>
-	 * <strong>Constraints:</strong>
-	 * <ul>
-	 * <li> This method may only be called once i.e. the initial list of candidates cannot be altered.</li>
-	 * <li> No candidate may appear more than once on the list.</li>
-	 * </ul>
-	 * <p>
-	 * 
-	 * @param listOfCandidates The list of candidates for this election.
-	 */
-	/*@ public normal_behavior 
-	  @   requires numberOfCandidates == 0;
-	  @   requires (\forall int i;
-	  @     0 <= i && i < listOfCandidates.length;
-	  @     listOfCandidates[i] != null &&
-	  @     0 < listOfCandidates[i].getCandidateID() &&
-	  @     listOfCandidates[i].getCandidateID() != Ballot.NONTRANSFERABLE); 
- 	  @   requires (\forall int i, j;
-	  @     0 <= i && i < listOfCandidates.length &&
-	  @     0 <= j && j < listOfCandidates.length &&
-	  @     i != j;
-	  @     (listOfCandidates[i].candidateID != (listOfCandidates[j].candidateID))); 
-	  @  assignable candidateList, numberOfCandidates;
-	  @  ensures (\forall int i;
-	  @     0 <= i && i < listOfCandidates.length;
- 	  @     candidateList[i].candidateID == (listOfCandidates[i].candidateID));
- 	  @  ensures listOfCandidates.length == numberOfCandidates;
-	  @*/	
-	public void setCandidateList(final /*@ non_null @*/ Candidate[] listOfCandidates) {
-		numberOfCandidates = listOfCandidates.length;
-		for (int i = 0; i < numberOfCandidates; i++) {
-		  this.candidateList[i] = listOfCandidates[i];
-		}
+		for (int i = 0; i < Candidate.MAX_CANDIDATES; i++) {
+      candidateList[i] = new Candidate();
+      }
+		//@ assert candidateList.length == Candidate.MAX_CANDIDATES;
     }
 
 	/**
@@ -119,16 +86,15 @@ public class Election {
 	}
 
   /**
-   * Add <code>n</code> empty objects to the array of candidates.
+   * Determine the number of candidates in this election.
    * 
-   * @param n The number of candidates to add
+   * @param n The number of candidates in this election
    */
   //@ requires 1 <= n;
+	//@ requires n <= Candidate.MAX_CANDIDATES;
   //@ ensures n == numberOfCandidates;
-  public void generateCandidates(int n) {
-    for (int i = 0; i < n; i++) {
-        candidateList[i] = new Candidate();
-    }
+  public void setNumberOfCandidates(int n) {
+    
     numberOfCandidates = n;
   }
 }

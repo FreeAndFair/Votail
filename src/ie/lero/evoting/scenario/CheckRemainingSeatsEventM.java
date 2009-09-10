@@ -13,7 +13,7 @@ public class CheckRemainingSeatsEventM extends TestCase {
 		Election election = new Election();
 		election.numberOfSeatsInThisElection = 3;
 		election.totalNumberOfSeats = 3;
-		election.generateCandidates(4);
+		election.setNumberOfCandidates(4);
 		ballotCounting.setup(election);
 		assertTrue (election.numberOfSeatsInThisElection 
             == ballotCounting.getRemainingSeats());

@@ -55,18 +55,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * once the counting starts, there must be a ballot paper associated with 
    * each vote held by a candidate.
    */
-  //@ public model non_null Candidate[] candidateList;
-	/*@ public invariant (state == PRELOAD || state == LOADING || 
-	  @   state == PRECOUNT)
-	  @ ==>
-	  @ (\forall int i; 0 <= i && i < totalCandidates;
-	  @   candidateList[i].getStatus() == Candidate.CONTINUING &&
-	  @   candidateList[i].getOriginalVote() == 0);
+  /*@ public model non_null Candidate[] candidateList;
+	  @ public invariant (state == PRELOAD || state == LOADING || 
+	  @   state == PRECOUNT) ==>
+	  @   (\forall int i; 0 <= i && i < totalCandidates;
+	  @     candidateList[i].getStatus() == Candidate.CONTINUING &&
+	  @     candidateList[i].getOriginalVote() == 0);
 	  @
 	  @ public invariant (state == PRELOAD || state == LOADING ||   
-	  @   state == PRECOUNT ||
-	  @   state == COUNTING || state == FINISHED)
-	  @ ==>
+	  @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
 	  @   (\forall int i, j;
 	  @     0 <= i && i < totalCandidates && 
 	  @     i < j && j < totalCandidates;
@@ -74,13 +71,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @     candidateList[j].getCandidateID());
 	  @
 	  @ public invariant (state == PRELOAD || state == LOADING || 
-	  @   state == PRECOUNT ||
-	  @   state == COUNTING || state == FINISHED)
-	  @ ==>
+	  @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
 	  @   (\forall int i;
 	  @     0 <= i && i < totalCandidates;
-	  @     candidateList[i].getCandidateID() != 
-	  @     Ballot.NONTRANSFERABLE);
+	  @     candidateList[i].getCandidateID() != Ballot.NONTRANSFERABLE);
 	  @
 	  @ protected invariant (state == COUNTING || state == FINISHED)
 	  @ ==> 
@@ -752,9 +746,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public pure model int numberTransferable (Candidate fromCandidate) {
     @     int sum = 0;
     @     for (int i = 0; i < totalCandidates; i++) {
- 	@	     sum += getPotentialTransfers(
- 	@			fromCandidate, candidateList[i].getCandidateID());
- 	@	  }
+    @	     sum += getPotentialTransfers(
+    @			fromCandidate, candidateList[i].getCandidateID());
+    @	  }
     @     return sum;
     @ } 
     @*/
@@ -783,28 +777,17 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param candidate Candidate for which to get the order of
    * @return Order of this candidate for use when lots are chosen
    */
-  /*@ requires candidateList != null && (\forall int c;
-    @              0 <= c && c < totalCandidates; 
-    @              candidateList [c] != null);
-    @
-    @ ensures 1 <= \result;
-    @ ensures \result <= candidateList.length;
-    @ ensures (\forall Candidate c, d; c != null && d != null;
-    @    (getOrder (c) < getOrder (d)) <==> (d.isAfter(c)));
-    @     
-    @ ensures 1 <= \result;
-    @ ensures \result <= candidateList.length;
-    @ ensures (\forall Candidate c, d; c != null && d != null;
-    @     (getOrder (c) < getOrder (d)) <==> (d.isAfter(c)));
+  /*@ ensures 1 <= \result;
+    @ ensures \result <= totalCandidates;
     @
     @ protected pure model int getOrder(non_null Candidate candidate) {
-    @     int order = 1;
-	@     for (int c = 0; c < totalCandidates; c++) {
-	@	      if (candidateList[c].isAfter(candidate)) {
-	@		      order++;
-	@	      }
-	@     }
-	@     return order;
+    @   int order = 1;
+    @   for (int c = 0; c < totalCandidates && c < candidateList.length; c++) {
+    @     if (candidateList[c].isAfter(candidate)) {
+    @       order++;
+    @     }
+    @   }
+    @   return order;
     @ }
     @*/
   
@@ -849,10 +832,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param candidateID The internal identifier of this candidate
    * @return The number of ballots in this candidate's pile
    */
-  /*@ requires ballotsToCount != null;
-    @ requires (\forall int index; 0 <= index && index < totalVotes;
-    @          ballotsToCount[index] != null); 
-    @*/
   public /*@ pure @*/ int countBallotsFor(int candidateID);
   
   /** Number of votes needed to guarantee election */

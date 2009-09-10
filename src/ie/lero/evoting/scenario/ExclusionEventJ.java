@@ -20,10 +20,9 @@ import election.tally.mock.MockBallot;
  */
 public class ExclusionEventJ extends TestCase {
 
-  private /*@ spec_public @*/ int numberOfCandidates;
-  private /*@ spec_public nullable @*/ Candidate[] candidates;
-  private /*@ spec_public nullable @*/ Election parameters;
-  private /*@ spec_public nullable @*/ BallotCounting ballotCounting;
+  private int numberOfCandidates;
+  private Election parameters;
+  private BallotCounting ballotCounting;
   private BallotBox ballotBox;
 
 	/**
@@ -41,44 +40,31 @@ public class ExclusionEventJ extends TestCase {
 		assertTrue (secondLowest != lowestCandidate);
 		ballotCounting.eliminateCandidate(secondLowest);
 		ballotCounting.count();
-		assertTrue (candidates[secondLowest].getStatus() == CandidateStatus.ELIMINATED);
-    assertTrue (candidates[lowestCandidate].getStatus() == CandidateStatus.ELIMINATED);
-
+		assertTrue (parameters.getCandidate(secondLowest).getStatus() 
+		            == CandidateStatus.ELIMINATED);
+		assertTrue (parameters.getCandidate(lowestCandidate).getStatus() 
+		            == CandidateStatus.ELIMINATED);
  	}
 
  	protected void setUpBallotBox() {
  	  int numberOfVotes;
  	  MockBallot ballot = new MockBallot();
  		for (int i = 0; i < numberOfCandidates; i++) {
-			 
-			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
-			numberOfVotes = i*10;
+			 numberOfVotes = i*10;
 			 
 			// Generate first preference ballots
 			for (int b = 0; b < numberOfVotes; b++) {
-				
- 			    ballot.setFirstPreference(candidates[i].getCandidateID());
-				  ballotBox.accept(ballot);
+ 			  ballot.setFirstPreference(parameters.getCandidate(i).getCandidateID());
+				ballotBox.accept(ballot);
 			}
 		}
 	}
 
-  //@ requires parameters != null;
-  //@ assignable candidates, numberOfCandidates;
   protected void setUpParameters() {
  		parameters.totalNumberOfSeats = 4;
 		parameters.numberOfSeatsInThisElection = 4;		
-		
-
-		// Generate candidates
 		numberOfCandidates = 2 + parameters.numberOfSeatsInThisElection;
-		candidates = new Candidate[numberOfCandidates];
-		for (int i = 0; i < numberOfCandidates; i++) {
-			candidates[i] = new Candidate();
-			assertTrue (candidates[i].getStatus() == CandidateStatus.CONTINUING);
-		}
-		
-		parameters.setCandidateList(candidates);
+		parameters.setNumberOfCandidates(numberOfCandidates);
 	}
  	
  	protected void setUp() throws Exception {

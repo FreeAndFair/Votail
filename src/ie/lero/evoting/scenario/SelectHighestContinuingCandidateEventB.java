@@ -26,7 +26,7 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     Election parameters = new Election();
     parameters.numberOfSeatsInThisElection = 1;
     parameters.totalNumberOfSeats = 3;
-    parameters.generateCandidates(2);
+    parameters.setNumberOfCandidates(2);
     ballotCounting.setup(parameters);
     MockBallot mockBallot = new MockBallot();
     mockBallot.setFirstPreference(

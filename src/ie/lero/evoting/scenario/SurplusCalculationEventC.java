@@ -32,7 +32,7 @@ public class SurplusCalculationEventC extends TestCase {
     parameters = new Election();
     parameters.totalNumberOfSeats = NUM_SEATS;
     parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
-    parameters.generateCandidates(NUM_CANDIDATES);
+    parameters.setNumberOfCandidates(NUM_CANDIDATES);
 
     int[] candidateIDList = new int[NUM_CANDIDATES];
 

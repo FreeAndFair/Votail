@@ -23,7 +23,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   Election election = new Election();
 	   election.numberOfSeatsInThisElection = 3;
 	   election.totalNumberOfSeats = 3;
-	   election.generateCandidates(NUM_CANDIDATES);
+	   election.setNumberOfCandidates(NUM_CANDIDATES);
 	   
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();

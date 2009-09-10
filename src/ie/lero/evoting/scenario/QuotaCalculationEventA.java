@@ -23,7 +23,7 @@ public class QuotaCalculationEventA extends TestCase {
 	  Election parameters = new Election();
 	  parameters.numberOfSeatsInThisElection = 1;
 	  parameters.totalNumberOfSeats = 1;
-	  parameters.generateCandidates(3);
+	  parameters.setNumberOfCandidates(3);
 	  ballotCounting.setup(parameters);
 	  
  		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);

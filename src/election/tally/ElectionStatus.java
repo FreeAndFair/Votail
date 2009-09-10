@@ -7,7 +7,7 @@ package election.tally;
  * state values and transitions between those states. The normal path for the 
  * outer tier of the state machine is: 
  * <p>
- * EMPTY --> SETUP --> PRELOAD --> LOADING --> PRECOUNT --> 
+ * EMPTY --> SETTING_UP --> PRELOAD --> LOADING --> PRECOUNT --> 
  * COUNTING --> FINISHED --> REPORT 
  * <p>
  * The inner state machine models the status of the count.
