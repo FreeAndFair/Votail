@@ -46,33 +46,17 @@ public class Election {
 	public transient int totalNumberOfSeats;
 	
 /** List of all candidates in this election */
-/*@ public invariant (\forall int i;
-  @   0 <= i && i < numberOfCandidates;
-  @   0 < candidateList[i].getCandidateID() &&
-  @   candidateList[i].getCandidateID() != Ballot.NONTRANSFERABLE); 
-  @*/
-/** @constraint No duplicate candidates are allowed. */
-/*@ public invariant (\forall int i, j;
-  @   0 <= i && i < numberOfCandidates &&
-  @   0 <= j && j < numberOfCandidates &&
-  @   i != j;
-  @   candidateList[i].candidateID != candidateList[j].candidateID); 
-  @*/	
-  protected /*@ spec_public non_null @*/ Candidate[] candidateList;
+protected /*@ spec_public non_null @*/ Candidate[] candidateList;
 
-    /**
-     * Election parameters e.g. number of seats
-     */
+  /**
+   * Election parameters e.g. number of seats
+   */
 	public Election(){	
 		totalNumberOfSeats = 0;
 		numberOfCandidates = 0;
 		numberOfSeatsInThisElection = totalNumberOfSeats;
 		candidateList = new Candidate [Candidate.MAX_CANDIDATES];
-		for (int i = 0; i < Candidate.MAX_CANDIDATES; i++) {
-      candidateList[i] = new Candidate();
-      }
-		//@ assert candidateList.length == Candidate.MAX_CANDIDATES;
-    }
+  }
 
 	/**
 	 * Get the <code>Candidate</code> object.
