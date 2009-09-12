@@ -56,6 +56,9 @@ protected /*@ spec_public non_null @*/ Candidate[] candidateList;
 		numberOfCandidates = 0;
 		numberOfSeatsInThisElection = totalNumberOfSeats;
 		candidateList = new Candidate [Candidate.MAX_CANDIDATES];
+		for (int i=0; i < Candidate.MAX_CANDIDATES; i++) {
+		  candidateList[i] = new Candidate();
+		}
   }
 
 	/**

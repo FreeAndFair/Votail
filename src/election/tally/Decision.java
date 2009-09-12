@@ -18,9 +18,11 @@ public static final int MAX_DECISIONS = 100;
 	
 /** Type of decision taken */
 //@ public initially decisionTaken == NO_DECISION;
-/*@ public invariant (decisionTaken == ELECT_BY_QUOTA) ||
-  @   (decisionTaken == EXCLUDE) || (decisionTaken == NO_DECISION) || 
-  @   (decisionTaken == ROUND_UP_FRACTION) || (decisionTaken == DISTRIBUTE_SURPLUS)
+/*@ public invariant (decisionTaken == ELECT_BY_QUOTA)
+  @   || (decisionTaken == EXCLUDE)
+  @   || (decisionTaken == NO_DECISION)
+  @   || (decisionTaken == ROUND_UP_FRACTION)
+  @   || (decisionTaken == DISTRIBUTE_SURPLUS)
   @   || (decisionTaken == DEEM_ELECTED);
   @ public constraint (\old(decisionTaken) != NO_DECISION) ==>
   @   decisionTaken == \old(decisionTaken);
@@ -28,12 +30,14 @@ public static final int MAX_DECISIONS = 100;
 	public byte decisionTaken;
 	
 /** Candidate to which the decision applied */
-//@ public invariant (decisionTaken != NO_DECISION) ==> 0 < candidateID;
-//@ public invariant (candidateID != Ballot.NONTRANSFERABLE) || (candidateID == 0);
-/*@ public constraint (decisionTaken != NO_DECISION) ==>
+/*@ public invariant (decisionTaken == NO_DECISION) 
+  @   <==> (candidateID == Candidate.NO_CANDIDATE);
+  @ public invariant (candidateID != Ballot.NONTRANSFERABLE) 
+  @   || (candidateID == Candidate.NO_CANDIDATE);
+  @ public constraint (decisionTaken != NO_DECISION) ==>
   @   candidateID == \old(candidateID);
-  @*/
-//@ public initially candidateID == 0;	
+  @ public initially candidateID == Candidate.NO_CANDIDATE;
+  @*/	
 	public long candidateID;
 	
 /** Round of counting at which decision was taken */
@@ -54,12 +58,13 @@ public static final int MAX_DECISIONS = 100;
 	
 /**	Default constructor */
 /*@ public normal_behavior
+  @   assignable decisionTaken, atCountNumber, candidateID, chosenByLot;
   @   ensures decisionTaken == NO_DECISION;
   @   ensures atCountNumber == 0;
-  @   ensures candidateID == 0;
+  @   ensures candidateID == Candidate.NO_CANDIDATE;
   @   ensures chosenByLot == false;
   @*/
-	public /*@ pure @*/ Decision(){
+	public Decision() {
 		decisionTaken = NO_DECISION;
 		atCountNumber = 0;
 		candidateID = Candidate.NO_CANDIDATE;

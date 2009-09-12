@@ -618,22 +618,15 @@ protected /*@ pure spec_public @*/ int getTransferShortfall(
  * 
  * @return The candidate ID of the chosen candidate
  */
-/*@ also 
-  @   protected normal_behavior
-  @     requires firstCandidate.randomNumber != secondCandidate.randomNumber;
-  @     ensures (\result == firstCandidate.candidateID) <==>
-  @       (firstCandidate.randomNumber < secondCandidate.randomNumber);
-  @     ensures (\result == secondCandidate.candidateID) <==>
-  @       (secondCandidate.randomNumber < firstCandidate.randomNumber);
-  @*/
 public /*@ pure @*/ int randomSelection(
 		/*@ non_null @*/ Candidate firstCandidate, 
 		/*@ non_null @*/ Candidate secondCandidate) {
 	
- 		if (firstCandidate.randomNumber < secondCandidate.randomNumber) {
-			return firstCandidate.candidateID;
+ 		if (firstCandidate.isAfter(secondCandidate) 
+ 		    || firstCandidate.sameAs(secondCandidate)) {
+			return firstCandidate.getCandidateID();
 		}
-		return secondCandidate.candidateID; 
+		return secondCandidate.getCandidateID(); 
 }
 
 

@@ -15,11 +15,4 @@ public class CandidateStatus {
 	 * of the lowest continuing candidates at the end of a round of counting.  
 	 */
 	public static final byte ELIMINATED = 2;
-	/**
-	 * State value for a candidate defeated at the last round of the election
-	 * e.g. the second highest remaining candidate when the last seat is 
-	 * being filled  
-	 */
-	public static final byte DEFEATED = 4;
-
 }

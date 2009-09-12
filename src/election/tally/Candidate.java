@@ -26,10 +26,12 @@ public class Candidate extends CandidateStatus {
  */
 public static final int MAX_CANDIDATES = 50;
 
-/** Identifier for the candidate.
+/** Identifier for the candidate. The data should be loaded in such a way that
+ *  the assignment of candidate IDs is fair and unbiased.
  */
 /*@ public invariant 0 <= candidateID;
-  @ public constraint candidateID == \old(candidateID);
+  @ public constraint \old(candidateID) != NO_CANDIDATE
+  @   ==> candidateID == \old(candidateID);
   @*/
 	protected transient /*@ spec_public @*/ int candidateID;
 	
@@ -75,12 +77,6 @@ public static final int MAX_CANDIDATES = 50;
 //@ public invariant lastSetCount <= lastCountNumber;
 	protected transient /*@ spec_public @*/ int lastSetCount;
 
-/**
- * Unique random number used to simulate drawing of lots between candidates.
- */
-  protected transient /*@ spec_public @*/ int randomNumber;
-  //@ ghost int _randomNumber;
-
 public static final int NO_CANDIDATE = 0;
 
 	/**
@@ -106,34 +102,6 @@ private static int nextCandidateID = 1;
 	protected /*@ pure @*/ int getVoteAtCount(final int count){
 		return (votesAdded[count] - votesRemoved[count]);
 	}
-	
-/*@ ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
-  @   ((votesAdded[i]) - (votesRemoved[i])));
-  @
-  @ public pure model int sumOfRetainedVotes() {
-  @   int sum = 0;
-  @
-  @   for (int i = 0; i <= lastCountNumber; i++) {
-  @     sum += votesAdded[i] - votesRemoved[i];
-  @   }
-  @
-  @   return sum;
-  @ }
-  @*/
-	
-	/*@ ensures \result == (\sum int i; 0 <= i && i <= lastCountNumber;
-	  @     (votesAdded[i]));
-	  @
-	  @ public pure model int sumOfAllVotes() {
-	  @     int sum = 0;
-	  @
-	  @     for (int i = 0; i <= lastCountNumber; i++) {
-	  @		   sum += votesAdded[i];
-	  @		}
-	  @
-	  @     return sum;
-	  @ }
-	  @*/
   	
 /**
  * Original number of votes received by this candidate before
@@ -141,10 +109,6 @@ private static int nextCandidateID = 1;
  * 
  * @return Gross total of votes received 
  */	
-/*@ public normal_behavior
-  @   ensures \result == sumOfAllVotes();
-  @   ensures 0 <= \result;
-  @*/
 	public /*@ pure @*/ int getOriginalVote() {
 		int originalVote = 0;
 		
@@ -173,8 +137,7 @@ private static int nextCandidateID = 1;
  * 
  * @return The candidate ID number
  */
-/*@ 
-  @   public normal_behavior
+/*@ public normal_behavior
   @   ensures \result == candidateID;
   @*/	
 	public /*@ pure @*/ int getCandidateID() {
@@ -190,11 +153,13 @@ private static int nextCandidateID = 1;
 	  @*/
   public Candidate(){
     state = CONTINUING;
-    randomNumber = this.hashCode();
     candidateID = nextCandidateID++;
-    //@ set _randomNumber = randomNumber;
     votesAdded = new int [CountConfiguration.MAXCOUNT];
     votesRemoved = new int [CountConfiguration.MAXCOUNT];
+    for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
+      votesAdded[i] = 0;
+      votesRemoved[i] = 0;
+    }
     lastCountNumber = 0;
     lastSetCount = 0;
   }
@@ -241,14 +206,14 @@ private static int nextCandidateID = 1;
   @   requires 0 <= numberOfVotes;
   @   requires numberOfVotes <= getTotalAtCount(count);
   @   assignable lastCountNumber, votesRemoved[count];
-  @   ensures \old(getTotalAtCount(count)) == 
-  @     getTotalAtCount(count) + numberOfVotes;
+  @   ensures \old (votesRemoved[count]) + numberOfVotes
+  @     == votesRemoved[count];
   @   ensures lastCountNumber == count;
   @*/
-  public void removeVote(final int numberOfVotes, final int count){
-        votesRemoved[count] += numberOfVotes;
-        lastCountNumber = count;
-    }
+  public void removeVote (final int numberOfVotes, final int count){
+    votesRemoved[count] += numberOfVotes;
+    lastCountNumber = count;
+  }
 
 /** Declares the candidate to be elected */
 /*@ public normal_behavior
@@ -271,23 +236,18 @@ private static int nextCandidateID = 1;
 	}
 
 /**
- * Compares with another candidate's secret random number.
+ * Determines the relative ordering of the candidate in the event of a tie.
  * 
- * @design It is intended to be able to compare random numbers without
- * revealing the exact value of the random number, so that the random
- * number cannot be manipulated in any way.
+ * @param other The other candidate to compare with this candidate
  * 
- * @param other other candidate to compare with this candidate
- * 
- * @return <code>true</true> if other candidate has lower random number
+ * @return <code>true</true> if other candidate is not selected
  */	
 /*@ 
   @ public normal_behavior
-  @ ensures (\result == true) <==>
-  @   (this.randomNumber > other.randomNumber);
+  @   ensures (\result == true) <==> (this.candidateID > other.candidateID);
   @*/
 	public /*@ pure @*/ boolean isAfter(final /*@ non_null @*/ Candidate other){
-		return (this.randomNumber > other.randomNumber);
+		return (this.candidateID > other.candidateID);
 	}
 	
 /**
@@ -299,10 +259,10 @@ private static int nextCandidateID = 1;
  */
 /*@ public normal_behavior
   @   ensures \result <==> ((other != null) &&
-  @     (other.getCandidateID() == candidateID));
+  @     (other.candidateID == candidateID));
   @*/
 	public /*@ pure @*/ boolean sameAs(/*@ non_null @*/ final Candidate other) {
-		return (other.getCandidateID() == this.candidateID);
+		return (other.candidateID == this.candidateID);
 	}
 
 /**
