@@ -85,12 +85,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	
   /** List of contents of each ballot paper that will be counted. */
   //@ public model non_null election.tally.Ballot[] ballotsToCount;
-  /*@ public invariant (state >= PRECOUNT)
-    @  ==>
-    @  (\forall int i, j; 
-    @     0 <= i && i < totalVotes && i < j && j < totalVotes;
-    @     ballotsToCount[i].getBallotID() != ballotsToCount[j].getBallotID());
-    @*/
 	
   /** Total number of candidates for election */
   /*@ public model int totalCandidates;

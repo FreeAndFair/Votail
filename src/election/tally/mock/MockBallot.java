@@ -24,7 +24,6 @@ public class MockBallot extends election.tally.Ballot {
    */
   public final void setMultiplePreferences(final int[] list) {
     load(list);
-    ballotID = nextBallotID++; // new ballot paper
   }
 
 }

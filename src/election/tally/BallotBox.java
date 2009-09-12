@@ -30,34 +30,10 @@ package election.tally;
 public class BallotBox {
 	
 /**
- * List of valid ballot papers.
+ * List of valid ballot papers, already shuffled and mixed by the data loader
+ * or returning officer.
  */
   protected /*@ spec_public @*/ Ballot[] ballots;
-  
-  /**
-   * No two ballot IDs in a ballot box are the same.
-   */
-  /*@ public invariant uniqueness();
-    @
-    @ ensures \result <==> (\forall int i, j;
-    @                   0 <= i & i < size() &
-    @                   0 <= j & j < size() &
-    @                   i != j;
-    @                   ballots[i].getBallotID() 
-    @                   != ballots[j].getBallotID());
-    @
-    @ public model pure boolean uniqueness() {
-    @     for (int i=0; i < size(); i++) {
-    @         for (int j=0; j < size(); j++) {
-    @             if (i != j && ballots[i].getBallotID() == 
-    @                           ballots[j].getBallotID()) {
-    @                 return false;
-    @             }
-    @         }
-    @      }
-    @      return true;
-    @ }
-    @*/
 
     /**
      * Get the number of ballots in this box.

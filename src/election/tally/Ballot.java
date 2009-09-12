@@ -87,9 +87,6 @@ public static final int NONTRANSFERABLE = 0;
 
 private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
 
-  /** Ballot ID number */
-  protected /*@ spec_public @*/ int ballotID;
-	 
   /** Preference list of candidate IDs */	
   protected /*@ spec_public non_null */ int[] preferenceList;
 
@@ -106,26 +103,17 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   protected /*@ spec_public @*/ int countNumberAtLastTransfer;
     
   /**
-   * Next available value for ballot ID number.
-   */
-  /*@ private invariant 0 < nextBallotID;
-    @ private constraint \old(nextBallotID) <= nextBallotID;
-    @*/
-  protected /*@ spec_public @*/ static int nextBallotID = 1;
-
-  /**
    * Generate an empty ballot paper for use by a voter.
    */
 /*@ also public normal_behavior
   @	  assignable numberOfPreferences, countNumberAtLastTransfer,
-  @     ballotID, positionInList, nextBallotID, preferenceList,
+  @     positionInList, preferenceList,
   @     candidateIDAtCount;
   @*/
   public Ballot () {
  	  numberOfPreferences = 0;
 	  countNumberAtLastTransfer = 0;
 	  positionInList = 0;
-	  ballotID = nextBallotID++;
 	  preferenceList = new int [MAX_PREFERENCES];
 	  candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
   }
@@ -145,7 +133,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     candidateIDAtCount[0] = preferenceList[0];
     countNumberAtLastTransfer = 0;
     positionInList = 0;
-    ballotID = nextBallotID++;
 
   }
 
@@ -168,10 +155,10 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   /*@ also public normal_behavior
     @   requires (\forall int i; 0 <= i && i < list.length;
     @     (list[i]) != NONTRANSFERABLE);
-    @   requires (\forall int i; 0 <= i && i < list.length;
-    @     0 < list[i]);
+    @   requires (\forall int i; 0 <= i && i < list.length; 0 < list[i]);
     @   requires positionInList == 0;
-    @	assignable numberOfPreferences, ballotID, preferenceList, nextBallotID, positionInList, candidateIDAtCount[*];
+    @	  assignable numberOfPreferences, preferenceList, positionInList, 
+    @     candidateIDAtCount[*];
     @   ensures numberOfPreferences == list.length;
     @   ensures (\forall int i; 0 <= i && i < list.length;
     @     (preferenceList[i] == list[i]));
@@ -264,18 +251,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     }
   }
     
-  /**
-   * Get ballot ID number
-   * 
-   * @return ID number for this ballot
-   */    
-  /*@ also public normal_behavior
-    @ ensures \result == ballotID;
-    @*/
-  public /*@ pure @*/ int getBallotID(){
-    return ballotID;
-  }
-     
   /**
    * This method checks if this ballot paper is assigned to this candidate.
    * 

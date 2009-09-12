@@ -50,7 +50,6 @@ public class SurplusCalculationEventC extends TestCase {
       MockBallot testBallot = new MockBallot();
       testBallot.setMultiplePreferences(candidateIDList);
       ballotBox.accept(testBallot);
-      assertTrue(0 < testBallot.getBallotID());
     }
   }
 

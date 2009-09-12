@@ -29,16 +29,6 @@ public class Ballot {
    * Rules, section 7, pages 23-27</a> 
    */
   public static final int NONTRANSFERABLE;
-  
-  /** @review kiniry 8 Feb 2006 - Each of these fields needs at least
-   * one invariant, typically.  E.g., can ballotID be negative?  If
-   * ballotID is unique per Ballot object, then this needs to be
-   * expressed in an invariant.  These examples are below. */
-
-  /** Ballot ID number */
-  //@ public static final ghost int NO_ID = 0;
-  //@ public invariant (ballotID == NO_ID) || (0 < ballotID);
-  protected /*@ spec_public @*/ int ballotID;
 
   /** Preference list of candidate IDs */
   protected /*@ spec_public non_null @*/ int[] preferenceList;
@@ -46,7 +36,6 @@ public class Ballot {
   /** Total number of valid preferences on the ballot paper */
   //@ public invariant 0 <= numberOfPreferences;
   // @design numberOfPreferences == 0 means an empty ballot.
-  // @see #ballotID invariant
   protected /*@ spec_public @*/ int numberOfPreferences;
   
   /** Position within preference list */
@@ -75,7 +64,7 @@ public class Ballot {
    */
   /*@ public normal_behavior
     @   assignable numberOfPreferences, countNumberAtLastTransfer;
-    @   assignable positionInList, ballotID;
+    @   assignable positionInList;
     @   ensures numberOfPreferences == 0;
     @   ensures countNumberAtLastTransfer == 0;
     @   ensures positionInList == 0;
@@ -215,16 +204,6 @@ public class Ballot {
     @     (positionInList == numberOfPreferences); 
     @*/
   public void transfer(int countNumber);
-  
-  /**
-   * Get ballot ID number.
-   * 
-   * @return ID number for this ballot
-   */
-  /*@ public normal_behavior
-    @   ensures \result == ballotID;
-    @*/
-  public /*@ pure @*/ int getBallotID();
   
   /**
    * This method checks if this ballot paper is assigned to this candidate.
