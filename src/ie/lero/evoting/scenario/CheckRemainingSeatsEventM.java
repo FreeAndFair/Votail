@@ -1,10 +1,10 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
-import election.tally.mock.MockBallot;
 
 public class CheckRemainingSeatsEventM extends TestCase {
 
@@ -18,7 +18,7 @@ public class CheckRemainingSeatsEventM extends TestCase {
 		assertTrue (election.numberOfSeatsInThisElection 
             == ballotCounting.getRemainingSeats());
 		BallotBox ballotBox = new BallotBox();
-		MockBallot ballot = new MockBallot();
+		Ballot ballot = new Ballot();
 		ballot.setFirstPreference(election.getCandidate(0).getCandidateID());
 		ballotBox.accept(ballot);
 		ballotCounting.load(ballotBox);

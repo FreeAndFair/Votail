@@ -5,10 +5,10 @@ package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
 import election.tally.AbstractCountStatus;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
-import election.tally.mock.MockBallot;
 
 /**
  * @author Dermot Cochran
@@ -27,7 +27,7 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();
-	   MockBallot ballot = new MockBallot();
+	   Ballot ballot = new Ballot();
 	   int[] preferences = {election.getCandidate(0).getCandidateID(), election.getCandidate(1).getCandidateID(),
 	                        election.getCandidate(2).getCandidateID()};
 	   
@@ -37,7 +37,7 @@ public class TransfersFromSurplusEventD extends TestCase {
        ballotBox.accept(ballot);
 	     ballot.setFirstPreference(election.getCandidate(i).getCandidateID());
 	     ballotBox.accept(ballot);
-	     ballot.setMultiplePreferences(preferences);
+	     ballot.load(preferences);
 	     ballotBox.accept(ballot);
 	   }
 	  

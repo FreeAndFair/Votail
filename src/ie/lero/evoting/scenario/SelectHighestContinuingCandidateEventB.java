@@ -4,10 +4,10 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
-import election.tally.mock.MockBallot;
 
 
 /**
@@ -28,7 +28,7 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     parameters.totalNumberOfSeats = 3;
     parameters.setNumberOfCandidates(2);
     ballotCounting.setup(parameters);
-    MockBallot mockBallot = new MockBallot();
+    Ballot mockBallot = new Ballot();
     mockBallot.setFirstPreference(
     parameters.getCandidate(candidateToWin).getCandidateID());
     ballotBox.accept(mockBallot);

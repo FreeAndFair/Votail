@@ -7,7 +7,6 @@ import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.CandidateStatus;
 import election.tally.Election;
-import election.tally.mock.MockBallot;
 
 /**
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
@@ -47,8 +46,8 @@ public class SurplusCalculationEventC extends TestCase {
     assertTrue(numberOfVotes <= Ballot.MAX_BALLOTS);
     assertTrue(ballotBox.size() == 0);
     for (int b = 0; b < numberOfVotes; b++) {
-      MockBallot testBallot = new MockBallot();
-      testBallot.setMultiplePreferences(candidateIDList);
+      Ballot testBallot = new Ballot();
+      testBallot.load(candidateIDList);
       ballotBox.accept(testBallot);
     }
   }

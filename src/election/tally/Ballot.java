@@ -107,33 +107,32 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    */
 /*@ also public normal_behavior
   @	  assignable numberOfPreferences, countNumberAtLastTransfer,
-  @     positionInList, preferenceList,
-  @     candidateIDAtCount;
+  @     positionInList, preferenceList[*], candidateIDAtCount[*],
+  @     preferenceList, candidateIDAtCount;
   @*/
   public Ballot () {
- 	  numberOfPreferences = 0;
-	  countNumberAtLastTransfer = 0;
-	  positionInList = 0;
-	  preferenceList = new int [MAX_PREFERENCES];
-	  candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
+    numberOfPreferences = 0;
+    countNumberAtLastTransfer = 0;
+    positionInList = 0;
+    preferenceList = new int [MAX_PREFERENCES];
+    candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
   }
-    
+
   /**
-   * Copy the <em>contents</em> of a ballot.
+   * Copy the contents of a ballot.
    * 
    * @param ballot Ballot to be copied.
    */
-  protected Ballot(final Ballot ballot) {
+  protected Ballot(final /*@ non_null @*/ Ballot ballot) {
     numberOfPreferences = ballot.numberOfPreferences;
-    preferenceList = new int[MAX_PREFERENCES];
+    preferenceList = new int[numberOfPreferences];
     for (int p = 0; p < numberOfPreferences; p++) {
       preferenceList[p] = ballot.getPreference(p);
     }
     candidateIDAtCount = new int[CountConfiguration.MAXCOUNT];
-    candidateIDAtCount[0] = preferenceList[0];
     countNumberAtLastTransfer = 0;
     positionInList = 0;
-
+    candidateIDAtCount[countNumberAtLastTransfer] = getCandidateID();
   }
 
 /**
@@ -152,39 +151,41 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    *         
    * @constraint The ballot may only be loaded once; it cannot be overwritten.
    */    
-  /*@ also public normal_behavior
+  /*@ public normal_behavior
     @   requires (\forall int i; 0 <= i && i < list.length;
-    @     (list[i]) != NONTRANSFERABLE);
+    @     list[i] != NONTRANSFERABLE);
     @   requires (\forall int i; 0 <= i && i < list.length; 0 < list[i]);
     @   requires positionInList == 0;
-    @	  assignable numberOfPreferences, preferenceList, positionInList, 
-    @     candidateIDAtCount[*];
-    @   ensures numberOfPreferences == list.length;
+    @   requires countNumberAtLastTransfer == 0;
+    @	  assignable numberOfPreferences, preferenceList[*], positionInList, 
+    @     candidateIDAtCount[*], preferenceList, countNumberAtLastTransfer;
     @   ensures (\forall int i; 0 <= i && i < list.length;
     @     (preferenceList[i] == list[i]));
     @*/
-   public void load(final /*@ non_null @*/ int[] list) {
+   public void load (final /*@ non_null @*/ int[] list) {
 
-    for(int i = 0; i < list.length; i++) {
- 		    preferenceList[i] = list[i];
- 	}
-    
-    numberOfPreferences = list.length;
-    candidateIDAtCount [countNumberAtLastTransfer] = list[0];
+    if (preferenceList.length < list.length) {
+      preferenceList = new int [list.length];
+    }
+
+    if (positionInList == 0) {
+      numberOfPreferences = list.length;
+    }
+
+    for (int i = 0; i < list.length; i++) {
+      preferenceList[i] = list[i];
+    }
   }
 
   /**
    * Get candidate ID to which the ballot is assigned 
    * 
    * @return The candidate ID to which the ballot is assigned
-   */    
-  /*@ also public normal_behavior
+   */
+  /*@ public normal_behavior
     @   requires 0 <= positionInList;
     @   requires positionInList <= numberOfPreferences;
-    @   ensures (positionInList == numberOfPreferences) ==>
-    @     (\result == NONTRANSFERABLE);
-    @   ensures (positionInList < numberOfPreferences) ==>
-    @     (\result == preferenceList[positionInList]);
+    @   ensures \result == getPreference(positionInList);
     @*/   
   public /*@ pure @*/ int getCandidateID() {
       return getPreference(positionInList);
@@ -197,20 +198,15 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    * 
    * @return The next preference candidate ID
    */    
-  /*@ also public normal_behavior
-    @ requires 0 <= positionInList;
-    @ requires 1 <= offset;
-    @ requires positionInList <= numberOfPreferences;
-    @ requires preferenceList != null;
-    @ ensures (positionInList + offset >= numberOfPreferences) ==>
-    @   (\result == NONTRANSFERABLE);
-    @ ensures (positionInList + offset < numberOfPreferences) ==>
-    @   (\result == preferenceList[positionInList + offset]);
+  /*@ public normal_behavior
+    @   requires 0 <= positionInList + offset;
+    @   ensures (\result == NONTRANSFERABLE)
+    @     || (\result == getPreference(positionInList + offset));
     @*/
-
   public /*@ pure @*/ int getNextPreference(final int offset){
-    if (positionInList + offset < numberOfPreferences){
-      return preferenceList[positionInList + offset];
+    final int index = positionInList + offset;
+    if (index < numberOfPreferences && index < preferenceList.length){
+      return preferenceList[index];
     }
 		return NONTRANSFERABLE;
   }
@@ -224,7 +220,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    * 
    * @param countNumber The count number at which the ballot was transfered.
    */    
-  /*@ also public normal_behavior
+  /*@ public normal_behavior
     @   requires 0 <= positionInList;
     @   requires positionInList <= numberOfPreferences;
     @   requires positionInList < preferenceList.length;
@@ -232,25 +228,29 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     @   requires countNumber < CountConfiguration.MAXCOUNT;
     @   requires countNumber < candidateIDAtCount.length;
     @   assignable countNumberAtLastTransfer, positionInList, 
-    @     candidateIDAtCount[*];
+    @     candidateIDAtCount[*], candidateIDAtCount;
     @   ensures (countNumberAtLastTransfer == countNumber) || 
     @           (positionInList == numberOfPreferences);
     @   ensures \old(positionInList) <= positionInList;
     @   ensures (positionInList == \old(positionInList) + 1) ||
     @           (positionInList == numberOfPreferences);
     @*/
-  public void transfer(final int countNumber) {
+  public void transfer (final int countNumber) {
 
     if (positionInList < numberOfPreferences) {
       // Update ballot history
-      for (int r = 1 + countNumberAtLastTransfer; r <= countNumber; r++) {
-        candidateIDAtCount[r] = preferenceList[positionInList];
+      for (int r = countNumberAtLastTransfer; r < countNumber; r++) {
+        if (r < candidateIDAtCount.length) {
+          candidateIDAtCount[r] = getCandidateID();
+        }
       }
-      countNumberAtLastTransfer = countNumber;
+      if (countNumber < CountConfiguration.MAXCOUNT) {
+        countNumberAtLastTransfer = countNumber;
+      }
       positionInList++;
     }
   }
-    
+
   /**
    * This method checks if this ballot paper is assigned to this candidate.
    * 
@@ -263,7 +263,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    * @return <code>true</code> if this ballot paper is assigned to this 
    * candidate ID
    */    
-  /*@ also public normal_behavior
+  /*@ public normal_behavior
     @   ensures (\result == true) <==> (getCandidateID() == candidateIDToCheck);
     @*/
   public /*@ pure @*/ boolean isAssignedTo(final int candidateIDToCheck){
@@ -284,18 +284,35 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     return (numberOfPreferences - positionInList);
   }
 
-//@ requires 0 <= i;
-//@ ensures (i < numberOfPreferences) ==> preferenceList[i] == \result;
-//@ ensures (numberOfPreferences <= i) ==> \result == Ballot.NONTRANSFERABLE;
+/*@ requires 0 <= i;
+  @ ensures (i < numberOfPreferences && i < preferenceList.length) 
+  @   ==> preferenceList[i] == \result;
+  @ ensures (numberOfPreferences <= i || preferenceList.length <= i) 
+  @   ==> \result == Ballot.NONTRANSFERABLE;
+  @*/
 protected /*@ spec_public pure @*/ int getPreference(int i) {
-    if (i < numberOfPreferences) {
+    if (i < numberOfPreferences && i < preferenceList.length) {
        return preferenceList[i];
     }
     return Ballot.NONTRANSFERABLE;	
 }
 
+//@ requires 0 < preferenceList.length;
+/*@ ensures \result == (candidateID == preferenceList[0]);
+  @
+  @*/
 public /*@ pure @*/ boolean isFirstPreference(int candidateID) {
 	return candidateID == preferenceList[0];
+}
+
+/**
+ * Set the first preference candidate ID on the ballot paper.
+ * 
+ * @param firstPreferenceID The first preference candidate ID
+ */
+public final void setFirstPreference(final int firstPreferenceID) {
+  int[] list = { firstPreferenceID };
+  load(list);
 }
  
 }

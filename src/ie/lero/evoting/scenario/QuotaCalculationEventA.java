@@ -4,11 +4,11 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
 import election.tally.ElectionStatus;
-import election.tally.mock.MockBallot;
 
 /**
  * @author Dermot Cochran
@@ -28,7 +28,7 @@ public class QuotaCalculationEventA extends TestCase {
 	  
  		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);
 		BallotBox ballotBox = new BallotBox();
-		MockBallot ballot = new MockBallot();
+		Ballot ballot = new Ballot();
 		for (int i = 0; i < 51; i++) {
 		  ballot.setFirstPreference(parameters.getCandidate(0).getCandidateID());
 		  ballotBox.accept(ballot);

@@ -1,10 +1,10 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Election;
-import election.tally.mock.MockBallot;
 
 public class ElectRemainingCandidatesEventN extends TestCase {
 
@@ -16,7 +16,7 @@ public class ElectRemainingCandidatesEventN extends TestCase {
    election.setNumberOfCandidates(4);
    ballotCounting.setup(election);		
    BallotBox ballotBox = new BallotBox();
-   MockBallot ballot = new MockBallot();
+   Ballot ballot = new Ballot();
    for (int i=0; i<3; i++) {
      ballot.setFirstPreference(election.getCandidate(i).getCandidateID());
      ballotBox.accept(ballot);
