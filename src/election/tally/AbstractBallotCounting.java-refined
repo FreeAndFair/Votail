@@ -41,8 +41,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	/*@ public model int numberOfDecisions;
 	  @ public initially numberOfDecisions == 0;
 	  @ public invariant 0 <= numberOfDecisions;
-	  @ public constraint 
-	  @   \old (numberOfDecisions) <= numberOfDecisions;
+	  @ public constraint \old (numberOfDecisions) <= numberOfDecisions;
 	  @*/
   /*@ public invariant (state <= PRECOUNT) ==> numberOfDecisions == 0;
     @ public constraint \old (numberOfDecisions) <= numberOfDecisions;
@@ -64,17 +63,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @
 	  @ public invariant (state == PRELOAD || state == LOADING ||   
 	  @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
-	  @   (\forall int i, j;
-	  @     0 <= i && i < totalCandidates && 
+	  @   (\forall int i, j; 0 <= i && i < totalCandidates && 
 	  @     i < j && j < totalCandidates;
 	  @     candidateList[i].getCandidateID() != 
 	  @     candidateList[j].getCandidateID());
-	  @
-	  @ public invariant (state == PRELOAD || state == LOADING || 
-	  @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
-	  @   (\forall int i;
-	  @     0 <= i && i < totalCandidates;
-	  @     candidateList[i].getCandidateID() != Ballot.NONTRANSFERABLE);
 	  @
 	  @ protected invariant (state == COUNTING || state == FINISHED)
 	  @ ==> 
@@ -192,15 +184,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant sumOfSurpluses <= totalVotes;
   //@ invariant (state == COUNTING) ==> sumOfSurpluses == getSumOfSurpluses();
 
-  /*@ requires state == COUNTING;
-    @ requires totalCandidates <= candidateList.length;
-    @ ensures \result == (\sum int i; 0 <= i && 
-    @   i < totalCandidates; getSurplus(candidateList[i]));
-    @
-    @ public pure model int getSumOfSurpluses() {
+  /*@ public pure model int getSumOfSurpluses() {
     @   int sum = 0;
-    @   for (int i=0; i < totalCandidates; i++) {
-    @     sum += getSurplus(candidateList[i]);
+    @   for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
+    @     if (candidateList[i] != null) {
+    @       sum += getSurplus(candidateList[i]);
+    @     }
     @   }
     @   return sum;
     @ }
@@ -211,8 +200,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant 0 <= remainingSeats;
   //@ public invariant remainingSeats <= seats;
   //@ public invariant (state <= PRECOUNT) ==> remainingSeats == seats;
-  /*@ public invariant (state == FINISHED) ==> 
-    @   remainingSeats == 0;
+  /*@ public invariant (state == FINISHED) ==> remainingSeats == 0;
     @ public invariant (state == COUNTING) ==> 
     @   remainingSeats == (seats - numberElected);
     @*/
@@ -333,15 +321,17 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures totalCandidates == electionParameters.numberOfCandidates;
     @ ensures seats == electionParameters.numberOfSeatsInThisElection;
     @ ensures totalSeats == electionParameters.totalNumberOfSeats;
-    @ assignable state, seats, totalSeats, totalCandidates, candidateList;
     @*/
   public void setup (Election electionParameters);
 	
 	
-  /** Loads all valid ballot papers */
-  // @constraint All ballot papers must be assigned to a valid candidate ID
+  /** Loads all valid ballot papers.
+   *  
+   *  @param ballotBox The set of ballots for counting
+   *  
+   *  All ballot papers must be assigned to a valid candidate ID
+   */
   /*@ requires state == PRELOAD;
-    @ assignable state, totalVotes, ballotsToCount, depositSavingThreshold;
     @ ensures state == PRECOUNT;
     @ ensures totalVotes == ballotBox.numberOfBallots;
     @ ensures (\forall int i; 0 <= i && i < totalVotes;
@@ -349,7 +339,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @      ballotsToCount[j].isAssignedTo(candidateList[i].getCandidateID())));
     @*/
   public void load(BallotBox ballotBox);
-	
 	
   /**
    * Count the votes.
@@ -389,10 +378,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return Number of votes potentially transferable from this candidate to that
    *   candidate
    */
-  /*@ requires (state == COUNTING);
-    @ requires 0 < toCandidateID;
-    @ requires toCandidateID != Ballot.NONTRANSFERABLE;
-    @ ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
+  /*@ ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
     @   (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
     @   (ballotsToCount[j].getCountNumberAtLastTransfer() ==
     @   fromCandidate.lastSetCount) && 
@@ -423,9 +409,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ 
     @ public model pure int getSumOfTransfers(non_null Candidate fromCandidate) {
     @   int sum = 0;
-    @   for (int i=0; i < totalCandidates; i++) {
-    @     sum += getPotentialTransfers (fromCandidate, 
-    @       candidateList[i].getCandidateID());
+    @   for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
+    @     if (candidateList[i] != null) {
+    @       sum += getPotentialTransfers (fromCandidate, 
+    @         candidateList[i].getCandidateID());
+    @       }
     @     }
     @   return sum;
     @ }
@@ -722,8 +710,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @
     @ public pure model int sumOfTransfers (Candidate fromCandidate) {
     @     int sum = 0;
-    @     for (int i=0; i < totalCandidates; i++) {
-    @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
+    @     for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
+    @        if (candidateList[i] != null &&
+    @            candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
     @            sum += getActualTransfers (fromCandidate, candidateList[i]);
     @        } 
     @     }
@@ -735,13 +724,16 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       getPotentialTransfers (fromCandidate, 
     @       candidateList[i].getCandidateID()));
     @
-    @ public pure model int numberTransferable (Candidate fromCandidate) {
-    @     int sum = 0;
-    @     for (int i = 0; i < totalCandidates; i++) {
-    @	     sum += getPotentialTransfers(
-    @			fromCandidate, candidateList[i].getCandidateID());
-    @	  }
-    @     return sum;
+    @ public pure model int numberTransferable (
+    @   non_null Candidate fromCandidate) {
+    @   int sum = 0;
+    @   for (int i = 0; i < totalCandidates && i < candidateList.length; i++) {
+    @     if (candidateList[i] != null) {
+    @       sum += getPotentialTransfers(
+    @         fromCandidate, candidateList[i].getCandidateID());
+    @       }
+    @	    }
+    @   return sum;
     @ } 
     @*/
   
@@ -769,13 +761,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param candidate Candidate for which to get the order of
    * @return Order of this candidate for use when lots are chosen
    */
-  /*@ ensures 1 <= \result;
-    @ ensures \result <= totalCandidates;
-    @
-    @ protected pure model int getOrder(non_null Candidate candidate) {
+  /*@ protected pure model int getOrder(non_null Candidate candidate) {
     @   int order = 1;
     @   for (int c = 0; c < totalCandidates && c < candidateList.length; c++) {
-    @     if (candidateList[c].isAfter(candidate)) {
+    @     if (candidateList[c] != null && candidateList[c].isAfter(candidate)) {
     @       order++;
     @     }
     @   }
@@ -827,12 +816,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public /*@ pure @*/ int countBallotsFor(int candidateID);
   
   /** Number of votes needed to guarantee election */
-  //@ requires 1 <= seats;
-  //@ ensures 0 <= \result;
-  //@ ensures \result <= totalVotes;
-  /*@ ensures (state == COUNTING) ==>
-    @   \result == 1 + (totalVotes / (seats + 1));
-    @*/
+  //@ requires 0 <= seats;
+  //@ ensures \result == 1 + (totalVotes / (seats + 1));
   public /*@ pure @*/ int getQuota();
   
   /** Number of candidates neither elected nor excluded from election 

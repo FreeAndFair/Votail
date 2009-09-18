@@ -50,7 +50,7 @@ package election.tally;
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
     // TODO naming convention for fields that represent model fields
-    // TODO naming convention for constants than define upper bounds for fields
+    // TODO naming convention for constants than define upper bounds of fields
 
     protected static final int NONE_FOUND_YET = -1;
 
@@ -128,7 +128,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   @     assignable state, countNumber, numberElected, numberEliminated,
   @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
   @       totalVotes, numberOfCandidatesEliminated, decisions, decisionsTaken,
-  @       totalNumberOfVotes;
+  @       totalNumberOfVotes, totalSumOfSurpluses;
   @     ensures state == ElectionStatus.EMPTY;
   @     ensures countNumber == 0;
   @     ensures numberElected == 0;
@@ -141,6 +141,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     decisionsTaken = 0;
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
+    totalSumOfSurpluses = 0;
   }
 
 /**
@@ -226,6 +227,7 @@ public final /*@ pure @*/ int getTotalSumOfSurpluses() {
  */
 //@ requires 0 <= sum;
 //@ requires sum <= totalVotes;
+//@ requires sum == getSumOfSurpluses();
 //@ assignable totalSumOfSurpluses;
 //@ ensures sum == totalSumOfSurpluses;
 protected final void setTotalSumOfSurpluses(final int sum) {
@@ -256,6 +258,9 @@ protected final void setTotalSumOfSurpluses(final int sum) {
   @       (isElected (candidateList[index]) == true);
   @*/
 public /*@ pure @*/ boolean isDepositSaved(final int index) {
+  if (candidates[index] == null) {
+    return false;
+  }
 	final Candidate candidate = candidates[index];
 	final int originalVote = candidate.getOriginalVote();
 	final boolean elected = isElected (candidate);
@@ -351,13 +356,15 @@ public /*@ pure @*/ int getQuota() {
  */
 //@ assignable candidates[*];
 protected void calculateFirstPreferences() {
-	for (int c = 0; c < totalNumberOfCandidates; c++) {
-		int candidateID = candidates[c].getCandidateID();
-		int numberOfBallotsInPile = countFirstPreferences(candidateID);
-		if (0 < numberOfBallotsInPile) {
-		  //@ assert candidateList[c].state == CandidateStatus.CONTINUING;
-		  candidates[c].addVote(numberOfBallotsInPile, countNumberValue);
-		}
+	for (int c = 0; c < totalNumberOfCandidates && c < candidates.length; c++) {
+	  if (candidates[c] != null) {
+		  int candidateID = candidates[c].getCandidateID();
+		  int numberOfBallotsInPile = countFirstPreferences(candidateID);
+		  if (0 < numberOfBallotsInPile) {
+		    //@ assert candidateList[c].state == CandidateStatus.CONTINUING;
+		    candidates[c].addVote(numberOfBallotsInPile, countNumberValue);
+		  }
+	  }
 	}
 }
 
@@ -389,7 +396,7 @@ public /*@ pure @*/ int countBallotsFor(int candidateID) {
 public /*@ pure @*/ int countFirstPreferences(int candidateID) {
 	int numberOfBallots = 0;
 	for (int b=0; b < totalNumberOfVotes; b++) {
-		if (ballots[b].isFirstPreference(candidateID)) {
+		if (ballots[b] != null && ballots[b].isFirstPreference(candidateID)) {
 			numberOfBallots++;
 		}
 	}
@@ -1027,6 +1034,7 @@ public abstract void transferVotes (
 	//@ requires candidateList[winner].getStatus() == Candidate.CONTINUING;
 	//@ requires numberElected < seats;
 	//@ requires 0 < remainingSeats;
+	//@ requires candidates[winner] != null;
   /*@ requires (hasQuota(candidateList[winner])) 
     @   || (winner == findHighestCandidate())
     @   || (getNumberContinuing() == totalRemainingSeats);
@@ -1041,7 +1049,7 @@ public abstract void transferVotes (
 	public void electCandidate(int winner) {
 	  candidates[winner].declareElected();
 		auditDecision(DecisionStatus.DEEM_ELECTED,
-		  candidates[winner].getCandidateID());
+		 candidates[winner].getCandidateID());
 		numberOfCandidatesElected++;
  		totalRemainingSeats--;
 	}
