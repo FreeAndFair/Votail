@@ -183,8 +183,6 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
    * @return The candidate ID to which the ballot is assigned
    */
   /*@ public normal_behavior
-    @   requires 0 <= positionInList;
-    @   requires positionInList <= numberOfPreferences;
     @   ensures \result == getPreference(positionInList);
     @*/   
   public /*@ pure @*/ int getCandidateID() {

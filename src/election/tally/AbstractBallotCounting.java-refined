@@ -29,12 +29,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /** List of decisions made */
   /*@ public model non_null Decision[] decisionsMade;
-    @ public invariant (\nonnullelements (decisionsMade)) ==>
-    @   (\forall int i; 0 <= i && i < numberOfDecisions &&
-    @     decisionsMade[i].decisionTaken != DecisionStatus.NO_DECISION;
-    @     decisionsMade[i].atCountNumber <= countNumber && 
-    @     (\exists int k; 0 <= k && k < totalCandidates;
-    @     decisionsMade[i].candidateID == candidateList[k].getCandidateID()));
     @*/
 	
   /** Number of decisions made */
@@ -401,13 +395,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected /*@ pure spec_public @*/ int getTotalTransferableVotes (
     /*@ non_null @*/ Candidate fromCandidate); 
 
-  /*@ requires state == COUNTING;
-    @ requires totalCandidates <= candidateList.length;
-    @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
-    @   getPotentialTransfers (fromCandidate, 
-    @   candidateList[i].getCandidateID()));
-    @ 
-    @ public model pure int getSumOfTransfers(non_null Candidate fromCandidate) {
+  /*@ public model pure int getSumOfTransfers(non_null Candidate fromCandidate) {
     @   int sum = 0;
     @   for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
     @     if (candidateList[i] != null) {
@@ -708,7 +696,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     candidateList[i].getStatus() == CandidateStatus.CONTINUING;
     @     getActualTransfers (fromCandidate, candidateList[i]));
     @
-    @ public pure model int sumOfTransfers (Candidate fromCandidate) {
+    @ public pure model int sumOfTransfers (non_null Candidate fromCandidate) {
     @     int sum = 0;
     @     for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
     @        if (candidateList[i] != null &&
@@ -720,11 +708,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ } 
     @*/
     
-  /*@ ensures \result == (\sum int i; 0 <= i && i < totalCandidates;
-    @       getPotentialTransfers (fromCandidate, 
-    @       candidateList[i].getCandidateID()));
-    @
-    @ public pure model int numberTransferable (
+  /*@ public pure model int numberTransferable (
     @   non_null Candidate fromCandidate) {
     @   int sum = 0;
     @   for (int i = 0; i < totalCandidates && i < candidateList.length; i++) {

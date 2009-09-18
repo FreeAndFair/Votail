@@ -258,7 +258,7 @@ protected final void setTotalSumOfSurpluses(final int sum) {
   @       (isElected (candidateList[index]) == true);
   @*/
 public /*@ pure @*/ boolean isDepositSaved(final int index) {
-  if (candidates[index] == null) {
+  if (candidates == null || candidates[index] == null) {
     return false;
   }
 	final Candidate candidate = candidates[index];
@@ -836,7 +836,6 @@ public abstract void transferVotes (
  * @param The decision to be added.
  */
 /*@ also
-  @   requires state == COUNTING;
   @   assignable decisions[*], decisionsTaken;
   @   ensures (\forall int i; 0 <= i && i < totalCandidates;
   @     isElected (candidateList[i]) ==> (\exists int k;
@@ -849,8 +848,10 @@ public abstract void transferVotes (
   @   ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE)));
   @*/
 	protected void updateDecisions(Decision decision) {
-		decisions[decisionsTaken] = decision;
-		decisionsTaken++;
+	  if (decisionsTaken < decisions.length) {
+		  decisions[decisionsTaken] = decision;
+		  decisionsTaken++;
+	  }
 }
 
 	/**
@@ -974,10 +975,9 @@ public abstract void transferVotes (
 	  @*/
 	protected void auditDecision(final byte decisionType, final int candidateID) {
 		 
-		Decision decision = new Decision(); // NOPMD
+		Decision decision = new Decision();
 		decision.atCountNumber = countNumberValue;
 		decision.candidateID = candidateID;
-		decision.chosenByLot = false;
 		decision.decisionTaken = decisionType;
 		updateDecisions(decision);
 	}
@@ -1047,11 +1047,13 @@ public abstract void transferVotes (
 	//@ ensures \old(getNumberContinuing()) == 1 + getNumberContinuing();
 	//@ ensures \old(remainingSeats) == 1 + remainingSeats;
 	public void electCandidate(int winner) {
-	  candidates[winner].declareElected();
-		auditDecision(DecisionStatus.DEEM_ELECTED,
-		 candidates[winner].getCandidateID());
-		numberOfCandidatesElected++;
- 		totalRemainingSeats--;
+	  if (candidates != null && candidates[winner] != null) {
+	    candidates[winner].declareElected();
+		  auditDecision(DecisionStatus.DEEM_ELECTED,
+		                candidates[winner].getCandidateID());
+		  numberOfCandidatesElected++;
+ 		  totalRemainingSeats--;
+	  }
 	}
 
 	/**

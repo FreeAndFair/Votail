@@ -9,7 +9,7 @@ package election.tally;
  * @author Dermot Cochran
  * @copyright 2005-2009 Dermot Cochran
  */
-public class Decision extends DecisionStatus {
+public class Decision {
 	
 /**
 	 * Maximum number of decision points 
@@ -17,24 +17,21 @@ public class Decision extends DecisionStatus {
 public static final int MAX_DECISIONS = 100;
 	
 /** Type of decision taken */
-//@ public initially decisionTaken == NO_DECISION;
-/*@ public invariant (decisionTaken == ELECT_BY_QUOTA)
-  @   || (decisionTaken == EXCLUDE)
-  @   || (decisionTaken == NO_DECISION)
-  @   || (decisionTaken == ROUND_UP_FRACTION)
-  @   || (decisionTaken == DISTRIBUTE_SURPLUS)
-  @   || (decisionTaken == DEEM_ELECTED);
-  @ public constraint (\old(decisionTaken) != NO_DECISION) ==>
+//@ public initially decisionTaken == DecisionStatus.NO_DECISION;
+/*@ public invariant (decisionTaken == DecisionStatus.EXCLUDE)
+  @   || (decisionTaken == DecisionStatus.NO_DECISION)
+  @   || (decisionTaken == DecisionStatus.DEEM_ELECTED);
+  @ public constraint (\old(decisionTaken) != DecisionStatus.NO_DECISION) ==>
   @   decisionTaken == \old(decisionTaken);
   @*/
 	public byte decisionTaken;
 	
 /** Candidate to which the decision applied */
-/*@ public invariant (decisionTaken == NO_DECISION) 
+/*@ public invariant (decisionTaken == DecisionStatus.NO_DECISION) 
   @   <==> (candidateID == Candidate.NO_CANDIDATE);
   @ public invariant (candidateID != Ballot.NONTRANSFERABLE) 
   @   || (candidateID == Candidate.NO_CANDIDATE);
-  @ public constraint (decisionTaken != NO_DECISION) ==>
+  @ public constraint (decisionTaken != DecisionStatus.NO_DECISION) ==>
   @   candidateID == \old(candidateID);
   @ public initially candidateID == Candidate.NO_CANDIDATE;
   @*/	
@@ -43,31 +40,21 @@ public static final int MAX_DECISIONS = 100;
 /** Round of counting at which decision was taken */
 //@ public invariant 0 <= atCountNumber;
 //@ public initially atCountNumber == 0;
-/*@ public constraint (decisionTaken != NO_DECISION) ==>
+/*@ public constraint (decisionTaken != DecisionStatus.NO_DECISION) ==>
   @   atCountNumber == \old(atCountNumber);
   @*/
 	public long atCountNumber;
 	
-/** Indicates if lots were drawn to make this decision */
-/*@ public invariant (decisionTaken == ELECT_BY_QUOTA) ==>
-  @   chosenByLot == false;
-  @ public constraint (decisionTaken != NO_DECISION) ==>
-  @   chosenByLot == \old(chosenByLot);  
-  @*/
-	public boolean chosenByLot;
-	
 /**	Default constructor */
 /*@ public normal_behavior
-  @   assignable decisionTaken, atCountNumber, candidateID, chosenByLot;
-  @   ensures decisionTaken == NO_DECISION;
+  @   assignable decisionTaken, atCountNumber, candidateID;
+  @   ensures decisionTaken == DecisionStatus.NO_DECISION;
   @   ensures atCountNumber == 0;
   @   ensures candidateID == Candidate.NO_CANDIDATE;
-  @   ensures chosenByLot == false;
   @*/
 	public Decision() {
-		decisionTaken = NO_DECISION;
+		decisionTaken = DecisionStatus.NO_DECISION;
 		atCountNumber = 0;
 		candidateID = Candidate.NO_CANDIDATE;
-		chosenByLot = false;	
 	}
 }

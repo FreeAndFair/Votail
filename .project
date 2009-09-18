@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Vótáil</name>
+	<name>Votail</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -30,6 +30,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>AutoGrader.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
@@ -38,5 +43,6 @@
 		<nature>mobius.escjava2.plugin.autocheckEscjavaNature</nature>
 		<nature>net.sourceforge.metrics.nature</nature>
 		<nature>ch.ethz.inf.pm.jml.plugin.CheckerNature</nature>
+		<nature>AutoGrader.nature</nature>
 	</natures>
 </projectDescription>
