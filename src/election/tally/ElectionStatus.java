@@ -13,7 +13,7 @@ package election.tally;
  * The inner state machine models the status of the count.
  */
 
-public class ElectionStatus {
+public class ElectionStatus extends CountConfiguration {
 
   /*@ public model byte state;
     @ public initially state == EMPTY;

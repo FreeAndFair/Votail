@@ -28,6 +28,7 @@
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /** List of decisions made */
+  //@ public invariant \nonnullelements (decisionsMade);
   /*@ public model non_null Decision[] decisionsMade;
     @*/
 	
@@ -782,11 +783,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   isElected (candidateList[i]) ==> (\exists int k;
     @     0 <= k && k < numberOfDecisions;
     @     (decisionsMade[k].candidateID == candidateList[i].getCandidateID()) &&
-    @     ((decisionsMade[k].decisionTaken == Decision.ELECT_BY_QUOTA) ||
-    @       (decisionsMade[k].decisionTaken == Decision.DEEM_ELECTED))) &&
+    @     (decisionsMade[k].decisionTaken == DecisionStatus.DEEM_ELECTED)) &&
     @   (\forall int n; 0 <= n && n < numberOfDecisions;
     @      (decisionsMade[n].candidateID  == candidateList[i].getCandidateID())
-    @      ==> (decisionsMade[n].decisionTaken != Decision.EXCLUDE))
+    @      ==> (decisionsMade[n].decisionTaken != DecisionStatus.EXCLUDE))
     @   );
     @*/
   protected void updateDecisions(Decision decision);

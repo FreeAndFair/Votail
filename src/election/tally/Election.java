@@ -46,6 +46,7 @@ public class Election {
 	public transient int totalNumberOfSeats;
 	
 /** List of all candidates in this election */
+//@ public invariant \nonnullelements (candidateList);
 protected /*@ spec_public non_null @*/ Candidate[] candidateList;
 
   /**
@@ -54,11 +55,8 @@ protected /*@ spec_public non_null @*/ Candidate[] candidateList;
 	public Election(){	
 		totalNumberOfSeats = 0;
 		numberOfCandidates = 0;
-		numberOfSeatsInThisElection = totalNumberOfSeats;
-		candidateList = new Candidate [Candidate.MAX_CANDIDATES];
-		for (int i=0; i < Candidate.MAX_CANDIDATES; i++) {
-		  candidateList[i] = new Candidate();
-		}
+		numberOfSeatsInThisElection = 0;
+		candidateList = new Candidate [0];
   }
 
 	/**
@@ -68,6 +66,8 @@ protected /*@ spec_public non_null @*/ Candidate[] candidateList;
 	 */
 	//@ requires candidateList != null && candidateList[index] != null;
 	//@ requires 0 <= index && index < candidateList.length;
+	//@ requires index < numberOfCandidates;
+	//@ ensures candidateList[index] == \result;
 	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
 		return candidateList[index];
 	}
@@ -75,13 +75,18 @@ protected /*@ spec_public non_null @*/ Candidate[] candidateList;
   /**
    * Determine the number of candidates in this election.
    * 
-   * @param n The number of candidates in this election
+   * @param number The number of candidates in this election. 
+   *   There must be at least two candidates or choices in any election.
    */
-  //@ requires 1 <= n;
-	//@ requires n <= Candidate.MAX_CANDIDATES;
-  //@ ensures n == numberOfCandidates;
-  public void setNumberOfCandidates(int n) {
-    
-    numberOfCandidates = n;
+  //@ requires 2 <= number;
+	//@ requires number <= Candidate.MAX_CANDIDATES;
+  //@ ensures number == numberOfCandidates;
+	//@ ensures number == candidateList.length;
+  public void setNumberOfCandidates(final int number) {
+    numberOfCandidates = number;
+    candidateList = new Candidate[number];
+    for (int index=0; index < number; index++) {
+      candidateList[index] = new Candidate();
+    }
   }
 }

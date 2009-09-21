@@ -114,8 +114,8 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     numberOfPreferences = 0;
     countNumberAtLastTransfer = 0;
     positionInList = 0;
-    preferenceList = new int [MAX_PREFERENCES];
-    candidateIDAtCount = new int [CountConfiguration.MAXCOUNT];
+    preferenceList = new int [0];
+    candidateIDAtCount = new int [0];
   }
 
   /**
@@ -185,7 +185,7 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
   /*@ public normal_behavior
     @   ensures \result == getPreference(positionInList);
     @*/   
-  public /*@ pure @*/ int getCandidateID() {
+  public final /*@ pure @*/ int getCandidateID() {
       return getPreference(positionInList);
   }
     
@@ -282,15 +282,15 @@ private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
     return (numberOfPreferences - positionInList);
   }
 
-/*@ requires 0 <= i;
-  @ ensures (i < numberOfPreferences && i < preferenceList.length) 
-  @   ==> preferenceList[i] == \result;
-  @ ensures (numberOfPreferences <= i || preferenceList.length <= i) 
+/*@ requires 0 <= index;
+  @ ensures (index < numberOfPreferences && index < preferenceList.length) 
+  @   ==> preferenceList[index] == \result;
+  @ ensures (numberOfPreferences <= index || preferenceList.length <= index) 
   @   ==> \result == Ballot.NONTRANSFERABLE;
   @*/
-protected /*@ spec_public pure @*/ int getPreference(int i) {
-    if (i < numberOfPreferences && i < preferenceList.length) {
-       return preferenceList[i];
+protected final /*@ spec_public pure @*/ int getPreference(final int index) {
+    if (index < numberOfPreferences && index < preferenceList.length) {
+       return preferenceList[index];
     }
     return Ballot.NONTRANSFERABLE;	
 }
@@ -299,7 +299,7 @@ protected /*@ spec_public pure @*/ int getPreference(int i) {
 /*@ ensures \result == (candidateID == preferenceList[0]);
   @
   @*/
-public /*@ pure @*/ boolean isFirstPreference(int candidateID) {
+public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
 	return candidateID == preferenceList[0];
 }
 
@@ -309,7 +309,7 @@ public /*@ pure @*/ boolean isFirstPreference(int candidateID) {
  * @param firstPreferenceID The first preference candidate ID
  */
 public final void setFirstPreference(final int firstPreferenceID) {
-  int[] list = { firstPreferenceID };
+  final int[] list = { firstPreferenceID };
   load(list);
 }
  

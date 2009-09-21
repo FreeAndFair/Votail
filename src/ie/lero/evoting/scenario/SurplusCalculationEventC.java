@@ -33,10 +33,10 @@ public class SurplusCalculationEventC extends TestCase {
     parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
 
-    int[] candidateIDList = new int[NUM_CANDIDATES];
+    int[] preferences = new int[NUM_CANDIDATES];
 
     for (int i = 0; i < NUM_CANDIDATES; i++) {
-      candidateIDList[i] = parameters.getCandidate(i).getCandidateID();
+      preferences[i] = parameters.getCandidate(i).getCandidateID();
       assertTrue(parameters.getCandidate(i).getStatus() == CandidateStatus.CONTINUING);
       assertTrue(parameters.getCandidate(i).getTotalAtCount(0) == 0);
     }
@@ -47,7 +47,7 @@ public class SurplusCalculationEventC extends TestCase {
     assertTrue(ballotBox.size() == 0);
     for (int b = 0; b < numberOfVotes; b++) {
       Ballot testBallot = new Ballot();
-      testBallot.load(candidateIDList);
+      testBallot.load(preferences);
       ballotBox.accept(testBallot);
     }
   }

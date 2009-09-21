@@ -9,7 +9,7 @@ package election.tally;
  * @author Dermot Cochran
  * @copyright 2005-2009 Dermot Cochran
  */
-public class Decision {
+public class Decision extends DecisionStatus {
 	
 /**
 	 * Maximum number of decision points 
@@ -45,16 +45,24 @@ public static final int MAX_DECISIONS = 100;
   @*/
 	public long atCountNumber;
 	
-/**	Default constructor */
+/** Create a new decision event.	
+ * 
+ * @param decisionType Type of decision made e.g. elect or eliminate
+ * @param candidateIDValue ID of the candidate in question
+ * @param countNumberValue Count number in which the decision was made
+ * */
 /*@ public normal_behavior
   @   assignable decisionTaken, atCountNumber, candidateID;
-  @   ensures decisionTaken == DecisionStatus.NO_DECISION;
-  @   ensures atCountNumber == 0;
-  @   ensures candidateID == Candidate.NO_CANDIDATE;
+  @   ensures decisionTaken == decisionType;
+  @   ensures atCountNumber == countNumberValue;
+  @   ensures candidateID == candidateIDValue;
   @*/
-	public Decision() {
-		decisionTaken = DecisionStatus.NO_DECISION;
-		atCountNumber = 0;
-		candidateID = Candidate.NO_CANDIDATE;
+	public Decision(final int countNumberValue, 
+	                final int candidateIDValue, 
+	                final byte decisionType) {
+	  super();
+		decisionTaken = decisionType;
+		atCountNumber = countNumberValue;
+		candidateID = candidateIDValue;
 	}
 }

@@ -757,5 +757,5 @@
         </rule>
     </rules>
     <includeDerivedFiles>false</includeDerivedFiles>
-    <violationsAsErrors>false</violationsAsErrors>
+    <violationsAsErrors>true</violationsAsErrors>
 </pmd>

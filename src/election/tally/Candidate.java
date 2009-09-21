@@ -152,6 +152,7 @@ private static int nextCandidateID = 1;
 	  @ ensures lastSetCount == 0;
 	  @*/
   public Candidate(){
+	  super();
     state = CONTINUING;
     candidateID = nextCandidateID++;
     votesAdded = new int [CountConfiguration.MAXCOUNT];
