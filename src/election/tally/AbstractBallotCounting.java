@@ -1006,23 +1006,24 @@ public abstract void transferVotes (
 	}
 
 	/**
-	 * Transfer the ballot until non-transferable or a continuing candidate is found.
-	 * 
-	 * @param ballot The ballot
-	 */
-	/*@ requires ballot.countNumberAtLastTransfer <= countNumberValue;
-	  @ assignable ballot.countNumberAtLastTransfer;
-	  @ assignable ballot.positionInList;
-	  @ assignable ballot.candidateIDAtCount[*];
-	  @*/
-	public void transferBallot(/*@ non_null @*/ Ballot ballot) {
-		 
-		while ((ballot.getCandidateID() != Ballot.NONTRANSFERABLE) && 
-				(!isContinuingCandidateID(ballot.getCandidateID()))) {
-			ballot.transfer(countNumberValue);
- 		}
-	}
-	
+   * Transfer the ballot until non-transferable or a continuing candidate is
+   * found.
+   * 
+   * @param ballot The ballot
+   */
+  /*@ requires ballot.countNumberAtLastTransfer <= countNumberValue;
+    @ assignable ballot.countNumberAtLastTransfer;
+    @ assignable ballot.positionInList;
+    @ assignable ballot.candidateIDAtCount[*];
+    @*/
+  public void transferBallot(final/*@ non_null @*/Ballot ballot) {
+
+    while ((ballot.getCandidateID() != Ballot.NONTRANSFERABLE)
+           && (!isContinuingCandidateID(ballot.getCandidateID()))) {
+      ballot.transfer(countNumberValue);
+    }
+  }
+
 	public abstract void count();
 
 	/**

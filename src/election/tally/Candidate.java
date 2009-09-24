@@ -96,29 +96,33 @@ private static int nextCandidateID = 1;
  */	
 /*@ protected normal_behavior
   @   requires 0 <= count;
-  @   requires count <= CountConfiguration.MAXCOUNT;
+  @   requires count < votesAdded.length;
+  @   requires count < votesRemoved.length;
   @   ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
-	protected /*@ pure @*/ int getVoteAtCount(final int count){
-		return (votesAdded[count] - votesRemoved[count]);
-	}
-  	
+  protected /*@ pure @*/ int getVoteAtCount(final int count){
+    return (votesAdded[count] - votesRemoved[count]);
+  }
+
 /**
  * Original number of votes received by this candidate before
  * transfers due to elimination or distribution of surplus votes.
  * 
  * @return Gross total of votes received 
  */	
-	public /*@ pure @*/ int getOriginalVote() {
-		int originalVote = 0;
-		
- 		for (int i = 0; i <= lastCountNumber; i++) {
- 			  originalVote += votesAdded[i];
-		}
- 		 
-		return originalVote;
-	}
-	
+/*@ requires lastCountNumber < votesAdded.length;
+  @
+  @*/
+  public /*@ pure @*/ int getOriginalVote() {
+    int originalVote = 0;
+
+    for (int i = 0; i <= lastCountNumber; i++) {
+      originalVote += votesAdded[i];
+     }
+
+    return originalVote;
+  }
+
 /**
  * Get status at the current round of counting; {@link #ELECTED}, 
  * {@link #ELIMINATED} or {@link #CONTINUING}
@@ -177,7 +181,8 @@ private static int nextCandidateID = 1;
 /*@ public normal_behavior
   @   requires state == CONTINUING;
   @   requires lastCountNumber <= count;
-  @   requires 0 <= count && count <= CountConfiguration.MAXCOUNT;
+  @   requires 0 <= count;
+  @   requires count < votesAdded.length;
   @   requires 0 <= numberOfVotes;
   @   assignable lastCountNumber, votesAdded[count], lastSetCount;
   @   ensures votesAdded[count] == \old(votesAdded[count]) + numberOfVotes;
@@ -203,7 +208,7 @@ private static int nextCandidateID = 1;
   @   requires state == ELIMINATED || state == ELECTED;
   @   requires lastCountNumber <= count;
   @   requires 0 <= count;
-  @   requires count < CountConfiguration.MAXCOUNT;
+  @   requires count < votesRemoved.length;
   @   requires 0 <= numberOfVotes;
   @   requires numberOfVotes <= getTotalAtCount(count);
   @   assignable lastCountNumber, votesRemoved[count];
@@ -272,6 +277,9 @@ private static int nextCandidateID = 1;
  * @param count The round of counting
  * @return The total number of votes received so far
  */
+/*@ requires count < votesAdded.length;
+  @ requires count < votesRemoved.length;
+  @*/
 public /*@ pure @*/ int getTotalAtCount(final int count) {
 	int totalAtCount = 0;
 	

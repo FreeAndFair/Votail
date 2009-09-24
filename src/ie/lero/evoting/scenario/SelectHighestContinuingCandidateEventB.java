@@ -18,6 +18,7 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
   
     private static final int candidateToWin = 0;
     private BallotCounting ballotCounting;
+    private static final int NUM_CANDIDATES = 2;
 
     protected void setUp() throws Exception {
     super.setUp();
@@ -26,12 +27,15 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     Election parameters = new Election();
     parameters.numberOfSeatsInThisElection = 1;
     parameters.totalNumberOfSeats = 3;
-    parameters.setNumberOfCandidates(2);
+    parameters.setNumberOfCandidates(NUM_CANDIDATES);
     ballotCounting.setup(parameters);
+    // All candidates get one vote; draw lots to resolve ties
     Ballot mockBallot = new Ballot();
-    mockBallot.setFirstPreference(
-    parameters.getCandidate(candidateToWin).getCandidateID());
-    ballotBox.accept(mockBallot);
+    for (int i=0; i < NUM_CANDIDATES; i++) {
+      mockBallot.setFirstPreference(
+        parameters.getCandidate(i).getCandidateID());
+      ballotBox.accept(mockBallot);
+    }
     ballotCounting.load(ballotBox);
   }
 

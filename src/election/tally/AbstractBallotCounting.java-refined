@@ -50,6 +50,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * each vote held by a candidate.
    */
   /*@ public model non_null Candidate[] candidateList;
+    @ public invariant \nonnullelements (candidateList);
 	  @ public invariant (state == PRELOAD || state == LOADING || 
 	  @   state == PRECOUNT) ==>
 	  @   (\forall int i; 0 <= i && i < totalCandidates;
@@ -693,15 +694,17 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected /*@ pure spec_public @*/ int getTransferShortfall (
 		  /*@ non_null @*/ Candidate fromCandidate);
 		  
-  /*@ ensures \result == (\sum int i; 0 <= i && i < totalCandidates &&
+  /*@ requires COUNTING == state;
+    @ requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
+    @   (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
+    @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates &&
     @     candidateList[i].getStatus() == CandidateStatus.CONTINUING;
     @     getActualTransfers (fromCandidate, candidateList[i]));
     @
     @ public pure model int sumOfTransfers (non_null Candidate fromCandidate) {
     @     int sum = 0;
     @     for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
-    @        if (candidateList[i] != null &&
-    @            candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
+    @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
     @            sum += getActualTransfers (fromCandidate, candidateList[i]);
     @        } 
     @     }
