@@ -33,7 +33,7 @@ public class BallotBox {
  * List of valid ballot papers, already shuffled and mixed by the data loader
  * or returning officer.
  */
-  protected /*@ spec_public @*/ Ballot[] ballots;
+  protected /*@ non_null spec_public @*/ Ballot[] ballots;
 
     /**
      * Get the number of ballots in this box.
@@ -82,7 +82,8 @@ public class BallotBox {
 	 * <p>
 	 * @param ballot The ballot paper
 	 */
-	/*@ requires numberOfBallots < ballots.length;
+	/*@ requires numberOfBallots + 1 < ballots.length;
+	  @ 
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @*/
 	public void accept (final /*@ non_null @*/ Ballot ballot) {
@@ -104,6 +105,7 @@ public class BallotBox {
 	 */
 	//@ requires 0 <= index;
 	//@ requires isNextBallot();
+	//@ requires index + 1 < ballots.length;
 	//@ assignable index;
 	//@ ensures \result == ballots[\old(index)];
     public Ballot getNextBallot() {
