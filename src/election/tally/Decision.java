@@ -73,6 +73,8 @@ public class Decision extends DecisionStatus {
       @*/
   }
 
+  /*@ assignable decisionTaken, atCountNumber, candidateID;
+    @*/
   public Decision() {
     super();
     atCountNumber = 0;
