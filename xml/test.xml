@@ -90,3 +90,71 @@
 90 	    </javac>
 91 	  </target>
 92 	</project>
+<project basedir="." default="generate_jml_test_source" name="test-jml">
+4 	
+5 	  <property name="main-project.location" value="../main-project" />
+6 	  <property name="spec-project.location" value="../spec-project" />
+7 	  <property name="test.jml.project" value="." />
+8 	
+9 	  <path id="jml-libraries.classpath">
+10 	    <pathelement location="${spec-project.location}/lib/jml/jml-release.jar" />
+11 	    <pathelement location="${spec-project.location}/lib/jml/specs" />
+12 	  </path>
+13 	
+14 	  <path id="main-project.classpath">
+15 	    <pathelement location="${main-project.location}/bin" />
+16 	    <pathelement location="${main-project.location}/lib/d2xxj/ftd2xxj.jar" />
+17 	    <pathelement location="${main-project.location}/lib/d2xxj/javax.util.property.jar" />
+18 	  </path>
+19 	
+20 	  <path id="jml.classpath">
+21 	    <path refid="jml-libraries.classpath" />
+22 	    <path refid="main-project.classpath" />
+23 	  </path>
+24 	  <property name="jml.classpath" refid="jml.classpath" />
+25 	
+26 	  <property name="jml.src" value="${spec-project.location}/src" />
+27 	  <property name="jml.junit.src" value="${test.jml.project}/test.generated" />
+28 	
+29 	  <property name="jml.src.compile" value="ie.ucd.sensetile"/>
+30 	 
+31 	  <target name="clean">
+32 	    <delete dir="${jml.junit.src}" />
+33 	  </target>
+34 	 
+35 	  <target name="init">
+36 	    <mkdir dir="${jml.junit.src}" />
+37 	  </target>
+38 	 
+39 	  <target name="generate_jml_test_source" depends="init">
+40 	    <property name="jml.debug" value="--debug" />
+41 	    <property name="jml.warning" value="--warning" />
+42 	    <property name="jml.recursive" value="--recursive" />
+43 	    <property name="jml.source_code" value="--source 1.4" />
+44 	    <!--
+45 	    <property name="jml.test.generator" value="- - useGenerator" />
+46 	    -->
+47 	    <property name="jml.test.generator" value="" />
+48 	    <property name="jml.test.generator.classname" value="--generatorClassName Generator" />
+49 	    <property name="jml.test.generator.packagename" value="--generatorPackageName ie.ucd.sensetile" />
+50 	    <java failonerror="true" fork="true" classname="org.jmlspecs.jmlunit.Main">
+51 	      <jvmarg value="-Xms64m" />
+52 	      <jvmarg value="-Xmx128m" />
+53 	      <classpath>
+54 	        <path refid="jml.classpath" />
+55 	      </classpath>
+56 	      <arg line="${jml.debug}" />
+57 	      <arg line="${jml.warning}" />
+58 	      <arg line="${jml.recursive}" />
+59 	      <arg line="${jml.source_code}" />
+60 	      <arg line="${jml.test.generator}" />
+61 	      <arg line="${jml.test.generator.classname}" />
+62 	      <arg line="${jml.test.generator.packagename}" />
+63 	      <arg line="--classpath ${jml.classpath}" />
+64 	      <arg line="--sourcepath ${jml.src}" />
+65 	      <arg line="--destination ${jml.junit.src}" />
+66 	      <arg line="${jml.src.compile}" />
+67 	    </java>
+68 	  </target>
+69 	
+70 	</project>
