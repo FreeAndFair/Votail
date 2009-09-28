@@ -262,9 +262,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (isElected (candidateList[index]) == true);
     @*/
   public/*@ pure @*/boolean isDepositSaved(final int index) {
-    if (candidates == null || candidates[index] == null) {
-      return false;
-    }
+    //@ assert 0 <= index;
     final Candidate candidate = candidates[index];
     final int originalVote = candidate.getOriginalVote();
     final boolean elected = isElected(candidate);
@@ -319,7 +317,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.totalNumberOfSeats = electionParameters.totalNumberOfSeats;
     this.status = PRELOAD;
     candidates = new Candidate[this.totalNumberOfCandidates];
-    for (int i = 0; i < totalNumberOfCandidates; i++) {
+    for (int i = 0; i < candidates.length; i++) {
       this.candidates[i] = electionParameters.getCandidate(i);
     }
     this.totalRemainingSeats = this.numberOfSeats;
@@ -389,6 +387,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public/*@ pure @*/int countBallotsFor(final int candidateID) {
     int numberOfBallots = 0;
     for (int b = 0; b < totalNumberOfVotes; b++) {
+      //@ assert ballots[b] != null;
       if (ballots[b].isAssignedTo(candidateID)) {
         numberOfBallots++;
       }
@@ -409,7 +408,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public/*@ pure @*/int countFirstPreferences(final int candidateID) {
     int numberOfBallots = 0;
     for (int b = 0; b < totalNumberOfVotes; b++) {
-      if (ballots[b] != null && ballots[b].isFirstPreference(candidateID)) {
+      //@ assert ballots[b] != null;
+      if (ballots[b].isFirstPreference(candidateID)) {
         numberOfBallots++;
       }
     }
@@ -429,7 +429,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         that candidate
    */
   /*@ also
-    @     requires ballotsToCount != null;
     @     requires (\forall int b; 0 <= b && b < totalVotes; 
     @         ballotsToCount[b] != null);
     @     ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
@@ -440,7 +439,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
                                                               final Candidate fromCandidate,
                                                               final int toCandidateID) {
     int numberOfBallots = 0;
-    for (int j = 0; j < totalNumberOfVotes; j++) {
+    for (int j = 0; j < ballots.length; j++) {
+      //@ assert ballots[j] != null;
       if (ballots[j].isAssignedTo(fromCandidate.getCandidateID())
           && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
         numberOfBallots++;
@@ -461,7 +461,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   protected normal_behavior
     @   ensures \result == state;
     @*/
-  public/*@ pure @*/byte getStatus() {
+  public /*@ pure @*/ byte getStatus() {
     return status;
   }
 
@@ -495,13 +495,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         candidate
    */
   /*@ also
-    @     requires 0 <= candidateID;
-    @     requires candidateList != null;
+    @     requires \nonnullelements (candidateList);
     @     requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
     @              candidateList[c] != null);
     @     ensures \result == (\exists int i;
     @       0 <= i && i < candidateList.length;
-    @       candidateList[i] != null &&
     @       candidateID == candidateList[i].getCandidateID() &&
     @       candidateList[i].getStatus() == CandidateStatus.CONTINUING);
     @*/
@@ -519,7 +517,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Determine actual number of votes to transfer to this candidate
    * 
    * @design The number of votes in a surplus transferred is in proportion to
-   *         the number of transfers available throughout the candidate ballot
+   *         the number of transfers available throughout the candidate's ballot
    *         stack
    * @param fromCandidate
    *        Candidate from which to count the transfers
@@ -963,7 +961,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires 0 <= loser && loser < totalCandidates;
     @ requires loser == findLowestCandidate();
     @ assignable candidateList, decisions[*], decisionsTaken;
-    @ assignable candidateList[loser];
+    @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
     @ ensures remainingSeats <= getNumberContinuing();
     @ ensures numberElected <= seats;
@@ -1033,9 +1031,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        The ballot
    */
   /*@ requires ballot.countNumberAtLastTransfer <= countNumberValue;
+    @ requires 0 <= ballot.positionInList;
+    @ requires ballot.positionInList <= ballot.numberOfPreferences;
+    @ requires ballot.positionInList < ballot.preferenceList.length;
+    @ requires ballot.countNumberAtLastTransfer <= countNumberValue;
+    @ requires countNumberValue < CountConfiguration.MAXCOUNT;
+    @ requires countNumberValue < ballot.candidateIDAtCount.length;
     @ assignable ballot.countNumberAtLastTransfer;
     @ assignable ballot.positionInList;
-    @ assignable ballot.candidateIDAtCount[*];
+    @ assignable ballot.candidateIDAtCount[*], ballot.candidateIDAtCount;
     @*/
   public void transferBallot(final/*@ non_null @*/Ballot ballot) {
 
