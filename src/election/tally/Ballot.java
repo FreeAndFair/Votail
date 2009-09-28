@@ -306,7 +306,12 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
  * 
  * @param firstPreferenceID The first preference candidate ID
  */
-// TODO @ requires 
+/*@ requires firstPreferenceID != Candidate.NO_CANDIDATE; 
+  @ requires 0 <= firstPreferenceID;
+  @ requires firstPreferenceID != Ballot.NONTRANSFERABLE;
+  @ requires positionInList == 0;
+  @ requires countNumberAtLastTransfer == 0;
+  @*/
 public final void setFirstPreference(final int firstPreferenceID) {
   final int[] list = { firstPreferenceID };
   load(list);

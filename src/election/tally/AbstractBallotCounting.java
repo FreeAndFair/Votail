@@ -42,9 +42,6 @@ package election.tally;
  */
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
-  // TODO naming convention for fields that represent model fields
-  // TODO naming convention for constants than define upper bounds of fields
-
   protected static final int                         NONE_FOUND_YET = -1;
 
   /** List of decisions made */
@@ -136,7 +133,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     countNumberValue = 0;
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
-    decisionsTaken = 0; // TODO decision array
+    decisionsTaken = 0;
+    for (int d=0; d < decisions.length; d++) {
+      decisions[d] = new Decision();
+    }
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
     totalSumOfSurpluses = 0;
@@ -321,7 +321,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     candidates = new Candidate[this.totalNumberOfCandidates];
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       this.candidates[i] = electionParameters.getCandidate(i);
-    } // TODO loop invariant!!
+    }
     this.totalRemainingSeats = this.numberOfSeats;
   }
 
