@@ -85,9 +85,7 @@ public class Ballot {
  */
 public static final int NONTRANSFERABLE = 0;
 
-private static final int MAX_PREFERENCES = Candidate.MAX_CANDIDATES;
-
-  /** Preference list of candidate IDs */	
+/** Preference list of candidate IDs */	
   protected /*@ spec_public non_null */ int[] preferenceList;
 
   /** Total number of valid preferences on this ballot paper */
@@ -308,6 +306,7 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
  * 
  * @param firstPreferenceID The first preference candidate ID
  */
+// TODO @ requires 
 public final void setFirstPreference(final int firstPreferenceID) {
   final int[] list = { firstPreferenceID };
   load(list);

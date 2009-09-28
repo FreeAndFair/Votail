@@ -704,6 +704,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public pure model int sumOfTransfers (non_null Candidate fromCandidate) {
     @     int sum = 0;
     @     for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
+    @        assert candidateList[i] != null;
     @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
     @            sum += getActualTransfers (fromCandidate, candidateList[i]);
     @        } 

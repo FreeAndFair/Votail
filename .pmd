@@ -164,6 +164,38 @@
             <ruleset>Clone Implementation Rules</ruleset>
         </rule>
         <rule>
+            <name>CyclomaticComplexity</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>ExcessiveMethodLength</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>ExcessiveParameterList</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>ExcessivePublicCount</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>NcssConstructorCount</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>NcssMethodCount</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>NcssTypeCount</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
+            <name>TooManyFields</name>
+            <ruleset>Code Size Rules</ruleset>
+        </rule>
+        <rule>
             <name>AssignmentInOperand</name>
             <ruleset>Controversial Rules</ruleset>
         </rule>
@@ -249,6 +281,10 @@
         </rule>
         <rule>
             <name>AssignmentToNonFinalStatic</name>
+            <ruleset>Design Rules</ruleset>
+        </rule>
+        <rule>
+            <name>AvoidConstantsInterface</name>
             <ruleset>Design Rules</ruleset>
         </rule>
         <rule>
@@ -581,14 +617,6 @@
         </rule>
         <rule>
             <name>AddEmptyString</name>
-            <ruleset>Optimization Rules</ruleset>
-        </rule>
-        <rule>
-            <name>AvoidArrayLoops</name>
-            <ruleset>Optimization Rules</ruleset>
-        </rule>
-        <rule>
-            <name>AvoidInstantiatingObjectsInLoops</name>
             <ruleset>Optimization Rules</ruleset>
         </rule>
         <rule>

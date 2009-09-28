@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Vótáil</name>
+	<name>Votail</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>net.sourceforge.metrics.builder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -21,17 +26,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</name>
+			<name>net.sourceforge.pmd.eclipse.plugin.pmdBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
 			<name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>net.sourceforge.pmd.eclipse.plugin.pmdBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -46,8 +46,13 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>AutoGrader.builder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
+			<triggers>full,incremental,</triggers>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>&lt;project&gt;/.externalToolBuilders/AutoGrader.builder.launch</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
@@ -56,11 +61,10 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>ie.ucd.bon.plugin.boncnature</nature>
 		<nature>mobius.escjava2.plugin.autocheckEscjavaNature</nature>
-		<nature>net.sourceforge.metrics.nature</nature>
 		<nature>ch.ethz.inf.pm.jml.plugin.CheckerNature</nature>
 		<nature>AutoGrader.nature</nature>
 		<nature>net.sourceforge.pmd.eclipse.plugin.pmdNature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
-		<nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+		<nature>net.sourceforge.metrics.nature</nature>
 	</natures>
 </projectDescription>

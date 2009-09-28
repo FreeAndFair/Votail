@@ -51,6 +51,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		 * Inner state machine for counting of Dail election ballots.
 		 */
 		public CountStatus() {
+		  super();
 			substate = READY_TO_COUNT;
 		}
 
@@ -129,42 +130,63 @@ public class BallotCounting extends AbstractBallotCounting {
     final int totalTransferableVotes = 
       getTotalTransferableVotes(candidates[winner]);
     if (0 < surplus) {
+      countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
+
       for (int i = 0; i < totalNumberOfCandidates; i++) {
-        if ((i != winner) && 
-          (candidates[i].getStatus() == CandidateStatus.CONTINUING)) {
-          int numberOfTransfers = 
-            getActualTransfers(candidates[winner], candidates[i]);
-          
-          if (surplus < totalTransferableVotes) {
-            numberOfTransfers += 
-              getRoundedFractionalValue(candidates[winner],candidates[i]);
-          }
-          countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
-          transferVotes(candidates[winner], candidates[i], numberOfTransfers);
-        }
+        moveSurplusBallots(winner, surplus, totalTransferableVotes, i);
       }
     }
     
     // Move non-transferable part of surplus
-    if (surplus > totalTransferableVotes) {
-      int nonTransferables = surplus - totalTransferableVotes;
-      final int fromCandidateID = candidates[winner].getCandidateID();
-      for (int b = 0; b < totalNumberOfVotes; b++) {
-        if ((ballots[b].getCandidateID() == fromCandidateID) &&
-          (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
-          transferBallot (ballots[b]);
-          nonTransferables--;
-          if (nonTransferables == 0) {
-            break;
-          }
-        }
-      }
-    }
+    removeNonTransferableBallots(winner, surplus, totalTransferableVotes);
 
     countStatus.changeState(
       AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
     //@ assert getSurplus (candidateList[winner]) == 0;
 	}
+
+
+  protected void moveSurplusBallots(final int winner, final int surplus,
+                                    final int totalTransferableVotes, final int index) {
+    if ((index != winner) && 
+      (candidates[index].getStatus() == CandidateStatus.CONTINUING)) {
+      final int numberOfTransfers = calculateNumberOfTransfers(
+        winner, surplus, totalTransferableVotes, index);
+      transferVotes(candidates[winner], candidates[index], numberOfTransfers);
+    }
+  }
+
+
+  protected void removeNonTransferableBallots(final int winner,
+                                              final int surplus,
+                                              final int totalTransferableVotes) {
+    if (surplus > totalTransferableVotes) {
+      int nonTransferables = surplus - totalTransferableVotes;
+      final int fromCandidateID = candidates[winner].getCandidateID();
+      for (int b = 0; b < totalNumberOfVotes; b++) {
+        if ((ballots[b].getCandidateID() == fromCandidateID) &&
+            (0 < nonTransferables) &&
+          (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
+          transferBallot (ballots[b]);
+          nonTransferables--;
+        }
+      }
+    }
+  }
+
+
+  protected int calculateNumberOfTransfers(final int winner, final int surplus,
+                                           final int totalTransferableVotes,
+                                           final int index) {
+    int numberOfTransfers = 
+      getActualTransfers(candidates[winner], candidates[index]);
+    
+    if (surplus < totalTransferableVotes) {
+      numberOfTransfers += 
+        getRoundedFractionalValue(candidates[winner],candidates[index]);
+    }
+    return numberOfTransfers;
+  }
 
 	
 	/**
@@ -264,40 +286,58 @@ public class BallotCounting extends AbstractBallotCounting {
       }
 			
 			// Exclusion of lowest continuing candidates if no surplus
-      while (getTotalSumOfSurpluses() == 0
-          && getNumberContinuing() > totalRemainingSeats
-          && countNumberValue < CountConfiguration.MAXCOUNT) {
-        
-        countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);
-        final int loser = findLowestCandidate();
-        
-        if (loser == NONE_FOUND_YET) {
-          break; // No more continuing candidates to eliminate
-        }
-          
-        countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);
-        eliminateCandidate(loser);
-        countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
-        redistributeBallots(candidates[loser].getCandidateID());
-        calculateSurpluses();
-        }
+      excludeLowestCandidates();
       incrementCountNumber();
     }
 		
 		// Filling of last seats
 		if (getNumberContinuing() == totalRemainingSeats) {
-			countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED);	
-			for (int c = 0; c < totalNumberOfCandidates; c++) {
-				if (isContinuingCandidateID(candidates[c].getCandidateID())) {
-					electCandidate(c);
-				}
-			incrementCountNumber();
-			}
+			fillLastSeats();
 				
 		}
 		countStatus.changeState(AbstractCountStatus.END_OF_COUNT);	
 		status = ElectionStatus.FINISHED;
 	}
+
+
+	/*@ assignable countStatus, countNumberValue, candidates, candidateList;
+	  @ assignable decisionsTaken, numberOfCandidatesEliminated;
+	  @ assignable sumOfSurpluses, totalSumOfSurpluses;
+	  @*/
+  protected void excludeLowestCandidates() {
+    while (getTotalSumOfSurpluses() == 0
+        && getNumberContinuing() > totalRemainingSeats
+        && countNumberValue < CountConfiguration.MAXCOUNT) {
+      
+      countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);
+      final int loser = findLowestCandidate();
+      
+      if (loser == NONE_FOUND_YET) {
+        break; // No more continuing candidates to eliminate
+      }
+        
+      countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);
+      eliminateCandidate(loser);
+      countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
+      redistributeBallots(candidates[loser].getCandidateID());
+      calculateSurpluses();
+      }
+  }
+
+	/*@ assignable candidateList[*], countNumber, countNumberValue;
+	  @ assignable numberOfCandidatesElected, totalRemainingSeats;
+	  @ assignable candidates, decisions, decisionsTaken;
+	  @*/
+
+  protected void fillLastSeats() {
+    countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED);	
+    for (int c = 0; c < totalNumberOfCandidates; c++) {
+    	if (isContinuingCandidateID(candidates[c].getCandidateID())) {
+    		electCandidate(c);
+    	}
+    incrementCountNumber();
+    }
+  }
 
 
 	/*@ requires state == PRECOUNT;
@@ -344,7 +384,7 @@ public class BallotCounting extends AbstractBallotCounting {
     int sumOfSurpluses = 0;
 
     for (int c = 0; c < totalNumberOfCandidates; c++) {
-      int surplus = getSurplus(candidates[c]);
+      final int surplus = getSurplus(candidates[c]);
       if (surplus > 0) {
         sumOfSurpluses += surplus;
       }
