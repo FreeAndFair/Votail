@@ -234,7 +234,7 @@ private static int nextCandidateID = 1;
 /** Declares the candidate to be eliminated */
 /*@ public normal_behavior
   @   requires state == CONTINUING;
-  @   assignable state;
+  @   assignable this.state;
   @   ensures state == ELIMINATED;
   @*/
 	public void declareEliminated(){

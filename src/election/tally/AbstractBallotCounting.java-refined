@@ -200,6 +200,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   remainingSeats == (seats - numberElected);
     @*/
 
+  /*@ ensures \nonnullelements (candidateList);
+    @ 
+    @*/
    public AbstractBallotCounting();
 	
   /** 
@@ -445,7 +448,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return Number of votes to be transfered, excluding fractional transfers
    */
   /*@ requires (state == COUNTING);
-    @ requires (fromCandidate.getStatus() == Candidate.ELECTED) ||
+    @ requires isElected (fromCandidate) ||
     @   (fromCandidate.getStatus() == Candidate.ELIMINATED);
     @ requires toCandidate.getStatus() == Candidate.CONTINUING;
     @ ensures ((fromCandidate.getStatus() == Candidate.ELECTED) && 

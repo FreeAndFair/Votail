@@ -25,9 +25,7 @@ public class Decision extends DecisionStatus {
   public byte             decisionTaken;
 
   /** Candidate to which the decision applied */
-  /*@ public invariant (decisionTaken == DecisionStatus.NO_DECISION) 
-    @   <==> (candidateID == Candidate.NO_CANDIDATE);
-    @ public invariant (candidateID != Ballot.NONTRANSFERABLE) 
+  /*@ public invariant (candidateID != Ballot.NONTRANSFERABLE) 
     @   || (candidateID == Candidate.NO_CANDIDATE);
     @ public constraint (decisionTaken != DecisionStatus.NO_DECISION) ==>
     @   candidateID == \old(candidateID);
@@ -54,7 +52,7 @@ public class Decision extends DecisionStatus {
   /*@ public normal_behavior
     @   requires (decisionType == DecisionStatus.EXCLUDE) ||
     @            (decisionType == DecisionStatus.DEEM_ELECTED);
-    @   requires 0 < countNumberValue;
+    @   requires 0 <= countNumberValue;
     @   requires candidateID != Candidate.NO_CANDIDATE;
     @   requires candidateID != Ballot.NONTRANSFERABLE;
     @   assignable decisionTaken, atCountNumber, candidateID;
