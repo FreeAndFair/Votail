@@ -252,7 +252,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return true if candidate has enough votes to save deposit
    */
   /*@ also
-    @  public normal_behavior
     @     requires (state == COUNTING) || (state == FINISHED);
     @     requires \nonnullelements (candidateList);
     @     requires 0 <= index;
@@ -301,6 +300,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @              electionParameters.candidateList[c] != null);
     @     requires electionParameters.candidateList != null &&
     @       electionParameters.numberOfCandidates <= electionParameters.candidateList.length;
+    @     requires \nonnullelements (electionParameters.candidateList);
     @     assignable status; 
     @     assignable totalNumberOfCandidates;
     @     assignable numberOfSeats, totalRemainingSeats;

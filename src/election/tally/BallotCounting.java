@@ -258,32 +258,7 @@ public class BallotCounting extends AbstractBallotCounting {
       calculateSurpluses();
 
       // Transfer surplus votes from winning candidates
-      while (getTotalSumOfSurpluses() > 0
-             && countNumberValue < CountConfiguration.MAXCOUNT
-             && getNumberContinuing() > totalRemainingSeats) {
-        
-        countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
-        final int winner = findHighestCandidate();
-
-        if (winner == NONE_FOUND_YET) {
-          break;  // No more continuing candidates to elect
-        }
-        
-        // Elect highest continuing candidate
-        updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
-        //@ assert 0 <= winner && winner < totalCandidates;
-        //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
-        //@ assert numberElected < seats;
-        //@ assert 0 < remainingSeats;
-        /*@ assert (hasQuota(candidateList[winner])) 
-          @   || (winner == findHighestCandidate())
-          @   || (getNumberContinuing() == totalRemainingSeats);
-          @*/
-        electCandidate(winner);
-        countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
-        distributeSurplus(winner);
-        calculateSurpluses();
-      }
+      electCandidatesWithSurplus();
 			
 			// Exclusion of lowest continuing candidates if no surplus
       excludeLowestCandidates();
@@ -298,6 +273,36 @@ public class BallotCounting extends AbstractBallotCounting {
 		countStatus.changeState(AbstractCountStatus.END_OF_COUNT);	
 		status = ElectionStatus.FINISHED;
 	}
+
+
+  protected void electCandidatesWithSurplus() {
+    while (getTotalSumOfSurpluses() > 0
+           && countNumberValue < CountConfiguration.MAXCOUNT
+           && getNumberContinuing() > totalRemainingSeats) {
+      
+      countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
+      final int winner = findHighestCandidate();
+
+      if (winner == NONE_FOUND_YET) {
+        break;  // No more continuing candidates to elect
+      }
+      
+      // Elect highest continuing candidate
+      updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
+      //@ assert 0 <= winner && winner < totalCandidates;
+      //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
+      //@ assert numberElected < seats;
+      //@ assert 0 < remainingSeats;
+      /*@ assert (hasQuota(candidateList[winner])) 
+        @   || (winner == findHighestCandidate())
+        @   || (getNumberContinuing() == totalRemainingSeats);
+        @*/
+      electCandidate(winner);
+      countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
+      distributeSurplus(winner);
+      calculateSurpluses();
+    }
+  }
 
 
 	/*@ assignable countStatus, countNumberValue, candidates, candidateList;
