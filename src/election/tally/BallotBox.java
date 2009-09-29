@@ -33,6 +33,7 @@ public class BallotBox {
  * List of valid ballot papers, already shuffled and mixed by the data loader
  * or returning officer.
  */
+  //@ public invariant \nonnullelements (ballots);
   protected /*@ non_null spec_public @*/ Ballot[] ballots;
 
     /**
@@ -73,6 +74,9 @@ public class BallotBox {
 		index = 0;
 		numberOfBallots = 0;
 		ballots = new Ballot[Ballot.MAX_BALLOTS];
+		for (int b=0; b < ballots.length; b++) {
+		  ballots[b] = new Ballot();
+		}
 	}
 
 	/**
@@ -82,12 +86,12 @@ public class BallotBox {
 	 * <p>
 	 * @param ballot The ballot paper
 	 */
-	/*@ requires numberOfBallots + 1 < ballots.length;
-	  @ 
+	/*@ requires numberOfBallots < ballots.length;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @*/
 	public void accept (final /*@ non_null @*/ Ballot ballot) {
-		ballots[numberOfBallots++] = new Ballot(ballot);
+	  //@ assert ballots[numberOfBallots] != null;
+		ballots[numberOfBallots++] = new Ballot (ballot);
 	} 
 
 	/**

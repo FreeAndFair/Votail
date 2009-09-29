@@ -182,10 +182,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /*@ public pure model int getSumOfSurpluses() {
     @   int sum = 0;
-    @   for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
-    @     if (candidateList[i] != null) {
+    @   for (int i=0; i < candidateList.length; i++) {
+    @       assert candidateList[i] != null;
     @       sum += getSurplus(candidateList[i]);
-    @     }
     @   }
     @   return sum;
     @ }

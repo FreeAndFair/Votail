@@ -229,6 +229,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ requires 0 <= sum;
   //@ requires sum <= totalVotes;
   //@ requires sum == getSumOfSurpluses();
+  //@ requires PRECOUNT <= state;
   //@ assignable totalSumOfSurpluses;
   //@ ensures sum == totalSumOfSurpluses;
   protected final void setTotalSumOfSurpluses(final int sum) {
@@ -991,6 +992,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   candidates[i].getCandidateID() == candidateID);
     @ requires (decisionType == DecisionStatus.EXCLUDE) ||
     @   (decisionType == DecisionStatus.DEEM_ELECTED);
+    @ requires state == COUNTING;
     @ assignable decisions[*], decisionsTaken;
     @ ensures \old(numberOfDecisions) < numberOfDecisions;
     @*/
