@@ -22,7 +22,7 @@ public class Decision extends DecisionStatus {
     @ public constraint (\old(decisionTaken) != DecisionStatus.NO_DECISION) ==>
     @   decisionTaken == \old(decisionTaken);
     @*/
-  public byte             decisionTaken;
+  protected /*@ spec_public @*/ byte decisionTaken;
 
   /** Candidate to which the decision applied */
   /*@ public invariant (candidateID != Ballot.NONTRANSFERABLE) 
@@ -30,14 +30,12 @@ public class Decision extends DecisionStatus {
     @ public constraint (decisionTaken != DecisionStatus.NO_DECISION) ==>
     @   candidateID == \old(candidateID);
     @*/
-  public long             candidateID;
+  protected/*@ spec_public @*/  long candidateID;
 
   /** Round of counting at which decision was taken */
   //@ public invariant 0 <= atCountNumber;
-  /*@ public constraint (decisionTaken != DecisionStatus.NO_DECISION) ==>
-    @   atCountNumber == \old(atCountNumber);
-    @*/
-  public long             atCountNumber;
+  //@ public constraint \old(atCountNumber) <= atCountNumber;
+  protected /*@ spec_public @*/  long atCountNumber;
 
   /**
    * Create a new decision event.
@@ -72,6 +70,9 @@ public class Decision extends DecisionStatus {
   }
 
   /*@ assignable decisionTaken, atCountNumber, candidateID;
+    @ ensures atCountNumber == 0;
+    @ ensures candidateID == Candidate.NO_CANDIDATE;
+    @ ensures decisionTaken == DecisionStatus.NO_DECISION;
     @*/
   public Decision() {
     super();
