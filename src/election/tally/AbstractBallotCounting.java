@@ -1039,16 +1039,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires ballot.positionInList < ballot.preferenceList.length;
     @ requires ballot.countNumberAtLastTransfer <= countNumberValue;
     @ requires countNumberValue < CountConfiguration.MAXCOUNT;
-    @ requires countNumberValue < ballot.candidateIDAtCount.length;
-    @ assignable ballot.countNumberAtLastTransfer;
     @ assignable ballot.positionInList;
-    @ assignable ballot.candidateIDAtCount[*], ballot.candidateIDAtCount;
     @*/
   public void transferBallot(final/*@ non_null @*/Ballot ballot) {
 
     while ((ballot.getCandidateID() != Ballot.NONTRANSFERABLE)
            && (!isContinuingCandidateID(ballot.getCandidateID()))) {
-      ballot.transfer(countNumberValue);
+      ballot.transfer();
     }
   }
 

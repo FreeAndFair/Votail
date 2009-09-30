@@ -87,11 +87,13 @@ public class BallotBox {
 	 * @param ballot The ballot paper
 	 */
 	/*@ requires numberOfBallots < ballots.length;
+	  @ requires numberOfBallots < Ballot.MAX_BALLOTS;
+	  @ requires ballots[numberOfBallots].positionInList == 0;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @*/
 	public void accept (final /*@ non_null @*/ Ballot ballot) {
 	  //@ assert ballots[numberOfBallots] != null;
-		ballots[numberOfBallots++] = new Ballot (ballot);
+		ballots[numberOfBallots++].copy(ballot);
 	} 
 
 	/**

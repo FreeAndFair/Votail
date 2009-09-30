@@ -94,26 +94,16 @@ public static final int NONTRANSFERABLE = 0;
   /** Position within preference list */
   protected /*@ spec_public @*/ int positionInList;
    
-  /** Candidate ID to which the vote is assigned at the end of each count */
-  protected /*@ spec_public non_null @*/ int[] candidateIDAtCount;
-
-  /** Last count number in which this ballot was transferred */
-  protected /*@ spec_public @*/ int countNumberAtLastTransfer;
-    
   /**
    * Generate an empty ballot paper for use by a voter.
    */
 /*@ also public normal_behavior
-  @	  assignable numberOfPreferences, countNumberAtLastTransfer,
-  @     positionInList, preferenceList[*], candidateIDAtCount[*],
-  @     preferenceList, candidateIDAtCount;
+  @	  assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList;
   @*/
   public Ballot () {
     numberOfPreferences = 0;
-    countNumberAtLastTransfer = 0;
     positionInList = 0;
     preferenceList = new int [0];
-    candidateIDAtCount = new int [0];
   }
 
   /**
@@ -121,16 +111,13 @@ public static final int NONTRANSFERABLE = 0;
    * 
    * @param ballot Ballot to be copied.
    */
-  protected Ballot(final /*@ non_null @*/ Ballot ballot) {
+  //@ requires positionInList == 0;
+  public void copy (final /*@ non_null @*/ Ballot ballot) {
     numberOfPreferences = ballot.numberOfPreferences;
     preferenceList = new int[numberOfPreferences];
     for (int p = 0; p < numberOfPreferences; p++) {
       preferenceList[p] = ballot.getPreference(p);
     }
-    candidateIDAtCount = new int[CountConfiguration.MAXCOUNT];
-    countNumberAtLastTransfer = 0;
-    positionInList = 0;
-    candidateIDAtCount[countNumberAtLastTransfer] = getCandidateID();
   }
 
 /**
@@ -154,9 +141,7 @@ public static final int NONTRANSFERABLE = 0;
     @     list[i] != NONTRANSFERABLE);
     @   requires (\forall int i; 0 <= i && i < list.length; 0 < list[i]);
     @   requires positionInList == 0;
-    @   requires countNumberAtLastTransfer == 0;
-    @	  assignable numberOfPreferences, preferenceList[*], positionInList, 
-    @     candidateIDAtCount[*], preferenceList, countNumberAtLastTransfer;
+    @	  assignable numberOfPreferences, preferenceList[*], positionInList, preferenceList;
     @   ensures (\forall int i; 0 <= i && i < list.length;
     @     (preferenceList[i] == list[i]));
     @*/
@@ -220,29 +205,14 @@ public static final int NONTRANSFERABLE = 0;
     @   requires 0 <= positionInList;
     @   requires positionInList <= numberOfPreferences;
     @   requires positionInList < preferenceList.length;
-    @   requires countNumberAtLastTransfer <= countNumber;
-    @   requires countNumber < CountConfiguration.MAXCOUNT;
-    @   requires countNumber < candidateIDAtCount.length;
-    @   assignable countNumberAtLastTransfer, positionInList, 
-    @     candidateIDAtCount[*], candidateIDAtCount;
-    @   ensures (countNumberAtLastTransfer == countNumber) || 
-    @           (positionInList == numberOfPreferences);
+    @   assignable positionInList;
     @   ensures \old(positionInList) <= positionInList;
     @   ensures (positionInList == \old(positionInList) + 1) ||
     @           (positionInList == numberOfPreferences);
     @*/
-  public void transfer (final int countNumber) {
+  public void transfer () {
 
     if (positionInList < numberOfPreferences) {
-      // Update ballot history
-      for (int r = countNumberAtLastTransfer; r < countNumber; r++) {
-        if (r < candidateIDAtCount.length) {
-          candidateIDAtCount[r] = getCandidateID();
-        }
-      }
-      if (countNumber < CountConfiguration.MAXCOUNT) {
-        countNumberAtLastTransfer = countNumber;
-      }
       positionInList++;
     }
   }
@@ -310,7 +280,6 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
   @ requires 0 <= firstPreferenceID;
   @ requires firstPreferenceID != Ballot.NONTRANSFERABLE;
   @ requires positionInList == 0;
-  @ requires countNumberAtLastTransfer == 0;
   @*/
 public final void setFirstPreference(final int firstPreferenceID) {
   final int[] list = { firstPreferenceID };

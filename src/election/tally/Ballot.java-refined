@@ -44,59 +44,14 @@ public class Ballot {
   //@ public invariant positionInList <= numberOfPreferences;
   //@ public constraint \old(positionInList) <= positionInList;
   protected /*@ spec_public @*/ int positionInList;
- 
-
-  /** Candidate ID to which the vote is assigned at the end of each count */
-  protected /*@ spec_public non_null @*/ int[] candidateIDAtCount;
-  
-  /** Last count number in which this ballot was transfered */
-  /*@ public invariant 0 <= countNumberAtLastTransfer;
-    @ public initially countNumberAtLastTransfer == 0;
-    @ public invariant countNumberAtLastTransfer <
-    @   CountConfiguration.MAXCOUNT;
-    @ public constraint \old(countNumberAtLastTransfer) <=
-    @   countNumberAtLastTransfer;
-    @*/
-  protected /*@ spec_public @*/ int countNumberAtLastTransfer;
 
   /**
    * Default constructor
    */
   /*@ ensures numberOfPreferences == 0;
-    @ ensures countNumberAtLastTransfer == 0;
     @ ensures positionInList == 0;
     @*/
   public Ballot();
-  
-  /**
-   * Get the location of the ballot at each count
-   * 
-   * @param countNumber The round of counting which we need to check
-   * @return The candidate ID or the NONTRANSFERABLE constant
-   */    
-  /*@ public normal_behavior
-    @   requires 0 <= countNumber;
-    @   requires countNumber <= countNumberAtLastTransfer;
-    @   requires countNumber < candidateIDAtCount.length;
-    @   ensures \result == candidateIDAtCount[countNumber];
-    @
-    @ public model pure int getPreferenceAtCount(final int countNumber) {
-    @     return candidateIDAtCount[countNumber];
-    @ }
-    @*/
-  
-  /**
-   * Get the count number for the last transfer of this ballot
-   * 
-   * @return The last count at which this ballot was transferred
-   */    
-  /*@ public normal_behavior
-    @   ensures \result == countNumberAtLastTransfer;
-    @
-    @ public model pure int getCountNumberAtLastTransfer(){
-    @    return countNumberAtLastTransfer;
-    @ }
-    @*/
 
   /**
    * Gets remaining number of preferences.
