@@ -19,54 +19,36 @@ public class Decision extends DecisionStatus {
   /*@ public invariant (decisionTaken == DecisionStatus.EXCLUDE)
     @   || (decisionTaken == DecisionStatus.NO_DECISION)
     @   || (decisionTaken == DecisionStatus.DEEM_ELECTED);
-    @ public constraint (\old(decisionTaken) != DecisionStatus.NO_DECISION) ==>
-    @   decisionTaken == \old(decisionTaken);
     @*/
   protected /*@ spec_public @*/ byte decisionTaken;
 
   /** Candidate to which the decision applied */
   /*@ public invariant (candidateID != Ballot.NONTRANSFERABLE) 
     @   || (candidateID == Candidate.NO_CANDIDATE);
-    @ public constraint (decisionTaken != DecisionStatus.NO_DECISION) ==>
-    @   candidateID == \old(candidateID);
     @*/
-  protected/*@ spec_public @*/  long candidateID;
+  protected /*@ spec_public @*/  long candidateID;
 
   /** Round of counting at which decision was taken */
   //@ public invariant 0 <= atCountNumber;
-  //@ public constraint \old(atCountNumber) <= atCountNumber;
   protected /*@ spec_public @*/  long atCountNumber;
 
-  /**
-   * Create a new decision event.
-   * 
-   * @param decisionType
-   *        Type of decision made e.g. elect or eliminate
-   * @param candidateIDValue
-   *        ID of the candidate in question
-   * @param countNumberValue
-   *        Count number in which the decision was made
-   */
-  /*@ public normal_behavior
-    @   requires (decisionType == DecisionStatus.EXCLUDE) ||
-    @            (decisionType == DecisionStatus.DEEM_ELECTED);
-    @   requires 0 <= countNumberValue;
-    @   requires candidateID != Candidate.NO_CANDIDATE;
-    @   requires candidateID != Ballot.NONTRANSFERABLE;
-    @   assignable decisionTaken, atCountNumber, candidateID;
-    @   ensures decisionTaken == decisionType;
-    @   ensures atCountNumber == countNumberValue;
-    @   ensures candidateID == candidateIDValue;
+  /*@ requires candidateIDValue != Ballot.NONTRANSFERABLE;
+    @ requires candidateIDValue != Candidate.NO_CANDIDATE; 
     @*/
-  public Decision(final int countNumberValue, final int candidateIDValue,
-      final byte decisionType) {
-    super();
-    decisionTaken = decisionType;
-    atCountNumber = countNumberValue;
+  public void setCandidate(final int candidateIDValue) {
     candidateID = candidateIDValue;
-    /*@ assert (decisionTaken == DecisionStatus.EXCLUDE) ||
-      @        (decisionTaken == DecisionStatus.DEEM_ELECTED);
-      @*/
+  }
+
+  //@ requires 0 <= countNumberValue;
+  public void setCountNumber(final int countNumberValue) {
+    atCountNumber = countNumberValue;
+  }
+
+  /*@ requires (decisionType == DecisionStatus.EXCLUDE)
+    @   || (decisionType == DecisionStatus.DEEM_ELECTED);
+    @*/
+  public void setDecisionType(final byte decisionType) {
+    decisionTaken = decisionType;
   }
 
   /*@ assignable decisionTaken, atCountNumber, candidateID;

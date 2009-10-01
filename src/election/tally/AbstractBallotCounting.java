@@ -293,20 +293,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ also
     @   protected normal_behavior
     @     requires state == EMPTY;
-    @     requires (\forall int c; 0 <= c && c < electionParameters.numberOfCandidates;
-    @              electionParameters.candidateList[c] != null);
-    @     requires electionParameters.candidateList != null &&
-    @       electionParameters.numberOfCandidates <= electionParameters.candidateList.length;
-    @     requires \nonnullelements (electionParameters.candidateList);
     @     assignable status; 
     @     assignable totalNumberOfCandidates;
     @     assignable numberOfSeats, totalRemainingSeats;
     @     assignable totalNumberOfSeats;
-    @     assignable candidates, decisions, decisionsTaken;
+    @     assignable candidates;
     @     ensures state == PRELOAD;
-    @     ensures totalCandidates == electionParameters.numberOfCandidates;
-    @     ensures seats == electionParameters.numberOfSeatsInThisElection;
-    @     ensures totalSeats == electionParameters.totalNumberOfSeats;
+    @     ensures totalCandidates == constituency.getNumberOfCandidates();
+    @     ensures seats == constituency.getNumberOfSeatsInThisElection();
+    @     ensures totalSeats == constituency.getTotalNumberOfSeats();
     @     ensures totalCandidates == candidateList.length;
     @*/
   public void setup(final/*@ non_null @*/ Constituency constituency) {
@@ -990,12 +985,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires (decisionType == DecisionStatus.EXCLUDE) ||
     @   (decisionType == DecisionStatus.DEEM_ELECTED);
     @ requires state == COUNTING;
+    @ requires 0 <= countNumberValue;
+    @ requires candidateID != Candidate.NO_CANDIDATE;
+    @ requires candidateID != Ballot.NONTRANSFERABLE;
     @ assignable decisions[*], decisionsTaken;
     @ ensures \old(numberOfDecisions) < numberOfDecisions;
     @*/
   protected void auditDecision(final byte decisionType, final int candidateID) {
 
-    updateDecisions(new Decision(countNumberValue, candidateID, decisionType));
+    Decision decision = new Decision();
+    decision.setDecisionType(decisionType);
+    decision.setCountNumber(countNumberValue);
+    decision.setCandidate(candidateID);
+    updateDecisions(decision);
   }
 
   /**

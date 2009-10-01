@@ -80,11 +80,11 @@ public class Constituency {
     }
   }
 
-  public int getNumberOfSeatsInThisElection() {
+  public /*@ pure @*/ int getNumberOfSeatsInThisElection() {
     return numberOfSeatsInThisElection;
   }
 
-  public int getTotalNumberOfSeats() {
+  public /*@ pure @*/ int getTotalNumberOfSeats() {
     return totalNumberOfSeats;
   }
 
@@ -96,7 +96,7 @@ public class Constituency {
     this.totalNumberOfSeats = totalNumberOfSeats;
   }
 
-  public int getNumberOfCandidates() {
+  public /*@ pure @*/ int getNumberOfCandidates() {
     return numberOfCandidates;
   }
 }

@@ -304,11 +304,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ requires state == EMPTY;
     @ ensures state == PRELOAD;
-    @ ensures totalCandidates == electionParameters.numberOfCandidates;
-    @ ensures seats == electionParameters.numberOfSeatsInThisElection;
-    @ ensures totalSeats == electionParameters.totalNumberOfSeats;
+    @ ensures totalCandidates == constituency.getNumberOfCandidates();
+    @ ensures seats == constituency.getNumberOfSeatsInThisElection();
+    @ ensures totalSeats == constituency.getTotalNumberOfSeats();
     @*/
-  public void setup (Election electionParameters);
+  public void setup (Constituency constituency);
 	
 	
   /** Loads all valid ballot papers.
