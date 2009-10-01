@@ -31,5 +31,5 @@ class BALLOT description "List of some or all candidates in order of preference"
 class BALLOT_BOX description "The set of all valid ballots"
 class BALLOT_COUNTING description "The algorithm used to count the ballots"
 class CANDIDATE description "A person eligible and nominated for election"
-class ELECTION description "The overall parameters of the election"
+class CONSTITUENCY description "The overall parameters of the election"
 end

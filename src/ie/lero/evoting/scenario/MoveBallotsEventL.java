@@ -5,7 +5,7 @@ import election.tally.AbstractCountStatus;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
-import election.tally.Election;
+import election.tally.Constituency;
 
 public class MoveBallotsEventL extends TestCase {
 
@@ -15,15 +15,14 @@ public class MoveBallotsEventL extends TestCase {
 
   public void testEvent() {
 	   BallotCounting ballotCounting = new BallotCounting();
-	   Election election = new Election();
-	   election.numberOfSeatsInThisElection = NUM_SEATS;
-	   election.totalNumberOfSeats = NUM_SEATS;
-	   election.setNumberOfCandidates(NUM_CANDIDATES);
-	   ballotCounting.setup(election);    
+	   Constituency constituency = new Constituency();
+	   constituency.setNumberOfSeats (NUM_SEATS, NUM_SEATS);
+	   constituency.setNumberOfCandidates(NUM_CANDIDATES);
+	   ballotCounting.setup(constituency);    
 	   BallotBox ballotBox = new BallotBox();
 	   Ballot ballot = new Ballot();
-	   int[] preferences = {election.getCandidate(0).getCandidateID(),
-	                        election.getCandidate(1).getCandidateID()};
+	   int[] preferences = {constituency.getCandidate(0).getCandidateID(),
+	                        constituency.getCandidate(1).getCandidateID()};
 	   for (int i=0; i<NUM_BALLOTS; i++) {
 	     ballot.load(preferences);
 	     ballotBox.accept(ballot);
@@ -36,7 +35,7 @@ public class MoveBallotsEventL extends TestCase {
 	   ballotCounting.electCandidate(firstElected);
 	   assertTrue (0 == firstElected);
 	   final int surplus = ballotCounting.getSurplus(
-	     election.getCandidate(firstElected));
+	     constituency.getCandidate(firstElected));
      assertTrue (surplus > 0);
      ballotCounting.countStatus.changeState(
        AbstractCountStatus.SURPLUS_AVAILABLE);

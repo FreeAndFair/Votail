@@ -5,15 +5,14 @@ import election.tally.AbstractCountStatus;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
-import election.tally.Election;
+import election.tally.Constituency;
 
 public class TransfersFromExcludedCandidateEventH extends TestCase {
 
 	public void testEvent() {
 	   BallotCounting ballotCounting = new BallotCounting();
-	   Election election = new Election();
-	   election.numberOfSeatsInThisElection = 3;
-	   election.totalNumberOfSeats = 3;
+	   Constituency election = new Constituency();
+	   election.setNumberOfSeats(3,3);
 	   election.setNumberOfCandidates(4);
 	   ballotCounting.setup(election);    
 	   BallotBox ballotBox = new BallotBox();

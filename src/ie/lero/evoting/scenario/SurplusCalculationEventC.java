@@ -6,7 +6,7 @@ import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.CandidateStatus;
-import election.tally.Election;
+import election.tally.Constituency;
 
 /**
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
@@ -19,7 +19,7 @@ public class SurplusCalculationEventC extends TestCase {
   private static final int NUM_SEATS = 3;
   private static final int NUM_CANDIDATES = 7;
   BallotCounting ballotCounting;
-  Election parameters;
+  Constituency parameters;
   BallotBox ballotBox;
 
   /**
@@ -28,9 +28,8 @@ public class SurplusCalculationEventC extends TestCase {
   protected void setUp() {
     ballotCounting = new BallotCounting();
     ballotBox = new BallotBox();
-    parameters = new Election();
-    parameters.totalNumberOfSeats = NUM_SEATS;
-    parameters.numberOfSeatsInThisElection = parameters.totalNumberOfSeats;
+    parameters = new Constituency();
+    parameters.setNumberOfSeats (NUM_SEATS, NUM_SEATS);
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
 
     int[] preferences = new int[NUM_CANDIDATES];

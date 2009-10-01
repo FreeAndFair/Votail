@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
-import election.tally.Election;
+import election.tally.Constituency;
 
 
 /**
@@ -24,9 +24,8 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     super.setUp();
     BallotBox ballotBox = new BallotBox();
     ballotCounting = new BallotCounting();
-    Election parameters = new Election();
-    parameters.numberOfSeatsInThisElection = 1;
-    parameters.totalNumberOfSeats = 3;
+    Constituency parameters = new Constituency();
+    parameters.setNumberOfSeats(1,3);
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
     ballotCounting.setup(parameters);
     // All candidates get one vote; draw lots to resolve ties

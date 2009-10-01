@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
-import election.tally.Election;
+import election.tally.Constituency;
 import election.tally.ElectionStatus;
 
 /**
@@ -20,9 +20,8 @@ public class QuotaCalculationEventA extends TestCase {
 	 */
 	public void testCalculateQuota () {
 	  BallotCounting ballotCounting = new BallotCounting();
-	  Election parameters = new Election();
-	  parameters.numberOfSeatsInThisElection = 1;
-	  parameters.totalNumberOfSeats = 1;
+	  Constituency parameters = new Constituency();
+	  parameters.setNumberOfSeats (1,1);
 	  parameters.setNumberOfCandidates(3);
 	  ballotCounting.setup(parameters);
 	  

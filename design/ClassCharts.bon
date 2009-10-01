@@ -92,7 +92,7 @@ query
   "How many votes in each round?"
 end
 
-class_chart ELECTION
+class_chart CONSTITUENCY
 explanation
   "The overall parameters of the election"
 query

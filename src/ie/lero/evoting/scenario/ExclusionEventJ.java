@@ -5,7 +5,7 @@ import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.CandidateStatus;
-import election.tally.Election;
+import election.tally.Constituency;
 import election.tally.ElectionStatus;
 
 /**
@@ -20,7 +20,7 @@ import election.tally.ElectionStatus;
 public class ExclusionEventJ extends TestCase {
 
   private int numberOfCandidates;
-  private Election parameters;
+  private Constituency parameters;
   private BallotCounting ballotCounting;
   private BallotBox ballotBox;
 
@@ -33,7 +33,7 @@ public class ExclusionEventJ extends TestCase {
 	  ballotCounting.startCounting();
 	 	final int lowestCandidate = ballotCounting.findLowestCandidate();
 		ballotCounting.eliminateCandidate(lowestCandidate);
-		assertTrue (ballotCounting.isDepositSaved(lowestCandidate) == false);
+		assertFalse (ballotCounting.isDepositSaved(lowestCandidate));
 		assertTrue (5 == ballotCounting.getContinuingCandidates());
 		final int secondLowest = ballotCounting.findLowestCandidate();
 		assertTrue (secondLowest != lowestCandidate);
@@ -60,9 +60,8 @@ public class ExclusionEventJ extends TestCase {
 	}
 
   protected void setUpParameters() {
- 		parameters.totalNumberOfSeats = 4;
-		parameters.numberOfSeatsInThisElection = 4;		
-		numberOfCandidates = 2 + parameters.numberOfSeatsInThisElection;
+ 		parameters.setNumberOfSeats(4,4);
+		numberOfCandidates = 2 + parameters.getNumberOfSeatsInThisElection();
 		parameters.setNumberOfCandidates(numberOfCandidates);
 	}
  	
@@ -70,7 +69,7 @@ public class ExclusionEventJ extends TestCase {
     super.setUp();
     ballotBox = new BallotBox();
     ballotCounting = new BallotCounting();
-    parameters = new Election();
+    parameters = new Constituency();
     setUpParameters();
     setUpBallotBox();
     ballotCounting.setup(parameters);
