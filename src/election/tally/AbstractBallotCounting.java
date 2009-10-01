@@ -855,6 +855,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     || (decision.getDecisionStatus() == DecisionStatus.DEEM_ELECTED);
     @   requires decision.getCandidateID() != Ballot.NONTRANSFERABLE;
     @   requires decision.getCandidateID() != Candidate.NO_CANDIDATE; 
+    @   requires 0 <= decision.getCandidateID();
     @   assignable decisions[*], decisionsTaken;
     @   ensures (\forall int i; 0 <= i && i < totalCandidates;
     @     isElected (candidateList[i]) ==> (\exists int k;
