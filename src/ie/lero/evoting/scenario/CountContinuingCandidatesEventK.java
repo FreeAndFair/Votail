@@ -2,17 +2,17 @@ package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
 import election.tally.BallotCounting;
-import election.tally.Election;
+import election.tally.Constituency;
 
 public class CountContinuingCandidatesEventK extends TestCase {
 
  	public void testEvent() {
  	 BallotCounting ballotCounting = new BallotCounting();
-   Election election = new Election();
-   election.numberOfSeatsInThisElection = 3;
-   election.totalNumberOfSeats = 3;
-   election.setNumberOfCandidates(4);
-   ballotCounting.setup(election);
+   Constituency constituency = new Constituency();
+   constituency.setNumberOfSeatsInThisElection(3);
+   constituency.setTotalNumberOfSeats(3);
+   constituency.setNumberOfCandidates(4);
+   ballotCounting.setup(constituency);
 	 assertTrue (4 == ballotCounting.getContinuingCandidates());
 	}
 }

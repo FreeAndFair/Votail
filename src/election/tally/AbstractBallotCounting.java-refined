@@ -51,8 +51,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ public model non_null Candidate[] candidateList;
     @ public invariant \nonnullelements (candidateList);
-	  @ public invariant (state == PRELOAD || state == LOADING || 
-	  @   state == PRECOUNT) ==>
+	  @ public invariant (state == PRELOAD || state == LOADING) ==>
 	  @   (\forall int i; 0 <= i && i < totalCandidates;
 	  @     candidateList[i].getStatus() == Candidate.CONTINUING &&
 	  @     candidateList[i].getOriginalVote() == 0);
@@ -178,17 +177,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public model int sumOfSurpluses;
   //@ public invariant 0 <= sumOfSurpluses;
   //@ public invariant sumOfSurpluses <= totalVotes;
-  //@ invariant (state == COUNTING) ==> sumOfSurpluses == getSumOfSurpluses();
-
-  /*@ public pure model int getSumOfSurpluses() {
-    @   int sum = 0;
-    @   for (int i=0; i < candidateList.length; i++) {
-    @       assert candidateList[i] != null;
-    @       sum += getSurplus(candidateList[i]);
-    @   }
-    @   return sum;
-    @ }
-    @*/
 
   /** Number of seats which remain to be filled */
   //@ public model int remainingSeats; 
@@ -378,8 +366,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
     @   (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
-    @   (ballotsToCount[j].getCountNumberAtLastTransfer() ==
-    @   fromCandidate.lastSetCount) && 
     @   (getNextContinuingPreference(ballotsToCount[j]) == toCandidateID));
     @*/
   protected /*@ pure spec_public@*/ int getPotentialTransfers (

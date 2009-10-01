@@ -23,41 +23,31 @@ package election.tally;
  */
 
 /**
- * Data transfer structure for candidate ID details and number of seats.
+ * Size of constituency and list of candidates for election..
  * 
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
 
-public class Election {
+public class Constituency {
 
-/** Number of candidates for election in this constituency */
-//@ public invariant 0 <= numberOfCandidates;
-//@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
-	protected /*@ spec_public @*/ transient int numberOfCandidates;
+  /** Number of candidates for election in this constituency */
+  //@ public invariant 0 <= numberOfCandidates;
+  //@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
+	protected /*@ spec_public @*/ transient int numberOfCandidates = 0;
 	
-/** Number of seats to be filled in this election */
-//@ public invariant 0 <= numberOfSeatsInThisElection;
-//@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
-	public transient int numberOfSeatsInThisElection;
+  /** Number of seats to be filled in this election */
+  //@ public invariant 0 <= numberOfSeatsInThisElection;
+  //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
+	protected /*@ spec_public @*/ transient int numberOfSeatsInThisElection = 0;
 	
-/** Number of seats in this constituency */
-//@ public invariant 0 <= totalNumberOfSeats;
-	public transient int totalNumberOfSeats;
+  /** Number of seats in this constituency */
+  //@ public invariant 0 <= totalNumberOfSeats;
+	protected /*@ spec_public @*/ transient int totalNumberOfSeats = 0;
 	
-/** List of all candidates in this election */
-//@ public invariant \nonnullelements (candidateList);
-protected /*@ spec_public non_null @*/ Candidate[] candidateList;
-
-  /**
-   * Election parameters e.g. number of seats
-   */
-	public Election(){	
-		totalNumberOfSeats = 0;
-		numberOfCandidates = 0;
-		numberOfSeatsInThisElection = 0;
-		candidateList = new Candidate [0];
-  }
+  /** List of all candidates in this election */
+  //@ public invariant \nonnullelements (candidateList);
+  protected /*@ spec_public non_null @*/ Candidate[] candidateList = new Candidate[0];
 
 	/**
 	 * Get the <code>Candidate</code> object.
@@ -83,10 +73,29 @@ protected /*@ spec_public non_null @*/ Candidate[] candidateList;
   //@ ensures number == numberOfCandidates;
 	//@ ensures number == candidateList.length;
   public void setNumberOfCandidates(final int number) {
-    numberOfCandidates = number;
-    candidateList = new Candidate[number];
+    this.numberOfCandidates = number;
+    this.candidateList = new Candidate[number];
     for (int index=0; index < number; index++) {
-      candidateList[index] = new Candidate();
+      this.candidateList[index] = new Candidate();
     }
+  }
+
+  public int getNumberOfSeatsInThisElection() {
+    return numberOfSeatsInThisElection;
+  }
+
+  public int getTotalNumberOfSeats() {
+    return totalNumberOfSeats;
+  }
+
+  //@ requires numberOfSeatsInThisElection <= totalNumberOfSeats;
+  public void setTotalNumberOfSeats(
+     final int numberOfSeatsInThisElection, final int totalNumberOfSeats) {
+    this.numberOfSeatsInThisElection = numberOfSeatsInThisElection;
+    this.totalNumberOfSeats = totalNumberOfSeats;
+  }
+
+  public int getNumberOfCandidates() {
+    return numberOfCandidates;
   }
 }

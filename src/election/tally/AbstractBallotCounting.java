@@ -45,38 +45,36 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected static final int                         NONE_FOUND_YET = -1;
 
   /** List of decisions made */
-  protected transient/*@ spec_public @*/Decision[]  decisions      =
-    new Decision[Decision.MAX_DECISIONS];
+  protected transient/*@ spec_public @*/ Decision[]  decisions 
+    = new Decision[Decision.MAX_DECISIONS];
   //@ protected represents decisionsMade <- decisions;
 
   /** List of candidates for election */
-  protected transient/*@ spec_public @*/Candidate[] candidates     =
-    new Candidate[0];
+  protected transient/*@ spec_public @*/ Candidate[] candidates = new Candidate[0];
   //@ protected represents candidateList <- candidates;
 
   /** List of contents of each ballot paper that will be counted. */
-  protected transient Ballot[]                       ballots        =
-    new Ballot[0];
+  protected transient Ballot[] ballots = new Ballot[0];
   //@ protected represents ballotsToCount <- ballots;
 
   /** Total number of candidates for election */
-  protected transient/*@ spec_public @*/int         totalNumberOfCandidates;
+  protected transient/*@ spec_public @*/ int totalNumberOfCandidates;
   //@ public represents totalCandidates <- totalNumberOfCandidates;
 
   /** Number of candidates elected so far */
-  protected transient/*@ spec_public @*/int         numberOfCandidatesElected;
+  protected transient/*@ spec_public @*/ int numberOfCandidatesElected;
   //@ public represents numberElected <- numberOfCandidatesElected;
 
   /** Number of candidates excluded from election so far */
-  protected transient/*@ spec_public @*/int         numberOfCandidatesEliminated;
+  protected transient/*@ spec_public @*/ int numberOfCandidatesEliminated;
   //@ public represents numberEliminated <- numberOfCandidatesEliminated;
 
   /** Number of seats in this election */
-  protected transient/*@ spec_public @*/int         numberOfSeats;
+  protected transient/*@ spec_public @*/ int numberOfSeats;
   //@ public represents seats <- numberOfSeats;
 
   /** Number of seats in this constituency */
-  protected transient int                            totalNumberOfSeats;
+  protected transient int totalNumberOfSeats;
   //@ protected represents totalSeats <- totalNumberOfSeats;
 
   /** Total number of valid ballot papers */
@@ -228,7 +226,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   //@ requires 0 <= sum;
   //@ requires sum <= totalVotes;
-  //@ requires sum == getSumOfSurpluses();
   //@ requires PRECOUNT <= state;
   //@ assignable totalSumOfSurpluses;
   //@ ensures sum == totalSumOfSurpluses;
@@ -312,14 +309,14 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     ensures totalSeats == electionParameters.totalNumberOfSeats;
     @     ensures totalCandidates == candidateList.length;
     @*/
-  public void setup(final/*@ non_null @*/Election electionParameters) {
-    this.totalNumberOfCandidates = electionParameters.numberOfCandidates;
-    this.numberOfSeats = electionParameters.numberOfSeatsInThisElection;
-    this.totalNumberOfSeats = electionParameters.totalNumberOfSeats;
+  public void setup(final/*@ non_null @*/ Constituency constituency) {
+    this.totalNumberOfCandidates = constituency.getNumberOfCandidates();
+    this.numberOfSeats = constituency.getNumberOfSeatsInThisElection();
+    this.totalNumberOfSeats = constituency.getTotalNumberOfSeats();
     this.status = PRELOAD;
     candidates = new Candidate[this.totalNumberOfCandidates];
     for (int i = 0; i < candidates.length; i++) {
-      this.candidates[i] = electionParameters.getCandidate(i);
+      this.candidates[i] = constituency.getCandidate(i);
     }
     this.totalRemainingSeats = this.numberOfSeats;
   }
@@ -1009,9 +1006,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ requires candidateID != Ballot.NONTRANSFERABLE;
     @ requires countNumberValue < CountConfiguration.MAXCOUNT;
-    @ requires ballots != null && (\forall int b;
-    @          0 <= b && b < totalVotes; ballots[b] != null &&
-    @          ballots[b].countNumberAtLastTransfer <= countNumberValue);
     @ assignable ballots[*];
     @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
     @   ballotsToCount[b].getCandidateID() != candidateID);
@@ -1033,12 +1027,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param ballot
    *        The ballot
    */
-  /*@ requires ballot.countNumberAtLastTransfer <= countNumberValue;
-    @ requires 0 <= ballot.positionInList;
+  /*@ requires 0 <= ballot.positionInList;
     @ requires ballot.positionInList <= ballot.numberOfPreferences;
     @ requires ballot.positionInList < ballot.preferenceList.length;
-    @ requires ballot.countNumberAtLastTransfer <= countNumberValue;
-    @ requires countNumberValue < CountConfiguration.MAXCOUNT;
     @ assignable ballot.positionInList;
     @*/
   public void transferBallot(final/*@ non_null @*/Ballot ballot) {
