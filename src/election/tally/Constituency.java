@@ -89,7 +89,7 @@ public class Constituency {
   }
 
   //@ requires numberOfSeatsInThisElection <= totalNumberOfSeats;
-  public void setTotalNumberOfSeats(
+  public void setNumberOfSeats(
      final int numberOfSeatsInThisElection, final int totalNumberOfSeats) {
     this.numberOfSeatsInThisElection = numberOfSeatsInThisElection;
     this.totalNumberOfSeats = totalNumberOfSeats;
