@@ -96,6 +96,7 @@ public class Constituency {
     this.totalNumberOfSeats = totalNumberOfSeats;
   }
 
+  //@ ensures \result == numberOfCandidates;
   public /*@ pure @*/ int getNumberOfCandidates() {
     return numberOfCandidates;
   }

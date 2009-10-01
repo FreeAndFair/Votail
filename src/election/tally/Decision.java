@@ -15,51 +15,72 @@ public class Decision extends DecisionStatus {
    */
   public static final int MAX_DECISIONS = 100;
 
-  /** Type of decision taken */
+  /** Decision status */
   /*@ public invariant (decisionTaken == DecisionStatus.EXCLUDE)
     @   || (decisionTaken == DecisionStatus.NO_DECISION)
     @   || (decisionTaken == DecisionStatus.DEEM_ELECTED);
     @*/
-  protected /*@ spec_public @*/ byte decisionTaken;
+  protected /*@ spec_public @*/ byte decisionTaken 
+    = DecisionStatus.NO_DECISION;
 
   /** Candidate to which the decision applied */
-  /*@ public invariant (candidateID != Ballot.NONTRANSFERABLE) 
-    @   || (candidateID == Candidate.NO_CANDIDATE);
+  /*@ public invariant 0 <= candidateID;
     @*/
-  protected /*@ spec_public @*/  long candidateID;
+  protected /*@ spec_public @*/  long candidateID = Candidate.NO_CANDIDATE;
 
   /** Round of counting at which decision was taken */
   //@ public invariant 0 <= atCountNumber;
-  protected /*@ spec_public @*/  long atCountNumber;
+  protected /*@ spec_public @*/  long atCountNumber = 0;
 
   /*@ requires candidateIDValue != Ballot.NONTRANSFERABLE;
     @ requires candidateIDValue != Candidate.NO_CANDIDATE; 
+    @ requires 0 <= candidateIDValue;
+    @ assignable candidateID;
     @*/
-  public void setCandidate(final int candidateIDValue) {
+  public void setCandidate(final long candidateIDValue) {
     candidateID = candidateIDValue;
   }
 
   //@ requires 0 <= countNumberValue;
-  public void setCountNumber(final int countNumberValue) {
+  //@ assignable atCountNumber;
+  public void setCountNumber(final long countNumberValue) {
     atCountNumber = countNumberValue;
   }
 
   /*@ requires (decisionType == DecisionStatus.EXCLUDE)
     @   || (decisionType == DecisionStatus.DEEM_ELECTED);
+    @ assignable decisionTaken;
     @*/
   public void setDecisionType(final byte decisionType) {
     decisionTaken = decisionType;
   }
 
-  /*@ assignable decisionTaken, atCountNumber, candidateID;
-    @ ensures atCountNumber == 0;
-    @ ensures candidateID == Candidate.NO_CANDIDATE;
-    @ ensures decisionTaken == DecisionStatus.NO_DECISION;
+  //@ ensures \result == decisionTaken;
+  public /*@ pure @*/ byte getDecisionStatus() {
+    return decisionTaken;
+  }
+
+  //@ ensures \result == candidateID;
+  public /*@ pure @*/ long getCandidateID() {
+    return candidateID;
+  }
+
+  public /*@ pure @*/ long getCountNumber() {
+    return atCountNumber;
+  }
+
+  /*@ requires 0 <= decision.getCountNumber();
+    @ requires (decision.getDecisionStatus() == DecisionStatus.EXCLUDE)
+    @   || (decision.getDecisionStatus() == DecisionStatus.DEEM_ELECTED);
+    @ requires decision.getCandidateID() != Ballot.NONTRANSFERABLE;
+    @ requires decision.getCandidateID() != Candidate.NO_CANDIDATE; 
+    @ assignable candidateID;
+    @ assignable atCountNumber;
+    @ assignable decisionTaken;
     @*/
-  public Decision() {
-    super();
-    atCountNumber = 0;
-    candidateID = Candidate.NO_CANDIDATE;
-    decisionTaken = DecisionStatus.NO_DECISION;
+  public void copy(final /*@ non_null @*/ Decision decision) {
+      setCountNumber(decision.getCountNumber());
+      setCandidate(decision.getCandidateID());
+      setDecisionType(decision.getDecisionStatus());
   }
 }

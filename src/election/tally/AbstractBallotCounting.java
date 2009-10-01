@@ -293,6 +293,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ also
     @   protected normal_behavior
     @     requires state == EMPTY;
+    @     requires 0 <= constituency.getNumberOfCandidates();
     @     assignable status; 
     @     assignable totalNumberOfCandidates;
     @     assignable numberOfSeats, totalRemainingSeats;
@@ -335,7 +336,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     totalNumberOfVotes = ballotBox.size();
     ballots = new Ballot[totalNumberOfVotes];
     int index = 0;
-    while (index < totalNumberOfVotes && ballotBox.isNextBallot()) {
+    while (ballotBox.isNextBallot()) {
       ballots[index++] = ballotBox.getNextBallot();
     }
     status = PRECOUNT;
@@ -379,7 +380,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   public/*@ pure @*/int countBallotsFor(final int candidateID) {
     int numberOfBallots = 0;
-    for (int b = 0; b < totalNumberOfVotes; b++) {
+    for (int b = 0; b < ballots.length; b++) {
       //@ assert ballots[b] != null;
       if (ballots[b].isAssignedTo(candidateID)) {
         numberOfBallots++;
@@ -400,7 +401,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public/*@ pure @*/int countFirstPreferences(final int candidateID) {
     int numberOfBallots = 0;
-    for (int b = 0; b < totalNumberOfVotes; b++) {
+    for (int b = 0; b < ballots.length; b++) {
       //@ assert ballots[b] != null;
       if (ballots[b].isFirstPreference(candidateID)) {
         numberOfBallots++;
@@ -768,6 +769,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
                                                final int actualTransfers,
                                                final int transferRemainder,
                                                final int index) {
+    //@ assert candidates[index] != null;
     if (getTransferRemainder(fromCandidate, candidates[index]) > transferRemainder) {
       return 1;
     }
@@ -848,7 +850,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        decision to be added.
    */
   /*@ also
-    @   requires decision.candidateID != Candidate.NO_CANDIDATE;
+    @   requires 0 <= decision.getCountNumber();
+    @   requires (decision.getDecisionStatus() == DecisionStatus.EXCLUDE)
+    @     || (decision.getDecisionStatus() == DecisionStatus.DEEM_ELECTED);
+    @   requires decision.getCandidateID() != Ballot.NONTRANSFERABLE;
+    @   requires decision.getCandidateID() != Candidate.NO_CANDIDATE; 
     @   assignable decisions[*], decisionsTaken;
     @   ensures (\forall int i; 0 <= i && i < totalCandidates;
     @     isElected (candidateList[i]) ==> (\exists int k;
@@ -859,9 +865,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   (decisionsMade[n].candidateID == candidateList[i].getCandidateID())
     @   ==> (decisionsMade[n].decisionTaken != DecisionStatus.EXCLUDE)));
     @*/
-  protected void updateDecisions(final Decision decision) {
+  protected void updateDecisions(final /*@ non_null @*/ Decision decision) {
     if (decisionsTaken < decisions.length) {
-      decisions[decisionsTaken] = decision;
+      decisions[decisionsTaken].copy(decision);
       decisionsTaken++;
     }
   }
@@ -993,7 +999,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   protected void auditDecision(final byte decisionType, final int candidateID) {
 
-    Decision decision = new Decision();
+    final Decision decision = new Decision();
     decision.setDecisionType(decisionType);
     decision.setCountNumber(countNumberValue);
     decision.setCandidate(candidateID);
@@ -1014,7 +1020,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   protected void redistributeBallots(final int candidateID) {
 
-    for (int b = 0; b < totalNumberOfVotes; b++) {
+    for (int b = 0; b < ballots.length; b++) {
       if (ballots[b].getCandidateID() == candidateID) {
 
         transferBallot(ballots[b]);
@@ -1058,6 +1064,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ requires (hasQuota(candidateList[winner])) 
     @   || (winner == findHighestCandidate())
     @   || (getNumberContinuing() == totalRemainingSeats);
+    @ requires candidates[winner].getCandidateID() != Candidate.NO_CANDIDATE;
     @*/
   //@ requires state == ElectionStatus.COUNTING;
   //@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;

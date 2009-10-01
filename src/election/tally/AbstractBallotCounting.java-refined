@@ -133,7 +133,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   //@ public model int totalVotes;
   //@ public invariant 0 <= totalVotes;
-  //@ public invariant totalVotes <= ballotsToCount.length;
+  //@ public invariant totalVotes == ballotsToCount.length;
   /*@ public invariant (state == EMPTY || state == SETTING_UP || state == PRELOAD) 
     @   ==> totalVotes == 0;
     @ public constraint (state == LOADING) 
