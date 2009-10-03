@@ -7,8 +7,8 @@ import election.tally.Constituency;
 public class CountContinuingCandidatesEventK extends TestCase {
 
  	public void testEvent() {
- 	 BallotCounting ballotCounting = new BallotCounting();
-   Constituency constituency = new Constituency();
+ 	 final BallotCounting ballotCounting = new BallotCounting();
+   final Constituency constituency = new Constituency();
    constituency.setNumberOfSeats(3,3);
    constituency.setNumberOfCandidates(4);
    ballotCounting.setup(constituency);
