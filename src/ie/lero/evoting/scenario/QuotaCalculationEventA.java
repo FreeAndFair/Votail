@@ -19,15 +19,15 @@ public class QuotaCalculationEventA extends TestCase {
 	 * Test the calculation of quota and deposit saving threshold.
 	 */
 	public void testCalculateQuota () {
-	  BallotCounting ballotCounting = new BallotCounting();
-	  Constituency parameters = new Constituency();
+	  final BallotCounting ballotCounting = new BallotCounting();
+	  final Constituency parameters = new Constituency();
 	  parameters.setNumberOfSeats (1,1);
 	  parameters.setNumberOfCandidates(3);
 	  ballotCounting.setup(parameters);
 	  
  		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);
-		BallotBox ballotBox = new BallotBox();
-		Ballot ballot = new Ballot();
+		final BallotBox ballotBox = new BallotBox();
+		final Ballot ballot = new Ballot();
 		for (int i = 0; i < 51; i++) {
 		  ballot.setFirstPreference(parameters.getCandidate(0).getCandidateID());
 		  ballotBox.accept(ballot);

@@ -47,7 +47,7 @@ public class ExclusionEventJ extends TestCase {
 
  	protected void setUpBallotBox() {
  	  int numberOfVotes;
- 	  Ballot ballot = new Ballot();
+ 	  final Ballot ballot = new Ballot();
  		for (int i = 0; i < numberOfCandidates; i++) {
 			 numberOfVotes = i*10;
 			 
@@ -60,7 +60,7 @@ public class ExclusionEventJ extends TestCase {
 	}
 
   protected void setUpParameters() {
- 		parameters.setNumberOfSeats(4,4);
+ 		parameters.setNumberOfSeats (4,4);
 		numberOfCandidates = 2 + parameters.getNumberOfSeatsInThisElection();
 		parameters.setNumberOfCandidates(numberOfCandidates);
 	}

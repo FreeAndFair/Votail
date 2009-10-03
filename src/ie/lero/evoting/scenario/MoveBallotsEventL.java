@@ -14,28 +14,28 @@ public class MoveBallotsEventL extends TestCase {
   private static final int NUM_SEATS = 3;
 
   public void testEvent() {
-	   BallotCounting ballotCounting = new BallotCounting();
-	   Constituency constituency = new Constituency();
-	   constituency.setNumberOfSeats (NUM_SEATS, NUM_SEATS);
-	   constituency.setNumberOfCandidates(NUM_CANDIDATES);
-	   ballotCounting.setup(constituency);    
-	   BallotBox ballotBox = new BallotBox();
-	   Ballot ballot = new Ballot();
-	   int[] preferences = {constituency.getCandidate(0).getCandidateID(),
-	                        constituency.getCandidate(1).getCandidateID()};
+	   final BallotCounting ballotCounting = new BallotCounting();
+	   final Constituency election = new Constituency();
+	   election.setNumberOfSeats (NUM_SEATS, NUM_SEATS);
+	   election.setNumberOfCandidates(NUM_CANDIDATES);
+	   ballotCounting.setup(election);    
+	   final BallotBox ballotBox = new BallotBox();
+	   final Ballot ballot = new Ballot();
+	   final int[] preferences = {election.getCandidate(0).getCandidateID(),
+	                        election.getCandidate(1).getCandidateID()};
+	   ballot.load(preferences);
 	   for (int i=0; i<NUM_BALLOTS; i++) {
-	     ballot.load(preferences);
 	     ballotBox.accept(ballot);
 	   }
 	   
 	   ballotCounting.load(ballotBox);
      ballotCounting.startCounting();
 	   assertTrue (NUM_BALLOTS == ballotBox.size());
-	   int firstElected = ballotCounting.findHighestCandidate();
+	   final int firstElected = ballotCounting.findHighestCandidate();
 	   ballotCounting.electCandidate(firstElected);
 	   assertTrue (0 == firstElected);
 	   final int surplus = ballotCounting.getSurplus(
-	     constituency.getCandidate(firstElected));
+	     election.getCandidate(firstElected));
      assertTrue (surplus > 0);
      ballotCounting.countStatus.changeState(
        AbstractCountStatus.SURPLUS_AVAILABLE);

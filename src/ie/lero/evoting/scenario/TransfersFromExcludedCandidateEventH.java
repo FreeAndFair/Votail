@@ -10,14 +10,14 @@ import election.tally.Constituency;
 public class TransfersFromExcludedCandidateEventH extends TestCase {
 
 	public void testEvent() {
-	   BallotCounting ballotCounting = new BallotCounting();
-	   Constituency election = new Constituency();
-	   election.setNumberOfSeats(3,3);
+	   final BallotCounting ballotCounting = new BallotCounting();
+	   final Constituency election = new Constituency();
+	   election.setNumberOfSeats (3,4);
 	   election.setNumberOfCandidates(4);
 	   ballotCounting.setup(election);    
-	   BallotBox ballotBox = new BallotBox();
-	   Ballot ballot = new Ballot();
-	   int[] preferences = {election.getCandidate(0).getCandidateID(),
+	   final BallotBox ballotBox = new BallotBox();
+	   final Ballot ballot = new Ballot();
+	   final int[] preferences = {election.getCandidate(0).getCandidateID(),
 			   election.getCandidate(1).getCandidateID()};
 	   for (int i=0; i<3; i++) {
 	     ballot.setFirstPreference(election.getCandidate(i).getCandidateID());
@@ -29,12 +29,12 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	   ballotCounting.load(ballotBox);
 	   ballotCounting.startCounting();
 	   ballotCounting.calculateSurpluses();
-	   int loser = ballotCounting.findLowestCandidate();
+	   final int loser = ballotCounting.findLowestCandidate();
 	   ballotCounting.eliminateCandidate(loser);
 	   ballotCounting.incrementCountNumber();
 	   ballotCounting.updateCountStatus(AbstractCountStatus.CANDIDATE_EXCLUDED);
 	   assertTrue(ballotCounting.getContinuingCandidates() == 3);
-	   int countState = ballotCounting.countStatus.getState();
+	   final int countState = ballotCounting.countStatus.getState();
 	   assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	}
 

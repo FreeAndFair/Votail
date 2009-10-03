@@ -22,14 +22,14 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
 
     protected void setUp() throws Exception {
     super.setUp();
-    BallotBox ballotBox = new BallotBox();
+    final BallotBox ballotBox = new BallotBox();
     ballotCounting = new BallotCounting();
-    Constituency parameters = new Constituency();
+    final Constituency parameters = new Constituency();
     parameters.setNumberOfSeats(1,3);
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
     ballotCounting.setup(parameters);
     // All candidates get one vote; draw lots to resolve ties
-    Ballot mockBallot = new Ballot();
+    final Ballot mockBallot = new Ballot();
     for (int i=0; i < NUM_CANDIDATES; i++) {
       mockBallot.setFirstPreference(
         parameters.getCandidate(i).getCandidateID());
@@ -43,9 +43,9 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
 	 */
 	public void testEvent() {
     ballotCounting.startCounting();
-    int winner = ballotCounting.findHighestCandidate();
+    final int winner = ballotCounting.findHighestCandidate();
     assertTrue(winner == candidateToWin);
-    int countState = ballotCounting.countStatus.getState();
+    final int countState = ballotCounting.countStatus.getState();
     assertTrue(ballotCounting.countStatus.isPossibleState(countState));
     // Test election without surplus
     ballotCounting.calculateSurpluses();

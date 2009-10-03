@@ -18,9 +18,9 @@ public class SurplusCalculationEventC extends TestCase {
   private static final int NUM_BALLOTS = 100;
   private static final int NUM_SEATS = 3;
   private static final int NUM_CANDIDATES = 7;
-  BallotCounting ballotCounting;
-  Constituency parameters;
-  BallotBox ballotBox;
+  protected BallotCounting ballotCounting;
+  protected Constituency parameters;
+  protected BallotBox ballotBox;
 
   /**
    * Create the scenario data needed
@@ -44,9 +44,9 @@ public class SurplusCalculationEventC extends TestCase {
 
     assertTrue(numberOfVotes <= Ballot.MAX_BALLOTS);
     assertTrue(ballotBox.size() == 0);
+    final Ballot testBallot = new Ballot();
+    testBallot.load(preferences);
     for (int b = 0; b < numberOfVotes; b++) {
-      Ballot testBallot = new Ballot();
-      testBallot.load(preferences);
       ballotBox.accept(testBallot);
     }
   }
