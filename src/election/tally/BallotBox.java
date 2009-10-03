@@ -34,7 +34,7 @@ public class BallotBox {
  * or returning officer.
  */
   //@ public invariant \nonnullelements (ballots);
-  protected /*@ non_null spec_public @*/ Ballot[] ballots;
+  protected /*@ non_null spec_public @*/ Ballot[] ballots = new Ballot [Ballot.MAX_BALLOTS];
 
     /**
      * Get the number of ballots in this box.
