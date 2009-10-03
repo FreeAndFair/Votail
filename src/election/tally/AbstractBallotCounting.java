@@ -304,6 +304,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     ensures seats == constituency.getNumberOfSeatsInThisElection();
     @     ensures totalSeats == constituency.getTotalNumberOfSeats();
     @     ensures totalCandidates == candidateList.length;
+    @     ensures \nonnullelements (candidateList);
     @*/
   public void setup(final/*@ non_null @*/ Constituency constituency) {
     this.totalNumberOfCandidates = constituency.getNumberOfCandidates();

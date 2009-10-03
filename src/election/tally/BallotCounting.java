@@ -340,7 +340,6 @@ public class BallotCounting extends AbstractBallotCounting {
     	if (isContinuingCandidateID(candidates[c].getCandidateID())) {
     		electCandidate(c);
     	}
-    incrementCountNumber();
     }
   }
 

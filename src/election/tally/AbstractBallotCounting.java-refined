@@ -169,8 +169,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   countNumber <= CountConfiguration.MAXCOUNT;
     @ public constraint (state == COUNTING) ==> 
     @   \old(countNumber) <= countNumber;
-    @ public constraint (state == COUNTING) ==>
-    @   countNumber <= \old (countNumber) + 1;
     @*/
 	
   /** Total number of undistributed surplus votes */
