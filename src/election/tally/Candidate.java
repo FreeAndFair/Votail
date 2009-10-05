@@ -40,18 +40,19 @@ public static final int MAX_CANDIDATES = 50;
   @   0 <= votesAdded[i]);
   @ public initially (\forall int i; 0 < i && i < votesAdded.length;
   @   votesAdded[i] == 0);	
-  @ public invariant votesAdded.length <= CountConfiguration.MAXCOUNT;
+  @ public invariant votesAdded.length == CountConfiguration.MAXCOUNT;
   @*/
-  protected /*@ spec_public non_null @*/ int[] votesAdded;
+  protected /*@ spec_public non_null @*/ int[] votesAdded = new int [CountConfiguration.MAXCOUNT];
 	
 /** Number of votes removed at each count */
 /*@ public invariant (\forall int i; 0 < i && i < votesRemoved.length;
   @                                  0 <= votesRemoved[i]);
   @ public initially (\forall int i; 0 < i && i < votesRemoved.length;
   @                                  votesRemoved[i] == 0);
-  @ public invariant votesRemoved.length <= CountConfiguration.MAXCOUNT;
+  @ public invariant votesRemoved.length == CountConfiguration.MAXCOUNT;
   @*/
-  protected /*@ spec_public non_null @*/ int[] votesRemoved;
+  protected /*@ spec_public non_null @*/ int[] votesRemoved 
+    = new int [CountConfiguration.MAXCOUNT];
 
 //@ public invariant votesAdded != votesRemoved;
 //@ public invariant votesRemoved != votesAdded;
@@ -96,8 +97,9 @@ private static int nextCandidateID = 1;
  */	
 /*@ protected normal_behavior
   @   requires 0 <= count;
-  @   requires count < votesAdded.length;
-  @   requires count < votesRemoved.length;
+  @   requires count < CountConfiguration.MAXCOUNT;
+  @   requires votesAdded.length == CountConfiguration.MAXCOUNT;
+  @   requires votesRemoved.length == CountConfiguration.MAXCOUNT;
   @   ensures \result == votesAdded[count] - votesRemoved[count];
   @*/
   protected /*@ pure @*/ int getVoteAtCount(final int count){
@@ -159,8 +161,6 @@ private static int nextCandidateID = 1;
 	  super();
     state = CONTINUING;
     candidateID = nextCandidateID++;
-    votesAdded = new int [CountConfiguration.MAXCOUNT];
-    votesRemoved = new int [CountConfiguration.MAXCOUNT];
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
       votesAdded[i] = 0;
       votesRemoved[i] = 0;
@@ -277,8 +277,10 @@ private static int nextCandidateID = 1;
  * @param count The round of counting
  * @return The total number of votes received so far
  */
-/*@ requires count < votesAdded.length;
-  @ requires count < votesRemoved.length;
+/*@ requires 0 <= count;
+  @ requires count < CountConfiguration.MAXCOUNT;
+  @ requires votesAdded.length == CountConfiguration.MAXCOUNT;
+  @ requires votesRemoved.length == CountConfiguration.MAXCOUNT;
   @*/
 public /*@ pure @*/ int getTotalAtCount(final int count) {
 	int totalAtCount = 0;

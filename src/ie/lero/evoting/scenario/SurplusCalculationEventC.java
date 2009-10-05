@@ -73,8 +73,6 @@ public class SurplusCalculationEventC extends TestCase {
     countState = ballotCounting.countStatus.getState();
     assertTrue(ballotCounting.countStatus.isPossibleState(countState));
 
-    ballotCounting.calculateSurpluses();
-
     ballotCounting.countStatus.changeState(
       AbstractCountStatus.READY_TO_ALLOCATE_SURPLUS);
     ballotCounting.distributeSurplus(indexOfHighestCandidate);

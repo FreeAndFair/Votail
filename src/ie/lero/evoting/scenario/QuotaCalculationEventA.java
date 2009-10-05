@@ -40,7 +40,6 @@ public class QuotaCalculationEventA extends TestCase {
 		ballotCounting.load(ballotBox);
 		ballotCounting.startCounting();
 		
-		ballotCounting.calculateSurpluses();
 		int countState = ballotCounting.countStatus.getState();
 	 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	 	

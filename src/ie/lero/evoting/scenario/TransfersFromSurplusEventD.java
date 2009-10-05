@@ -44,7 +44,6 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   ballotCounting.load(ballotBox);
 	   ballotCounting.startCounting();
 	   assertTrue (ballotBox.size() == 3 * NUM_CANDIDATES);
-	   ballotCounting.calculateSurpluses();
 	   assertTrue (NUM_CANDIDATES == ballotCounting.getContinuingCandidates()); 
 	   final int winner = ballotCounting.findHighestCandidate();
 	   assertTrue (21 == ballotCounting.countBallotsFor(election.getCandidate(0).getCandidateID()));

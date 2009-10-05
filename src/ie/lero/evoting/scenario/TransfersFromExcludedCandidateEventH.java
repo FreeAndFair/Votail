@@ -28,7 +28,6 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	   
 	   ballotCounting.load(ballotBox);
 	   ballotCounting.startCounting();
-	   ballotCounting.calculateSurpluses();
 	   final int loser = ballotCounting.findLowestCandidate();
 	   ballotCounting.eliminateCandidate(loser);
 	   ballotCounting.incrementCountNumber();

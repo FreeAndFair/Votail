@@ -96,10 +96,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected transient/*@ spec_public @*/int         countNumberValue;
   //@ protected represents countNumber <- countNumberValue;
 
-  /** Total number of undistributed surplus votes */
-  protected/*@ spec_public @*/int                   totalSumOfSurpluses;
-  //@ protected represents sumOfSurpluses <- totalSumOfSurpluses;
-
   /** Number of seats remaining to be filled */
   protected transient/*@ spec_public @*/int         totalRemainingSeats;
   /*@ protected represents remainingSeats <- 
@@ -120,7 +116,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     assignable state, countNumber, numberElected, numberEliminated,
     @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
     @       totalVotes, numberOfCandidatesEliminated, decisions, decisionsTaken,
-    @       totalNumberOfVotes, totalSumOfSurpluses;
+    @       totalNumberOfVotes;
     @     ensures state == ElectionStatus.EMPTY;
     @     ensures countNumber == 0;
     @     ensures numberElected == 0;
@@ -137,7 +133,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
-    totalSumOfSurpluses = 0;
   }
 
   /**
@@ -215,22 +210,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return the totalSumOfSurpluses
    */
   public final/*@ pure @*/int getTotalSumOfSurpluses() {
-    return totalSumOfSurpluses;
-  }
+    int sumOfSurpluses = 0;
 
-  /**
-   * Update the total number of surplus votes available for redistribution.
-   * 
-   * @param sum
-   *        the totalSumOfSurpluses to set
-   */
-  //@ requires 0 <= sum;
-  //@ requires sum <= totalVotes;
-  //@ requires PRECOUNT <= state;
-  //@ assignable totalSumOfSurpluses;
-  //@ ensures sum == totalSumOfSurpluses;
-  protected final void setTotalSumOfSurpluses(final int sum) {
-    this.totalSumOfSurpluses = sum;
+    for (int c = 0; c < totalNumberOfCandidates; c++) {
+      final int surplus = getSurplus(candidates[c]);
+      if (surplus > 0) {
+        sumOfSurpluses += surplus;
+      }
+    }
+    return sumOfSurpluses;
   }
 
   /**
@@ -358,6 +346,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Calculate the first preference counts for each candidate.
    */
+  //@ requires PRECOUNT <= state;
   //@ assignable candidates[*];
   protected void calculateFirstPreferences() {
     for (int c = 0; c < totalNumberOfCandidates && c < candidates.length; c++) {
@@ -379,6 +368,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        The internal identifier of this candidate
    * @return The number of ballots in this candidate's pile
    */
+  //@ also requires \nonnullelements (ballotsToCount);
   public/*@ pure @*/int countBallotsFor(final int candidateID) {
     int numberOfBallots = 0;
     for (int b = 0; b < ballots.length; b++) {
@@ -398,6 +388,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return The number of ballots in this candidate's pile
    */
   /*@ requires PRECOUNT <= state;
+    @ requires \nonnullelements (ballotsToCount);
     @ ensures (countNumber == 0) ==> \result == countBallotsFor (candidateID);
     @*/
   public/*@ pure @*/int countFirstPreferences(final int candidateID) {
@@ -424,11 +415,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         that candidate
    */
   /*@ also
-    @     requires (\forall int b; 0 <= b && b < totalVotes; 
-    @         ballotsToCount[b] != null);
-    @     ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
-    @       (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
-    @       (getNextContinuingPreference(ballotsToCount[j]) == toCandidateID));
+    @   requires \nonnullelements (ballotsToCount);
+    @   ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
+    @     (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
+    @     (getNextContinuingPreference(ballotsToCount[j]) == toCandidateID));
     @*/
   protected/*@ pure spec_public @*/int getPotentialTransfers(
                                                               final Candidate fromCandidate,
@@ -490,19 +480,16 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         candidate
    */
   /*@ also
-    @     requires \nonnullelements (candidateList);
-    @     requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
-    @              candidateList[c] != null);
-    @     ensures \result == (\exists int i;
-    @       0 <= i && i < candidateList.length;
-    @       candidateID == candidateList[i].getCandidateID() &&
-    @       candidateList[i].getStatus() == CandidateStatus.CONTINUING);
+    @   requires \nonnullelements (candidateList);
+    @   ensures \result == (\exists int i;
+    @     0 <= i && i < candidateList.length;
+    @     candidateID == candidateList[i].getCandidateID() &&
+    @     candidateList[i].getStatus() == CandidateStatus.CONTINUING);
     @*/
   public/*@ pure @*/boolean isContinuingCandidateID(final int candidateID) {
-    for (int i = 0; i < totalNumberOfCandidates; i++) {
-      final byte candidateStatus = candidates[i].getStatus();
+    for (int i = 0; i < candidates.length; i++) {
       if (candidateID == candidates[i].getCandidateID()) {
-        return candidateStatus == CandidateStatus.CONTINUING;
+        return candidates[i].getStatus() == CandidateStatus.CONTINUING;
       }
     }
     return false; // not a candidate
@@ -522,6 +509,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ also
     @   protected normal_behavior
+    @   requires state == COUNTING;
     @   requires isElected (fromCandidate) || 
     @            (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
     @   requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
@@ -546,10 +534,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @         toCandidate.getCandidateID()));
     @*/
   protected/*@ pure spec_public @*/int getActualTransfers(
-                                                           final/*@ non_null @*/Candidate fromCandidate,
-                                                           final/*@ non_null @*/Candidate toCandidate) {
-    int numberOfVotes =
-                        getPotentialTransfers(fromCandidate,
+    final/*@ non_null @*/Candidate fromCandidate,
+    final/*@ non_null @*/Candidate toCandidate) {
+    int numberOfVotes = getPotentialTransfers(fromCandidate,
                                               toCandidate.getCandidateID());
     final int surplus = getSurplus(fromCandidate);
     final int totalTransferableVotes = getTotalTransferableVotes(fromCandidate);
@@ -582,9 +569,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @            getTotalTransferableVotes(fromCandidate);
     @*/
   protected/*@ pure spec_public @*/int getRoundedFractionalValue(
-                                                                  final/*@ non_null @*/Candidate fromCandidate,
-                                                                  final/*@ non_null @*/Candidate toCandidate) {
-    if (getCandidateOrderByHighestRemainder(fromCandidate, toCandidate) <= getTransferShortfall(fromCandidate)) {
+    final/*@ non_null @*/Candidate fromCandidate,
+    final/*@ non_null @*/Candidate toCandidate) {
+    if (getOrder(fromCandidate, toCandidate) <= getTransferShortfall(fromCandidate)) {
       return 1;
     }
     return 0;
@@ -596,18 +583,16 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * 
    * @param fromCandidate
    *        Elected candidate from which to distribute surplus
-   * @return The shortfall between the sum of the transfers and the size of
-   *         surplus
+   * @return The shortfall between the sum of the transfers and the size of surplus
    */
-  /*@ also requires candidates != null;
-    @      requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
-    @               candidates[c] != null);
-    @      requires (state == COUNTING);
-    @      requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
-    @               (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
+  /*@ also 
+    @   requires \nonnullelements (candidateList);
+    @   requires state == COUNTING;
+    @   requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
+    @            (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
     @*/
   protected/*@ pure spec_public @*/int getTransferShortfall(
-                                                             final/*@ non_null @*/Candidate fromCandidate) {
+     final/*@ non_null @*/Candidate fromCandidate) {
     int shortfall = 0;
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
@@ -690,12 +675,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ also
     @   protected normal_behavior
+    @     requires countNumberValue < CountConfiguration.MAXCOUNT;
     @     requires firstCandidate.getStatus() == Candidate.CONTINUING;
     @     requires secondCandidate.getStatus() == Candidate.CONTINUING;
     @*/
   protected/*@ pure spec_public @*/boolean isHigherThan(
-                                                         final/*@ non_null @*/Candidate firstCandidate,
-                                                         final/*@ non_null @*/Candidate secondCandidate) {
+    final/*@ non_null @*/Candidate firstCandidate,
+    final/*@ non_null @*/Candidate secondCandidate) {
 
     int firstNumberOfVotes;
     int secondNumberOfVotes;
@@ -725,9 +711,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         recieve and if the number of transfers are equal then look at the
    *         number of votes all ready recieved.
    * @param fromCandidate
-   *        Elected candidate from which to distribute surplus
+   *        Candidate, already elected, with surplus votes to donate
    * @param toCandidate
-   *        Continuing candidate potentially eligible to recieve transfers
+   *        Continuing candidate eligible to receive vote transfer
    * @return The number of continuing candidates with a higher quotient remainder
    *         than this candidate
    */
@@ -739,11 +725,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @         election.tally.Candidate.CONTINUING;
     @     requires getSurplus(fromCandidate) < 
     @         getTotalTransferableVotes(fromCandidate);
+    @     requires 0 <= getTransferShortfall (fromCandidate);
     @     ensures \result == getCandidateRanking (fromCandidate, toCandidate);
     @*/
-  protected/*@ pure spec_public @*/int getCandidateOrderByHighestRemainder(
-                                                                            final/*@ non_null @*/Candidate fromCandidate,
-                                                                            final/*@ non_null @*/Candidate toCandidate) {
+  protected/*@ pure spec_public @*/int getOrder(
+    final/*@ non_null @*/Candidate fromCandidate,
+    final/*@ non_null @*/Candidate toCandidate) {
     int numberHigherThan = 0;
     final int actualTransfers = getActualTransfers(fromCandidate, toCandidate);
     final int transferRemainder =
@@ -764,12 +751,14 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   }
 
   /*@ requires 0 <= index && index < candidates.length;
+    @ requires state == COUNTING;
     @*/
-  protected /*@ pure @*/ int compareCandidates(final Candidate fromCandidate,
-                                               final Candidate toCandidate,
-                                               final int actualTransfers,
-                                               final int transferRemainder,
-                                               final int index) {
+  protected /*@ pure @*/ int compareCandidates(
+    final /*@ non_null @*/ Candidate fromCandidate,
+    final /*@ non_null @*/ Candidate toCandidate,
+    final int actualTransfers,
+    final int transferRemainder,
+    final int index) {
     //@ assert candidates[index] != null;
     if (getTransferRemainder(fromCandidate, candidates[index]) > transferRemainder) {
       return 1;
@@ -800,11 +789,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ also
     @   protected normal_behavior
-    @     requires (state == COUNTING);
-    @     requires candidateList != null && (\forall int i;
-    @       0 <= i && i < totalNumberOfCandidates;
-    @       candidateList[i] != null);
-    @     requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
+    @     requires state == COUNTING;
+    @     requires \nonnullelements (candidateList);
+    @     requires isElected (fromCandidate) ||
     @       (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
     @     ensures \result == numberTransferable (fromCandidate);
     @*/
@@ -869,6 +856,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   protected void updateDecisions(final /*@ non_null @*/ Decision decision) {
     if (decisionsTaken < decisions.length) {
+      //@ assert 0 <= decision.getCountNumber();
       decisions[decisionsTaken].copy(decision);
       decisionsTaken++;
     }
@@ -880,8 +868,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return The continuing candidate with the most votes
    */
   /*@ requires 1 <= getNumberContinuing();
-    @ requires candidateList != null && (\forall int c;
-    @          0 <= c && c < totalNumberOfCandidates; candidateList[c] != null);
+    @ requires \nonnullelements (ballotsToCount);
     @ ensures (\max int i; 0 <= i && i < totalCandidates && 
     @   candidateList[i].getStatus() == Candidate.CONTINUING;
     @   countBallotsFor(candidateList[i].getCandidateID())) 
@@ -918,13 +905,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return The continuing candidate with the least votes
    */
   /*@ requires 1 <= totalCandidates;
-    @ ensures (\forall int i; 
-    @   0 <= i && i < totalCandidates && 
+    @ requires \nonnullelements (ballotsToCount);
+    @ ensures (\forall int i; 0 <= i && i < totalCandidates && i != \result &&
     @   candidateList[i].getStatus() == CandidateStatus.CONTINUING;
     @   countBallotsFor(candidateList[i].getCandidateID()) >= 
     @   countBallotsFor(candidateList[\result].getCandidateID()));
-    @ ensures -1 == \result || (\exists int i; 
-    @   0 <= i && i < totalCandidates && 
+    @ ensures AbstractBallotCounting.NONE_FOUND_YET == \result 
+    @   || (\exists int i; 0 <= i && i < totalCandidates && 
     @   candidateList[i].getStatus() == CandidateStatus.CONTINUING;
     @   i == \result);
     @*/
@@ -961,15 +948,16 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires (state == COUNTING);
     @ requires 0 <= loser && loser < totalCandidates;
     @ requires loser == findLowestCandidate();
+    @ requires candidateList[loser].getCandidateID() != Ballot.NONTRANSFERABLE;
     @ assignable candidateList, decisions[*], decisionsTaken;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
+    @ assignable candidateList[loser].state;
     @ ensures remainingSeats <= getNumberContinuing();
     @ ensures numberElected <= seats;
     @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
     @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
-    @   ballotsToCount[b].getCandidateID() != 
-    @   candidateList[loser].getCandidateID());
+    @   ballotsToCount[b].getCandidateID() != candidateList[loser].getCandidateID());
     @*/
   public void eliminateCandidate(final int loser) {
     final int candidateID = candidates[loser].getCandidateID();
@@ -996,6 +984,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires 0 <= countNumberValue;
     @ requires candidateID != Candidate.NO_CANDIDATE;
     @ requires candidateID != Ballot.NONTRANSFERABLE;
+    @ requires 0 < candidateID;
     @ assignable decisions[*], decisionsTaken;
     @ ensures \old(numberOfDecisions) < numberOfDecisions;
     @*/
@@ -1011,11 +1000,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Redistribute the transferable ballots of an excluded candidate.
    * 
-   * @param The
-   *        unique identifier for the excluded candidate
+   * @param candidateID The unique identifier for the excluded candidate
    */
   /*@ requires candidateID != Ballot.NONTRANSFERABLE;
     @ requires countNumberValue < CountConfiguration.MAXCOUNT;
+    @ requires \nonnullelements (ballotsToCount);
     @ assignable ballots[*];
     @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
     @   ballotsToCount[b].getCandidateID() != candidateID);
@@ -1069,6 +1058,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires candidates[winner].getCandidateID() != Candidate.NO_CANDIDATE;
     @*/
   //@ requires state == ElectionStatus.COUNTING;
+  //@ requires 0 < candidateList[winner].getCandidateID();
   //@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
   //@ assignable totalRemainingSeats;
   //@ assignable candidates[winner], candidates[winner].state;

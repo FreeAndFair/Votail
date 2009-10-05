@@ -110,9 +110,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	}
 
 	// Status of the ballot counting process
-	/*@ public invariant (state == COUNTING) ==> countStatus != null;
-	  @*/
-	public CountStatus countStatus;
+	public /*@ non_null @*/ CountStatus countStatus;
 	 
   /**
    * Distribute the surplus of an elected candidate.
@@ -124,6 +122,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @   requires countStatus.getState() 
 	  @     == AbstractCountStatus.SURPLUS_AVAILABLE;
 	  @   requires isElected (candidateList[winner]);
+	  @   requires \nonnullelements (candidateList);
 	  @*/
 	public void distributeSurplus(final int winner) {
     final int surplus = getSurplus(candidates[winner]);
@@ -237,7 +236,6 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
 	  @		assignable totalofNonTransferableVotes;
-    @   assignable sumOfSurpluses, totalSumOfSurpluses;
 	  @		assignable decisions, decisionsTaken;
 	  @		assignable remainingSeats, totalRemainingSeats;
 	  @     ensures state == ElectionStatus.FINISHED;
@@ -253,10 +251,6 @@ public class BallotCounting extends AbstractBallotCounting {
 			countNumberValue < CountConfiguration.MAXCOUNT) {
 			countStatus.changeState(
 				AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
-
-			// Calculate surpluses
-      calculateSurpluses();
-
       // Transfer surplus votes from winning candidates
       electCandidatesWithSurplus();
 			
@@ -300,32 +294,29 @@ public class BallotCounting extends AbstractBallotCounting {
       electCandidate(winner);
       countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
       distributeSurplus(winner);
-      calculateSurpluses();
     }
   }
 
 
-	/*@ assignable countStatus, countNumberValue, candidates, candidateList;
+	/*@ requires \nonnullelements (candidateList);
+	  @ assignable countStatus, countNumberValue, candidates, candidateList;
 	  @ assignable decisionsTaken, numberOfCandidatesEliminated;
-	  @ assignable sumOfSurpluses, totalSumOfSurpluses;
 	  @*/
   protected void excludeLowestCandidates() {
     while (getTotalSumOfSurpluses() == 0
-        && getNumberContinuing() > totalRemainingSeats
-        && countNumberValue < CountConfiguration.MAXCOUNT) {
+      && getNumberContinuing() > totalRemainingSeats
+      && countNumberValue < CountConfiguration.MAXCOUNT) {
       
       countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);
       final int loser = findLowestCandidate();
       
-      if (loser == NONE_FOUND_YET) {
-        break; // No more continuing candidates to eliminate
-      }
-        
-      countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);
-      eliminateCandidate(loser);
-      countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
-      redistributeBallots(candidates[loser].getCandidateID());
-      calculateSurpluses();
+      if (loser != NONE_FOUND_YET) {
+        countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);
+        eliminateCandidate(loser);
+        countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
+        //@ assert candidates[loser] != null;
+        redistributeBallots(candidates[loser].getCandidateID());
+        }
       }
   }
 
@@ -374,27 +365,11 @@ public class BallotCounting extends AbstractBallotCounting {
   }
 
 	/*@ requires state == COUNTING && countStatus != null;
-	  @ assignable countStatus;
+	  @ assignable countStatus.substate;
 	  @*/
 	public void updateCountStatus(final int countingStatus) {
 		countStatus.changeState(countingStatus);
 	}
-
-	/**
-	 * Recalculate the number of surplus votes available for transfer.
-	 */
-	//@ assignable sumOfSurpluses, totalSumOfSurpluses;
-  public void calculateSurpluses() {
-    int sumOfSurpluses = 0;
-
-    for (int c = 0; c < totalNumberOfCandidates; c++) {
-      final int surplus = getSurplus(candidates[c]);
-      if (surplus > 0) {
-        sumOfSurpluses += surplus;
-      }
-    }
-    setTotalSumOfSurpluses(sumOfSurpluses);
-  }
 
 	//@ assignable countNumberValue;
 	//@ ensures \old(countNumberValue) + 1 == countNumberValue;

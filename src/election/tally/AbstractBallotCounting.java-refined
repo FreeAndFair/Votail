@@ -170,11 +170,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public constraint (state == COUNTING) ==> 
     @   \old(countNumber) <= countNumber;
     @*/
-	
-  /** Total number of undistributed surplus votes */
-  //@ public model int sumOfSurpluses;
-  //@ public invariant 0 <= sumOfSurpluses;
-  //@ public invariant sumOfSurpluses <= totalVotes;
 
   /** Number of seats which remain to be filled */
   //@ public model int remainingSeats; 
@@ -187,7 +182,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
 
   /*@ ensures \nonnullelements (candidateList);
-    @ 
     @*/
    public AbstractBallotCounting();
 	
@@ -334,8 +328,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires state == PRECOUNT || state == COUNTING;
     @   ensures state == FINISHED;
     @   assignable state, countNumber, numberElected,
-    @       remainingSeats, candidateList,
-    @       sumOfSurpluses, nonTransferableVotes, ballotsToCount;
+    @     remainingSeats, candidateList,
+    @     nonTransferableVotes, ballotsToCount;
     @   ensures remainingSeats == 0;
     @   ensures numberElected == seats;
     @*/
@@ -476,12 +470,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
     @ requires getSurplus(fromCandidate) < 
     @   getTotalTransferableVotes(fromCandidate);
-    @ ensures (getCandidateOrderByHighestRemainder 
-    @   (fromCandidate, toCandidate) <=
+    @ ensures (getOrder (fromCandidate, toCandidate) <=
     @   getTransferShortfall (fromCandidate))
     @   ==> \result == 1;
-    @ ensures (getCandidateOrderByHighestRemainder 
-    @   (fromCandidate, toCandidate) >
+    @ ensures (getOrder (fromCandidate, toCandidate) >
     @   getTransferShortfall (fromCandidate))
     @   ==> \result == 0;
     @*/
@@ -515,9 +507,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     getTotalTransferableVotes(fromCandidate);
     @ ensures \result == getCandidateRanking (fromCandidate, toCandidate);
     @*/
-  protected /*@ pure spec_public @*/ int getCandidateOrderByHighestRemainder (
-		  /*@ non_null @*/ Candidate fromCandidate, 
-		  /*@ non_null @*/ Candidate toCandidate);
+  protected /*@ pure spec_public @*/ int getOrder(
+		  final /*@ non_null @*/ Candidate fromCandidate, 
+		  final /*@ non_null @*/ Candidate toCandidate);
 		  
  /*@ ensures \result == (\num_of int i; i <= 0 && i < totalCandidates &&
    @   candidateList[i].getCandidateID() != toCandidate.getCandidateID() &&
@@ -674,13 +666,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires state == COUNTING;
     @   requires isElected (fromCandidate); 
     @   requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
-    @   ensures \result == getSurplus (fromCandidate) - 
-    @        sumOfTransfers (fromCandidate);
+    @   ensures \result == getSurplus (fromCandidate) - sumOfTransfers (fromCandidate);
     @*/
   protected /*@ pure spec_public @*/ int getTransferShortfall (
 		  /*@ non_null @*/ Candidate fromCandidate);
 		  
   /*@ requires COUNTING == state;
+    @ requires \nonnullelements (candidateList);
     @ requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
     @   (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
     @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates &&
@@ -689,7 +681,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @
     @ public pure model int sumOfTransfers (non_null Candidate fromCandidate) {
     @     int sum = 0;
-    @     for (int i=0; i < totalCandidates && i < candidateList.length; i++) {
+    @     for (int i=0; i < candidateList.length; i++) {
     @        assert candidateList[i] != null;
     @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
     @            sum += getActualTransfers (fromCandidate, candidateList[i]);
