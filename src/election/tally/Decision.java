@@ -20,8 +20,7 @@ public class Decision extends DecisionStatus {
     @   || (decisionTaken == DecisionStatus.NO_DECISION)
     @   || (decisionTaken == DecisionStatus.DEEM_ELECTED);
     @*/
-  protected /*@ spec_public @*/ byte decisionTaken 
-    = DecisionStatus.NO_DECISION;
+  protected /*@ spec_public @*/ byte decisionTaken = DecisionStatus.NO_DECISION;
 
   /** Candidate to which the decision applied */
   /*@ public invariant 0 <= candidateID;
@@ -30,12 +29,14 @@ public class Decision extends DecisionStatus {
 
   /** Round of counting at which decision was taken */
   //@ public invariant 0 <= atCountNumber;
+  //@ public initially atCountNumber == 0;
   protected /*@ spec_public @*/  long atCountNumber = 0;
 
   /*@ requires candidateIDValue != Ballot.NONTRANSFERABLE;
     @ requires candidateIDValue != Candidate.NO_CANDIDATE; 
     @ requires 0 <= candidateIDValue;
     @ assignable candidateID;
+    @ ensures getCandidateID() == candidateIDValue;
     @*/
   public void setCandidate(final long candidateIDValue) {
     candidateID = candidateIDValue;
@@ -43,6 +44,7 @@ public class Decision extends DecisionStatus {
 
   //@ requires 0 <= countNumberValue;
   //@ assignable atCountNumber;
+  //@ ensures getCountNumber() == countNumberValue;
   public void setCountNumber(final long countNumberValue) {
     atCountNumber = countNumberValue;
   }
@@ -50,6 +52,7 @@ public class Decision extends DecisionStatus {
   /*@ requires (decisionType == DecisionStatus.EXCLUDE)
     @   || (decisionType == DecisionStatus.DEEM_ELECTED);
     @ assignable decisionTaken;
+    @ ensures getDecisionStatus() == decisionType;
     @*/
   public void setDecisionType(final byte decisionType) {
     decisionTaken = decisionType;
@@ -65,6 +68,7 @@ public class Decision extends DecisionStatus {
     return candidateID;
   }
 
+  //@ ensures \result == atCountNumber;
   public /*@ pure @*/ long getCountNumber() {
     return atCountNumber;
   }

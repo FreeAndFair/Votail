@@ -263,11 +263,10 @@ protected final /*@ spec_public pure @*/ int getPreference(final int index) {
     return Ballot.NONTRANSFERABLE;	
 }
 
-//@ requires 0 < preferenceList.length;
-/*@ ensures \result == (candidateID == preferenceList[0]);
-  @
-  @*/
 public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
+  if (preferenceList.length == 0) {
+    return false;
+  }
 	return candidateID == preferenceList[0];
 }
 
