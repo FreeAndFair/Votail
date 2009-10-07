@@ -55,8 +55,6 @@ public class BallotCounting extends AbstractBallotCounting {
 			substate = READY_TO_COUNT;
 		}
 
-		//@ public invariant isPossibleState (substate);
-		//@ public constraint isTransition(\old(substate), substate);
 		//@ public initially substate == READY_TO_COUNT;
  		protected /*@ spec_public @*/ int substate;
  		
@@ -90,22 +88,22 @@ public class BallotCounting extends AbstractBallotCounting {
 		 * @return <code>true</code> if this state exists with the automaton for counting of Dail ballots
 		 */
 		public /*@ pure @*/ boolean isPossibleState(final int value) {
- 			return ((READY_TO_COUNT == value) ||
- 					(NO_SEATS_FILLED_YET == value) ||
- 					(CANDIDATES_HAVE_QUOTA == value) ||
- 					(CANDIDATE_ELECTED == value) ||
- 					(NO_SURPLUS_AVAILABLE == value) ||
- 					(SURPLUS_AVAILABLE == value) ||
-  				(READY_TO_ALLOCATE_SURPLUS == value) ||
-   				(READY_TO_MOVE_BALLOTS == value) ||
- 					(CANDIDATE_EXCLUDED == value) ||
- 					(READY_FOR_NEXT_ROUND_OF_COUNTING == value) ||
- 					(LAST_SEAT_BEING_FILLED == value) ||
- 					(MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value) ||
- 					(ONE_OR_MORE_SEATS_REMAINING == value) ||
- 					(ALL_SEATS_FILLED == value) ||
- 					(END_OF_COUNT == value) ||
- 					(ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
+     return ((READY_TO_COUNT == value) 
+              || (NO_SEATS_FILLED_YET == value)
+              || (CANDIDATES_HAVE_QUOTA == value)
+              || (CANDIDATE_ELECTED == value)
+              || (NO_SURPLUS_AVAILABLE == value)
+              || (SURPLUS_AVAILABLE == value)
+              || (READY_TO_ALLOCATE_SURPLUS == value)
+              || (READY_TO_MOVE_BALLOTS == value)
+              || (CANDIDATE_EXCLUDED == value)
+              || (READY_FOR_NEXT_ROUND_OF_COUNTING == value)
+              || (LAST_SEAT_BEING_FILLED == value)
+              || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
+              || (ONE_OR_MORE_SEATS_REMAINING == value)
+              || (ALL_SEATS_FILLED == value) 
+              || (END_OF_COUNT == value) 
+              || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
 		}
 	}
 
@@ -236,6 +234,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
 	  @		assignable totalofNonTransferableVotes;
+    @   assignable sumOfSurpluses, totalSumOfSurpluses;
 	  @		assignable decisions, decisionsTaken;
 	  @		assignable remainingSeats, totalRemainingSeats;
 	  @     ensures state == ElectionStatus.FINISHED;
@@ -251,6 +250,7 @@ public class BallotCounting extends AbstractBallotCounting {
 			countNumberValue < CountConfiguration.MAXCOUNT) {
 			countStatus.changeState(
 				AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
+
       // Transfer surplus votes from winning candidates
       electCandidatesWithSurplus();
 			
@@ -304,20 +304,20 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @*/
   protected void excludeLowestCandidates() {
     while (getTotalSumOfSurpluses() == 0
-      && getNumberContinuing() > totalRemainingSeats
-      && countNumberValue < CountConfiguration.MAXCOUNT) {
+        && getNumberContinuing() > totalRemainingSeats
+        && countNumberValue < CountConfiguration.MAXCOUNT) {
       
       countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);
       final int loser = findLowestCandidate();
       
       if (loser != NONE_FOUND_YET) {
-        countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);
-        eliminateCandidate(loser);
-        countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
-        //@ assert candidates[loser] != null;
-        redistributeBallots(candidates[loser].getCandidateID());
-        }
+        
+      countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED);
+      eliminateCandidate(loser);
+      countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
+      redistributeBallots(candidates[loser].getCandidateID());
       }
+    }
   }
 
 	/*@ assignable candidateList[*], countNumber, countNumberValue;
@@ -370,7 +370,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	public void updateCountStatus(final int countingStatus) {
 		countStatus.changeState(countingStatus);
 	}
-
+	
 	//@ assignable countNumberValue;
 	//@ ensures \old(countNumberValue) + 1 == countNumberValue;
 	public void incrementCountNumber() {
