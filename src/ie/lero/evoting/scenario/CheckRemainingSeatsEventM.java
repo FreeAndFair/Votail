@@ -9,15 +9,15 @@ import election.tally.Constituency;
 public class CheckRemainingSeatsEventM extends TestCase {
 
   public void testEvent() {
-    BallotCounting ballotCounting = new BallotCounting();
-    Constituency constituency = new Constituency();
+    final BallotCounting ballotCounting = new BallotCounting();
+    final Constituency constituency = new Constituency();
     constituency.setNumberOfSeats(3,3);
     constituency.setNumberOfCandidates(4);
     ballotCounting.setup(constituency);
     assertTrue(constituency.getNumberOfSeatsInThisElection() 
                == ballotCounting.getRemainingSeats());
-    BallotBox ballotBox = new BallotBox();
-    Ballot ballot = new Ballot();
+    final BallotBox ballotBox = new BallotBox();
+    final Ballot ballot = new Ballot();
     ballot.setFirstPreference(constituency.getCandidate(0).getCandidateID());
     ballotBox.accept(ballot);
     ballotCounting.load(ballotBox);

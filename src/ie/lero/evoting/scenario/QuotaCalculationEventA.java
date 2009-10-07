@@ -40,6 +40,7 @@ public class QuotaCalculationEventA extends TestCase {
 		ballotCounting.load(ballotBox);
 		ballotCounting.startCounting();
 		
+		assertTrue (ballotCounting.countStatus != null);
 		int countState = ballotCounting.countStatus.getState();
 	 	assertTrue (ballotCounting.countStatus.isPossibleState(countState));
 	 	
@@ -47,7 +48,7 @@ public class QuotaCalculationEventA extends TestCase {
 		
 		assertTrue (ballotBox.size() == 100);
 		
-		int quota = ballotCounting.getQuota();
+		final int quota = ballotCounting.getQuota();
 		assertTrue (51 == quota);
 		
 		// Candidate 0 has the full quota but no surplus
