@@ -202,13 +202,7 @@ public static final int NONTRANSFERABLE = 0;
    * @param countNumber The count number at which the ballot was transfered.
    */    
   /*@ public normal_behavior
-    @   requires 0 <= positionInList;
-    @   requires positionInList <= numberOfPreferences;
-    @   requires positionInList < preferenceList.length;
     @   assignable positionInList;
-    @   ensures \old(positionInList) <= positionInList;
-    @   ensures (positionInList == \old(positionInList) + 1) ||
-    @           (positionInList == numberOfPreferences);
     @*/
   public void transfer () {
 

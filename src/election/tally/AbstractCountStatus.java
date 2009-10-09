@@ -22,7 +22,6 @@ public abstract class AbstractCountStatus {
 	/**
 	 * Get the current stage of counting.
 	 */
-	 //@ ensures isPossibleState(\result);
 	public abstract /*@ pure @*/ int getState();
 
 	/**

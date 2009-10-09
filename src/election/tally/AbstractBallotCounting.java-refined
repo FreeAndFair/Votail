@@ -37,11 +37,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ public initially numberOfDecisions == 0;
 	  @ public invariant 0 <= numberOfDecisions;
 	  @ public constraint \old (numberOfDecisions) <= numberOfDecisions;
-	  @*/
-  /*@ public invariant (state <= PRECOUNT) ==> numberOfDecisions == 0;
-    @ public constraint \old (numberOfDecisions) <= numberOfDecisions;
-    @ protected invariant (decisionsMade != null) ==> 
-    @   numberOfDecisions <= decisionsMade.length;
+    @ public invariant numberOfDecisions <= decisionsMade.length;
     @*/
 	
   /** List of details for each candidate. 
@@ -142,25 +138,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public constraint (state == COUNTING || state == FINISHED) 
     @   ==> totalVotes == \old (totalVotes);
     @*/
-	
-  /** Number of votes so far which did not have a transfer to
-   * a continuing candidate */
-  //@ public model int nonTransferableVotes;
-  //@ public invariant 0 <= nonTransferableVotes;
-  //@ public invariant nonTransferableVotes <= totalVotes;
-  /*@ public invariant (state == COUNTING || state == FINISHED)
-    @   ==> nonTransferableVotes == (\num_of int i; 0 <= i && i < totalVotes;
-    @   ballotsToCount[i].getCandidateID() == Ballot.NONTRANSFERABLE);
-    @*/
 
   /** Minimum number of votes needed to save deposit unless elected */
   //@ public model int depositSavingThreshold;
   //@ public invariant 0 <= depositSavingThreshold;
   //@ public invariant depositSavingThreshold <= totalVotes;
   /** @see requirement 6, section 3, item 3, page 13 */
-  /*@ invariant (PRECOUNT < state) ==> depositSavingThreshold == 
-    @   (((totalVotes / (totalSeats + 1)) + 1) / 4) + 1;
-    @*/
+  //@ invariant (PRECOUNT < state) ==> depositSavingThreshold == (getQuota() / 4) + 1;
 
   /** Number of rounds of counting so far */
   //@ public model int countNumber;
@@ -334,9 +318,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ public normal_behavior
     @   requires state == PRECOUNT || state == COUNTING;
     @   ensures state == FINISHED;
-    @   assignable state, countNumber, numberElected,
-    @       remainingSeats, candidateList,
-    @       sumOfSurpluses, nonTransferableVotes, ballotsToCount;
+    @   assignable state, countNumber, numberElected, remainingSeats, candidateList,
+    @     sumOfSurpluses, ballotsToCount;
     @   ensures remainingSeats == 0;
     @   ensures numberElected == seats;
     @*/
@@ -673,30 +656,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires state == COUNTING;
     @   requires isElected (fromCandidate); 
     @   requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
-    @   ensures \result == getSurplus (fromCandidate) - sumOfTransfers (fromCandidate);
     @*/
   protected /*@ pure spec_public @*/ int getTransferShortfall (
 		  /*@ non_null @*/ Candidate fromCandidate);
-		  
-  /*@ requires COUNTING == state;
-    @ requires \nonnullelements (candidateList);
-    @ requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
-    @   (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
-    @ ensures \result == (\sum int i; 0 <= i && i < totalCandidates &&
-    @     candidateList[i].getStatus() == CandidateStatus.CONTINUING;
-    @     getActualTransfers (fromCandidate, candidateList[i]));
-    @
-    @ public pure model int sumOfTransfers (non_null Candidate fromCandidate) {
-    @     int sum = 0;
-    @     for (int i=0; i < candidateList.length; i++) {
-    @        assert candidateList[i] != null;
-    @        if (candidateList[i].getStatus() == CandidateStatus.CONTINUING) {
-    @            sum += getActualTransfers (fromCandidate, candidateList[i]);
-    @        } 
-    @     }
-    @     return sum;
-    @ } 
-    @*/
     
   /*@ public pure model int numberTransferable (
     @   non_null Candidate fromCandidate) {

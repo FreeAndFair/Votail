@@ -64,7 +64,6 @@ public class BallotCounting extends AbstractBallotCounting {
  		 * @return The state of the count.
  		 */
  		/*@ also ensures \result == substate;
- 		  @
  		  @*/
  		public /*@ pure @*/ int getState() {
 			return substate;
@@ -76,7 +75,8 @@ public class BallotCounting extends AbstractBallotCounting {
  		 * 
  		 * @param newState The next stage of counting.
  		 */
- 		//@ also ensures newState == getState();
+ 		//@ also assignable substate;
+ 		//@ ensures newState == getState();
 		public void changeState(final int newState) {
 			substate = newState;
 		}
@@ -85,7 +85,7 @@ public class BallotCounting extends AbstractBallotCounting {
 		 * Is this a valid state for the count to be in?
 		 * @param value The state to be checked.
 		 * 
-		 * @return <code>true</code> if this state exists with the automaton for counting of Dail ballots
+		 * @return <code>true</code> if this stage exists with the automaton for counting of Dail ballots
 		 */
 		public /*@ pure @*/ boolean isPossibleState(final int value) {
      return ((READY_TO_COUNT == value) 
@@ -117,15 +117,15 @@ public class BallotCounting extends AbstractBallotCounting {
    */
 	/*@ also
 	  @   requires state == COUNTING;
-	  @   requires countStatus.getState() 
-	  @     == AbstractCountStatus.SURPLUS_AVAILABLE;
+	  @   requires countStatus.getState() == AbstractCountStatus.SURPLUS_AVAILABLE;
 	  @   requires isElected (candidateList[winner]);
 	  @   requires \nonnullelements (candidateList);
+	  @   requires 0 <= winner && winner < candidateList.length;
 	  @*/
 	public void distributeSurplus(final int winner) {
+	  //@ assert candidateList[winner] != null;
     final int surplus = getSurplus(candidates[winner]);
-    final int totalTransferableVotes = 
-      getTotalTransferableVotes(candidates[winner]);
+    final int totalTransferableVotes = getTotalTransferableVotes(candidates[winner]);
     if (0 < surplus) {
       countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
 
@@ -143,8 +143,14 @@ public class BallotCounting extends AbstractBallotCounting {
 	}
 
 
+	//@ requires 0 <= index && index < candidateList.length;
+	//@ requires 0 <= winner && winner < candidateList.length;
+	//@ requires 0 <= surplus;
+  //@ requires 0 <= totalTransferableVotes;
+	//@ requires \nonnullelements (candidateList);
   protected void moveSurplusBallots(final int winner, final int surplus,
                                     final int totalTransferableVotes, final int index) {
+    //@ assert candidateList[index] != null;
     if ((index != winner) && 
       (candidates[index].getStatus() == CandidateStatus.CONTINUING)) {
       final int numberOfTransfers = calculateNumberOfTransfers(
@@ -153,28 +159,38 @@ public class BallotCounting extends AbstractBallotCounting {
     }
   }
 
-
+  //@ requires 0 <= winner && winner < candidateList.length;
+  //@ requires 0 <= surplus && surplus < ballotsToCount.length;
+  //@ requires 0 <= totalTransferableVotes && totalTransferableVotes < ballotsToCount.length;
+  //@ requires \nonnullelements (candidateList);
+  //@ requires \nonnullelements (ballotsToCount);
   protected void removeNonTransferableBallots(final int winner,
                                               final int surplus,
                                               final int totalTransferableVotes) {
     if (surplus > totalTransferableVotes) {
-      int nonTransferables = surplus - totalTransferableVotes;
+      int numberToRemove = surplus - totalTransferableVotes;
+      //@ assert 0 < numberToRemove;
+      //@ assert candidateList[winner] != null;
       final int fromCandidateID = candidates[winner].getCandidateID();
-      for (int b = 0; b < totalNumberOfVotes; b++) {
-        if ((ballots[b].getCandidateID() == fromCandidateID) &&
-            (0 < nonTransferables) &&
+      for (int b = 0; b < ballots.length; b++) {
+        //@ assert ballotsToCount[b] != null;
+        if ((ballots[b].isAssignedTo(fromCandidateID)) &&
           (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
           transferBallot (ballots[b]);
-          nonTransferables--;
+          numberToRemove--;
+          if (numberToRemove <= 0) break;
         }
       }
     }
   }
 
 
+  //@ requires 0 <= index && index < candidateList.length;
+  //@ requires \nonnullelements (candidateList);
   protected int calculateNumberOfTransfers(final int winner, final int surplus,
                                            final int totalTransferableVotes,
                                            final int index) {
+    //@ assert candidates[winner] != null;
     int numberOfTransfers = 
       getActualTransfers(candidates[winner], candidates[index]);
     
@@ -226,18 +242,17 @@ public class BallotCounting extends AbstractBallotCounting {
 	 * @see "requirement 1, section 3, item 2, page 12"
 	 */
 	/*@ also
-	  @     requires state == PRECOUNT || state == COUNTING;
+	  @   requires state == PRECOUNT || state == COUNTING;
+	  @   requires \nonnullelements (candidateList);
 	  @		assignable countNumberValue, ballotsToCount, candidateList[*];
-	  @     assignable candidates, candidates[*];
+	  @   assignable candidates, candidates[*];
 	  @		assignable totalRemainingSeats, countStatus;
 	  @		assignable savingThreshold;
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
-	  @		assignable totalofNonTransferableVotes;
-    @   assignable sumOfSurpluses, totalSumOfSurpluses;
 	  @		assignable decisions, decisionsTaken;
 	  @		assignable remainingSeats, totalRemainingSeats;
-	  @     ensures state == ElectionStatus.FINISHED;
+	  @   ensures state == ElectionStatus.FINISHED;
 	  @*/
 	public void count() {
 		
@@ -277,23 +292,22 @@ public class BallotCounting extends AbstractBallotCounting {
       countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
       final int winner = findHighestCandidate();
 
-      if (winner == NONE_FOUND_YET) {
-        break;  // No more continuing candidates to elect
-      }
+      if (winner != NONE_FOUND_YET) {
       
-      // Elect highest continuing candidate
-      updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
-      //@ assert 0 <= winner && winner < totalCandidates;
-      //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
-      //@ assert numberElected < seats;
-      //@ assert 0 < remainingSeats;
-      /*@ assert (hasQuota(candidateList[winner])) 
-        @   || (winner == findHighestCandidate())
-        @   || (getNumberContinuing() == totalRemainingSeats);
-        @*/
-      electCandidate(winner);
-      countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
-      distributeSurplus(winner);
+        // Elect highest continuing candidate
+        updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
+        //@ assert 0 <= winner && winner < totalCandidates;
+        //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
+        //@ assert numberElected < seats;
+        //@ assert 0 < remainingSeats;
+        /*@ assert (hasQuota(candidateList[winner])) 
+          @   || (winner == findHighestCandidate())
+          @   || (getNumberContinuing() == totalRemainingSeats);
+          @*/
+        electCandidate(winner);
+        countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
+        distributeSurplus(winner);
+      }
     }
   }
 
@@ -337,8 +351,7 @@ public class BallotCounting extends AbstractBallotCounting {
 
 	/*@ requires state == PRECOUNT;
 	  @ assignable state, countStatus, countNumberValue, totalRemainingSeats,
-	  @   savingThreshold, numberOfCandidatesElected, 
-	  @   numberOfCandidatesEliminated, totalofNonTransferableVotes;
+	  @   savingThreshold, numberOfCandidatesElected, numberOfCandidatesEliminated;
 	  @ ensures state == COUNTING;
 	  @*/
 	public void startCounting() {
@@ -346,10 +359,14 @@ public class BallotCounting extends AbstractBallotCounting {
     countNumberValue = 0;
 
     totalRemainingSeats = numberOfSeats;
-    savingThreshold = 1 + (getQuota() / 4);
+    savingThreshold = getDepositSavingThreshold();
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
-    totalofNonTransferableVotes = 0;
+  }
+
+
+  public int getDepositSavingThreshold() {
+    return 1 + (getQuota() / 4);
   }
 
 

@@ -54,9 +54,8 @@ public class Constituency {
 	 * 
 	 * @return The candidate at that position on the initial list
 	 */
-	//@ requires candidateList != null && candidateList[index] != null;
+	//@ requires \nonnullelements (candidateList);
 	//@ requires 0 <= index && index < candidateList.length;
-	//@ requires index < numberOfCandidates;
 	//@ ensures candidateList[index] == \result;
 	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
 		return candidateList[index];
@@ -74,7 +73,7 @@ public class Constituency {
 	//@ ensures number == candidateList.length;
   public void setNumberOfCandidates(final int number) {
     this.numberOfCandidates = number;
-    this.candidateList = new Candidate[number];
+    this.candidateList = new Candidate[this.numberOfCandidates];
     for (int index=0; index < number; index++) {
       this.candidateList[index] = new Candidate();
     }
