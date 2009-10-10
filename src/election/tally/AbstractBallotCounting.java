@@ -844,7 +844,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   candidateList[i].getStatus() == Candidate.CONTINUING;
     @   countBallotsFor(candidateList[i].getCandidateID())) 
     @   == countBallotsFor(candidateList[\result].getCandidateID());
-    @ ensures \result == -AbstractBallotCounting.NONE_FOUND_YET || (\exists int i; 0 <= i && i < totalCandidates && 
+    @ ensures \result == AbstractBallotCounting.NONE_FOUND_YET || (\exists int i; 0 <= i && i < totalCandidates && 
     @   candidates[i].getStatus() == Candidate.CONTINUING; i == \result);
     @ ensures 0 <= \result && \result < totalCandidates;
     @ ensures candidateList[\result] != null;
@@ -922,6 +922,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires loser == findLowestCandidate();
     @ requires candidateList[loser].getCandidateID() != Ballot.NONTRANSFERABLE;
     @ requires countNumber < CountConfiguration.MAXCOUNT;
+    @ requires \nonnullelements (ballotsToCount);
+    @ requires \nonnullelements (candidateList);
     @ assignable candidateList, decisions[*], decisionsTaken;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
@@ -974,6 +976,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       decisions[decisionsTaken].copy(decision);
       decisionsTaken++;
     }
+    //@ assert 0 <= numberOfDecisions;
+    //@ assert numberOfDecisions <= decisionsMade.length;
+    //@ assert 0 <= totalVotes;
   }
 
   /**

@@ -223,7 +223,7 @@ public class BallotCounting extends AbstractBallotCounting {
     final int fromCandidateID = fromCandidate.getCandidateID();
     final int toCandidateID = toCandidate.getCandidateID();
     int ballotsMoved = 0;
-    for (int b = 0; b < totalNumberOfVotes; b++) {
+    for (int b = 0; b < ballots.length; b++) {
       if ((ballots[b].getCandidateID() == fromCandidateID) &&
         (getNextContinuingPreference(ballots[b]) == toCandidateID)) {
         transferBallot (ballots[b]);

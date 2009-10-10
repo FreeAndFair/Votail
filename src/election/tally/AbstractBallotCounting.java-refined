@@ -727,22 +727,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 		  final int numberOfVotes);
 
   /**
-   * Update list of decision events.
-   */
-  /*@ requires state == COUNTING;
-    @ ensures (\forall int i; 0 <= i && i < totalCandidates;
-    @   isElected (candidateList[i]) ==> (\exists int k;
-    @     0 <= k && k < numberOfDecisions;
-    @     (decisionsMade[k].candidateID == candidateList[i].getCandidateID()) &&
-    @     (decisionsMade[k].decisionTaken == DecisionStatus.DEEM_ELECTED)) &&
-    @   (\forall int n; 0 <= n && n < numberOfDecisions;
-    @      (decisionsMade[n].candidateID  == candidateList[i].getCandidateID())
-    @      ==> (decisionsMade[n].decisionTaken != DecisionStatus.EXCLUDE))
-    @   );
-    @*/
-  protected void updateDecisions(Decision decision);
-  
-  /**
    * Count the number of ballots in the pile for this candidate.
    * 
    * @param candidateID The internal identifier of this candidate
