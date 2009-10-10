@@ -796,16 +796,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
     @     ensures \result == numberTransferable (fromCandidate);
     @*/
-  protected/*@ pure spec_public @*/int getTotalTransferableVotes(
-                                                                  final/*@ non_null @*/Candidate fromCandidate) {
+  protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
+    final /*@ non_null @*/ Candidate fromCandidate) {
     int numberOfTransfers = 0;
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
         numberOfTransfers +=
-                             getPotentialTransfers(
-                                                   fromCandidate,
-                                                   candidates[i]
-                                                                .getCandidateID());
+         getPotentialTransfers(fromCandidate, candidates[i].getCandidateID());
       }
     }
     return numberOfTransfers;
@@ -939,17 +936,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
     candidates[loser].declareEliminated();
     redistributeBallots(candidateID);
-    auditDecision(DecisionStatus.EXCLUDE, candidateID);
+    makeDecision(DecisionStatus.EXCLUDE, candidateID);
     numberOfCandidatesEliminated++;
   }
 
   /**
-   * Audit a decision event.
+   * Make a decision either to elect or exclude a candidate.
    * 
-   * @param decisionType
-   *        The type of decision made
-   * @param candidateID
-   *        The candidate about which the decision was made
+   * @param decisionType The type of decision made
+   * @param candidateID The identity of the candidate about which the decision was made
    */
   /*@ requires (\exists int i; 0 <= i && i < totalCandidates;
     @   candidateList[i].getCandidateID() == candidateID);
@@ -965,7 +960,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ assignable decisions[decisionsTaken].decisionTaken;
     @ ensures \old(numberOfDecisions) <= numberOfDecisions;
     @*/
-  protected void auditDecision(final byte decisionType, final int candidateID) {
+  protected void makeDecision(final byte decisionType, final int candidateID) {
 
     final Decision decision = new Decision();
     decision.setDecisionType(decisionType);
@@ -1050,12 +1045,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ ensures \old(remainingSeats) == 1 + remainingSeats;
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;
-      candidates[winner].declareElected();
-      auditDecision(DecisionStatus.DEEM_ELECTED,
-                    candidates[winner].getCandidateID());
-      numberOfCandidatesElected++;
-      totalRemainingSeats--;
-    
+    candidates[winner].declareElected();
+    makeDecision(DecisionStatus.DEEM_ELECTED, candidates[winner].getCandidateID());
+    numberOfCandidatesElected++;
+    totalRemainingSeats--;
   }
 
   /**

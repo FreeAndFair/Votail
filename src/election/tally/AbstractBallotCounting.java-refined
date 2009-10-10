@@ -361,9 +361,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param fromCandidate Candidate from which to check the transfers
    * @return Number of votes potentially transferable from this candidate
    */
-  /*@ requires (state == COUNTING);
-    @ ensures \result == getSumOfTransfers(fromCandidate);
-    @*/
+  //@ requires state == COUNTING;
   protected /*@ pure spec_public @*/ int getTotalTransferableVotes (
     /*@ non_null @*/ Candidate fromCandidate); 
 
