@@ -974,6 +974,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     //@ assert 0 <= numberOfDecisions;
     //@ assert numberOfDecisions <= decisionsMade.length;
     //@ assert 0 <= totalVotes;
+    //@ assert depositSavingThreshold <= totalVotes;
   }
 
   /**
@@ -1005,12 +1006,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   || (isContinuingCandidateID (ballot.getCandidateID()) 
     @   && \old(ballot.getCandidateID()) != ballot.getCandidateID());
     @*/
-  public void transferBallot(final/*@ non_null @*/Ballot ballot) {
+  public void transferBallot(final /*@ non_null @*/ Ballot ballot) {
 
     while ((ballot.getCandidateID() != Ballot.NONTRANSFERABLE)
            && (!isContinuingCandidateID(ballot.getCandidateID()))) {
       ballot.transfer();
     }
+    /*@ assert ballot.getCandidateID() == Ballot.NONTRANSFERABLE
+      @   || isContinuingCandidateID (ballot.getCandidateID());
+      @*/
   }
 
   /**
