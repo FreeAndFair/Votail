@@ -45,6 +45,11 @@
 				</dictionary>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>mobius.escjava2.ui.autocheckEscjavaBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
@@ -56,5 +61,6 @@
 		<nature>net.sourceforge.pmd.eclipse.plugin.pmdNature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>
 		<nature>net.sourceforge.metrics.nature</nature>
+		<nature>mobius.escjava2.ui.autocheckEscjavaNature</nature>
 	</natures>
 </projectDescription>

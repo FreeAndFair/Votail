@@ -155,11 +155,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public constraint (state == COUNTING) ==> 
     @   \old(countNumber) <= countNumber;
     @*/
-	
-  /** Total number of undistributed surplus votes */
-  //@ public model int sumOfSurpluses;
-  //@ public invariant 0 <= sumOfSurpluses;
-  //@ public invariant sumOfSurpluses <= totalVotes;
 
   /** Number of seats which remain to be filled */
   //@ public model int remainingSeats; 
@@ -319,7 +314,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires state == PRECOUNT || state == COUNTING;
     @   ensures state == FINISHED;
     @   assignable state, countNumber, numberElected, remainingSeats, candidateList,
-    @     sumOfSurpluses, ballotsToCount;
+    @     ballotsToCount;
     @   ensures remainingSeats == 0;
     @   ensures numberElected == seats;
     @*/

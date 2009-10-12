@@ -54,7 +54,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ protected represents candidateList <- candidates;
 
   /** List of contents of each ballot paper that will be counted. */
-  protected transient Ballot[] ballots = new Ballot[0];
+  protected transient /*@ spec_public @*/ Ballot[] ballots = new Ballot[0];
+  //@ public invariant ballots.owner == this;
   //@ protected represents ballotsToCount <- ballots;
 
   /** Total number of candidates for election */
@@ -419,6 +420,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
                                                               final Candidate fromCandidate,
                                                               final int toCandidateID) {
     int numberOfBallots = 0;
+    //@ assert ballots != null;
     for (int j = 0; j < ballots.length; j++) {
       //@ assert ballots[j] != null;
       if (ballots[j].isAssignedTo(fromCandidate.getCandidateID())
@@ -562,6 +564,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
     @   requires getSurplus(fromCandidate) < 
     @            getTotalTransferableVotes(fromCandidate);
+    @   requires 0 <= getTransferShortfall (fromCandidate);
     @*/
   protected/*@ pure spec_public @*/int getRoundedFractionalValue(
     final/*@ non_null @*/Candidate fromCandidate,
@@ -924,7 +927,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ assignable candidateList, decisions[*], decisionsTaken;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
-    @ assignable candidateList[loser].state;
+    @ assignable candidateList[loser].state, ballotsToCount, ballots;
     @ ensures remainingSeats <= getNumberContinuing();
     @ ensures numberElected <= seats;
     @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
@@ -985,6 +988,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ requires candidateID != Ballot.NONTRANSFERABLE;
     @ requires countNumberValue < CountConfiguration.MAXCOUNT;
     @ requires \nonnullelements (ballotsToCount);
+    @ assignable ballots;
     @*/
   protected void redistributeBallots(final int candidateID) {
 

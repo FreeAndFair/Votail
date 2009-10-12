@@ -85,8 +85,9 @@ public class Ballot {
  */
 public static final int NONTRANSFERABLE = 0;
 
-/** Preference list of candidate IDs */	
+  /** Preference list of candidate IDs */	
   protected /*@ spec_public non_null */ int[] preferenceList;
+  //@ protected invariant preferenceList.owner == this;
 
   /** Total number of valid preferences on this ballot paper */
   protected /*@ spec_public @*/ int numberOfPreferences;
@@ -104,6 +105,7 @@ public static final int NONTRANSFERABLE = 0;
     numberOfPreferences = 0;
     positionInList = 0;
     preferenceList = new int [0];
+    //@ set preferenceList.owner = this;
   }
 
   /**

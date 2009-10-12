@@ -130,7 +130,7 @@ public class BallotCounting extends AbstractBallotCounting {
       countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
 
       for (int i = 0; i < totalNumberOfCandidates; i++) {
-        moveSurplusBallots(winner, surplus, totalTransferableVotes, i);
+        moveSurplusBallots(winner, i);
       }
     }
     
@@ -145,16 +145,12 @@ public class BallotCounting extends AbstractBallotCounting {
 
 	//@ requires 0 <= index && index < candidateList.length;
 	//@ requires 0 <= winner && winner < candidateList.length;
-	//@ requires 0 <= surplus;
-  //@ requires 0 <= totalTransferableVotes;
 	//@ requires \nonnullelements (candidateList);
-  protected void moveSurplusBallots(final int winner, final int surplus,
-                                    final int totalTransferableVotes, final int index) {
+  protected void moveSurplusBallots(final int winner, final int index) {
     //@ assert candidateList[index] != null;
     if ((index != winner) && 
       (candidates[index].getStatus() == CandidateStatus.CONTINUING)) {
-      final int numberOfTransfers = calculateNumberOfTransfers(
-        winner, surplus, totalTransferableVotes, index);
+      final int numberOfTransfers = calculateNumberOfTransfers(winner, index);
       transferVotes(candidates[winner], candidates[index], numberOfTransfers);
     }
   }
@@ -174,11 +170,10 @@ public class BallotCounting extends AbstractBallotCounting {
       final int fromCandidateID = candidates[winner].getCandidateID();
       for (int b = 0; b < ballots.length; b++) {
         //@ assert ballotsToCount[b] != null;
-        if ((ballots[b].isAssignedTo(fromCandidateID)) &&
-          (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
+        if ((ballots[b].isAssignedTo(fromCandidateID)) && (0 < numberToRemove) 
+            && (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
           transferBallot (ballots[b]);
           numberToRemove--;
-          if (numberToRemove <= 0) break;
         }
       }
     }
@@ -187,14 +182,12 @@ public class BallotCounting extends AbstractBallotCounting {
 
   //@ requires 0 <= index && index < candidateList.length;
   //@ requires \nonnullelements (candidateList);
-  protected int calculateNumberOfTransfers(final int winner, final int surplus,
-                                           final int totalTransferableVotes,
-                                           final int index) {
+  protected int calculateNumberOfTransfers(final int winner, final int index) {
     //@ assert candidates[winner] != null;
     int numberOfTransfers = 
       getActualTransfers(candidates[winner], candidates[index]);
     
-    if (surplus < totalTransferableVotes) {
+    if (0 <= getTransferShortfall (candidates[winner])) {
       numberOfTransfers += 
         getRoundedFractionalValue(candidates[winner],candidates[index]);
     }
@@ -247,7 +240,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable countNumberValue, ballotsToCount, candidateList[*];
 	  @   assignable candidates, candidates[*];
 	  @		assignable totalRemainingSeats, countStatus;
-	  @		assignable savingThreshold;
+	  @		assignable savingThreshold, ballots, ballotsToCount;
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
 	  @		assignable decisions, decisionsTaken;
@@ -284,6 +277,9 @@ public class BallotCounting extends AbstractBallotCounting {
 	}
 
 
+	/*@ assignable candidateList, ballotsToCount, candidates, decisions,
+	  @   decisionsTaken, numberOfCandidatesElected, totalRemainingSeats;
+	  @*/
   protected void electCandidatesWithSurplus() {
     while (getTotalSumOfSurpluses() > 0
            && countNumberValue < CountConfiguration.MAXCOUNT
@@ -314,7 +310,8 @@ public class BallotCounting extends AbstractBallotCounting {
 
 	/*@ requires \nonnullelements (candidateList);
 	  @ assignable countStatus, countNumberValue, candidates, candidateList;
-	  @ assignable decisionsTaken, numberOfCandidatesEliminated;
+	  @ assignable decisionsTaken, numberOfCandidatesEliminated, ballots,
+	  @   ballotsToCount;
 	  @*/
   protected void excludeLowestCandidates() {
     while (getTotalSumOfSurpluses() == 0
@@ -365,7 +362,7 @@ public class BallotCounting extends AbstractBallotCounting {
   }
 
 
-  public int getDepositSavingThreshold() {
+  public /*@ pure @*/ int getDepositSavingThreshold() {
     return 1 + (getQuota() / 4);
   }
 
