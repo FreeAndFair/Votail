@@ -126,17 +126,16 @@ public class BallotCounting extends AbstractBallotCounting {
 	  //@ assert candidateList[winner] != null;
     final int surplus = getSurplus(candidates[winner]);
     final int totalTransferableVotes = getTotalTransferableVotes(candidates[winner]);
-    if (0 < surplus) {
+    if (0 < surplus && 0 < totalTransferableVotes) {
       countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
 
       for (int i = 0; i < totalNumberOfCandidates; i++) {
         moveSurplusBallots(winner, i);
       }
+      // Move non-transferable part of surplus
+      removeNonTransferableBallots(winner, surplus, totalTransferableVotes);
     }
     
-    // Move non-transferable part of surplus
-    removeNonTransferableBallots(winner, surplus, totalTransferableVotes);
-
     countStatus.changeState(
       AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
     //@ assert getSurplus (candidateList[winner]) == 0;
@@ -156,13 +155,11 @@ public class BallotCounting extends AbstractBallotCounting {
   }
 
   //@ requires 0 <= winner && winner < candidateList.length;
-  //@ requires 0 <= surplus && surplus < ballotsToCount.length;
-  //@ requires 0 <= totalTransferableVotes && totalTransferableVotes < ballotsToCount.length;
   //@ requires \nonnullelements (candidateList);
   //@ requires \nonnullelements (ballotsToCount);
   protected void removeNonTransferableBallots(final int winner,
-                                              final int surplus,
-                                              final int totalTransferableVotes) {
+                                            final int surplus,
+                                            final int totalTransferableVotes) {
     if (surplus > totalTransferableVotes) {
       int numberToRemove = surplus - totalTransferableVotes;
       //@ assert 0 < numberToRemove;
@@ -171,7 +168,8 @@ public class BallotCounting extends AbstractBallotCounting {
       for (int b = 0; b < ballots.length; b++) {
         //@ assert ballotsToCount[b] != null;
         if ((ballots[b].isAssignedTo(fromCandidateID)) && (0 < numberToRemove) 
-            && (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
+            && (getNextContinuingPreference(ballots[b]) 
+            == Ballot.NONTRANSFERABLE)) {
           transferBallot (ballots[b]);
           numberToRemove--;
         }

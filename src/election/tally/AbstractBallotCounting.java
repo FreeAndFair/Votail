@@ -7,7 +7,7 @@ package election.tally;
  * Parliament of Ireland.
  * 
  * @author Dermot Cochran
- * @copyright 2005-2009 Dermot Cochran
+ * (c) 2005-2009 Dermot Cochran
  * @license Permission is hereby granted, free of charge, to any person obtaining
  *          a copy of this software and associated documentation files (the
  *          "Software"), to deal in the Software without restriction, including
@@ -703,8 +703,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @design There must be a strict ordering of candidates for the purpose of
    *         allocating the transfer shortfall. If two or more candidates have
    *         equal remainders then use the number of transfers they are about to
-   *         recieve and if the number of transfers are equal then look at the
-   *         number of votes all ready recieved.
+   *         receive and if the number of transfers are equal then look at the
+   *         number of votes all ready received.
    * @param fromCandidate
    *        Candidate, already elected, with surplus votes to donate
    * @param toCandidate
@@ -717,10 +717,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     requires state == COUNTING;
     @     requires isElected (fromCandidate);
     @     requires toCandidate.getStatus() == 
-    @         election.tally.Candidate.CONTINUING;
+    @       election.tally.Candidate.CONTINUING;
     @     requires getSurplus(fromCandidate) < 
-    @         getTotalTransferableVotes(fromCandidate);
+    @       getTotalTransferableVotes(fromCandidate);
     @     requires 0 <= getTransferShortfall (fromCandidate);
+    @     requires 0 <= getSurplus(fromCandidate);
     @     ensures \result == getCandidateRanking (fromCandidate, toCandidate);
     @*/
   protected/*@ pure spec_public @*/int getOrder(
@@ -728,56 +729,51 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     final/*@ non_null @*/Candidate toCandidate) {
     int numberHigherThan = 0;
     final int actualTransfers = getActualTransfers(fromCandidate, toCandidate);
-    final int transferRemainder =
-                                  getTransferRemainder(fromCandidate,
+    final int transferRemainder = getTransferRemainder(fromCandidate,
                                                        toCandidate);
 
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getCandidateID() != toCandidate.getCandidateID()
-          && candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-        numberHigherThan +=
-                            compareCandidates(fromCandidate, toCandidate,
-                                              actualTransfers,
-                                              transferRemainder, i);
-
+        && candidates[i].getStatus() == CandidateStatus.CONTINUING) {
+        //@ assert state == COUNTING;
+        //@ assert isElected (fromCandidate);
+        //@ assert getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
+        //@ assert 0 <= getTransferShortfall (fromCandidate);
+        //@ assert 0 <= getSurplus(fromCandidate);
+        numberHigherThan += compareCandidates(fromCandidate, toCandidate,
+          actualTransfers, transferRemainder, candidates[i]);
       }
     }
     return numberHigherThan;
   }
 
-  /*@ requires 0 <= index && index < candidateList.length;
-    @ requires state == COUNTING;
-    @ requires \nonnullelements (candidateList);
-    @ requires state == COUNTING;
-    @ requires isElected (fromCandidate);
-    @ requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
-    @ requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
-    @ requires 0 <= getTransferShortfall (fromCandidate);
-    @ requires 0 < getSurplus(fromCandidate);
-    @ requires 0 <= actualTransfers;
-    @ requires 0 <= transferRemainder;
+  /*@ protected normal_behavior
+    @   requires state == COUNTING;
+    @   requires isElected (fromCandidate);
+    @   requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
+    @   requires 0 <= getTransferShortfall (fromCandidate);
+    @   requires 0 <= getSurplus(fromCandidate);
     @*/
   protected /*@ pure @*/ int compareCandidates(
     final /*@ non_null @*/ Candidate fromCandidate,
-    final /*@ non_null @*/ Candidate toCandidate,
-    final int actualTransfers,
-    final int transferRemainder,
-    final int index) {
-    //@ assert candidates[index] != null;
-    if (getTransferRemainder(fromCandidate, candidates[index]) > transferRemainder) {
+    final /*@ non_null @*/ Candidate firstCandidate,
+    final int transfersToFirst,
+    final int firstTransferRemainder,
+    final /*@ non_null @*/ Candidate secondCandidate) {
+    final int secondTransferRemainder = getTransferRemainder(fromCandidate,
+                                                           secondCandidate);
+    if (secondTransferRemainder > firstTransferRemainder) {
       return 1;
     }
 
-    final boolean equalRemainders =
-                                    getTransferRemainder(fromCandidate,
-                                                         candidates[index]) == transferRemainder;
-    final int transfersToOther =
-                                 getActualTransfers(fromCandidate,
-                                                    candidates[index]);
-    if (equalRemainders && transfersToOther > actualTransfers) {
+    final int transfersToSecond = getActualTransfers(fromCandidate,
+                                                    secondCandidate);
+    if (secondTransferRemainder == firstTransferRemainder 
+        && transfersToSecond > transfersToFirst) {
       return 1;
-    } else if (equalRemainders && transfersToOther == actualTransfers
-               && isHigherThan(candidates[index], toCandidate)) {
+    } else if (secondTransferRemainder == firstTransferRemainder 
+        && transfersToSecond == transfersToFirst
+               && isHigherThan(secondCandidate, firstCandidate)) {
       return 1;
     }
 
@@ -798,6 +794,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     requires isElected (fromCandidate) ||
     @       (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
     @     ensures \result == numberTransferable (fromCandidate);
+    @     ensures 0 <= \result;
     @*/
   protected /*@ pure spec_public @*/ int getTotalTransferableVotes(
     final /*@ non_null @*/ Candidate fromCandidate) {
@@ -862,7 +859,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
           highestCandidate = i;
         } else if (0 <= highestCandidate && votes == mostVotes
                    && isHigherThan(candidates[i], candidates[highestCandidate])) {
-          highestCandidate = i;
+          highestCandidate = i; // TODO test coverage
         }
       }
     }
