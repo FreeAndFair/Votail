@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 	
+ 	<project basedir="." default="compile_jml_source" name="spec">
+ 	
+ 	  <property name="main-project.location" value="." />
+ 	  <property name="spec-project.location" value="./jml" />
+      <property name="jml.location" value="/usr/local/Java/JML"/>
+ 	
+ 	  <path id="jml-libraries.classpath">
+ 	    <pathelement location="${jml-location}/bin/jml-release.jar" />
+ 	    <pathelement location="${jml-location}/specs" />
+ 	  </path>
+ 	
+ 	  <path id="main-project.classpath">
+ 	    <pathelement location="${main-project.location}/src" />
+ 	  </path>
+ 	
+ 	  <path id="jml.classpath">
+ 	    <path refid="jml-libraries.classpath" />
+ 	    <path refid="main-project.classpath" />
+ 	  </path>
+ 	  <property name="jml.classpath" refid="jml.classpath" />
+ 	
+ 	  <property name="jml.src" value="jml/src" />
+	  <property name="jml.rac.src.generated" value="jml/src.generated" />
+	  <property name="jml.rac.src" value="jml/src.rac" />
+ 	  <property name="jml.rac.compiled" value="jml/bin" />
+ 	 
+ 	  <property name="jml.src.compile" value="election.tally"/>
+ 	 
+ 	  <target name="clean">
+ 	    <delete dir="${jml.rac.src.generated}" />
+ 	    <delete dir="${jml.rac.src}" />
+ 	    <delete dir="${jml.rac.compiled}" />
+ 	  </target>
+ 	 
+ 	  <target name="init">
+ 	    <mkdir dir="${jml.rac.src.generated}" />
+ 	    <mkdir dir="${jml.rac.src}" />
+ 	    <mkdir dir="${jml.rac.compiled}" />
+ 	  </target>
+ 	 
+ 	  <target name="generate_jml_source" depends="init">
+ 	    <property name="jml.debug" value="--debug" />
+ 	    <property name="jml.warning" value="--warning" />
+ 	    <property name="jml.assignable" value="--assignable" />
+ 	    <property name="jml.recursive" value="--recursive" />
+ 	    <property name="jml.source_code" value="--source 1.4" />
+ 	    <property name="jml.print_source" value="--print" />
+ 	    <java failonerror="true" fork="true" classname="org.jmlspecs.jmlrac.Main">
+ 	      <jvmarg value="-Xms64m" />
+ 	      <jvmarg value="-Xmx128m" />
+ 	      <classpath>
+ 	        <path refid="jml.classpath" />
+ 	      </classpath>
+ 	      <arg line="${jml.debug}" />
+ 	      <arg line="${jml.warning}" />
+ 	      <arg line="${jml.assignable}" />
+ 	      <arg line="${jml.recursive}" />
+ 	      <arg line="${jml.source_code}" />
+ 	      <arg line="${jml.print_source}" />
+ 	      <arg line="--classpath ${jml.classpath}" />
+ 	      <arg line="--sourcepath ${jml.src}" />
+ 	      <arg line="--destination ${jml.rac.src.generated}" />
+ 	      <arg line="${jml.src.compile}" />
+ 	    </java>
+ 	    <copy todir="${jml.rac.src}" includeemptydirs="true">
+ 	      <fileset dir="${jml.rac.src.generated}">
+ 	        <include name="**/*.java.gen" />
+ 	      </fileset>
+ 	      <mapper type="glob" from="*.java.gen" to="*.java" />
+ 	    </copy>
+ 	  </target>
+ 	
+ 	  <target name="compile_jml_source" depends="generate_jml_source">
+ 	    <javac
+ 	        destdir="${jml.rac.compiled}"
+ 	        srcdir="${jml.rac.src}"
+ 	        fork="yes"
+ 	        source="1.4"
+ 	        target="1.4"
+ 	        memorymaximumsize="128m"
+ 	        debug="true"
+ 	        debuglevel="lines,vars,source"
+ 	        verbose="yes"
+ 	          listfiles="yes">
+ 	      <src path="${jml.rac.src}" />
+ 	      <classpath refid="jml.classpath" />
+ 	    </javac>
+ 	  </target>
+ 	 
+ 	  <target name="generate_jml_test_source" depends="init">
+ 	    <property name="jml.debug" value="--debug" />
+ 	    <property name="jml.warning" value="--warning" />
+ 	    <property name="jml.recursive" value="--recursive" />
+ 	    <property name="jml.source_code" value="--source 1.4" />
+ 	    <!--
+ 	    <property name="jml.test.generator" value="- - useGenerator" />
+ 	    -->
+ 	    <property name="jml.test.generator" value="" />
+ 	    <property name="jml.test.generator.classname" value="--generatorClassName Generator" />
+ 	    <property name="jml.test.generator.packagename" value="--generatorPackageName election.tally" />
+ 	    <java failonerror="true" fork="true" classname="org.jmlspecs.jmlunit.Main">
+ 	      <jvmarg value="-Xms64m" />
+ 	      <jvmarg value="-Xmx128m" />
+ 	      <classpath>
+ 	        <path refid="jml.classpath" />
+ 	      </classpath>
+ 	      <arg line="${jml.debug}" />
+ 	      <arg line="${jml.warning}" />
+ 	      <arg line="${jml.recursive}" />
+ 	      <arg line="${jml.source_code}" />
+ 	      <arg line="${jml.test.generator}" />
+ 	      <arg line="${jml.test.generator.classname}" />
+ 	      <arg line="${jml.test.generator.packagename}" />
+ 	      <arg line="--classpath ${jml.classpath}" />
+ 	      <arg line="--sourcepath ${jml.src}" />
+ 	      <arg line="--destination ${jml.junit.src}" />
+ 	      <arg line="${jml.src.compile}" />
+ 	    </java>
+ 	  </target>
+ 	
+ 	</project>
