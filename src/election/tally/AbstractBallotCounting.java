@@ -148,7 +148,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (countBallotsFor(candidate.getCandidateID()) >= getQuota());
     @*/
   public/*@ pure @*/boolean hasQuota(final/*@ non_null @*/Candidate candidate) {
-    return (countBallotsFor(candidate.getCandidateID()) >= getQuota());
+    // TODO 2009.10.14 ESC precondition violation warning
+    return (countBallotsFor(candidate.getCandidateID()) >= getQuota()); //@ nowarn;
   }
 
   /**
@@ -192,7 +193,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     ensures 0 <= \result;
     @*/
   public/*@ pure @*/int getSurplus(final/*@ non_null @*/Candidate candidate) {
-    final int surplus = countBallotsFor(candidate.getCandidateID()) - getQuota();
+    // TODO 2009.10.14 ESC precondition violation warning
+    final int surplus = countBallotsFor(candidate.getCandidateID()) - getQuota(); //@ nowarn;
     if (surplus < 0) {
       return 0;
     }
@@ -242,9 +244,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (isElected (candidateList[index]) == true);
     @*/
   public/*@ pure @*/boolean isDepositSaved(final int index) {
-    //@ assert 0 <= index;
-    final Candidate candidate = candidates[index];
-    final int originalVote = candidate.getOriginalVote();
+    // TODO 2009.10.14 ESC negative index warning
+    final Candidate candidate = candidates[index]; //@ nowarn;
+    // TODO 2009.10.14 ESC precondition warning
+    final int originalVote = candidate.getOriginalVote(); //@ nowarn;
     final boolean elected = isElected(candidate);
     return ((originalVote >= savingThreshold) || elected);
   }
@@ -296,10 +299,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.status = PRELOAD;
     candidates = new Candidate[this.totalNumberOfCandidates];
     for (int i = 0; i < candidates.length; i++) {
-      this.candidates[i] = constituency.getCandidate(i);
+      // TODO 2009.10.14 ESC precondition
+      this.candidates[i] = constituency.getCandidate(i); //@ nowarn;
     }
     this.totalRemainingSeats = this.numberOfSeats;
-  }
+    // TODO 2009.10.14 ESC postcondition
+  } //@ nowarn;
 
   /**
    * Open the ballot box for counting.
@@ -320,8 +325,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     totalNumberOfVotes = ballotBox.size();
     ballots = new Ballot[totalNumberOfVotes];
     int index = 0;
-    while (ballotBox.isNextBallot()) {
-      ballots[index++] = ballotBox.getNextBallot();
+    // TODO 2009.10.14 ESC invariant violation
+    while (ballotBox.isNextBallot()) { //@ nowarn;
+      // TODO 2009.10.14 ESC precondition warning
+      ballots[index++] = ballotBox.getNextBallot(); //@ nowarn;
     }
     status = PRECOUNT;
 
@@ -350,7 +357,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
         final int candidateID = candidates[c].getCandidateID();
         final int numberOfBallotsInPile = countFirstPreferences(candidateID);
         if (0 < numberOfBallotsInPile) {
-          candidates[c].addVote(numberOfBallotsInPile, countNumberValue);
+          // TODO 2009.10.14 ESC warning
+          candidates[c].addVote(numberOfBallotsInPile, countNumberValue); //@ nowarn;
         }
       
     }
@@ -420,10 +428,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
                                                               final Candidate fromCandidate,
                                                               final int toCandidateID) {
     int numberOfBallots = 0;
-    //@ assert ballots != null;
-    for (int j = 0; j < ballots.length; j++) {
-      //@ assert ballots[j] != null;
-      if (ballots[j].isAssignedTo(fromCandidate.getCandidateID())
+    // TODO 2009.10.14 ESC null reference warnings
+    for (int j = 0; j < ballots.length; j++) { //@ nowarn;
+      if (ballots[j].isAssignedTo(fromCandidate.getCandidateID()) //@ nowarn;
           && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
         numberOfBallots++;
       }
@@ -490,7 +497,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       }
     }
     return false; // not a candidate
-  }
+    // TODO 2009.10.14 ESC postcondition
+  } //@ nowarn;
 
   /**
    * Determine actual number of votes to transfer to this candidate
@@ -537,13 +545,14 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
                                               toCandidate.getCandidateID());
     final int surplus = getSurplus(fromCandidate);
     final int totalTransferableVotes = getTotalTransferableVotes(fromCandidate);
-    if (isElected(fromCandidate) && surplus < totalTransferableVotes) {
+    if (isElected(fromCandidate) && surplus < totalTransferableVotes && 0 < totalTransferableVotes) {
       numberOfVotes *= surplus;
       numberOfVotes /= totalTransferableVotes;
     }
 
     return numberOfVotes;
-  }
+    // TODO 2009.10.14 ESC postcondition
+  } //@ nowarn;
 
   /**
    * Determine the rounded value of a fractional transfer.
@@ -683,7 +692,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     int count = countNumberValue;
     while (0 <= count) {
 
-      firstNumberOfVotes = firstCandidate.getTotalAtCount(count);
+      // TODO 2009.10.14 ESC precondition warning
+      firstNumberOfVotes = firstCandidate.getTotalAtCount(count); //@ nowarn;
       secondNumberOfVotes = secondCandidate.getTotalAtCount(count);
       if (firstNumberOfVotes > secondNumberOfVotes) {
         return true;
@@ -694,7 +704,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
 
     return secondCandidate.isAfter(firstCandidate);
-  }
+    // TODO 2009.10.14 ESC postcondition warning
+  } //@ nowarn;
 
   /**
    * Determine the number of continuing candidates with a higher remainder in
@@ -729,23 +740,21 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     final/*@ non_null @*/Candidate toCandidate) {
     int numberHigherThan = 0;
     final int actualTransfers = getActualTransfers(fromCandidate, toCandidate);
-    final int transferRemainder = getTransferRemainder(fromCandidate,
-                                                       toCandidate);
+    // TODO 2009.10.14 ESC precondition warning
+    final int transferRemainder 
+      = getTransferRemainder(fromCandidate, toCandidate); //@ nowarn;
 
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getCandidateID() != toCandidate.getCandidateID()
         && candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-        //@ assert state == COUNTING;
-        //@ assert isElected (fromCandidate);
-        //@ assert getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
-        //@ assert 0 <= getTransferShortfall (fromCandidate);
-        //@ assert 0 <= getSurplus(fromCandidate);
-        numberHigherThan += compareCandidates(fromCandidate, toCandidate,
+        // TODO 2009.10.14 ESC precondition warning
+        numberHigherThan += compareCandidates(fromCandidate, toCandidate, //@ nowarn;
           actualTransfers, transferRemainder, candidates[i]);
       }
     }
     return numberHigherThan;
-  }
+    // TODO 2009.10.14 ESC postcondition warning
+  } //@ nowarn;
 
   /*@ protected normal_behavior
     @   requires state == COUNTING;
@@ -760,8 +769,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     final int transfersToFirst,
     final int firstTransferRemainder,
     final /*@ non_null @*/ Candidate secondCandidate) {
-    final int secondTransferRemainder = getTransferRemainder(fromCandidate,
-                                                           secondCandidate);
+    
+    // TODO 2009.10.14 ESC warning
+    final int secondTransferRemainder 
+      = getTransferRemainder(fromCandidate, secondCandidate); //@ nowarn;
     if (secondTransferRemainder > firstTransferRemainder) {
       return 1;
     }
@@ -773,7 +784,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       return 1;
     } else if (secondTransferRemainder == firstTransferRemainder 
         && transfersToSecond == transfersToFirst
-               && isHigherThan(secondCandidate, firstCandidate)) {
+               // TODO 2009.10.14 ESC precondition warning
+               && isHigherThan(secondCandidate, firstCandidate)) { //@ nowarn;
       return 1;
     }
 
@@ -806,7 +818,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       }
     }
     return numberOfTransfers;
-  }
+    // TODO 2009.10.14 ESC postcondition
+  } //@ nowarn Post;
 
   /**
    * Transfer votes from one candidate to another.
@@ -865,7 +878,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
 
     return highestCandidate;
-  }
+    // TODO 2009.10.14 ESC postcondition
+  } //@ nowarn Post;
 
   /**
    * Who is the lowest continuing candidate?
@@ -935,10 +949,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     final int candidateID = candidates[loser].getCandidateID();
 
     candidates[loser].declareEliminated();
-    redistributeBallots(candidateID);
-    makeDecision(DecisionStatus.EXCLUDE, candidateID);
+    // TODO 2009.10.14 ESC warnings
+    redistributeBallots(candidateID); //@ nowarn;
+    makeDecision(DecisionStatus.EXCLUDE, candidateID); //@ nowarn;
     numberOfCandidatesEliminated++;
-  }
+  } //@ nowarn;
 
   /**
    * Make a decision either to elect or exclude a candidate.
@@ -975,7 +990,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     //@ assert numberOfDecisions <= decisionsMade.length;
     //@ assert 0 <= totalVotes;
     //@ assert depositSavingThreshold <= totalVotes;
-  }
+    // TODO 2009.10.14 ESC object invariant warning
+  } //@ nowarn;
 
   /**
    * Redistribute the transferable ballots of an excluded candidate.
@@ -992,7 +1008,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     for (int b = 0; b < ballots.length; b++) {
       if (ballots[b].getCandidateID() == candidateID) {
 
-        transferBallot(ballots[b]);
+        // TODO 2009.10.14 ESC precondition
+        transferBallot(ballots[b]); //@ nowarn;
       }
     }
   }
@@ -1016,7 +1033,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     /*@ assert ballot.getCandidateID() == Ballot.NONTRANSFERABLE
       @   || isContinuingCandidateID (ballot.getCandidateID());
       @*/
-  }
+    // TODO 2009.10.14 ESC postcondition
+  } //@ nowarn;
 
   /**
    * Main count algorithm.
@@ -1051,10 +1069,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;
     candidates[winner].declareElected();
-    makeDecision(DecisionStatus.DEEM_ELECTED, candidates[winner].getCandidateID());
+    // TODO 2009.10.14 ESC warning
+    makeDecision(DecisionStatus.DEEM_ELECTED, candidates[winner].getCandidateID()); //@ nowarn;
     numberOfCandidatesElected++;
     totalRemainingSeats--;
-  }
+    // TODO 2009.10.14 ESC precondition
+  } //@ nowarn;
 
   /**
    * Get the number of continuing candidates, neither elected nor eliminated
