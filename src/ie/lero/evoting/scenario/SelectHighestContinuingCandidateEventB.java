@@ -29,11 +29,10 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
     ballotCounting.setup(parameters);
     // All candidates get one vote; draw lots to resolve ties
-    final Ballot mockBallot = new Ballot();
     for (int i=0; i < NUM_CANDIDATES; i++) {
-      mockBallot.setFirstPreference(
-        parameters.getCandidate(i).getCandidateID());
-      ballotBox.accept(mockBallot);
+      int[] preferences =
+        {parameters.getCandidate(i).getCandidateID()};
+      ballotBox.accept(preferences);
     }
     ballotCounting.load(ballotBox);
   }

@@ -26,19 +26,19 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   
 	   ballotCounting.setup(election);    
 	   final BallotBox ballotBox = new BallotBox();
-	   final Ballot ballot = new Ballot();
 	   final int[] preferences = {election.getCandidate(0).getCandidateID(), 
 	                        election.getCandidate(1).getCandidateID(),
 	                        election.getCandidate(2).getCandidateID()};
+	   int[] preferenceA = new int[1];
+	   int[] preferenceB = new int[1];
 	   
 	   for (int i=0; i<NUM_CANDIDATES; i++) {
 	     assertTrue (election.getCandidate(i).sameAs(election.getCandidate(i)));
-	     ballot.setFirstPreference(election.getCandidate(0).getCandidateID());
-       ballotBox.accept(ballot);
-	     ballot.setFirstPreference(election.getCandidate(i).getCandidateID());
-	     ballotBox.accept(ballot);
-	     ballot.load(preferences);
-	     ballotBox.accept(ballot);
+	     preferenceA[0] = (election.getCandidate(0).getCandidateID());
+       ballotBox.accept(preferenceA);
+	     preferenceB[0] = (election.getCandidate(i).getCandidateID());
+	     ballotBox.accept(preferenceB);
+	     ballotBox.accept(preferences);
 	   }
 	  
 	   ballotCounting.load(ballotBox);

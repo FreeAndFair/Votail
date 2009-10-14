@@ -85,9 +85,9 @@ public class Ballot {
  */
 public static final int NONTRANSFERABLE = 0;
 
-  /** Preference list of candidate IDs */	
-  protected /*@ spec_public non_null */ int[] preferenceList;
+  /** List of candidates in order of preference */	
   //@ protected invariant preferenceList.owner == this;
+  protected /*@ spec_public non_null */ int[] preferenceList;
 
   /** Total number of valid preferences on this ballot paper */
   protected /*@ spec_public @*/ int numberOfPreferences;
@@ -99,70 +99,20 @@ public static final int NONTRANSFERABLE = 0;
    * Generate an empty ballot paper for use by a voter.
    */
 /*@ also public normal_behavior
-  @	  assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList;
+  @	  assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList, 
+  @   preferenceList.owner;
   @*/
-  public Ballot () {
-    numberOfPreferences = 0;
+  public Ballot (final /*@ non_null @*/ int[] preferences) {
+    numberOfPreferences = preferences.length;
     positionInList = 0;
-    preferenceList = new int [0];
+    preferenceList = new int [numberOfPreferences];
+    for (int i=0; i<preferences.length; i++) {
+      preferenceList[i] = preferences[i];
+    }
     //@ set preferenceList.owner = this;
   }
 
-  /**
-   * Copy the contents of a ballot.
-   * 
-   * @param ballot Ballot to be copied.
-   */
-  //@ requires positionInList == 0;
-  public void copy (final /*@ non_null @*/ Ballot ballot) {
-    numberOfPreferences = ballot.numberOfPreferences;
-    preferenceList = new int[numberOfPreferences];
-    for (int p = 0; p < numberOfPreferences; p++) {
-      preferenceList[p] = ballot.getPreference(p);
-    }
-  }
-
 /**
-   * Load the ballot details.
-   * 
-   * @param list List of candidate IDs in order from first preference
-   * 
-   * @design There should be at least one preference in the list. Empty or spoilt
-   *         votes should neither be loaded nor counted. There should be no
-   *         duplicate preferences in the list and none of the candidate ID values
-   *         should match the special value for non transferable votes.
-   *         <p>
-   *         There should be no duplicates in the preference list; but there is no
-   *         need to make this a precondition because duplicates will be ignored
-   *         and skipped over.
-   *         
-   * @constraint The ballot may only be loaded once; it cannot be overwritten.
-   */    
-  /*@ public normal_behavior
-    @   requires (\forall int i; 0 <= i && i < list.length;
-    @     list[i] != NONTRANSFERABLE);
-    @   requires (\forall int i; 0 <= i && i < list.length; 0 < list[i]);
-    @   requires positionInList == 0;
-    @	  assignable numberOfPreferences, preferenceList[*], positionInList, preferenceList;
-    @   ensures (\forall int i; 0 <= i && i < list.length;
-    @     (preferenceList[i] == list[i]));
-    @*/
-   public void load (final /*@ non_null @*/ int[] list) {
-
-    if (preferenceList.length < list.length) {
-      preferenceList = new int [list.length];
-    }
-
-    if (positionInList == 0) {
-      numberOfPreferences = list.length;
-    }
-
-    for (int i = 0; i < list.length; i++) {
-      preferenceList[i] = list[i];
-    }
-  }
-
-  /**
    * Get candidate ID to which the ballot is assigned 
    * 
    * @return The candidate ID to which the ballot is assigned
@@ -264,21 +214,6 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
     return false;
   }
 	return candidateID == preferenceList[0];
-}
-
-/**
- * Set the first preference candidate ID on the ballot paper.
- * 
- * @param firstPreferenceID The first preference candidate ID
- */
-/*@ requires firstPreferenceID != Candidate.NO_CANDIDATE; 
-  @ requires 0 <= firstPreferenceID;
-  @ requires firstPreferenceID != Ballot.NONTRANSFERABLE;
-  @ requires positionInList == 0;
-  @*/
-public final void setFirstPreference(final int firstPreferenceID) {
-  final int[] list = { firstPreferenceID };
-  load(list);
 }
  
 }

@@ -17,9 +17,9 @@ public class CheckRemainingSeatsEventM extends TestCase {
     assertTrue(constituency.getNumberOfSeatsInThisElection() 
                == ballotCounting.getRemainingSeats());
     final BallotBox ballotBox = new BallotBox();
-    final Ballot ballot = new Ballot();
-    ballot.setFirstPreference(constituency.getCandidate(0).getCandidateID());
-    ballotBox.accept(ballot);
+    final int[] preferences = new int[1];
+    preferences[0] = constituency.getCandidate(0).getCandidateID();
+    ballotBox.accept(preferences);
     ballotCounting.load(ballotBox);
     assertTrue(constituency.getNumberOfSeatsInThisElection() 
                == ballotCounting.getRemainingSeats());

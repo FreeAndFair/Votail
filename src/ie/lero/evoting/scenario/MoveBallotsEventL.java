@@ -20,12 +20,11 @@ public class MoveBallotsEventL extends TestCase {
 	   election.setNumberOfCandidates(NUM_CANDIDATES);
 	   ballotCounting.setup(election);    
 	   final BallotBox ballotBox = new BallotBox();
-	   final Ballot ballot = new Ballot();
+	    
 	   final int[] preferences = {election.getCandidate(0).getCandidateID(),
 	                        election.getCandidate(1).getCandidateID()};
-	   ballot.load(preferences);
-	   for (int i=0; i<NUM_BALLOTS; i++) {
-	     ballotBox.accept(ballot);
+ 	   for (int i=0; i<NUM_BALLOTS; i++) {
+	     ballotBox.accept(preferences);
 	   }
 	   
 	   ballotCounting.load(ballotBox);

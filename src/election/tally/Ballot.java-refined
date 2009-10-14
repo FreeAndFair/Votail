@@ -48,10 +48,10 @@ public class Ballot {
   /**
    * Default constructor
    */
-  /*@ ensures numberOfPreferences == 0;
+  /*@ ensures numberOfPreferences == preferenceList.length;
     @ ensures positionInList == 0;
     @*/
-  public Ballot();
+  public Ballot(final /*@ non_null @*/ int[] preferences);
 
   /**
    * Gets remaining number of preferences.

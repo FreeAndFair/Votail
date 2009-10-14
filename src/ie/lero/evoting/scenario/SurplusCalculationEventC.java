@@ -44,10 +44,8 @@ public class SurplusCalculationEventC extends TestCase {
 
     assertTrue(numberOfVotes <= Ballot.MAX_BALLOTS);
     assertTrue(ballotBox.size() == 0);
-    final Ballot testBallot = new Ballot();
-    testBallot.load(preferences);
     for (int b = 0; b < numberOfVotes; b++) {
-      ballotBox.accept(testBallot);
+      ballotBox.accept(preferences);
     }
   }
 

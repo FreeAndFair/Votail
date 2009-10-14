@@ -4,7 +4,6 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
-import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
@@ -27,14 +26,14 @@ public class QuotaCalculationEventA extends TestCase {
 	  
  		assertTrue(ballotCounting.getStatus() == ElectionStatus.PRELOAD);
 		final BallotBox ballotBox = new BallotBox();
-		final Ballot ballot = new Ballot();
+		int[] preferences = new int[1];
 		for (int i = 0; i < 51; i++) {
-		  ballot.setFirstPreference(parameters.getCandidate(0).getCandidateID());
-		  ballotBox.accept(ballot);
+		  preferences[0] = parameters.getCandidate(0).getCandidateID();
+		  ballotBox.accept(preferences);
 		}
 		for (int i = 0; i < 49; i++) {
-		  ballot.setFirstPreference(parameters.getCandidate(1).getCandidateID());
-		  ballotBox.accept(ballot);
+		  preferences[0] =(parameters.getCandidate(1).getCandidateID());
+		  ballotBox.accept(preferences);
 		}
 		
 		ballotCounting.load(ballotBox);

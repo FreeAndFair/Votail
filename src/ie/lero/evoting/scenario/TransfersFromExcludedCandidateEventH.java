@@ -16,14 +16,12 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	   election.setNumberOfCandidates(4);
 	   ballotCounting.setup(election);    
 	   final BallotBox ballotBox = new BallotBox();
-	   final Ballot ballot = new Ballot();
 	   final int[] preferences = {election.getCandidate(0).getCandidateID(),
 			   election.getCandidate(1).getCandidateID()};
 	   for (int i=0; i<3; i++) {
-	     ballot.setFirstPreference(election.getCandidate(i).getCandidateID());
-	     ballotBox.accept(ballot);
-	     ballot.load(preferences);
-	     ballotBox.accept(ballot);
+	     int[] preferenceA = {election.getCandidate(i).getCandidateID()};
+	     ballotBox.accept(preferenceA);
+	     ballotBox.accept(preferences);
 	   }
 	   
 	   ballotCounting.load(ballotBox);

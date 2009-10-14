@@ -6,7 +6,8 @@ import election.tally.Candidate;
 public class Generator {
   
   Ballot generateBallot(int number) {
-    return new Ballot();
+    int [] preferences = new int [number];
+    return new Ballot(preferences);
   }
   
   Candidate generateCandidate(int number) {

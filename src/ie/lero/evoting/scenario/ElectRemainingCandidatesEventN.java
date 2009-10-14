@@ -1,7 +1,6 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
-import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
@@ -15,10 +14,11 @@ public class ElectRemainingCandidatesEventN extends TestCase {
     constituency.setNumberOfCandidates(4);
     ballotCounting.setup(constituency);
     final BallotBox ballotBox = new BallotBox();
-    final Ballot ballot = new Ballot();
+    final int[] preferences = new int[1];
+      
     for (int i = 0; i < 3; i++) {
-      ballot.setFirstPreference(constituency.getCandidate(i).getCandidateID());
-      ballotBox.accept(ballot);
+      preferences[0] = constituency.getCandidate(i).getCandidateID();
+      ballotBox.accept(preferences);
     }
     ballotCounting.load(ballotBox);
     ballotCounting.count();

@@ -47,14 +47,14 @@ public class ExclusionEventJ extends TestCase {
 
  	protected void setUpBallotBox() {
  	  int numberOfVotes;
- 	  final Ballot ballot = new Ballot();
+ 	  int[] preferences = new int[1];
  		for (int i = 0; i < numberOfCandidates; i++) {
 			 numberOfVotes = i*10;
 			 
 			// Generate first preference ballots
 			for (int b = 0; b < numberOfVotes; b++) {
- 			  ballot.setFirstPreference(parameters.getCandidate(i).getCandidateID());
-				ballotBox.accept(ballot);
+			  preferences[0] = parameters.getCandidate(i).getCandidateID();
+	      ballotBox.accept(preferences);
 			}
 		}
 	}

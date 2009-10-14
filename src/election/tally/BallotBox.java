@@ -34,6 +34,7 @@ public class BallotBox {
  * or returning officer.
  */
   //@ public invariant \nonnullelements (ballots);
+  // TODO JML warning: array nullity is invariant for assignment
   protected /*@ non_null spec_public @*/ Ballot[] ballots = new Ballot [Ballot.MAX_BALLOTS];
 
     /**
@@ -73,9 +74,9 @@ public class BallotBox {
 	public /*@ pure @*/ BallotBox(){
 		index = 0;
 		numberOfBallots = 0;
-		ballots = new Ballot[Ballot.MAX_BALLOTS];
+		final int[] preferences = new int[0];
 		for (int b=0; b < ballots.length; b++) {
-		  ballots[b] = new Ballot();
+		  ballots[b] = new Ballot(preferences);
 		}
 	}
 
@@ -91,9 +92,9 @@ public class BallotBox {
 	  @ requires ballots[numberOfBallots].positionInList == 0;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @*/
-	public void accept (final /*@ non_null @*/ Ballot ballot) {
+	public void accept (final /*@ non_null @*/ int[] preferences) {
 	  //@ assert ballots[numberOfBallots] != null;
-		ballots[numberOfBallots++].copy(ballot);
+		ballots[numberOfBallots++] = new Ballot(preferences);
 	} 
 
 	/**
