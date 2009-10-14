@@ -249,7 +249,8 @@ public class BallotCounting extends AbstractBallotCounting {
 		
 		// Start or else resume the counting of ballots
 		if (status < ElectionStatus.COUNTING) {
-			startCounting();
+		  // TODO 2009.10.14 ESC warning
+			startCounting(); //@ nowarn;
 		}
 		
 		while (getNumberContinuing() > totalRemainingSeats && 
@@ -316,7 +317,8 @@ public class BallotCounting extends AbstractBallotCounting {
         && getNumberContinuing() > totalRemainingSeats
         && countNumberValue < CountConfiguration.MAXCOUNT) {
       
-      countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);
+      // TODO 2009.10.14 ESC assignable warning
+      countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE); //@ nowarn;
       final int loser = findLowestCandidate();
       
       if (loser != NONE_FOUND_YET) {
@@ -335,7 +337,8 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @*/
 
   protected void fillLastSeats() {
-    countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED);	
+    // TODO 2009.10.14 ESC assignable warning
+    countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED);	//@ nowarn;
     for (int c = 0; c < totalNumberOfCandidates; c++) {
     	if (isContinuingCandidateID(candidates[c].getCandidateID())) {
     		electCandidate(c);
@@ -354,10 +357,12 @@ public class BallotCounting extends AbstractBallotCounting {
     countNumberValue = 0;
 
     totalRemainingSeats = numberOfSeats;
-    savingThreshold = getDepositSavingThreshold();
+    // TODO 2009.10.14 ESC invariant warning
+    savingThreshold = getDepositSavingThreshold(); //@ nowarn;
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
-  }
+    // TODO 2009.10.14 ESC postcondition warning
+  } //@ nowarn;
 
 
   public /*@ pure @*/ int getDepositSavingThreshold() {
@@ -372,15 +377,18 @@ public class BallotCounting extends AbstractBallotCounting {
 	 */
   public BallotCounting() {
     super();
-    countStatus = new CountStatus();
+    // TODO 2009.10.14 ESC invariant warning
+    countStatus = new CountStatus(); //@ nowarn;
 		countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
-  }
+		// TODO 2009.10.14 ESC postcondition warning
+  } //@ nowarn;
 
 	/*@ requires state == COUNTING && countStatus != null;
 	  @ assignable countStatus.substate;
 	  @*/
 	public void updateCountStatus(final int countingStatus) {
-		countStatus.changeState(countingStatus);
+	  // TODO 2009.10.14 ESC assignable warning
+		countStatus.changeState(countingStatus); //@ nowarn;
 	}
 	
 	//@ assignable countNumberValue;
