@@ -71,12 +71,14 @@ public class BallotBox {
 	/**
 	 * Create an empty ballot box.
 	 */
+ 	//@ assignable ballots, index, numberOfBallots;
 	public /*@ pure @*/ BallotBox(){
 		index = 0;
 		numberOfBallots = 0;
 		final int[] preferences = new int[0];
 		for (int b=0; b < ballots.length; b++) {
-		  ballots[b] = new Ballot(preferences);
+		  // TODO 2009.10.15 ESC assignable warning
+		  ballots[b] = new Ballot(preferences); //@ nowarn;
 		}
 	}
 
@@ -94,7 +96,8 @@ public class BallotBox {
 	  @*/
 	public void accept (final /*@ non_null @*/ int[] preferences) {
 	  //@ assert ballots[numberOfBallots] != null;
-		ballots[numberOfBallots++] = new Ballot(preferences);
+	  // TODO 2009.10.15 ESC type mismatch warning
+		ballots[numberOfBallots++] = new Ballot(preferences); //@ nowarn;
 	} 
 
 	/**
