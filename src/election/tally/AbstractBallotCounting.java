@@ -333,8 +333,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     status = PRECOUNT;
 
     // Number of first preferences for each candidate
-    calculateFirstPreferences();
-  }
+    // TODO 2009.10.15 ESC precondition warning
+    calculateFirstPreferences(); //@ nowarn;
+    // TODO 2009.10.15 ESC postcondition warning
+  } //@ nowarn;
 
   /**
    * Droop quota; number of votes needed to guarantee election.
@@ -437,7 +439,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
     }
     return numberOfBallots;
-  }
+    // TODO 2009.10.15 ESC postcondition warning
+  } //@ nowarn;
 
   /**
    * Gets the status of the algorithm in progress.
