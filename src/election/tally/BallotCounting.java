@@ -253,7 +253,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable savingThreshold, ballots, ballotsToCount;
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
-	  @		assignable decisions, decisionsTaken;
+	  @		assignable decisions, decisionsTaken, status, countStatus;
 	  @		assignable remainingSeats, totalRemainingSeats;
 	  @   ensures state == ElectionStatus.FINISHED;
 	  @*/
@@ -285,15 +285,16 @@ public class BallotCounting extends AbstractBallotCounting {
 		
 		// Filling of last seats
 		// TODO 2009.10.15 ESC warnings
-		if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant
+		if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
 			fillLastSeats(); //@ nowarn;
 				
 		}
 		
-		// TODO 2009.10.16 ESC warning
-		countStatus.changeState(AbstractCountStatus.END_OF_COUNT);	//@ nowarn Modifies
+		// TODO 2009.10.16 ESC assignable warning
+		countStatus.changeState(AbstractCountStatus.END_OF_COUNT); //@ nowarn Modifies ;
 		status = ElectionStatus.FINISHED;
-	}
+		// TODO 2009.10.16 ESC postcondition warning
+	} //@ nowarn;
 
 
 	/*@ assignable candidateList, ballotsToCount, candidates, decisions,
