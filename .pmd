@@ -424,10 +424,6 @@
             <ruleset>Design Rules</ruleset>
         </rule>
         <rule>
-            <name>TooFewBranchesForASwitchStatement</name>
-            <ruleset>Design Rules</ruleset>
-        </rule>
-        <rule>
             <name>UncommentedEmptyConstructor</name>
             <ruleset>Design Rules</ruleset>
         </rule>
