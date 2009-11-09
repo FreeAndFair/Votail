@@ -234,7 +234,7 @@ public class BallotCounting extends AbstractBallotCounting {
       }
     }
     // TODO 2009.10.15 ESC warning
-	} //@ nowarn Post
+	} //@ nowarn Post;
 
 	/**
 	 * Count the ballots for this constituency using the rules of 
