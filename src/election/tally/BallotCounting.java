@@ -433,4 +433,10 @@ public class BallotCounting extends AbstractBallotCounting {
     return getNumberContinuing();
   }
 
+
+  public AbstractCountStatus getCountStatus() {
+    // TODO Auto-generated method stub
+    return countStatus;
+  }
+
 }

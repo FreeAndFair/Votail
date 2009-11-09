@@ -2,6 +2,8 @@
 
 package election.tally;
 
+import ie.lero.evoting.test.data.TestDataGenerator;
+
 /** Supply test data for the JML and JUnit based testing of 
  *  BallotBox.
  *
@@ -120,7 +122,7 @@ public abstract class BallotBox_JML_TestData
         = new org.jmlspecs.jmlunit.strategies.CloneableObjectAbstractStrategy()
             {
                 protected java.lang.Object[] addData() {
-                    return TestDataGenerator.getintArray();
+                    return TestDataGenerator.getIntArrayAsObject();
                 }
 
                 //@ also
