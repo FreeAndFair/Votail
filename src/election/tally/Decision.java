@@ -3,10 +3,9 @@ package election.tally;
 /**
  * Decisions taken during the counting of ballots.
  * 
- * @design It is necessary to be able to record any decision which might
+ * <p> It is necessary to be able to record any decision which might
  *         influence the order in which votes are counted or transfered.
  * @author Dermot Cochran
- * @copyright 2005-2009 Dermot Cochran
  */
 public class Decision extends DecisionStatus {
 

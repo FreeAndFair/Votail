@@ -1,8 +1,8 @@
 /**
  * Votail - PR-STV ballot counting for Irish elections
  * 
- * Copyright (c) 2005-2007 Dermot Cochran, Joseph R. Kiniry and Patrick E. Tierney
- * Copyright (c) 2008-2009 Dermot Cochran, Lero Graduate School of Software Engineering
+ * Copyright (c) 2005-2009 Dermot Cochran, Joseph R. Kiniry 
+ * and Patrick E. Tierney
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,8 +56,8 @@ package election.tally;
    Count Requirements and Commentary on Count Rules,
    section 3-14</a>
  * 
- * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">Dermot Cochran</a>
- * @copyright 2005-2009
+ * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
+ * Dermot Cochran</a>
  */
 
 

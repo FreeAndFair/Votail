@@ -2,6 +2,8 @@
 
 package election.tally;
 
+import ie.lero.evoting.test.data.TestDataGenerator;
+
 /** Supply test data for the JML and JUnit based testing of 
  *  AbstractBallotCounting.
  *
@@ -295,9 +297,9 @@ public abstract class AbstractBallotCounting_JML_TestData
 
     /** The strategy for generating test data of type
      * int. */
-    private org.jmlspecs.jmlunit.strategies.IntBigStrategyType
+    private org.jmlspecs.jmlunit.strategies.IntStrategyType
         vintStrategy
-        = new org.jmlspecs.jmlunit.strategies.IntStrategy()
+        = new org.jmlspecs.jmlunit.strategies.IntBigStrategy()
             {
                 protected int[] addData() {
                     return TestDataGenerator.getIntArray();

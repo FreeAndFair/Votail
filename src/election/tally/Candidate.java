@@ -11,7 +11,6 @@ package election.tally;
  * section 3-14</a>
  * 
  * @author Dermot Cochran
- * @copyright 2005-2009
  */
 
 public class Candidate extends CandidateStatus {

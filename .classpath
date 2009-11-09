@@ -5,5 +5,7 @@
 	<classpathentry kind="src" path="/jmlspecs"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="/usr/local/JML/bin/jmljunitruntime.jar"/>
+	<classpathentry kind="lib" path="/usr/local/JML/bin/jmlruntime.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -6,9 +6,7 @@ package election.tally;
  * Parliament.
  * 
  * @author Dermot Cochran
- * @copyright 2009 Dermot Cochran
- * 
- * @license
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -27,7 +25,7 @@ package election.tally;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  * 
- * @sponsors
+ * 
  * This work was supported, in part, by Science Foundation Ireland
  * grant 03/CE2/I303_1 to Lero - the Irish Software Engineering
  * Research Centre (www.lero.ie) and, in part, by the European Project Mobius 
