@@ -108,7 +108,7 @@ public static final int NONTRANSFERABLE = 0;
     for (int i=0; i<preferences.length; i++) {
       preferenceList[i] = preferences[i];
     }
-    // TDOD set preferenceList.owner = this;
+    // TODO set preferenceList.owner = this;
   }
 
 /**
