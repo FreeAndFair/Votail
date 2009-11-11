@@ -85,8 +85,8 @@ public class Ballot {
  */
 public static final int NONTRANSFERABLE = 0;
 
-  /** List of candidates in order of preference */	
-  //@ protected invariant preferenceList.owner == this;
+  /** List of candidates in order of preference */
+  // TODO protected invariant preferenceList.owner == this;
   protected /*@ spec_public non_null */ int[] preferenceList;
 
   /** Total number of valid preferences on this ballot paper */
@@ -99,8 +99,7 @@ public static final int NONTRANSFERABLE = 0;
    * Generate an empty ballot paper for use by a voter.
    */
 /*@ also public normal_behavior
-  @	  assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList, 
-  @   preferenceList.owner;
+  @	  assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList;
   @*/
   public Ballot (final /*@ non_null @*/ int[] preferences) {
     numberOfPreferences = preferences.length;
@@ -109,7 +108,7 @@ public static final int NONTRANSFERABLE = 0;
     for (int i=0; i<preferences.length; i++) {
       preferenceList[i] = preferences[i];
     }
-    //@ set preferenceList.owner = this;
+    // TDOD set preferenceList.owner = this;
   }
 
 /**

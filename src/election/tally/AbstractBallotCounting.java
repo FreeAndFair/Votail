@@ -55,7 +55,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /** List of contents of each ballot paper that will be counted. */
   protected transient /*@ spec_public @*/ Ballot[] ballots = new Ballot[0];
-  //@ public invariant ballots.owner == this;
+  // TODO public invariant ballots.owner == this;
   //@ protected represents ballotsToCount <- ballots;
 
   /** Total number of candidates for election */
