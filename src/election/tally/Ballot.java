@@ -68,7 +68,7 @@ public class Ballot {
    * 
    * @see "Constitution of Ireland, Article 16, Section 2"
    */
-  public static final int MAX_BALLOTS = 150000;
+  public static final int MAX_BALLOTS = 10000;
 
 /**
  * Candidate ID value to use for non-transferable ballot papers

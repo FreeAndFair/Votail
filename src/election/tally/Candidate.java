@@ -23,7 +23,7 @@ public class Candidate extends CandidateStatus {
  * 
  * The average number of candidates could be much less.
  */
-public static final int MAX_CANDIDATES = 50;
+public static final int MAX_CANDIDATES = 20;
 
 /** Identifier for the candidate. The data should be loaded in such a way that
  *  the assignment of candidate IDs is fair and unbiased.

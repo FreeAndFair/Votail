@@ -10,9 +10,9 @@ package election.tally;
 public class Decision extends DecisionStatus {
 
   /**
-   * Maximum number of decision points
+   * Maximum number of decision points (after which decisions are not logged)
    */
-  public static final int MAX_DECISIONS = 100;
+  public static final int MAX_DECISIONS = 10;
 
   /** Decision status */
   /*@ public invariant (decisionTaken == DecisionStatus.EXCLUDE)
