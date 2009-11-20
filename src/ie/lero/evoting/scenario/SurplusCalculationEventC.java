@@ -54,7 +54,8 @@ public class SurplusCalculationEventC extends TestCase {
    */
   public void testDistributionOfSurplus() {
 
-    ballotCounting.setup(parameters);
+    // TODO precondition not established
+    ballotCounting.setup(parameters); //@ nowarn;
     ballotCounting.load(ballotBox);
     assertTrue(QUOTA == ballotCounting.getQuota());
 

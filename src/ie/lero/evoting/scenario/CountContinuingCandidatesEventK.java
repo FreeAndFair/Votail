@@ -11,7 +11,8 @@ public class CountContinuingCandidatesEventK extends TestCase {
    final Constituency constituency = new Constituency();
    constituency.setNumberOfSeats(3,3);
    constituency.setNumberOfCandidates(4);
-   ballotCounting.setup(constituency);
+   // TODO precondition not established
+   ballotCounting.setup(constituency); //@ nowarn;
 	 assertTrue (4 == ballotCounting.getContinuingCandidates());
 	}
 }

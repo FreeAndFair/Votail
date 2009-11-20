@@ -2,7 +2,6 @@ package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
 import election.tally.AbstractCountStatus;
-import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
@@ -14,7 +13,8 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
 	   final Constituency election = new Constituency();
 	   election.setNumberOfSeats (3,4);
 	   election.setNumberOfCandidates(4);
-	   ballotCounting.setup(election);    
+	   // TODO precondition not established
+	   ballotCounting.setup(election); //@ nowarn;
 	   final BallotBox ballotBox = new BallotBox();
 	   final int[] preferences = {election.getCandidate(0).getCandidateID(),
 			   election.getCandidate(1).getCandidateID()};

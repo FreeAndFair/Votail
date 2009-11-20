@@ -4,7 +4,6 @@
 package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
-import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
@@ -27,7 +26,8 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     final Constituency parameters = new Constituency();
     parameters.setNumberOfSeats(1,3);
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
-    ballotCounting.setup(parameters);
+    // TODO precondition not established
+    ballotCounting.setup(parameters); //@ nowarn;
     // All candidates get one vote; draw lots to resolve ties
     for (int i=0; i < NUM_CANDIDATES; i++) {
       int[] preferences =

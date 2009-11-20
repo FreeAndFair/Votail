@@ -12,13 +12,14 @@ public class ElectRemainingCandidatesEventN extends TestCase {
     final Constituency constituency = new Constituency();
     constituency.setNumberOfSeats(3, 3);
     constituency.setNumberOfCandidates(4);
-    ballotCounting.setup(constituency);
+    // TODO precondition not established
+    ballotCounting.setup(constituency); //@ nowarn;
     final BallotBox ballotBox = new BallotBox();
     final int[] preferences = new int[1];
       
     for (int i = 0; i < 3; i++) {
       preferences[0] = constituency.getCandidate(i).getCandidateID();
-      ballotBox.accept(preferences);
+      ballotBox.accept(preferences); //@ nowarn;
     }
     ballotCounting.load(ballotBox);
     ballotCounting.count();
