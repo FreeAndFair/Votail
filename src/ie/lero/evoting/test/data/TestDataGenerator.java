@@ -1,5 +1,7 @@
 package ie.lero.evoting.test.data;
 
+import java.util.ArrayList;
+
 import election.tally.AbstractBallotCounting;
 import election.tally.AbstractCountStatus;
 import election.tally.Ballot;
@@ -14,6 +16,9 @@ public class TestDataGenerator {
   // Singletons
   private static final BallotCounting BALLOT_COUNTING = new BallotCounting();
   private static final BallotBox BALLOT_BOX = new BallotBox();
+  
+  // Dynamic Arrays
+  static ArrayList<Candidate> candidateList = new ArrayList<Candidate>();
 
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
     return BALLOT_COUNTING;
@@ -34,10 +39,14 @@ public class TestDataGenerator {
   }
 
   public static Candidate getCandidate(int n) {
-    return new Candidate();
+    while (candidateList.size() < n) {
+      candidateList.add(new Candidate());
+    }
+    return candidateList.get(n);
   }
 
   public static BallotBox getBallotBox(int n) {
+    // default
     return BALLOT_BOX;
   }
 
@@ -50,19 +59,29 @@ public class TestDataGenerator {
   }
 
   public static Decision getDecision(int n) {
-    return new Decision();
+    final Decision decision = new Decision();
+    switch (n) {
+      case 1: decision.setDecisionType(Decision.DEEM_ELECTED); 
+      case 2: decision.setDecisionType(Decision.EXCLUDE); break;
+      default: decision.setDecisionType(Decision.NO_DECISION);
+    }
+    decision.setCountNumber(n);
+    decision.setCandidate(getCandidate(n).getCandidateID());
+    return decision;
   }
 
   public static BallotCounting getBallotCounting(int n) {
+    // default
     return BALLOT_COUNTING;
   }
 
   public static Object[] getIntArrayAsObject() {
-    return new Object[0];
+    final Object[] intArray = new Object[0];
+    return intArray;
   }
 
   public static AbstractCountStatus getAbstractCountStatus(int n) {
-    BallotCounting ballotCounting = BALLOT_COUNTING;
-    return ballotCounting.getCountStatus();
+    // default
+    return BALLOT_COUNTING.getCountStatus();
   }
 }
