@@ -11,8 +11,12 @@ import election.tally.Decision;
 
 public class TestDataGenerator {
  
+  // Singletons
+  private static final BallotCounting BALLOT_COUNTING = new BallotCounting();
+  private static final BallotBox BALLOT_BOX = new BallotBox();
+
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
-    return new BallotCounting();
+    return BALLOT_COUNTING;
   }
 
   public static byte[] getByteArray() {
@@ -24,19 +28,17 @@ public class TestDataGenerator {
   }
 
   public static Ballot getBallot(int preferenceID) {
-    // TODO Auto-generated method stub
     int[] list = new int[1];
     list[0] = preferenceID;
     return new Ballot(list);
   }
 
   public static Candidate getCandidate(int n) {
-    // TODO Auto-generated method stub
     return new Candidate();
   }
 
   public static BallotBox getBallotBox(int n) {
-    return new BallotBox();
+    return BALLOT_BOX;
   }
 
   public static int[] getIntArray() {
@@ -52,7 +54,7 @@ public class TestDataGenerator {
   }
 
   public static BallotCounting getBallotCounting(int n) {
-    return new BallotCounting();
+    return BALLOT_COUNTING;
   }
 
   public static Object[] getIntArrayAsObject() {
@@ -60,7 +62,7 @@ public class TestDataGenerator {
   }
 
   public static AbstractCountStatus getAbstractCountStatus(int n) {
-    BallotCounting ballotCounting = new BallotCounting();
+    BallotCounting ballotCounting = BALLOT_COUNTING;
     return ballotCounting.getCountStatus();
   }
 }
