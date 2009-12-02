@@ -61,7 +61,7 @@ public class TestDataGenerator {
   public static Decision getDecision(int n) {
     final Decision decision = new Decision();
     switch (n) {
-      case 1: decision.setDecisionType(Decision.DEEM_ELECTED); 
+      case 1: decision.setDecisionType(Decision.DEEM_ELECTED); break;
       case 2: decision.setDecisionType(Decision.EXCLUDE); break;
       default: decision.setDecisionType(Decision.NO_DECISION);
     }
