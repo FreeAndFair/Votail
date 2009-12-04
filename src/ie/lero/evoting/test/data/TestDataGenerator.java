@@ -1,7 +1,5 @@
 package ie.lero.evoting.test.data;
 
-import java.util.ArrayList;
-
 import election.tally.AbstractBallotCounting;
 import election.tally.AbstractCountStatus;
 import election.tally.Ballot;
@@ -14,11 +12,10 @@ import election.tally.Decision;
 public class TestDataGenerator {
  
   // Singletons
+  private static final Constituency CONSTITUENCY = new Constituency();
+  private static final Candidate CANDIDATE = new Candidate();
   private static final BallotCounting BALLOT_COUNTING = new BallotCounting();
   private static final BallotBox BALLOT_BOX = new BallotBox();
-  
-  // Dynamic Arrays
-  static ArrayList<Candidate> candidateList = new ArrayList<Candidate>();
 
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
     return BALLOT_COUNTING;
@@ -29,7 +26,7 @@ public class TestDataGenerator {
   }
 
   public static Constituency getConstituency(int n) {
-    return new Constituency();
+    return CONSTITUENCY;
   }
 
   public static Ballot getBallot(int preferenceID) {
@@ -39,10 +36,8 @@ public class TestDataGenerator {
   }
 
   public static Candidate getCandidate(int n) {
-    while (candidateList.size() < n) {
-      candidateList.add(new Candidate());
-    }
-    return candidateList.get(n);
+    
+    return CANDIDATE;
   }
 
   public static BallotBox getBallotBox(int n) {
