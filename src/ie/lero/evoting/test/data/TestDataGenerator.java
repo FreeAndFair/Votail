@@ -12,6 +12,7 @@ import election.tally.Decision;
 public class TestDataGenerator {
  
   // Singletons
+  private static final Decision DECISION = new Decision();
   private static final Constituency CONSTITUENCY = new Constituency();
   private static final Candidate CANDIDATE = new Candidate();
   private static final BallotCounting BALLOT_COUNTING = new BallotCounting();
@@ -41,7 +42,6 @@ public class TestDataGenerator {
   }
 
   public static BallotBox getBallotBox(int n) {
-    // default
     return BALLOT_BOX;
   }
 
@@ -54,19 +54,10 @@ public class TestDataGenerator {
   }
 
   public static Decision getDecision(int n) {
-    final Decision decision = new Decision();
-    switch (n) {
-      case 1: decision.setDecisionType(Decision.DEEM_ELECTED); break;
-      case 2: decision.setDecisionType(Decision.EXCLUDE); break;
-      default: decision.setDecisionType(Decision.NO_DECISION);
-    }
-    decision.setCountNumber(n);
-    decision.setCandidate(getCandidate(n).getCandidateID());
-    return decision;
+    return DECISION;
   }
 
   public static BallotCounting getBallotCounting(int n) {
-    // default
     return BALLOT_COUNTING;
   }
 
@@ -76,7 +67,6 @@ public class TestDataGenerator {
   }
 
   public static AbstractCountStatus getAbstractCountStatus(int n) {
-    // default
     return BALLOT_COUNTING.getCountStatus();
   }
 }
