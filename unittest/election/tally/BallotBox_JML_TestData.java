@@ -162,5 +162,7 @@ public abstract class BallotBox_JML_TestData
                 protected Object make(int n) {
                     return TestDataGenerator.getBallotBox(n);
                 }
+                
+                
             };
 }

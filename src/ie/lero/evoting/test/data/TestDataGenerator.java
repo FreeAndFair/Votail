@@ -13,13 +13,19 @@ public class TestDataGenerator {
  
   // Singletons
   private static final Decision DECISION = new Decision();
+  private static int decision_count = 0;
   private static final Constituency CONSTITUENCY = new Constituency();
   private static final Candidate CANDIDATE = new Candidate();
   private static final BallotCounting BALLOT_COUNTING = new BallotCounting();
   private static final BallotBox BALLOT_BOX = new BallotBox();
+  private static int ballot_count = 0;
 
+  //@ requires 0 <= n;
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
-    return BALLOT_COUNTING;
+    if (decision_count == 0) {
+      decision_count++;
+      return BALLOT_COUNTING;
+    } else throw new java.util.NoSuchElementException();
   }
 
   public static byte[] getByteArray() {
@@ -30,14 +36,16 @@ public class TestDataGenerator {
     return CONSTITUENCY;
   }
 
-  public static Ballot getBallot(int preferenceID) {
-    int[] list = new int[1];
-    list[0] = preferenceID;
-    return new Ballot(list);
+  public static Ballot getBallot(int n) {
+    if (ballot_count == 0) {
+      ballot_count++;
+      int[] list = new int[1];
+      list[0] = n;
+      return new Ballot(list);
+    } else throw new java.util.NoSuchElementException();
   }
 
-  public static Candidate getCandidate(int n) {
-    
+  public static Candidate getCandidate(int n) {   
     return CANDIDATE;
   }
 

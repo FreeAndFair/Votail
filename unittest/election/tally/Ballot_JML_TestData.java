@@ -185,9 +185,9 @@ public abstract class Ballot_JML_TestData
 
     /** The strategy for generating test data of type
      * int. */
-    private org.jmlspecs.jmlunit.strategies.IntStrategyType
+    private org.jmlspecs.jmlunit.strategies.IntBigStrategy
         vintStrategy
-        = new org.jmlspecs.jmlunit.strategies.IntStrategy()
+        = new org.jmlspecs.jmlunit.strategies.IntBigStrategy()
             {
                 protected int[] addData() {
                     return TestDataGenerator.getIntArray();
