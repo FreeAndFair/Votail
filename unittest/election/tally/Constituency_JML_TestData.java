@@ -149,7 +149,7 @@ public abstract class Constituency_JML_TestData
      * int. */
     private org.jmlspecs.jmlunit.strategies.IntStrategyType
         vintStrategy
-        = new org.jmlspecs.jmlunit.strategies.IntStrategy()
+        = new org.jmlspecs.jmlunit.strategies.IntBigStrategy()
             {
                 protected int[] addData() {
                     return TestDataGenerator.getIntArray();

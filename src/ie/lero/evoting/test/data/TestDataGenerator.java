@@ -1,5 +1,11 @@
 package ie.lero.evoting.test.data;
 
+// December 2009
+// Dermot Cochran and Joseph R. Kiniry
+// Lero Graduate School of Software Engineering, Ireland
+// CASL, University College Dublin, Ireland
+// IT University of Copenhagen, Denmark
+
 import election.tally.AbstractBallotCounting;
 import election.tally.AbstractCountStatus;
 import election.tally.Ballot;
@@ -11,20 +17,20 @@ import election.tally.Decision;
 
 public class TestDataGenerator {
  
-  // Singletons
-  private static final Decision DECISION = new Decision();
-  private static int decision_count = 0;
-  private static final Constituency CONSTITUENCY = new Constituency();
-  private static final Candidate CANDIDATE = new Candidate();
-  private static final BallotCounting BALLOT_COUNTING = new BallotCounting();
-  private static final BallotBox BALLOT_BOX = new BallotBox();
+  private static int abstractBallotCounting_count = 0;
+  private static int abstractCountStatus_count = 0;
   private static int ballot_count = 0;
+  private static int ballotBox_count = 0;
+  private static int ballotCounting_count = 0;
+  private static int candidate_count = 0;
+  private static int constituency_count = 0;
+  private static int decision_count = 0;
 
   //@ requires 0 <= n;
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
-    if (decision_count == 0) {
-      decision_count++;
-      return BALLOT_COUNTING;
+    if (abstractBallotCounting_count == 0 || n == 0) {
+      abstractBallotCounting_count++;
+      return new BallotCounting();
     } else throw new java.util.NoSuchElementException();
   }
 
@@ -32,12 +38,17 @@ public class TestDataGenerator {
     return new byte[0];
   }
 
+  //@ requires 0 <= n;
   public static Constituency getConstituency(int n) {
-    return CONSTITUENCY;
+    if (constituency_count == 0 | n == 0) {
+      constituency_count++;
+      return new Constituency();
+    } else throw new java.util.NoSuchElementException();
   }
 
+  //@ requires 0 <= n;
   public static Ballot getBallot(int n) {
-    if (ballot_count == 0) {
+    if (ballot_count == 0 || n == 0) {
       ballot_count++;
       int[] list = new int[1];
       list[0] = n;
@@ -45,12 +56,20 @@ public class TestDataGenerator {
     } else throw new java.util.NoSuchElementException();
   }
 
-  public static Candidate getCandidate(int n) {   
-    return CANDIDATE;
+  //@ requires 0 <= n;
+  public static Candidate getCandidate(int n) {
+    if (candidate_count == 0 || n == 0) {
+      candidate_count++;
+      return new Candidate();
+    } else throw new java.util.NoSuchElementException();
   }
 
+  //@ requires 0 <= n;
   public static BallotBox getBallotBox(int n) {
-    return BALLOT_BOX;
+    if (ballotBox_count == 0 || n == 0) {
+      ballotBox_count++;
+      return new BallotBox();
+    } else throw new java.util.NoSuchElementException();
   }
 
   public static int[] getIntArray() {
@@ -61,20 +80,34 @@ public class TestDataGenerator {
     return new long[0];
   }
 
+  //@ requires 0 <= n;
   public static Decision getDecision(int n) {
-    return DECISION;
+    if (decision_count == 0 || n == 0) {
+      decision_count++;
+      return new Decision();
+    } else throw new java.util.NoSuchElementException();
   }
 
+  //@ requires 0 <= n;
   public static BallotCounting getBallotCounting(int n) {
-    return BALLOT_COUNTING;
+    if (ballotCounting_count == 0 || n == 0) {
+      ballotCounting_count++;
+      return new BallotCounting();
+    } else throw new java.util.NoSuchElementException();
   }
 
+  //@ requires 0 <= n;
   public static Object[] getIntArrayAsObject() {
     final Object[] intArray = new Object[0];
     return intArray;
   }
 
+  //@ requires 0 <= n;
   public static AbstractCountStatus getAbstractCountStatus(int n) {
-    return BALLOT_COUNTING.getCountStatus();
+    if (abstractCountStatus_count == 0 || n == 0) {
+      abstractCountStatus_count++;
+      BallotCounting ballotCounting = new BallotCounting();
+      return ballotCounting.getCountStatus();
+    } else throw new java.util.NoSuchElementException();
   }
 }
