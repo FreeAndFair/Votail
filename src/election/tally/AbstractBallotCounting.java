@@ -42,7 +42,7 @@ package election.tally;
  */
 public abstract class AbstractBallotCounting extends ElectionStatus {
 
-  protected static final int                         NONE_FOUND_YET = -1;
+  public static final int                         NONE_FOUND_YET = -1;
 
   /** List of decisions made */
   protected transient/*@ spec_public @*/ Decision[]  decisions 

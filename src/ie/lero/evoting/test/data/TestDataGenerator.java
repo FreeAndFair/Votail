@@ -12,6 +12,7 @@ import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
+import election.tally.CandidateStatus;
 import election.tally.Constituency;
 import election.tally.CountConfiguration;
 import election.tally.Decision;
@@ -35,7 +36,8 @@ public class TestDataGenerator {
       abstractBallotCounting_count++;
       final BallotCounting ballotCounting = new BallotCounting();
       return ballotCounting;
-    } else throw new java.util.NoSuchElementException();
+    }
+    throw new java.util.NoSuchElementException();
   }
 
   public static byte[] getByteArray() {
@@ -64,7 +66,10 @@ public class TestDataGenerator {
       AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING,
       AbstractCountStatus.READY_TO_COUNT,
       AbstractCountStatus.READY_TO_MOVE_BALLOTS,
-      AbstractCountStatus.SURPLUS_AVAILABLE
+      AbstractCountStatus.SURPLUS_AVAILABLE,
+      CandidateStatus.CONTINUING,
+      CandidateStatus.ELECTED,
+      CandidateStatus.ELIMINATED
       };
     return bytes;
   }
@@ -74,7 +79,8 @@ public class TestDataGenerator {
     if (constituency_count == 0 | n == 0) {
       constituency_count++;
       return new Constituency();
-    } else throw new java.util.NoSuchElementException();
+    }
+    throw new java.util.NoSuchElementException();
   }
 
   //@ requires 0 <= n;
@@ -104,7 +110,8 @@ public class TestDataGenerator {
     if (candidate_count == 0 || n == 0) {
       candidate_count++;
       return new Candidate();
-    } else throw new java.util.NoSuchElementException();
+    }
+    throw new java.util.NoSuchElementException();
   }
 
   //@ requires 0 <= n;
@@ -138,7 +145,17 @@ public class TestDataGenerator {
   }
 
   public static int[] getIntArray() {
-    return new int[0];
+    final int[] integers = {
+      AbstractBallotCounting.NONE_FOUND_YET,
+      Ballot.MAX_BALLOTS,
+      Ballot.NONTRANSFERABLE,
+      Candidate.MAX_CANDIDATES,
+      Candidate.NO_CANDIDATE,
+      CountConfiguration.MAXCOUNT,
+      CountConfiguration.MAXVOTES,
+      Decision.MAX_DECISIONS
+    };
+    return integers;
   }
 
   public static long[] getLongArray() {
@@ -150,7 +167,8 @@ public class TestDataGenerator {
     if (decision_count == 0 || n == 0) {
       decision_count++;
       return new Decision();
-    } else throw new java.util.NoSuchElementException();
+    }
+    throw new java.util.NoSuchElementException();
   }
 
   //@ requires 0 <= n;
@@ -158,10 +176,10 @@ public class TestDataGenerator {
     if (ballotCounting_count == 0 || n == 0) {
       ballotCounting_count++;
       return new BallotCounting();
-    } else throw new java.util.NoSuchElementException();
+    }
+    throw new java.util.NoSuchElementException();
   }
 
-  //@ requires 0 <= n;
   public static Object[] getIntArrayAsObject() {
     final Object[] intArray = new Object[0];
     return intArray;
@@ -173,6 +191,7 @@ public class TestDataGenerator {
       abstractCountStatus_count++;
       BallotCounting ballotCounting = new BallotCounting();
       return ballotCounting.getCountStatus();
-    } else throw new java.util.NoSuchElementException();
+    }
+    throw new java.util.NoSuchElementException();
   }
 }
