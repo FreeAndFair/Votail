@@ -13,6 +13,7 @@ import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Candidate;
 import election.tally.Constituency;
+import election.tally.CountConfiguration;
 import election.tally.Decision;
 
 public class TestDataGenerator {
@@ -51,10 +52,22 @@ public class TestDataGenerator {
   public static Ballot getBallot(int n) {
     if (ballot_count == 0 || n == 0) {
       ballot_count++;
-      int[] list = new int[1];
-      list[0] = n;
+      int[] list = new int[0];
       return new Ballot(list);
-    } else throw new java.util.NoSuchElementException();
+    } else  if (n == 1) {
+      int[] list = new int[1];
+      list[0] = new Candidate().getCandidateID();
+      return new Ballot(list);
+    } else if (n < CountConfiguration.MAXCOUNT) {
+      int[] list = new int[n];
+      for (int preference = 0; preference < n; preference++) {
+        list[preference] = new Candidate().getCandidateID();
+      }
+      return new Ballot(list);
+    }
+      
+      
+      throw new java.util.NoSuchElementException();
   }
 
   //@ requires 0 <= n;
