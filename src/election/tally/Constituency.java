@@ -70,13 +70,16 @@ public class Constituency {
   //@ requires 2 <= number;
 	//@ requires number <= Candidate.MAX_CANDIDATES;
   //@ ensures number == numberOfCandidates;
-	//@ ensures number == candidateList.length;
+	//@ ensures number <= candidateList.length;
   public void setNumberOfCandidates(final int number) {
-    this.numberOfCandidates = number;
-    this.candidateList = new Candidate[this.numberOfCandidates];
-    for (int index=0; index < number; index++) {
-      this.candidateList[index] = new Candidate();
-    }
+      if (this.numberOfCandidates < number) {
+        this.candidateList = new Candidate[number];
+        for (int index=0; index < number; index++) {
+          this.candidateList[index] = new Candidate();
+        }
+      }
+      this.numberOfCandidates = number;
+
   }
 
   public /*@ pure @*/ int getNumberOfSeatsInThisElection() {
