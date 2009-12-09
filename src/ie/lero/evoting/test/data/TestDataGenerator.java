@@ -15,6 +15,8 @@ import election.tally.Candidate;
 import election.tally.Constituency;
 import election.tally.CountConfiguration;
 import election.tally.Decision;
+import election.tally.DecisionStatus;
+import election.tally.ElectionStatus;
 
 public class TestDataGenerator {
  
@@ -37,7 +39,34 @@ public class TestDataGenerator {
   }
 
   public static byte[] getByteArray() {
-    return new byte[0];
+    final byte[] bytes = {
+      DecisionStatus.DEEM_ELECTED,
+      DecisionStatus.EXCLUDE,
+      DecisionStatus.NO_DECISION,
+      ElectionStatus.COUNTING,
+      ElectionStatus.EMPTY,
+      ElectionStatus.FINISHED,
+      ElectionStatus.LOADING,
+      ElectionStatus.PRECOUNT,
+      ElectionStatus.PRELOAD,
+      ElectionStatus.SETTING_UP,
+      AbstractCountStatus.ALL_SEATS_FILLED,
+      AbstractCountStatus.CANDIDATE_ELECTED,
+      AbstractCountStatus.CANDIDATE_EXCLUDED,
+      AbstractCountStatus.CANDIDATES_HAVE_QUOTA,
+      AbstractCountStatus.END_OF_COUNT,
+      AbstractCountStatus.LAST_SEAT_BEING_FILLED,
+      AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS,
+      AbstractCountStatus.NO_SEATS_FILLED_YET,
+      AbstractCountStatus.NO_SURPLUS_AVAILABLE,
+      AbstractCountStatus.ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT,
+      AbstractCountStatus.ONE_OR_MORE_SEATS_REMAINING,
+      AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING,
+      AbstractCountStatus.READY_TO_COUNT,
+      AbstractCountStatus.READY_TO_MOVE_BALLOTS,
+      AbstractCountStatus.SURPLUS_AVAILABLE
+      };
+    return bytes;
   }
 
   //@ requires 0 <= n;
