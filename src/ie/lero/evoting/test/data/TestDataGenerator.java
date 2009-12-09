@@ -30,7 +30,8 @@ public class TestDataGenerator {
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
     if (abstractBallotCounting_count == 0 || n == 0) {
       abstractBallotCounting_count++;
-      return new BallotCounting();
+      final BallotCounting ballotCounting = new BallotCounting();
+      return ballotCounting;
     } else throw new java.util.NoSuchElementException();
   }
 
@@ -68,8 +69,30 @@ public class TestDataGenerator {
   public static BallotBox getBallotBox(int n) {
     if (ballotBox_count == 0 || n == 0) {
       ballotBox_count++;
-      return new BallotBox();
-    } else throw new java.util.NoSuchElementException();
+      final BallotBox emptyBallotBox = new BallotBox();
+      return emptyBallotBox;
+    } else if (n == 1) {
+      final BallotBox oneBallotInBox = new BallotBox();
+      Candidate firstCandidate = new Candidate();
+      int[] list = new int[1];
+      list[0] = firstCandidate.getCandidateID();
+      oneBallotInBox.accept(list);
+      return oneBallotInBox;
+    } else if (n == 2) {
+      final BallotBox twoBallotsInBox = new BallotBox();
+      Candidate firstCandidate = new Candidate();
+      Candidate secondCandidate = new Candidate();
+      int[] list = new int[2];
+      list[0] = firstCandidate.getCandidateID();
+      list[1] = secondCandidate.getCandidateID();
+      twoBallotsInBox.accept(list);
+      list[0] = secondCandidate.getCandidateID();
+      list[1] = firstCandidate.getCandidateID();
+      twoBallotsInBox.accept(list);
+      return twoBallotsInBox;
+    }
+
+      throw new java.util.NoSuchElementException();
   }
 
   public static int[] getIntArray() {
