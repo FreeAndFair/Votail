@@ -76,9 +76,53 @@ public class TestDataGenerator {
 
   //@ requires 0 <= n;
   public static Constituency getConstituency(int n) {
-    if (constituency_count == 0 | n == 0) {
+    if (constituency_count == 0 || n == 0) {
       constituency_count++;
-      return new Constituency();
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(1, 5);
+      constituency.setNumberOfCandidates(2);
+      return constituency;
+    } else if (n <= 3) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(n, 3);
+      constituency.setNumberOfCandidates(n + 1);
+      return constituency;
+    } else if (n <= 5) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(n, 5);
+      constituency.setNumberOfCandidates(n + 2);
+    } else if (n == 6) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(1, 4);
+      constituency.setNumberOfCandidates(n);
+    } else if (n == 7) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(2, 4);
+      constituency.setNumberOfCandidates(n);
+    } else if (n == 8) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(3, 4);
+      constituency.setNumberOfCandidates(n);
+    } else if (n == 9) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(4, 4);
+      constituency.setNumberOfCandidates(n);
+    } else if (n == 10) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(2, 5);
+      constituency.setNumberOfCandidates(n);
+    } else if (n == 11) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(3, 5);
+      constituency.setNumberOfCandidates(n);
+    } else if (n == 12) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(5, 5);
+      constituency.setNumberOfCandidates(Candidate.MAX_CANDIDATES);
+    } else if (n == 13) {
+      final Constituency constituency = new Constituency();
+      constituency.setNumberOfSeats(4, 4);
+      constituency.setNumberOfCandidates(Candidate.MAX_CANDIDATES - 1);
     }
     throw new java.util.NoSuchElementException();
   }
