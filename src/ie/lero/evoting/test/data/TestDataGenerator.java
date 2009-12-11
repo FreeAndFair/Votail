@@ -36,6 +36,21 @@ public class TestDataGenerator {
       abstractBallotCounting_count++;
       final AbstractBallotCounting ballotCounting = new BallotCounting();
       return ballotCounting;
+    } else if (n < 10) {
+      final AbstractBallotCounting ballotCounting = new BallotCounting();
+      ballotCounting.setup(getConstituency(n));
+      return ballotCounting;
+    } else if (n < 20) {
+      final AbstractBallotCounting ballotCounting = new BallotCounting();
+      ballotCounting.setup(getConstituency(n - 10));
+      ballotCounting.load(getBallotBox(n - 10));
+      return ballotCounting;
+    } else if (n < 30) {
+      final AbstractBallotCounting ballotCounting = new BallotCounting();
+      ballotCounting.setup(getConstituency(n - 20));
+      ballotCounting.load(getBallotBox(n - 20));
+      ballotCounting.count();
+      return ballotCounting;
     }
     throw new java.util.NoSuchElementException();
   }
