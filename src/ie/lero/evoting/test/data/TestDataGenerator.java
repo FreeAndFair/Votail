@@ -34,7 +34,7 @@ public class TestDataGenerator {
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
     if (abstractBallotCounting_count == 0 || n == 0) {
       abstractBallotCounting_count++;
-      final BallotCounting ballotCounting = new BallotCounting();
+      final AbstractBallotCounting ballotCounting = new BallotCounting();
       return ballotCounting;
     }
     throw new java.util.NoSuchElementException();
@@ -133,20 +133,15 @@ public class TestDataGenerator {
       ballot_count++;
       int[] list = new int[0];
       return new Ballot(list);
-    } else  if (n == 1) {
-      int[] list = new int[1];
-      list[0] = new Candidate().getCandidateID();
-      return new Ballot(list);
-    } else if (n < CountConfiguration.MAXCOUNT) {
+    } else if (n <= Candidate.MAX_CANDIDATES) {
       int[] list = new int[n];
       for (int preference = 0; preference < n; preference++) {
-        list[preference] = new Candidate().getCandidateID();
+        list[preference] = Candidate.getUniqueID();
       }
       return new Ballot(list);
     }
-      
-      
-      throw new java.util.NoSuchElementException();
+
+    throw new java.util.NoSuchElementException();
   }
 
   //@ requires 0 <= n;
@@ -154,6 +149,20 @@ public class TestDataGenerator {
     if (candidate_count == 0 || n == 0) {
       candidate_count++;
       return new Candidate();
+    } else if (n == 1) {
+      Candidate candidate1 = new Candidate();
+      candidate1.addVote(20000, 0);
+      candidate1.declareElected();
+      return candidate1;
+    } else if (n == 2) {
+      Candidate candidate2 = new Candidate();
+      candidate2.declareEliminated();
+      return candidate2;
+    } else if (n == 3) {
+      Candidate candidate3 = new Candidate();
+      candidate3.addVote(10000, 0);
+      candidate3.addVote(500, 1);
+      return candidate3;
     }
     throw new java.util.NoSuchElementException();
   }

@@ -159,7 +159,7 @@ private static int nextCandidateID = 1;
   public Candidate(){
 	  super();
     state = CONTINUING;
-    candidateID = nextCandidateID++;
+    candidateID = getUniqueID();
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
       votesAdded[i] = 0;
       votesRemoved[i] = 0;
@@ -167,6 +167,10 @@ private static int nextCandidateID = 1;
     lastCountNumber = 0;
     lastSetCount = 0;
   }
+
+public static int getUniqueID() {
+  return nextCandidateID++;
+}
 
 /**
  * Add a number of votes to the candidate's ballot pile.

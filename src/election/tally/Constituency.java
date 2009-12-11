@@ -49,16 +49,18 @@ public class Constituency {
   //@ public invariant \nonnullelements (candidateList);
   protected /*@ spec_public non_null @*/ Candidate[] candidateList = new Candidate[0];
 
+  //@ public ghost boolean candidateDataInUse = false;
+  
 	/**
 	 * Get the <code>Candidate</code> object.
 	 * 
 	 * @return The candidate at that position on the initial list
 	 */
 	//@ requires \nonnullelements (candidateList);
-	//@ requires 0 <= index && index < candidateList.length;
+	//@ requires 0 <= index && index < numberOfCandidates;
 	//@ ensures candidateList[index] == \result;
 	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
-		return candidateList[index];
+    return candidateList[index];
 	}
 
   /**
@@ -69,17 +71,22 @@ public class Constituency {
    */
   //@ requires 2 <= number;
 	//@ requires number <= Candidate.MAX_CANDIDATES;
+	//@ requires candidateDataInUse == false;
   //@ ensures number == numberOfCandidates;
 	//@ ensures number <= candidateList.length;
   public void setNumberOfCandidates(final int number) {
-      if (this.numberOfCandidates < number) {
-        this.candidateList = new Candidate[number];
-        for (int index=0; index < number; index++) {
-          this.candidateList[index] = new Candidate();
-        }
-      }
       this.numberOfCandidates = number;
-
+      makeListOfCandidates();
+      //@ set candidateDataInUse = true;
+  }
+  
+  private void makeListOfCandidates() {
+    if (this.candidateList.length < this.numberOfCandidates) {
+      this.candidateList = new Candidate[this.numberOfCandidates];
+      for (int index=0; index < this.numberOfCandidates; index++) {
+        this.candidateList[index] = new Candidate();
+      }
+    }
   }
 
   public /*@ pure @*/ int getNumberOfSeatsInThisElection() {
