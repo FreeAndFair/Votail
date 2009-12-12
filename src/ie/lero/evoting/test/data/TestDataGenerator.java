@@ -208,7 +208,8 @@ public class TestDataGenerator {
       twoBallotsInBox.accept(list);
       return twoBallotsInBox;
     }
-    else if (n < Ballot.MAX_BALLOTS) {
+    // Two way ties
+    else if (n < Ballot.MAX_BALLOTS / 2) {
       BallotBox ballotBox = new BallotBox();
       Candidate candidate1 = new Candidate();
       Candidate candidate2 = new Candidate();
@@ -220,10 +221,39 @@ public class TestDataGenerator {
       for (int index = 0; index < n/2; index++) {
         ballotBox.accept(list);
       }
-      list[2] = candidate1.getCandidateID();
-      list[1] = candidate2.getCandidateID();
       list[0] = candidate3.getCandidateID();
+      list[1] = candidate2.getCandidateID();
+      list[2] = candidate1.getCandidateID();
       for (int index = n/2; index < n; index++) {
+        ballotBox.accept(list);
+      }
+      return ballotBox;
+    }
+    // Three way ties
+    else if (n <= Ballot.MAX_BALLOTS) {
+      BallotBox ballotBox = new BallotBox();
+      Candidate candidate1 = new Candidate();
+      Candidate candidate2 = new Candidate();
+      Candidate candidate3 = new Candidate();
+      Candidate candidate4 = new Candidate();
+      Candidate candidate5 = new Candidate();
+      int[] list = new int[5];
+      list[0] = candidate1.getCandidateID();
+      list[1] = candidate2.getCandidateID();
+      list[2] = candidate3.getCandidateID();
+      for (int index = 0; index < n/3; index++) {
+        ballotBox.accept(list);
+      }
+      list[0] = candidate2.getCandidateID();
+      list[1] = candidate3.getCandidateID();
+      list[2] = candidate4.getCandidateID();
+      for (int index = n/3; index < 2*n/3; index++) {
+        ballotBox.accept(list);
+      }
+      list[0] = candidate3.getCandidateID();
+      list[1] = candidate4.getCandidateID();
+      list[2] = candidate5.getCandidateID();
+      for (int index = 2*n/3; index < n; index++) {
         ballotBox.accept(list);
       }
       return ballotBox;
