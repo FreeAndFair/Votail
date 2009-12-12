@@ -227,7 +227,8 @@ public class TestDataGenerator {
   }
 
   public static long[] getLongArray() {
-    return new long[0];
+    final long[] longs = new long[0];
+    return longs;
   }
 
   //@ requires 0 <= n;
@@ -235,6 +236,27 @@ public class TestDataGenerator {
     if (decision_count == 0 || n == 0) {
       decision_count++;
       return new Decision();
+    }
+    else if (n == 1) {
+      Decision decision = new Decision();
+      decision.setCandidate(Candidate.getUniqueID());
+      decision.setCountNumber(n);
+      decision.setDecisionType(DecisionStatus.DEEM_ELECTED);
+      return decision;
+    }
+    else if (n == 2) {
+      Decision decision = new Decision();
+      decision.setCandidate(Candidate.getUniqueID());
+      decision.setCountNumber(n);
+      decision.setDecisionType(DecisionStatus.EXCLUDE);
+      return decision;
+    }
+    else if (n == 3) {
+      Decision decision = new Decision();
+      decision.setCandidate(Candidate.getUniqueID());
+      decision.setCountNumber(n);
+      decision.setDecisionType(DecisionStatus.NO_DECISION);
+      return decision;
     }
     throw new java.util.NoSuchElementException();
   }
@@ -244,6 +266,11 @@ public class TestDataGenerator {
     if (ballotCounting_count == 0 || n == 0) {
       ballotCounting_count++;
       return new BallotCounting();
+    }
+    else if (n <= AbstractCountStatus.SURPLUS_AVAILABLE) {
+      BallotCounting ballotCounting = new BallotCounting();
+      ballotCounting.updateCountStatus(n);
+      return ballotCounting;
     }
     throw new java.util.NoSuchElementException();
   }
@@ -259,6 +286,12 @@ public class TestDataGenerator {
       abstractCountStatus_count++;
       BallotCounting ballotCounting = new BallotCounting();
       return ballotCounting.getCountStatus();
+    }
+    else if (n <= AbstractCountStatus.SURPLUS_AVAILABLE) {
+      BallotCounting ballotCounting = new BallotCounting();
+      AbstractCountStatus countStatus = ballotCounting.getCountStatus();
+      countStatus.changeState(n);
+      return countStatus;
     }
     throw new java.util.NoSuchElementException();
   }
