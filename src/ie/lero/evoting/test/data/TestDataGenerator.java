@@ -208,6 +208,26 @@ public class TestDataGenerator {
       twoBallotsInBox.accept(list);
       return twoBallotsInBox;
     }
+    else if (n < Ballot.MAX_BALLOTS) {
+      BallotBox ballotBox = new BallotBox();
+      Candidate candidate1 = new Candidate();
+      Candidate candidate2 = new Candidate();
+      Candidate candidate3 = new Candidate();
+      int[] list = new int[3];
+      list[0] = candidate1.getCandidateID();
+      list[1] = candidate2.getCandidateID();
+      list[2] = candidate3.getCandidateID();
+      for (int index = 0; index < n/2; index++) {
+        ballotBox.accept(list);
+      }
+      list[2] = candidate1.getCandidateID();
+      list[1] = candidate2.getCandidateID();
+      list[0] = candidate3.getCandidateID();
+      for (int index = n/2; index < n; index++) {
+        ballotBox.accept(list);
+      }
+      return ballotBox;
+    }
 
       throw new java.util.NoSuchElementException();
   }
