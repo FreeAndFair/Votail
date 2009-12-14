@@ -20,6 +20,8 @@ import election.tally.DecisionStatus;
 import election.tally.ElectionStatus;
 
 public class TestDataGenerator {
+  
+  private static boolean testOutOfRangeValues = true;
  
   private static int abstractBallotCounting_count = 0;
   private static int abstractCountStatus_count = 0;
@@ -30,31 +32,23 @@ public class TestDataGenerator {
   private static int constituency_count = 0;
   private static int decision_count = 0;
 
+  /**
+   * AbstractBallotCounting is a top level class; it is extended by 
+   * BallotCouting but is neither used as a field nor a formal parameter in
+   * any other class.
+   */
   //@ requires 0 <= n;
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
     if (abstractBallotCounting_count == 0 || n == 0) {
       abstractBallotCounting_count++;
       final AbstractBallotCounting ballotCounting = new BallotCounting();
       return ballotCounting;
-    } else if (n < 10) {
-      final AbstractBallotCounting ballotCounting = new BallotCounting();
-      ballotCounting.setup(getConstituency(n));
-      return ballotCounting;
-    } else if (n < 20) {
-      final AbstractBallotCounting ballotCounting = new BallotCounting();
-      ballotCounting.setup(getConstituency(n - 10));
-      ballotCounting.load(getBallotBox(n - 10));
-      return ballotCounting;
-    } else if (n < 30) {
-      final AbstractBallotCounting ballotCounting = new BallotCounting();
-      ballotCounting.setup(getConstituency(n - 20));
-      ballotCounting.load(getBallotBox(n - 20));
-      ballotCounting.count();
-      return ballotCounting;
     }
     throw new java.util.NoSuchElementException();
   }
 
+  // TODO construct a set of unique values
+  // TODO construct out-of-range values
   public static byte[] getByteArray() {
     final byte[] bytes = {
       DecisionStatus.DEEM_ELECTED,
@@ -155,6 +149,7 @@ public class TestDataGenerator {
       }
       return new Ballot(list);
     }
+    // TODO find all unique permutations of preferences
 
     throw new java.util.NoSuchElementException();
   }
@@ -164,20 +159,6 @@ public class TestDataGenerator {
     if (candidate_count == 0 || n == 0) {
       candidate_count++;
       return new Candidate();
-    } else if (n == 1) {
-      Candidate candidate1 = new Candidate();
-      candidate1.addVote(20000, 0);
-      candidate1.declareElected();
-      return candidate1;
-    } else if (n == 2) {
-      Candidate candidate2 = new Candidate();
-      candidate2.declareEliminated();
-      return candidate2;
-    } else if (n == 3) {
-      Candidate candidate3 = new Candidate();
-      candidate3.addVote(10000, 0);
-      candidate3.addVote(500, 1);
-      return candidate3;
     }
     throw new java.util.NoSuchElementException();
   }
@@ -209,53 +190,55 @@ public class TestDataGenerator {
       return twoBallotsInBox;
     }
     // Two way ties
-    else if (n < Ballot.MAX_BALLOTS / 2) {
+    else if (n == 3) {
       BallotBox ballotBox = new BallotBox();
       Candidate candidate1 = new Candidate();
       Candidate candidate2 = new Candidate();
       Candidate candidate3 = new Candidate();
       int[] list = new int[3];
+      
+      // First ballot
       list[0] = candidate1.getCandidateID();
       list[1] = candidate2.getCandidateID();
       list[2] = candidate3.getCandidateID();
-      for (int index = 0; index < n/2; index++) {
-        ballotBox.accept(list);
-      }
+      ballotBox.accept(list);
+      
+      // Second ballot
       list[0] = candidate3.getCandidateID();
       list[1] = candidate2.getCandidateID();
       list[2] = candidate1.getCandidateID();
-      for (int index = n/2; index < n; index++) {
-        ballotBox.accept(list);
-      }
+      ballotBox.accept(list);
       return ballotBox;
     }
     // Three way ties
-    else if (n <= Ballot.MAX_BALLOTS) {
+    else if (n == 4) {
       BallotBox ballotBox = new BallotBox();
       Candidate candidate1 = new Candidate();
       Candidate candidate2 = new Candidate();
       Candidate candidate3 = new Candidate();
       Candidate candidate4 = new Candidate();
       Candidate candidate5 = new Candidate();
-      int[] list = new int[5];
+      int[] list = new int[4];
+      
+      // First ballot
       list[0] = candidate1.getCandidateID();
       list[1] = candidate2.getCandidateID();
       list[2] = candidate3.getCandidateID();
-      for (int index = 0; index < n/3; index++) {
-        ballotBox.accept(list);
-      }
+      ballotBox.accept(list);
+      
+      // Second ballot
       list[0] = candidate2.getCandidateID();
       list[1] = candidate3.getCandidateID();
       list[2] = candidate4.getCandidateID();
-      for (int index = n/3; index < 2*n/3; index++) {
-        ballotBox.accept(list);
-      }
+      list[3] = candidate5.getCandidateID();
+      ballotBox.accept(list);
+      
+      // Last ballot
       list[0] = candidate3.getCandidateID();
       list[1] = candidate4.getCandidateID();
       list[2] = candidate5.getCandidateID();
-      for (int index = 2*n/3; index < n; index++) {
-        ballotBox.accept(list);
-      }
+      ballotBox.accept(list);
+      
       return ballotBox;
     }
 
@@ -311,16 +294,18 @@ public class TestDataGenerator {
     throw new java.util.NoSuchElementException();
   }
 
+  /**
+   * BallotCounting is the top level object in the system; it is neither
+   * a field nor a formal parameter for any other object.
+   * 
+   * @param n
+   * @return
+   */
   //@ requires 0 <= n;
   public static BallotCounting getBallotCounting(int n) {
     if (ballotCounting_count == 0 || n == 0) {
       ballotCounting_count++;
       return new BallotCounting();
-    }
-    else if (n <= AbstractCountStatus.SURPLUS_AVAILABLE) {
-      BallotCounting ballotCounting = new BallotCounting();
-      ballotCounting.updateCountStatus(n);
-      return ballotCounting;
     }
     throw new java.util.NoSuchElementException();
   }
@@ -336,12 +321,6 @@ public class TestDataGenerator {
       abstractCountStatus_count++;
       BallotCounting ballotCounting = new BallotCounting();
       return ballotCounting.getCountStatus();
-    }
-    else if (n <= AbstractCountStatus.SURPLUS_AVAILABLE) {
-      BallotCounting ballotCounting = new BallotCounting();
-      AbstractCountStatus countStatus = ballotCounting.getCountStatus();
-      countStatus.changeState(n);
-      return countStatus;
     }
     throw new java.util.NoSuchElementException();
   }
