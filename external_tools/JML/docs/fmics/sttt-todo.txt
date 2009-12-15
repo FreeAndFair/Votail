@@ -1,0 +1,42 @@
+As Gary point out, we can still drop or add headings.  Eg, some specific 
+questions that should be answered for each of the tools:
+- is the tool is publicly available
+- some impression about the size of program it can handle, 
+  e.g. what the biggest example that has been handled successfully
+
+Here's the new outline suitable for dropping into the latex document
+sections:
+
+\subsubsection{Overview and Goals}
+
+% A discussion of the suggested "Goals" or problem solved by the tool
+% The "methodolgy for using the tool", if any.
+
+\subsubsection{Design of the Tool}
+
+% Discuss the approach to solving the problems,
+% meeting the goals, i.e. the "design decisions, rationale" for the tool.
+
+\subsubsection{Example}
+    
+% Discuss in more detail how the tool is used and the
+% features that enable it to solve the problems (meet the goals)
+% from its users' point of view.  This includes a:
+% discussion on how the tool checks or generates documentation of
+% some of the specifications in Figure 1
+
+\subsubsection{Experience}
+
+% Experience when using the tool (describe any case studies, users...)
+% - give some impression about the size of program it can handle, 
+% e.g., what the biggest example that has been handled successfully
+% - Some summary "Assessment of the tool".
+
+\subsubsection{Future Work}
+
+% Discussion of ongoing work related to the tool's development, if any.
+% Omit this subsubsection if the tool is no longer being developed.
+
+\subsubsection{Availability}
+
+% Where and how to get the tool, if that's different than the JML web page.

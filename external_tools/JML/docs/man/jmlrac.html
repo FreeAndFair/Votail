@@ -1,0 +1,232 @@
+<!-- Creator     : groff version 1.18.1 -->
+<!-- CreationDate: Wed Aug 24 15:55:41 2005 -->
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>JMLRAC</title>
+</head>
+<body>
+
+<h1 align=center>JMLRAC</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#EXAMPLES">EXAMPLES</a><br>
+<a href="#ENVIRONMENT">ENVIRONMENT</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+<a href="#COPYRIGHT">COPYRIGHT</a><br>
+
+<hr>
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>jmlrac &minus; run Java programs compiled with the JML
+runtime assertion checker compiler</p>
+</td>
+</table>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>jmlrac</b> [--nocheckmodels] [java-option] ...
+FQClassName</p>
+</td>
+</table>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>jmlrac</b> runs a Java(TM) program, named in the
+<b>FQClassName</b> argument, that has been compiled using
+the JML runtime assertion checker compiler <b>jmlc</b>. It
+provides the program access to classes in the
+org.jmlspecs.jmlunit, org.jmlspecs.models, and
+org.jmlspecs.jmlrac.runtime packages. It also provides
+access to runtime assertion checked version of interfaces in
+the J2SDK libraries (e.g., in java.lang and java.util).
+Access to classes in org.jmlspecs.jmlunit and
+org.jmlspecs.models are provided by adding to the end of the
+CLASSPATH environment variable the files
+JML/bin/jmljunitruntime.jar and JML/bin/jmlmodels.jar.
+Access to the other classes is done by using the
+Xbootclasspath option of the <b>java</b> program, and using
+that option to add JML/bin/jmlruntime.jar to the boot class
+path. With this option set, it runs the <b>java</b> program,
+passing along the rest of the aguments.</p>
+</td>
+</table>
+<a name="OPTIONS"></a>
+<h2>OPTIONS</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;nocheckmodels</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>When this option is present, the JML models used are
+those in the jar file JML/bin/jmlmodelsnonrac.jar, which
+does not do runtime assertion checking in the
+org.jmlspecs.models and org.jmlspecs.models.resolve
+packages. The default is to use the models in
+JML/bin/jmlmodels.jar, which does do runtime assertion of
+these types.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Aside from the &minus;&minus;nocheckmodels option, this
+script simply passes along all its arguments to <b>java</b>,
+which should be consulted for details of its options.</p>
+</td>
+</table>
+<a name="EXAMPLES"></a>
+<h2>EXAMPLES</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Suppose that the files &lsquo;PersonMain.java&rsquo; and
+&lsquo;Person.java&rsquo; have been compiled using jmlc(1).
+Suppose furhter that both of these files contain the package
+statement</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>package org.jmlspecs.samples.jmltutorial;
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>and hence that they are in the
+org.jmlspecs.samples.jmltutorial package. Then, assuming
+that the CLASSPATH environment variable includes the
+directory just above the directory &lsquo;org&rsquo;, one
+can run the &lsquo;PersonMain&rsquo; class as compiled with
+jmlc as follows.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>jmlrac org.jmlspecs.samples.jmltutorial.PersonMain
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>If you are using the jmlunit(1) tool, you may want to use
+the jml-junit(1) script instead of <b>jmlrac</b>. However,
+if you do not want graphical output from your junit tests,
+you can use <b>jmlrac</b> to run such tests.</p>
+</td>
+</table>
+<a name="ENVIRONMENT"></a>
+<h2>ENVIRONMENT</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>During the execution of the program, the <b>CLASSPATH</b>
+environment variable is changed by placing the JUnit jar
+file (&lsquo;junit.jar&rsquo;), the
+JML/bin/jmljunitruntime.jar, and JML/bin/jmlmodels.jar files
+at the end of the CLASSPATH during the run. The
+JML/bin/jmlruntime.jar file is added to the bootclass
+path.</p>
+<!-- INDENTATION -->
+<p>In the Unix version of this script, the location of the
+JML installation&rsquo;s top directory is taken from the
+JMLDIR environment variable, if that is defined. Similarly,
+the location of JUnit&rsquo;s top directory is taken from
+the JUNITDIR environment variable, if that is defined.</p>
+</td>
+</table>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>jmlc(1), java(1), javadoc(1), jml(1), jmldoc(1),
+jmlunit(1), jtest(1), jml-junit(1)</p>
+</td>
+</table>
+<a name="COPYRIGHT"></a>
+<h2>COPYRIGHT</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Copyright (c) 2001-2002 by Iowa State University</p>
+<!-- INDENTATION -->
+<p>JML is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version
+2, or (at your option) any later version.</p>
+<!-- INDENTATION -->
+<p>JML is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+the GNU General Public License for more details.</p>
+<!-- INDENTATION -->
+<p>You should have received a copy of the GNU General Public
+License along with JML; see the file COPYING. If not, write
+to the Free Software Foundation, 675 Mass Ave, Cambridge, MA
+02139, USA.</p>
+</td>
+</table>
+<hr>
+</body>
+</html>

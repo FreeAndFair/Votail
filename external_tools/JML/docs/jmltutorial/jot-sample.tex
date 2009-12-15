@@ -1,0 +1,240 @@
+%---------------------------------------------------------------------
+% This is a sample file for the jotarticle class.
+%
+% (c) Susanne Cech, Departement Informatik, ETH Zuerich, 
+%     susanne.cech@inf.ethz.ch, 2003-02-27
+%
+%---------------------------------------------------------------------
+% last change: 2003-02-27
+%---------------------------------------------------------------------
+
+\documentclass{jotarticle}
+
+%---------------------------------------------------------------------
+% GENERAL INFORMATION
+%---------------------------------------------------------------------
+% This template is to be used for JOT-articles only.
+%
+% Read this documentation carefully, it will simplify your work.
+% Some commands are to be used out by the authors, some by the JOT
+% team only. I've tagged the commands with [AUTHOR] and [JOT].
+%
+% To compile your LaTeX-document, I suggest using pdflatex. We will
+% use it here as well because it generates directly PDF, thus 
+% a clickable document with internal and external links (HTML) is 
+% the result.
+%
+% Please note: When using pdflatex, your picture files need to be
+% either in PNG or PDF-format. 
+%
+% I'm happy about every comment. If you have questions, suggestions,
+% comments, etc, please send me an email: susanne.cech@inf.ethz.ch
+%---------------------------------------------------------------------
+
+
+%---------------------------------------------------------------------
+% CONFIGURATION
+%---------------------------------------------------------------------
+% There are two parts configuration parts. The author can enter the 
+% first part, that is information regarding the author and the 
+% article.
+% The second part is to be filled out by the JOT team. Authors please
+% leave it as it is, as any non-suitable input will be removed.
+%---------------------------------------------------------------------
+
+
+%---------------------------------------------------------------------
+% CONFIGURATION: BY THE AUTHOR
+%---------------------------------------------------------------------
+% [AUTHOR] Add the title of your article here
+%---------------------------------------------------------------------
+\title{The jotarticle Class}
+%---------------------------------------------------------------------
+% [AUTHOR] Add the authors here
+%          Several authors can be separated by either \\ or \and
+%          Use bold font for the authors name as shown in the example.
+%---------------------------------------------------------------------
+\author{\textbf{Susanne Cech}, Departement Informatik, 
+        ETH Zurich, Switzerland}
+%---------------------------------------------------------------------
+
+
+%---------------------------------------------------------------------
+% CONFIGURATION: BY THE JOT TEAM
+%---------------------------------------------------------------------
+% [JOT] Set first page and last page of the article/column
+%---------------------------------------------------------------------
+\firstpage{1}
+\lastpage{3}
+%---------------------------------------------------------------------
+% [JOT] Enter the volume and number of the issue. 
+%       Here: vol 2, no 3
+%---------------------------------------------------------------------
+\jotvolume{2}
+\jotnumber{2}
+%---------------------------------------------------------------------
+% [JOT] Enter the month and year when the issues is published.
+%       Here: March 2003
+%---------------------------------------------------------------------
+\jotmonth{3}
+\jotyear{2003}
+%---------------------------------------------------------------------
+% [JOT] [OPTIONAL] Enter how to cite this article 
+%       This is generated. In case it does not fit your expectations,
+%       you can enter it yourself.
+%---------------------------------------------------------------------
+\howtocite{\href{http://www.jot.fm/general/JOT_template_LaTeX.tgz}%
+{http://www.jot.fm/general/JOT\_template\_LaTeX.tgz}}
+%---------------------------------------------------------------------
+% [JOT] Set type of paper, i.e. column or article
+%       This is needed for the generation of \howtocite
+%---------------------------------------------------------------------
+\papertype{document}
+%---------------------------------------------------------------------
+% [JOT] Set the filename. 
+%       This is needed for the generation of \howtocite
+%---------------------------------------------------------------------
+\filename{}
+%---------------------------------------------------------------------
+% [JOT] Enter the names of the authors as comma-separated list.
+%       This is needed for the generation of \howtocite.
+%       (I know this is ugly -- I will work on that as soon as type
+%       permits it.) 
+%---------------------------------------------------------------------
+\authornames{Susanne Cech}
+%---------------------------------------------------------------------
+
+
+%---------------------------------------------------------------------
+% START OF THE DOCUMENT
+%---------------------------------------------------------------------
+% This is where the document starts. In this example, I will guide
+% you through this sample article with the explanation of possible
+% commands you should use.
+%---------------------------------------------------------------------
+
+
+%---------------------------------------------------------------------
+\begin{document}
+%---------------------------------------------------------------------
+
+%---------------------------------------------------------------------
+% ABSTRACT
+%---------------------------------------------------------------------
+% [AUTHOR] Clearly a job for the author :-)
+%          Add your abstract here
+%---------------------------------------------------------------------
+\begin{abstract}
+This little document shows you how to use commands either especially
+defined for JOT or just useful. Authors can use this file as template
+for their own papers or as reference. In any case, the source file
+of this document should also be read.
+\end{abstract}
+%---------------------------------------------------------------------
+
+
+%---------------------------------------------------------------------
+\section{Link commands}
+
+\subsection{HTML Links}
+
+To include HTML links, you should use this command: \verb|\htmllink{URL}|
+
+\paragraph{Example} \htmllink{http://www.jot.fm}
+
+
+\subsection{E-Mail Addresses}
+
+To format e-mail addresses, use following command: 
+\verb|\maillink{emailaddress}|
+
+\paragraph{Example} \maillink{susanne.cech@inf.ethz.ch}
+
+
+%---------------------------------------------------------------------
+\section{Source Code}
+
+\subsection{Blocks of source code}
+
+To include source code, either the \code{verbatim} or the \code{alltt}
+environment can be used. The font is redefined to lightblue color.
+
+\paragraph{Example}
+\begin{alltt}
+The \textcolor{red}{alltt} is really convenient, since commands are 
+still interpreted. For example you can display important things in 
+\textit{italics} or \textcolor{red}{color}.
+\end{alltt}
+
+\begin{verbatim}
+This is the basic verbatim environment. 
+Every character is printed as it is.
+\end{verbatim}
+
+
+\subsection{Source code within floating text}
+
+To include source code within floating text, you can use these
+two commands:
+
+\begin{verbatim}
+\verb|x := x + 1|
+\code{x := x + 1}
+\end{verbatim}
+
+\paragraph{Examples} \verb|x := x + 1| or \code{x := x + 1}
+
+
+
+%---------------------------------------------------------------------
+\section{About the bibliography}
+
+The source file shows an example of how a bibliography can look like.
+Feel free to use any available form. This is merely shown to see the
+order of sections in a document
+
+
+%---------------------------------------------------------------------
+\section{About the biography}
+
+
+Keep the bio short. Include a picture if you wish (size 100x100 pixels,
+solution 72 dpi); if so, make sure it is of good enough quality at 
+that size and include it in the document. Include email for at 
+least one author, set it up as HTML link. Use this command: 
+
+\begin{verbatim}
+\abouttheauthor[picture]{name of the author}{text about the author}
+\end{verbatim}
+
+\paragraph{Example} See in the section ``About the authors''.
+
+
+%---------------------------------------------------------------------
+% BIBLIOGRAPHY
+%---------------------------------------------------------------------
+\begin{thebibliography}{XXXXX}
+
+\bibitem[]{}
+
+\end{thebibliography}
+
+
+%---------------------------------------------------------------------
+% ABOUT THE AUTHORS
+%---------------------------------------------------------------------
+
+% This command starts the ``About the Authors'' section.
+\abouttheauthors
+
+\abouttheauthor[susi]{Susanne Cech}{is a PhD student and research
+assistant at the Chair of Software Engineering at the ETH Zurich,
+Switzerland. She can be reached at
+\maillink{susanne.cech@inf.ethz.ch}. 
+See also \htmllink{http://se.inf.ethz.ch}.}
+
+
+
+%---------------------------------------------------------------------
+\end{document}
+%---------------------------------------------------------------------

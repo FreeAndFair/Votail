@@ -1,0 +1,648 @@
+.\" @(#)$Id: jmldoc.1,v 1.34 2005/12/22 20:57:45 darvasa Exp $
+.\"
+.\" Copyright (C) 2002 Iowa State University
+.\"
+.\" This file is part of JML
+.\"
+.\" JML is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2, or (at your option)
+.\" any later version.
+.\"
+.\" JML is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with JML; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.TH JMLDOC l "$Date: 2005/12/22 20:57:45 $"
+.UC 4
+.SH NAME
+jmldoc \- generate HTML pages from JML and Java files
+.SH SYNOPSIS
+.BR "jmldoc" " [option] ... file-or-package-or-directory [file-or-package-or-directory] ..."
+.br
+.BR "jmldoc-gui" " [option] ... file-or-package-or-directory [file-or-package-or-directory] ..."
+.SH DESCRIPTION
+The command
+.B jmldoc
+and the graphical user interface version
+.B jmldoc-gui
+generate HTML (web) pages from JML annotated Java(TM) and JML files.
+This is similar to Javadoc, but
+.B jmldoc
+understands JML specifications, and includes this information in the
+generated HTML pages.
+The program also type checks the JML specifications to some extent
+and combines annotations across refinement files.
+The output is a set of HTML files that can be browsed using a web
+browser.
+.PP
+The
+.B jmldoc
+script sets the CLASSPATH and then runs the Java class
+org.jmlspecs.jmldoc.Main, which does both syntax and type checking of
+Java and JML files, and then generates the HTML pages.
+.PP
+The
+.B jmldoc-gui
+script is similar, but just runs the Java class
+org.jmlspecs.jmldoc.JmldocGUI, which brings up a graphical
+user-interface to do the HTML generation.
+.PP
+This version of jmldoc is compatible with Java 1.4.1 and not with any earlier
+versions of the Java developement kit.
+.PP
+The non-option arguments may be either a filename, a dot-separated package 
+name, or a directory name.  A simple name is interpreted as a package name.
+When packages or directories are given, jmldoc processes all files in the
+named directory with either a .java suffix or a legal refinement suffix
+(e.g. .refines-java).
+.SH OPTIONS
+.PP
+This program supports the options described below.
+There are two kinds of options, some contributed by javadoc and some 
+contributed by the mjc parser that is used by jmldoc.
+.PP
+Options from javadoc consist of a single hyphen and the name of the
+option; if there is an argument to the option it is separated from 
+the name of the option by whitespace.
+.PP
+Options contributed by the mjc parser have both a long and short form.
+The short forms consist of a single hypen and a single letter.
+The long forms consist of one or two hyphens and a word.
+To avoid duplication, we only show the long forms with two hyphens,
+since these are unambiguous; however one can use the forms with a
+single hyphen if desired.
+To avoid ambiguity between multiple short form options and the long
+form with a single hyphen, one should give each option separately.
+In the synopsis below, the long form is separated from the short form
+by a comma (,), but in actual usage, you would pick one of these forms
+and not use the comma.
+.PP
+Note that options given on the command line are case sensitive.
+.TP
+.B \-\-ImplicitPromotion, \-i
+This disables implicit promotion (to \\bigint).  This promotion only
+occurs within specifications and in specification expressions, and
+does not affect Java code. 
+The default is to have such implicit promotions to \\bigint.
+.TP
+.B \-\-Quiet, \-Q, \-quiet
+Shuts off all type checking informational messages.
+The default is to produce these messages.
+(The jmldoc --Quiet is now equivalent to the javadoc -quiet, but not to
+the jmldoc option --quiet).
+.TP
+.B \-\-admissibility <String>
+Checks the admissibility of invariants and represents clauses
+in accordance with a certain proof technique. For more details
+about admissibility see "Modular Invariants for Layered Object Structures" by 
+P. Mueller, A. Poetzsch-Heffter and G. Leavens, 2004.
+.br
+Statics (static invariants, static represents clauses and static
+fields appearing in one of the former) and method calls (in an invariant
+or a represents clause) are not yet supported.
+.PP
+.RS
+Available option strings:
+.RS
+.PP
+"none"
+.RS
+No admissibility checks are performed.
+.br
+This is the default.
+.RE
+.PP
+"classical"
+.RS
+Admissibility checks of invariants and represents clauses
+are done in accordance with the
+classical modular proof technique.
+.br
+See the above
+mentioned paper for details.
+.RE
+.PP
+"ownership"
+.RS
+Admissibility checks of invariants and represents clauses
+are done in accordance with the
+ownership proof technique, using the UTS information.
+Therefore this option only makes sense if the UTS
+is enabled at least for parsing and typechecking.
+Additionally fields and methods are checked to ensure subclass
+separation.
+.br
+For further details see the above mentioned paper.
+.RE
+.RE
+.RE
+.TP
+.B \-\-Assignable, \-A
+Turn off errors that are otherwise given when a method with
+an "assignable" clause calls methods that do not have "assignable" clauses.
+The default is to produce such messages.
+.TP
+.B \-\-assignable, \-a
+Turn off caution messages for heavyweight specification cases of
+non-pure methods that have no "assignable" clause. A heavyweight specification
+case is a specification case that starts with one of the
+keywords "behavior", "normal_behavior", or "exceptional_behavior".
+A pure method is a method annotated with the JML modifier "pure".
+The default is to produce such caution messages.
+.TP
+.B \-\-classpath <directory-list>, \-C <directory-list>
+Use the given string as the CLASSPATH.
+By default the value of the environment variable CLASSPATH is used instead.
+.TP
+.B \-\-debug, \-c
+Produces (copious) debugging information.
+The default is not to produce this information.
+.TP
+.B \-\-deprecation 
+Test for deprecated members.
+The default is not to test for deprecated members.
+(Not applicable to jmldoc)
+.TP
+.B \-\-destination <directory>, \-d <directory>
+Writes HTML files in a subdirectory
+corresponding to the file's package name, relative to the
+named destination directory.
+The default is the current working directory.
+.TP
+.B \-\-docpath <directory-list>
+A path (directory list separated by the path separator character)
+that tells where to find javadoc files.
+Using this option is equivalent to a series of \-link options 
+each specifying one directory from the directory list.
+.TP
+.B \-\-excludefiles <pattern>
+A pattern (regular expression) for file names to exclude from
+processing.
+By default this is the pattern
+.nf
+   _JML_Test[\\044.]
+.fi
+which means that
+file names that contain the strings _JML_Test. or _JML_Test$
+are not processed (044 is the octal code for a dollar sign),
+unless they are referred to by other files that are
+processed.  The regular expressions that can be used are described in
+the javadocs for the type java.util.regexp.Pattern.  For example, 
+when building the JML documentation, we use the pattern
+.nf
+   _JML_Test[\\044.]|TestSuite\\.[^.]+
+.fi
+which excludes files with names like TestSuite.java, as well as the
+_JML_Test files.  This was necessary for us, becuase the
+TestSuite.java files reference the types named _JML_Test.
+.TP
+.B \-\-fcns <option>
+Used to specify the treatment of external functions in MultiJava
+.TP
+.B \-\-filter <String>, \-f <String>
+Make the warning filter be the named class.
+The default is org.jmlspecs.checker.JMLDefaultWarningFilter.
+.TP
+.B \-\-generic, \-G
+Accept the Java 1.5 generic syntax.  This feature is still experimental.
+The default is not to do this.
+.TP
+.B \-\-help, \-h
+Display the help information and exit.
+The default is not to do this.
+.TP
+.B \-\-keepGoing, \-k
+Keep going when errors are encountered.
+Be warned that this may cause the tool to die with an exception.
+The default is to not keep going.
+.TP
+.B \-\-multijava, \-M
+Accept MultiJava source code.
+The default is to not accept Multijava constructs.
+.TP
+.B \-\-nomultijava
+Do not accept MultiJava source code.
+This turns off acceptance of Multijava constructs.
+.TP
+.B \-\-norecursive
+Do not recurse into subdirectories of command-line arguments
+.TP
+.B \-\-purity, \-p
+Do not check for pure-ness of methods referenced in assertions. A method is
+considered to be pure if it is annotated with the JML modifier "pure".
+The default is to check for purity.
+.TP
+.B \-\-quiet, \-q
+Do not suppress information on compilation passes completed.
+The default is to suppress this information.
+.TP
+.B \-\-recursive, \-R
+Process all subdirectories of given directory or package arguments recursively.
+The default is not to process subdirectories.
+.TP
+.B \-\-relaxed, \-r
+Accept Relaxed MultiJava source code.
+The default is not to allow the special constructs in Relaxed MultiJava.
+.TP
+.B \-\-safemath, \-s
+Turns on safe math mode. This is an experimental feature, currently
+under development, in which the checker will report a compile-time error if the
+evaluation of a constant integral expression causes an overflow.
+The default is not to report such errors.
+.TP
+.B \-\-showPromotion, \-U
+Shows implicit and explicit coercions in annotations.
+The default is not to show such promotions.
+.TP
+.B \-\-source <release-number>
+Accept code containing source for the given Java version.
+When the release-number is "1.4", the compiler accepts code containing Java 1.4
+assert statements, and treats `assert' as a reserved word in Java
+code.
+The default is "1.3", meaning that `assert' is not a
+reserved word in Java code (although it is in annotations). 
+In some future release of JML, the default will change to "1.4".
+.TP
+.B \-\-sourcepath <directory-list>, \-S <directory-list>
+Use the given path when searching for packages specified on the command line.
+A path is a list of directories separated by either colons (on Unix) or
+semicolons (on Windows).
+The default is to use the CLASSPATH. (Equivalent to -sourcepath)
+
+.\" START universe-options
+.TP
+.B \-\-universesx <String>, \-E <String>
+Specify the degree of support for the Universe type system (UTS).
+.PP
+.RS
+Available option strings:
+.RS
+.PP
+"no"
+.RS
+UTS features are disabled and no keywords are reserved.
+.br
+Only the \\xxx version of the keywords are allowed
+(all UTS keywords have to be prefixed by a backslash).
+.br
+This is the default.
+.RE
+.PP
+"parse"
+.RS
+the UTS keywords are reserved and parsed.
+.RE
+.PP
+"check"
+.RS
+UTS typechecking is performed.
+.RE
+.PP
+"dynchecks"
+.RS
+code for UTS runtime checks (for downcasts and array updates)
+is generated.
+.br
+This also turns on the "check" option, because the runtime checks rely
+on a type-checked program.
+.RE
+.PP
+"purity"
+.RS
+purity of methods is checked with a conservative method, which
+might forbid some methods that do not modify existing objects.
+.RE
+.PP
+"xbytecode"
+.RS
+Universe type information is stored in special bytecode attributes.
+.br
+This also turns on the "check" option, because it is important that
+the stored information is type-checked.
+.br
+The resulting class-file is compatible with standard Java VMs.
+.RE
+.PP
+"annotations"
+.RS
+Universe type information is stored in Java 5 annotations.
+.br
+This also turns on the "check" option, because it is important that
+the stored information is type-checked.
+.br
+The resulting class-file is compatible with Java 5 VMs.
+.RE
+.PP
+"full"
+.RS
+all UTS features except "annotations" are enabled;
+this corresponds to the \-\-universes flag below.
+.RE
+.RE
+.PP
+The options "no" and "full" must be used alone.
+All other options can be combined by separating them with commas.
+First all options are turned off and then the given options
+(and the options implicitly turned on by the given options)
+are turned on.
+.RE
+.TP
+.B \-\-universes, \-e
+Enable the default Universe type system features.
+This corresponds to the "\-\-universesx full" flag.
+.br
+This option is disabled by default.
+.\" END universe-options
+
+.TP
+.B \-\-verbose, \-v
+Display verbose information during compilation.
+The default is not to display this information.
+.TP
+.B \-\-version, \-V
+Instead of doing anything else, print the checker's version information
+on standard output and exit.
+The default is not to do this.
+.TP
+.B \-\-warning=<int>, \-w <int>
+Set the `pickiness' of warnings displayed to the given integer.
+The default is 1.  Using 2 generates more picky warnings, and 3 more picky
+still.
+.TP
+.B \-\-Xnoversion
+Omits printing the version in help messages, which is useful for
+regression testing (but not normally by users).
+The default is to print the version in help messages.
+.BR
+.PP
+The following options are inherited from javadoc (see the javadoc documentation for more detail).  The option
+names (but not the arguments, nor the options listed above) are case-insensitive.
+.TP
+.B \-author
+Causes information in @author tags to be put into html pages; the default is to omit them
+.TP
+.B \-bootclasspath <path>
+Specifies the sequence of directories and jar files in which the Java system classes are found; the default is system specific
+.TP
+.B \-bottom <String>
+A string of HTML content to be placed below the lower navigation bar
+.TP
+.B \-breakiterator
+In javadoc specifies how to determine the summary sentence of a comment.
+The option in ignored in jmldoc since jmldoc always behaves like
+javadoc with -breakiterator enabled.
+.TP
+.B \-charset <String>
+Specifies the HTML character set for the document as given in the META tag; the default is to omit the META tag
+.TP
+.B \-classpath <path>
+The sequence of root lcoations (directories and jar files) that are searched for classes referenced in classes and packages listed on the command line; the default is the value of the CLASSPATH environment variable
+.TP
+.B \-d <directory>
+The location in which output files are written (equivalent to --destination); the default is the current directory.
+.TP
+.B \-docfilessubdirs
+Recursively copy doc-file subdirectories
+.TP
+.B \-docencoding <name>
+Specifies the html encoding for generated files; the default is the default
+encoding of the local java virtual machine.
+.TP
+.B \-doclet <classname>
+Specifies a fully-qualified class name that is to be used as the doclet instead of jmldoc
+.TP
+.B \-docletpath <path>
+Specifies a path in which to find the doclet in the -doclet option; the default is the value of -classpath; (option is NOT IMPLEMENTED)
+.TP
+.B \-doctitle <String>
+Specifies the title to display in the generated overview html page; the default is no title
+.TP
+.B \-encoding <name>
+Specifies the encoding name of the source files; otherwise uses a platform-specific default
+.TP
+.B \-exclude <pkglist>
+Specify a list of packages to exclude
+.TP
+.B \-excludedocfilessubdir <name1>:... 
+Exclude an doc-files subdirectories with the given names
+.TP
+.B \-extdirs <path>
+Specifies the path to search for extension classes; the default is to use the bootclasspath; NOT IMPLEMENTED
+.TP
+.B \-footer <String>
+A string of HTML content to be placed to the right of the lower navigation bar;
+the default for the footer is the header string
+.TP
+.B \-group <groupheading> <packagepatternlist>
+Allows the organization of the packages listed on the overview page to be grouped in specified sections, as described in the javadoc documentation; by default all packages are in one group
+.TP
+.B \-header <String>
+A string of HTML content to be placed to the right of the upper navigation bar
+.TP
+.B \-help
+Prints out the options and usage and terminates (equivalent to --help)
+.TP
+.B \-helpfile <file>
+Specifies the file that contains the description of how to use the generated html pages. 
+A copy of this file is made and stored in the top-level directory of the documentation set
+(using the given filename), and linked to by the HELP link in the documentation pages.
+Without this option jmldoc generates its own file at a hard-coded filesname.  The given 
+file is found relative to the current directory.
+.TP
+.B \-J<flag>
+Specifies runtime system options (note no white space after the J)
+.TP
+.B \-link <url>
+Specifies a url (either http: or file:) at which to find the html documentation of classes that are
+referenced in the classes being documented, but whose documentation is not itself being generated 
+in this run of jmldoc.  It is allowed to have multiple -link options.  It is required that there be
+a file named 'package-list' at the specified url; this file contains the list of packages whose
+documentation is at that location.
+.TP
+.B \-linkoffline <url> <url-or-directory>
+Specifies the location (as does the -link option) of class documentation for classes not being documented
+in the current execution of jmldoc.  In this case, the url-or-directory gives the location of the package-list
+file that contains the list of packages that are documented at the location url.  The url need not
+be available at the time the documentation is generated.
+.TP
+.B \-linksource
+Generate links to the source files, rewritten in HTML.
+.TP
+.B \-locale <locale-name>
+Specifies the locale to be used for rendering text (place this option first) [NOT IMPLEMENTED in jmldoc]
+.TP
+.B \-nocomment
+Suppress description and tags, generating only declarations
+.TP
+.B \-nodeprecated
+Prevents the generation of any documentation of deprecated elements (as well as doing what
+-nodeprecatedlist does)
+.TP
+.B \-nodeprecatedlist
+Prevents the generation of the deprecated-list.html file, which contains a list of deprecated elements
+.TP
+.B \-nohelp
+Prevents the generation of a help file
+.TP
+.B \-noindex
+Prevents the generation of an index
+.TP
+.B \-nonavbar
+Causes the documentation to omit the header, footer and navigation bars
+.TP
+.B \-nooverview
+Prevents an overview file from being generated when more than one package is being documented
+.TP
+.B \-noqualifier <name1>:<name2>:...
+Exclude the listed qualifiers from the output
+.TP
+.B \-nosince
+Prevents the listing of any information from @since tags
+.TP
+.B \-notree
+Omits the class/interface tree from the generated documentation
+.TP
+.B \-overview <file>
+Causes jmldoc to create an overview page using the information in the given file,
+which is found relative to the -sourcepath.  In jmldoc, an overview file is
+created by default if more than one package is being documented.  (Despite the
+javadoc documentation, javadoc 1.3 looks for the overview file relative to the
+current directory).
+.TP
+.B \-public, \-protected, \-package, \-private
+These options control which classes and class members are documented, according to
+their declared access level
+.TP
+.B \-quiet
+Suppress doclet-produced informational messages.
+This option is now equivalent to --Quiet.
+.TP
+.B \-serialwarn
+Causes warnings to be generated for missing @serial tags (NOT IMPLEMENTED)
+.TP
+.B \-sourcepath <path>
+The sequence of directories and jar files to be searched for the packages that are
+specified on the command line; the default value is the value of -classpath
+.TP
+.B \-splitindex
+Causes the index, if it is generated, to consist of a number of files instead 
+of one long file
+.TP
+.B \-stylesheetfile <file>
+The file to use instead of the default stylesheet file.  It will be copied to the
+root of the documentation set (retaining the same filename).  The file is found
+relative to the current directory.
+.TP
+.B \-subpackages <subpkglist>
+Specify subpackages to recursively load
+.TP
+.B \-tag <name>:<locations>:<header>
+Specify single-argument custom tags
+.TP
+.B \-taglet
+The fully qualified name of a custom taglet
+.TP
+.B \-tagletpath
+The search path for taglet .class files
+.TP
+.B \-use
+Causes the use information pages (one per class and one per package) to be generated
+.TP
+.B \-verbose
+A javadoc option that has no effect in jmldoc
+.TP
+.B \-version
+Causes information in @version tags to be put in the generated pages
+.TP
+.B \-windowtitle <string>
+Uses the given string in the TITLE tag of the generated html pages (so that it 
+appears in the title bar and bookmarks or favorite lists of the html browser).
+The javadoc documentation says that the default is the value of -doctitle, but
+javadoc 1.3 (and jmldoc) actually produces by default a title of
+"Generated Documentation (Untitled)" on the frame-style overview page and
+an empty title on other pages.
+.TP
+.B \-x
+Prints out a list of special (javadoc) options
+.TP
+.B \-xnodate
+A special option tha causes html pages to have the string 'TODAY' instead of a current date and time
+
+.SH EXAMPLES
+.PP
+Here is an example of running jmldoc on the packages that make up the
+MJ compiler.  (Here $HOME is the root of the MJ directory containing
+the MJC source code).
+.RS
+.nf
+rm -fr $HOME/MJ/javadocs
+jmldoc -Q -private -d $HOME/MJ/javadocs \\
+  -link file:/cygwin/usr/local/jdk1.4/docs/api \\
+  -link file:/cygwin/usr/local/antlr/javadocs \\
+  --sourcepath $HOME/MJ  \\
+  org.multijava.dis org.multijava.javadoc org.multijava.mjc \\
+  org.multijava.mjdoc org.multijava.util org.multijava.util.backend \\
+  org.multijava.util.classfile org.multijava.util.compiler \\
+  org.multijava.util.jperf org.multijava.util.lexgen \\
+  org.multijava.util.msggen org.multijava.util.optgen \\
+  org.multijava.util.optimize org.multijava.util.testing
+.fi
+.RE
+.PP
+The options used in the above invocation of jmldoc make jmldoc
+be quiet, document all members (including private
+ones) of classes and interfaces, write the HTML files relative to
+$HOME/MJ/javadocs, link to existing HTML files for the JDK and ANTLR,
+and find listed packages relative to $HOME/MJ.
+.SH ENVIRONMENT
+.PP
+The
+.B CLASSPATH
+environment variable is used to find Java class and source files,
+as well as JML specification files.
+.SH BUGS
+.PP
+The
+.B jmldoc
+script sets the CLASSPATH environment variable, but does not look
+at any -classpath option that might be used.  If you use a -classpath
+option, then you must explicitly include paths to the jar files and
+directories that this script would have otherwise included.
+On the other hand, this allows you to override the default orderings
+for such jar files and directories.
+.SH SEE ALSO
+java(1), javadoc(1), jml(1), jmlc(1), jmlrac(1), jmlunit(1), jtest(1),
+the html documentation at org/jmlspecs/jmldoc/package.html or the
+overview javadoc documentation for the jmldoc package
+.SH AUTHOR
+.PP
+The current version of jmldoc was written by David Cok, building on
+the source files of Sun MicroSystems' doclet API and on the parsing
+capabilities of the MultiJava compiler and the JML checker.  The
+original concept was implemented in the first version by
+Arun Raghavan.
+.SH COPYRIGHT
+.PP
+Copyright (c) 2002 by Iowa State University and David Cok
+.BR
+.PP
+JML is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+.BR
+.PP
+JML is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License
+along with JML; see the file COPYING.  If not, write to
+the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.

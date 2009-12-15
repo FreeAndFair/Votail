@@ -1,0 +1,87 @@
+\begin{thebibliography}{10}
+
+\bibitem{Beck-Gamma98}
+Kent Beck and Erich Gamma.
+\newblock Test infected: Programmers love writing tests.
+\newblock {\em Java Report}, 3(7):37--50, 1998.
+
+\bibitem{Burdy-etal03}
+Lilian Burdy, Yoonsik Cheon, David Cok, Michael Ernst, Joe Kiniry, Gary~T.
+  Leavens, K.~Rustan~M. Leino, and Erik Poll.
+\newblock An overview of {JML} tools and applications.
+\newblock In Thomas Arts and Wan Fokkink, editors, {\em Eighth International
+  Workshop on Formal Methods for Industrial Critical Systems (FMICS 03)},
+  volume~80 of {\em Electronic Notes in Theoretical Computer Science (ENTCS)},
+  pages 73--89. Elsevier, June 2003.
+
+\bibitem{Cheon03}
+Yoonsik Cheon.
+\newblock A runtime assertion checker for the {Java Modeling Language}.
+\newblock Technical Report 03-09, Department of Computer Science, Iowa State
+  University, Ames, IA, April 2003.
+\newblock The author's Ph.D. dissertation. Available from
+  \url{archives.cs.iastate.edu}.
+
+\bibitem{Cheon-Leavens02b}
+Yoonsik Cheon and Gary~T. Leavens.
+\newblock A runtime assertion checker for the {Java Modeling Language (JML)}.
+\newblock In Hamid~R. Arabnia and Youngsong Mun, editors, {\em Proceedings of
+  the International Conference on Software Engineering Research and Practice
+  (SERP '02), Las Vegas, Nevada, USA, June 24-27, 2002}, pages 322--328. CSREA
+  Press, June 2002.
+
+\bibitem{Cheon-Leavens02}
+Yoonsik Cheon and Gary~T. Leavens.
+\newblock A simple and practical approach to unit testing: The {JML} and
+  {JUnit} way.
+\newblock In Boris Magnusson, editor, {\em ECOOP 2002 --- Object-Oriented
+  Programming, 16th European Conference, M\'{a}alaga, Spain, Proceedings},
+  volume 2374 of {\em Lecture Notes in Computer Science}, pages 231--255,
+  Berlin, June 2002. Springer-Verlag.
+
+\bibitem{Cheon-etal03}
+Yoonsik Cheon, Gary~T. Leavens, Murali Sitaraman, and Stephen Edwards.
+\newblock Model variables: Cleanly supporting abstraction in design by
+  contract.
+\newblock Technical Report 03-10, Department of Computer Science, Iowa State
+  University, April 2003.
+\newblock Available from \url{archives.cs.iastate.edu}.
+
+\bibitem{Hoare69}
+C.~A.~R. Hoare.
+\newblock An axiomatic basis for computer programming.
+\newblock {\em Communications of the ACM}, 12(10):576--583, October 1969.
+
+\bibitem{Leavens-Baker-Ruby03}
+Gary~T. Leavens, Albert~L. Baker, and Clyde Ruby.
+\newblock Preliminary design of {JML}: A behavioral interface specification
+  language for {Java}.
+\newblock Technical Report 98-06v, Iowa State University, Department of
+  Computer Science, May 2003.
+\newblock See \url{www.jmlspecs.org}.
+
+\bibitem{Leavens-etal03a}
+Gary~T. Leavens, Yoonsik Cheon, Curtis Clifton, Clyde Ruby, and David~R. Cok.
+\newblock How the design of {JML} accommodates both runtime assertion checking
+  and formal verification.
+\newblock Technical Report 03-04, Department of Computer Science, Iowa State
+  University, Ames, Iowa, 50011, March 2003.
+\newblock To appear in the proceedings of FMCO 2002.
+
+\bibitem{Liskov-Wing94}
+Barbara Liskov and Jeannette Wing.
+\newblock A behavioral notion of subtyping.
+\newblock {\em ACM Transactions on Programming Languages and Systems},
+  16(6):1811--1841, November 1994.
+
+\bibitem{Meyer92a}
+Bertrand Meyer.
+\newblock Applying ``design by contract''.
+\newblock {\em Computer}, 25(10):40--51, October 1992.
+
+\bibitem{Meyer92b}
+Bertrand Meyer.
+\newblock {\em Eiffel: The Language}.
+\newblock Object-Oriented Series. Prentice Hall, New York, NY, 1992.
+
+\end{thebibliography}

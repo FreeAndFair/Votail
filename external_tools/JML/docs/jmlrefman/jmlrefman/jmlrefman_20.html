@@ -1,0 +1,115 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Deprecated and Replaced Syntax</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Deprecated and Replaced Syntax">
+<META NAME="keywords" CONTENT="JML Reference Manual: Deprecated and Replaced Syntax">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC216"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_19.html#SEC213"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_21.html#SEC219"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 20. Deprecated and Replaced Syntax </H1>
+<!--docid::SEC216::-->
+<P>
+
+<A NAME="IDX3016"></A>
+<A NAME="IDX3017"></A>
+The subsections below briefly describe the
+deprecated and replaced features of JML.
+A feature is <EM>deprecated</EM> if it is supported in the current release,
+but slated to be removed from a subsequent release.
+Such features should not be used.
+</P><P>
+
+<A NAME="IDX3018"></A>
+<A NAME="IDX3019"></A>
+A feature that was formerly deprecated is <EM>replaced</EM> if it has
+been removed from JML in favor of some other feature or features.
+While we do not describe all replaced syntax in this appendix, we do
+mention a few of the more interesting or important features that were
+replaced, especially those discussed in earlier papers on JML.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_20.html#SEC217">20.1 Deprecated Syntax</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_20.html#SEC218">20.2 Replaced Syntax</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Deprecated Syntax"></A>
+<HR SIZE="6">
+<A NAME="SEC217"></A>
+<H2> 20.1 Deprecated Syntax </H2>
+<!--docid::SEC217::-->
+<P>
+
+The following syntax is deprecated.
+</P><P>
+
+<A NAME="Replaced Syntax"></A>
+<HR SIZE="6">
+<A NAME="SEC218"></A>
+<H2> 20.2 Replaced Syntax </H2>
+<!--docid::SEC218::-->
+<P>
+
+<A NAME="IDX3020"></A>
+As a note for readers of older papers, 
+the keyword <CODE>subclassing_contract</CODE> was replaced with
+<CODE>code_contract</CODE>, which is now removed.
+Instead, one should use
+a heavyweight specification case with the keyword <CODE>code</CODE>
+just before the behavior keyword, and a precondition of <CODE>\same</CODE>.
+</P><P>
+
+<A NAME="IDX3021"></A>
+Similarly, the <CODE>depends</CODE> clause has been replaced by the
+mechanism of data groups and the <CODE>in</CODE> and <CODE>maps</CODE> clauses of
+variable declarations.
+</P><P>
+
+<A NAME="Grammar Summary"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_20.html#SEC216"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_21.html#SEC219"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

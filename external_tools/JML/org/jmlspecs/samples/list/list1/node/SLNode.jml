@@ -1,0 +1,69 @@
+// @(#) $Id: SLNode.jml,v 1.5 2005/12/06 19:55:00 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.list1.node;
+
+//@ refine "SLNode.jml-refined";
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+// FIXME: adapt this file to non-null-by-default and remove the following modifier.
+/*@ nullable_by_default @*/ 
+public class SLNode { // Singly Linked Node
+
+    protected Object entry_;
+    //@                  in theEntry;
+
+    //@ protected represents theEntry <- entry_;
+
+    protected SLNode nextNode_;
+    /*@              in nextNode;
+      @              maps nextNode_.entries \into entries; 
+      @              maps nextNode_.allButFirst \into allButFirst; 
+      @
+      @              maps_redundantly nextNode_.theEntry \into entries;
+      @              maps_redundantly nextNode_.nextNode \into allButFirst;
+      @*/
+
+    //@ protected represents nextNode <- nextNode_;
+
+    //@ protected represents entries <- allButFirst.insertFront(entry_);
+    /*@ protected represents allButFirst <- 
+      @   (nextNode_ == null)? new JMLObjectSequence() : nextNode_.entries;
+      @*/
+
+  /*@ protected normal_behavior
+    @    assignable entries;
+    @    ensures theEntry == null && entries.int_size() == 1
+    @         && entries.itemAt(0) == null && allButFirst.isEmpty();
+    @*/
+    protected SLNode();
+
+  /*@ protected normal_behavior
+    @    assignable entries;
+    @    ensures theEntry == ent &&  entries.itemAt(0) == ent
+    @         && nextNode == nxtNode;
+    @*/
+    protected SLNode(Object ent, SLNode nxtNode);
+
+}
+

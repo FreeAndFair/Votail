@@ -1,7 +1,7 @@
 # @todo kiniry 16 Aug 2005 - Remove jmlc_junit seperate compilation
 # and classfile directory as it is no longer necessary with JML 5.
 
-RELEASE = v2.0.0
+RELEASE = v0.0.0
 BASE	= proposal
 BIBTEXOPT = 
 BIBWARN = 'LaTeX Warning: Citation'
@@ -11,22 +11,20 @@ FIGSCALE = 0.5
 
 # CLASSPATH components
 
-CORECP	= src:specs
-SPECS = ../../specs
-JARS = ../../infrastructure/jars
-JMLCP	= $(JARS)/jmlruntime.jar:$(JARS)/jmljunitruntime.jar:$(JARS)/jml-release.jar:$(SPECS)
-JUNITCP	= $(JARS)/junit.jar
-CHECKSTYLECP	= $(JARS)/checkstyle-optional-4.3.jar:$(JARS)/checkstyle-all-4.3.jar
-ESCJAVA2CP = $(JARS)/esctools2.jar
+CORECP	= src
+SPECS = external_libraries/specs
+LIB = external_libraries
+JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)jml-release.jar:$(SPECS)
+JUNITCP = $(LIB)/junit.jar
 
 # local variables for build process
 
-jml ?= /usr/local/bin/jml
-javac ?= /usr/bin/javac
-jmlrac ?= /usr/local/bin/jmlrac
-jmlc ?= /usr/local/bin/jmlc
-jmldoc ?= /usr/local/bin/jmldoc
-jmlunit ?= /usr/local/bin/jmlunit
+jml ?= external_tools/JML/bin/jml
+javac ?= external_tools/JML/bin/javac
+jmlrac ?= external_tools/JML/local/bin/jmlrac
+jmlc ?= external_tools/JML/local/bin/jmlc
+jmldoc ?= external_tools/JML/local/bin/jmldoc
+jmlunit ?= external_tools/JML/local/bin/jmlunit
 
 basedocdir = doc
 srcpath = src
@@ -36,7 +34,7 @@ jmlc_path =	jmlc_build
 jmlunit_path =	jmlunit_build
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
-ESCPATH = ../../../ESCJava2
+ESCPATH ?= external_tools/ESCJava2
 escjava = $(ESCPATH)/Escjava/escj -source 1.4 -vclimit 2500000 -warnUnsoundIncomplete
 export ESCTOOLS_ROOT=$(ESCPATH)
 export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx

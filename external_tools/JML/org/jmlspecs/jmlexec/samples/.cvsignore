@@ -1,0 +1,6 @@
+classes.stamp
+*.class
+*~
+debug.out
+.emacs.desktop
+.DS_Store

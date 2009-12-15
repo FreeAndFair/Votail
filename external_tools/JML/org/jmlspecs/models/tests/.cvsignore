@@ -1,0 +1,14 @@
+*.*-ckd
+*.class
+*.sym
+*.html
+*.out
+*.dout
+*_JML_Test.java
+*~
+TestSuite.java
+buildtests.stamp
+classes.stamp
+package-list
+stylesheet.css
+.DS_Store

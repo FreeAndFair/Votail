@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- $Id: developer-tips.html,v 1.50 2008/01/09 16:12:10 leavens Exp $ -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Tips for Working on JML as a Developer</title>
+<!-- The following is interpreted differently on the JML web page. Those editing this file should be aware that it has to work correctly both here and on the JML web page! So please don't remove the following line, even though here it seems to not do anything... -->
+<!--#include virtual="developer-tips-base.html"-->
+</head>
+<body>
+
+<h1>Tips for Working on JML as a Developer</h1>
+
+<h2>For Everyone</h2>
+
+<p>You first need to get an account on sourceforge.net.
+See the SourceForge documentation for
+<a href="http://sourceforge.net/docman/display_doc.php?docid=11123&amp;group_id=1">
+how to register for a user account</a>.</p>
+
+<p>
+Then, once you are on SourceForge as a developer, you should send
+email to one of the project administrators and ask to be added as a
+developer.  It will help if we either know who you are already or have
+received patches or bug fixes from you in the past.  (You can do the
+latter using SourceForge read-only access.)  But don't be shy.</p>
+
+<p>
+When you have gotten your SourceForge account, you next need to get
+ssh to work to SourceForge.  The first thing to do is to read the
+documentation from SourceForge about it.  In particular,
+read the document 
+<a href="http://sourceforge.net/docman/display_doc.php?docid=761&amp;group_id=1">
+Guide to Generation and Posting of SSH Keys</a> from the SourceForge
+documentation.
+(If you plan to use Eclipse, don't use PuTTY to generate the keys.)
+In particular, you will need to
+<a href="http://sourceforge.net/docman/display_doc.php?docid=761&amp;group_id=1#key_posting">
+upload your ssh keys</a> to avoid having to retype your password when
+you are working with CVS.  Note that you have to wait some time before
+these take effect.</p>
+
+<p>Also, while you're working on your SourceForge account,
+you should
+<a href="http://sourceforge.net/mail/?group_id=65346">
+sign up for all the mailing lists for the jmlspecs project</a>
+(except that you only need to sign up for either the jmlspecs-interest
+list or the for the jmlspecs-release list; signing up for both isn't
+necessary).
+You should also sign up for both of the
+<a href="http://sourceforge.net/mail/?group_id=65658">
+mailing lists for MultiJava</a> project,
+since JML is build on top of MultiJava.</p>
+
+<p>If you are going to commit files to either project, then you should sign up for the mailing lists jmlspecs-commits and multijava-commit using your @users.sourceforge.net account.  This is because commit messages are sent out by your sourceforge.net user account, and we only allow subscribed users to send such messages.  (For other mailing lists, you can sign up from whereever you want to send messages from.)</p>
+
+<h2>What Project?</h2>
+
+<p>There are currently several "projects" within the JML effort.</p>
+
+<h3>JML2 (Common JML Tools)</h3>
+
+Most of this document refers to the JML2 project, which is based on the MultiJava compiler.  If so, continue reading below this section.</p>
+
+<h3>JML3 and JMLAnnotations</h3>
+
+<p>If, however, you are working on one of the newer efforts, 
+follow the brief instructions in the following items, see the documentation contained therein, and ignore the rest of this document.
+</p>
+
+<dl>
+<dt>JML3</dt>
+<dd>The JML3 project is an experimental version of the JML tools,
+which is trying to make JML work with Eclipse.
+To access JML3's subversion repository
+use the following URL as the repository location:
+<a href="https://jmlspecs.svn.sourceforge.net/svnroot/jmlspecs">
+https://jmlspecs.svn.sourceforge.net/svnroot/jmlspecs</a>.
+Then check out (from the trunk): JML3Core, JML3Feature, JML3Test, JML3UI, and docs
+</dd>
+
+<dt>JML Annotations</dt>
+<dd>An experimental version of JML is based on the Java 5 syntax.
+This is a cooperation between Kristina Boysen (at Iowa State) and 
+Johannes Rieken (from the Jass group at Oldenburg).
+To access the subversion repository for the agreed upon annotations, 
+use the following URL as the repository location:
+<a href="https://jmlspecs.svn.sourceforge.net/svnroot/jmlspecs">
+https://jmlspecs.svn.sourceforge.net/svnroot/jmlspecs</a>.
+Then check out (from the trunk): JMLAnnotations.
+(You can also browse the code from
+<a href="http://jmlspecs.svn.sourceforge.net/viewvc/jmlspecs/trunk/JMLAnnotations/">
+http://jmlspecs.svn.sourceforge.net/viewvc/jmlspecs/trunk/JMLAnnotations/</a>.)
+</dd>
+</dl>
+
+<h2>Working with JML2 from CVS</h2>
+
+<p>
+To use CVS to check out the MultiJava sources first do (in bash)</p>
+<pre>
+     export CVS_RSH=ssh
+</pre>
+<p>
+or in csh or tcsh:</p>
+<pre>
+     setenv CVS_RSH ssh
+</pre>
+<p>Then to get a checkout of the MultiJava and JML sources,
+do the following, where <em>yoursflogin</em>
+should be substituted with your source forge login name.</p>
+<pre>
+     cd ~
+     cvs -z3 -d:ext:<em>yoursflogin</em>@multijava.cvs.sourceforge.net:/cvsroot/multijava checkout MJ
+     cvs -z3 -d:ext:<em>yoursflogin</em>@jmlspecs.cvs.sourceforge.net:/cvsroot/jmlspecs checkout JML2
+</pre>
+
+<p>
+(If you want to update the JML web pages, you can do so by using the
+following command, with the same convention about <em>yoursflogin</em>
+as above.)</p>
+<pre>
+     cvs -z3 -d:ext:<em>yoursflogin</em>@jmlspecs.cvs.sourceforge.net:/cvsroot/jmlspecs checkout web
+</pre>
+
+<p>
+You need to set up your CLASSPATH environment variable, and export it.
+This must contain the directories with jar or class files
+for <a href="http://www.multijava.org">MultiJava</a>,
+<a href="http://www.jmlspecs.org">JML2</a>,
+<a href="http://www.antlr.org/">ANTLR</a>,
+<a href="http://junit.org">JUnit</a>,
+and <a href="http://www.urbanophile.com/arenn/coding/download.html">GNU
+getopt</a>, and the JML <kbd>specs</kbd> directory.  At Iowa State, we 
+put the JML2 directory in our home directory, so it's path is ~/JML2.
+We keep Java's J2SDK in /usr/local/jdk1.4.</p>
+
+<p>
+If you don't have Java's J2SDK installed, you can download it from <a
+href="http://java.sun.com">http://java.sun.com</a>.  You need at least
+a 1.4.1 J2SDK (although 1.4.2 is recommended).
+Be sure to also install the documentation underneath
+the Java install.
+</p>
+
+<p>
+It's possible to build and test everything except jmldoc and mjdoc with
+J2SDK 1.5 (Java 5).  To do this, you have to define the name JAVA5, and export it.  For example in Bash, do the following.
+</p>
+<pre>
+  export JAVA5=1
+</pre>
+
+<p>
+If you don't have ANTLR installed, you can download it from
+<a href="http://www.antlr.org">http://www.antlr.org</a>.
+You need ANTLR version 2.7.4 or later.  (We have tested with versions 2.7.6 and 2.7.7.)
+We keep ANTLR in <kbd>/usr/local/antlr</kbd>.
+When you install Antlr, you have to make the javadocs for Antlr, for
+example by running the <kbd>make-antlr-javadocs-unix</kbd> or
+<kbd>make-antlr-javadocs-cygwin</kbd> scripts in the
+<kbd>bin-for-developers</kbd> directory. </p>
+
+<p>
+If you don't have GNU Getopt installed, you can download it from
+<a href="http://www.urbanophile.com/arenn/coding/download.html">
+http://www.urbanophile.com/arenn/coding/download.html</a>.  We installed the
+package under <code>/usr/local/gnu</code>; note that this means that
+<code>/usr/local/gnu</code> will contain a subdirectory also named <code>gnu</code>.
+In the end you will have a directory
+<kbd>/usr/local/gnu/gnu/getopt/</kbd> containing the 
+Java files in the GNU Getops release.  (Note the <kbd>gnu/gnu</kbd> in
+the path above.)
+You'll have to go into that directory and do <kbd>make all docs</kbd>
+to build it.</p>
+
+<p>
+If you don't have Junit installed, you can download it from
+<a href="http://www.junit.org">http://www.junit.org</a>.
+You need at least version 3.8.1.
+(For versions prior to 3.8.1, you may have to unjar the
+src.jar file in it, and you will also need to take out the deprecated
+"assert" methods from "junit.framework.Assert", and instead use the
+assertTrue method).
+We keep Junit in <kbd>/usr/local/junit</kbd>.  The release of JUnit is already
+compiled, so simply unpacking it is enough.</p>
+
+<p>
+You may also want to get <a href="http://ant.apache.org/">Ant</a>, and install
+it under <code>/usr/local/ant</code>.</p>
+
+<p>
+With all of the above, you will want to have the following in your
+.profile file (for sh or bash):</p>
+<pre>
+     export CLASSPATH=".:$HOME/MJ:$HOME/JML2:/usr/local/antlr/antlr.jar:/usr/local/junit/junit.jar:/usr/local/gnu:$HOME/JML2/specs:/usr/local/jdk1.4/lib/tools.jar"
+</pre>
+
+<p>
+Either you need to have /usr/local/jdk1.4/lib/tools.jar
+in your CLASSPATH, or you can follow the directions in the JML
+<a href="../README.html">README.html</a> file about copying your
+tools.jar file to the jre/lib/ext directory.
+This is for mjdoc and jmldoc.
+It's also important to have the MJ directory listed before the JML2
+directory in your CLASSPATH; this can help prevent some subtle
+problems if you accidently forget to recompile in the MJ directory
+after making a change, such as committing a file, and then a
+compilation from within JML2 emits a <kbd>.class</kbd> file in a
+directory under JML2.</p>
+
+<p>
+If you use csh or tcsh, change your .login file instead to something like:</p>
+<pre>
+     setenv CLASSPATH ".:$HOME/MJ:$HOME/JML2:/usr/local/antlr/antlr.jar:/usr/local/junit/junit.jar:/usr/local/gnu:$HOME/JML2/specs:/usr/local/jdk1.4/lib/tools.jar"
+</pre>
+
+<p>
+You'll need to use GNU make to use the make system.  On Linux (and
+cygwin) this is automatic, but on some machines you'll need
+to need to write a shell script that redirects make to gmake.  You
+might have the following in a shell script that is in your file
+<tt>~/bin/make</tt>, assuming that is in your path before the usual version of
+make (<tt>/bin/make</tt>).  (Also, take out the spacing before each line.)</p>
+<pre>
+	#!/bin/sh
+	exec /usr/local/bin/gmake "$@"
+</pre>
+<p>
+In the directory above this one (i.e. in $HOME/JML2), the file <tt>Make.ProjDefs</tt> and the
+Makefile have a bunch of useful targets.  There are even more useful
+targets in the MultiJava directory's file <tt>Make.Defs</tt>.  These are
+included by all the makefiles.</p>
+
+<p>
+If you're using the latest version of cygwin or Linux, their
+<kbd>jar</kbd> command causes the jmlrac tests to fail one test
+(<kbd>BootClassDownCall.java</kbd>).  If this happens to you, write a
+script named <kbd>jar</kbd>, like the one for <kbd>make</kbd>
+suggested above, that maes sure that runs the <kbd>jar</kbd> command
+from the JDK, and put it in your <kbd>PATH</kbd> before the bad one in
+<kbd>/usr/bin/jar</kbd>.  (A sample is availble at
+<a href="http://www.eecs.ucf.edu/~leavens/Windows/bin/jar">
+http://www.eecs.ucf.edu/~leavens/Windows/bin/jar</a>.)
+</p>
+
+<p>
+The makefiles use several environment variables, which you need to
+set.  The easiest way to do this is to make a copy of and edit one
+of the following files, in <a href="../bin-for-developers">JML2/bin-for-developers</a>:</p>
+<ul>
+<li>
+<a href="../bin-for-developers/example-developers-sourceme-cygwin.sh">
+example-developers-sourceme-cygwin.sh</a> for cygwin bash and sh users,</li>
+
+<li>
+<a href="../bin-for-developers/example-developers-sourceme-unix.sh">
+example-developers-sourceme-unix.sh</a> for Unix bash and sh users, or</li>
+
+<li>
+<a href="../bin-for-developers/example-developers-sourceme-unix.csh">
+example-developers-sourceme-unix.csh</a> for Unix csh and tcsh users.</li>
+</ul>
+<p>
+Let's assume you make a copy of this in ~/bin/jml-sourceme.sh.
+You need to check all of the variable definitions in ~/bin/jml-sourceme.sh.
+You also need to source (not just execute) this file before starting
+to work with the JML make system.
+</p>
+
+<p>
+It's possible to work with the JML sources from Eclipse.
+Because we build from makefiles, if you check out MJ and JML 2 as Java projects, go to the Project menu, then Properties, then Builders, then uncheck the Java builder checkbox.  (Ignore the warning message.)
+You'll have to ignore various errors that occur because some files are not generated and ignore errors from testcases (that
+are supposed to be errors).  You can also, if you wish check it out as a non-Java project, to avoid some of these problems.
+To build, use make, as described below, instead of letting Eclipse build them.
+You will also want to use a version of the following sourceme file:</p>
+<ul>
+<li>
+<a href="../bin-for-developers/example-developers-sourceme-eclipse-cygwin.sh">
+example-developers-sourceme-eclipse-cygwin.sh</a>.</li>
+</ul>
+
+<p>
+When using Eclipse, don't check your <kbd>.project</kbd> file into CVS.</p>
+
+<p>
+In theory, you shouldn't need to have a separate sourceme file for the
+MultiJava project, but if you are regenerating the Javadoc comments
+for MultiJava, you will need to use one like the example sourceme
+files in the <a href="../../MJ/bin/">MJ/bin</a> directory.</p>
+
+<p>
+To begin work, after following the steps above, and then source-ing your
+file ~/bin/jml-sourceme.sh.</p>
+<pre>
+        source ~/bin/jml-sourceme.sh
+</pre>
+<p>Now do the following to compile a
+version of JML and to get the HTML files generated.</p>
+<pre>
+        cd MJ
+	make rebuild-all
+        cd JML2
+        make rebuild-all jmldocs html
+</pre>
+<p>
+The <tt>rebuild-all</tt> target first does a make <tt>pristine</tt>
+and then makes the <tt>build</tt> target.  Both of these are useful on
+their own.  You can also shortcut all of the above by doing
+<kbd>make everything+</kbd>.</p>
+
+<p>
+A handy shell script, makeboth, is included in the bin-for-developers
+directory.  This script executes make, first in the MJ directory and
+then in the JML2 directory, using any arguments given to the script as
+arguments to make.</p>
+
+<p>
+When you are working with your own version of JML, it's important to
+have a shell script in your PATH that runs your version of the
+checker, not the standard one.  For this reason,
+the <a href="../bin-for-developers">JML2/bin-for-developers</a>
+provides scripts with a suffix "2" at the end.
+You can thus copy the appropriate versions of these
+into a directory you own on your PATH.
+For example, if you are using cygwin, copy
+the scripts jml2-cygwin, jmlc2-cygwin, jmldoc2-cygwin, junit2-cygwin,
+and jtest2 to your personal bin directory, renaming them
+as jml2, jmlc2, jmldoc2, jmlrac2, jmlunit2, and jtest2.
+This can be done automatically from the makefile in JML2, for example
+by executing the following on cygwin:</p>
+<pre>
+      cd ~/JML2
+      source ~/bin/jml-sourceme.sh
+      make INSTALLTYPE=cygwin install-developers-scripts
+</pre>
+<p>
+You may possibly need to edit your copies of these scripts, especially if you
+don't keep the JML2 directory in your home directory.
+</p>
+
+<p>
+JML is open source software.  New files should have the appropriate
+GPL comment in the style of
+<a href="../org/jmlspecs/copyright-for-java.txt">org/jmlspecs/copyright-for-java.txt</a> or
+<a href="../org/jmlspecs/copyright-for-make.txt">org/jmlspecs/copyright-for-make.txt</a> (see the bottom of this file).
+For the specifications for libraries we use the LGPL instead;
+see the <a href="../specs/">specs directory</a> for examples.</p>
+
+<p>
+If you use emacs, when working with antlr files, put the following in
+your .emacs file to convert tabs to spaces.  This will help people
+who don't use emacs :-).</p>
+<pre>
+  ;;; ANTLR mode
+  (autoload 'antlr-mode "antlr-mode" nil t)
+  (add-to-list 'auto-mode-alist '("\\.g\\'" . antlr-mode))
+  (add-hook 'speedbar-load-hook  ; would be too late in antlr-mode.el
+	    (lambda () (speedbar-add-supported-extension ".g")))
+  (add-hook 'antlr-mode-hook
+   (function (lambda ()
+	       (make-local-variable 'indent-tabs-mode)
+	       (setq indent-tabs-mode nil))))
+</pre>
+
+<h2>Committing</h2>
+<p>
+When you commit changes, it is important to first test your changes to
+make sure you aren't breaking any other code or tests.
+The basic testing strategy is the following:</p>
+<pre>
+    cd ~
+    cvs -q update -d -P MJ JML2
+    cd JML2
+    make rebuild-everything quiet-tests
+</pre>
+
+<p>
+If you changed anything in the MultiJava project, you need to build
+and test those changes as well.  Since mjc is used to compile JML, you
+should build and test the MultiJava changes first.  The basic testing
+strategy in this case is:</p>
+<pre>
+    cd ~
+    cvs -q update -d -P MJ JML2
+    cd MJ
+    make rebuild-all quiet-tests
+    cd JML2
+    make rebuild-everything quiet-tests
+</pre>
+
+<p>
+Alternatively, if you have configured the makeboth script, you can use</p>
+<pre>
+    cd ~
+    cvs -q update -d -P MJ JML2
+    makeboth rebuild-all quiet-tests
+</pre>
+
+<p>
+This 'makeboth' approach has the advantage that the compilation and
+test results will be written to the file results.out in your home
+directory.  This makes it easier to scan through the results of
+testing and check for any errors.</p>
+
+<p>
+Of course, you don't always need to run all the tests during
+development, and if you can be sure that the tests aren't going to
+fail because you know your changes are localized, then you can go
+ahead and commit them before doing all of this testing.  Still it's a
+good idea to test as described above whenever you have time (e.g.,
+when you're sleeping :-).</p>
+
+<p>
+In general, for each feature you add to the software, there should be
+tests that exercise it, so that others will not break your code when
+they make changes.</p>
+
+<h2>Iowa State Local Tips</h2>
+
+<p>The following is no longer much relevant, except for the PLSL module.
+The PLSL module is a replacement for all of ANTLR, JUnit, and GNU getopt.
+If you use this module, you don't need such a complicated
+CLASSPATH, and can instead set your CLASSPATH as follows
+(for sh or bash users):</p>
+<pre>
+     export CLASSPATH=".:$HOME/MJ:$HOME/JML2:$HOME/PLSL:$HOME/JML2/specs:/usr/local/jdk1.4/lib/tools.jar"
+</pre>
+
+<p>
+To use CVS on larch, if you use bash (or sh) as your shell, 
+put the following line in your .profile file:</p>
+<pre>
+	export CVSROOT='/home/larch/research/master'
+</pre>
+<p>or if you use tcsh (or csh) as your shell, instead put the following
+in your .login file:</p>
+<pre>
+	setenv CVSROOT '/home/larch/research/master'
+</pre>
+<p>Then do the following</p>
+<pre>
+        cd ~
+	cvs checkout -P PLSL
+</pre>
+<p>The -P flag says to prune out directories that aren't needed.</p>
+
+<p>
+When you want to update your copy, you can do that by running</p>
+<pre>
+        cd ~/PLSL
+	cvs update -d -P
+</pre>
+
+<p>
+More information on CVS can be found from the info documentation,
+which you can reach in emacs by running the help, selecting browse
+manuals in info (i), unsupported, and then CVS.  It is also on the web,
+for example at
+<a href="http://durak.org/cvswebsites/doc/">http://durak.org/cvswebsites/doc/</a>.</p>
+
+<p>
+Be sure that your umask is not set to deny group read or execute permissions. For example, put </p>
+<pre>
+	umask 002
+</pre>
+<p>in your .login file.</p>
+
+<p>
+It's best if you do your work while in the "jml" group, by executing</p>
+<pre>
+	newgrp jml
+</pre>
+<p>before your begin work.  It's absolutely critical that you do this if
+you are committing files, especially new files.</p>
+
+<p>
+If you commit a new directory, the scripts should change it to the
+"jml" group after a while.  If this doesn't happen,
+you can change it yourself by doing the following
+(and ignore error messages about files you don't own).</p>
+<pre>
+	cd $CVSROOT/JML2
+	chgrp -R jml .
+	chmod -R go+r .
+	find . -type d -exec chmod ug+w '{}' ';'
+</pre>
+<p>
+You might want to put that in a shell script and run it after committing files.
+Doing that is important if you use CVS remotely from a machine other
+than larch.</p>
+
+<p>
+To work remotely on the machine "pvs", on that machine put the following
+in your ~/.bash_profile file.</p>
+<pre>
+        CVSROOT=":ext:larch.cs.iastate.edu:/home/larch/research/master"
+        CVS_RSH=ssh
+        export CVSROOT CVS_RSH
+</pre>
+<p>If you use csh or tcsh, use instead of the above the following:</p>
+<pre>
+        setenv CVSROOT ":ext:larch.cs.iastate.edu:/home/larch/research/master"
+        setenv CVS_RSH ssh
+</pre>
+<p>
+You'll also need to set up ssh so it works from pvs to and from larch.</p>
+
+<p>
+It doesn't seem to work to manipulate the CVS repository through samba.
+The problem is that file names get turned to all lower case.</p>
+
+<h2>Conclusions</h2>
+
+<p>Thanks to the JML team at ISU, especially to Curtis Cliftion for help
+with these tips. Thanks to Patrice Chalin and others for help in getting them to be more useful elsewhere.</p>
+
+<p>
+Please let Gary Leavens know of any other
+tips you think are helpful for this work.</p>
+
+<hr />
+
+<pre>
+@(#)$Id: developer-tips.html,v 1.50 2008/01/09 16:12:10 leavens Exp $
+</pre>
+<p>Copyright (C) 2002-2006 Iowa State University</p>
+
+<p>
+This file is part of JML</p>
+
+<p>
+JML is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.</p>
+<p>
+JML is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.</p>
+<p>
+You should have received a copy of the GNU General Public License
+along with JML; see the file COPYING.  If not, write to
+the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.</p>
+</body>
+</html>

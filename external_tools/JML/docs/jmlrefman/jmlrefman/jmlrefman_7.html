@@ -1,0 +1,753 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Class and Interface Member Declarations</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Class and Interface Member Declarations">
+<META NAME="keywords" CONTENT="JML Reference Manual: Class and Interface Member Declarations">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC52"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_6.html#SEC35"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_8.html#SEC63"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 7. Class and Interface Member Declarations </H1>
+<!--docid::SEC52::-->
+<P>
+
+The nonterminal <VAR>field</VAR> describes all the members of classes and
+interfaces (see section <A HREF="jmlrefman_6.html#SEC36">6.1 Class and Interface Definitions</A>).
+</P><P>
+
+<A NAME="IDX1283"></A>
+<A NAME="IDX1284"></A>
+<A NAME="IDX1285"></A>
+<A NAME="IDX1286"></A>
+<A NAME="IDX1287"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>field</VAR> ::= <VAR>member-decl</VAR>
+        | <VAR>jml-declaration</VAR>
+        | <VAR>class-initializer-decl</VAR>
+        | <CODE>;</CODE>
+</pre></td></tr></table></P><P>
+
+Also see section <A HREF="jmlrefman_25.html#SEC244">E.2.1 Non-null by Default</A>.
+In the rest of this chapter we describe mostly the syntax and Java
+details of member declarations and class initializers.
+See section <A HREF="jmlrefman_8.html#SEC63">8. Type Specifications</A>, for the syntax and semantics of
+<VAR>jml-declaration</VAR>, and, more generally, how to use JML to specify
+the behavior of types.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC53">7.1 Java Member Declarations</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC62">7.2 Class Initializer Declarations</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Java Member Declarations"></A>
+<HR SIZE="6">
+<A NAME="SEC53"></A>
+<H2> 7.1 Java Member Declarations </H2>
+<!--docid::SEC53::-->
+<P>
+
+The following gives the syntax of Java member declarations.
+</P><P>
+
+<A NAME="IDX1288"></A>
+<A NAME="IDX1289"></A>
+<A NAME="IDX1290"></A>
+<A NAME="IDX1291"></A>
+<A NAME="IDX1292"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>member-decl</VAR> ::= <VAR>method-decl</VAR>
+        | <VAR>variable-definition</VAR>
+        | <VAR>class-definition</VAR>
+        | <VAR>interface-definition</VAR>
+</pre></td></tr></table></P><P>
+
+See section <A HREF="jmlrefman_6.html#SEC36">6.1 Class and Interface Definitions</A>, for details of <VAR>class-definition</VAR>
+and <VAR>interface-definition</VAR>.  We discuss method and variable
+declarations below.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC54">7.1.1 Method and Constructor Declarations</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC59">7.1.2 Field and Variable Declarations</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Method and Constructor Declarations"></A>
+<HR SIZE="6">
+<A NAME="SEC54"></A>
+<H3> 7.1.1 Method and Constructor Declarations </H3>
+<!--docid::SEC54::-->
+<P>
+
+The following is the syntax of a method declaration.
+</P><P>
+
+<A NAME="IDX1293"></A>
+<A NAME="IDX1294"></A>
+<A NAME="IDX1295"></A>
+<A NAME="IDX1296"></A>
+<A NAME="IDX1297"></A>
+<A NAME="IDX1298"></A>
+<A NAME="IDX1299"></A>
+<A NAME="IDX1300"></A>
+<A NAME="IDX1301"></A>
+<A NAME="IDX1302"></A>
+<A NAME="IDX1303"></A>
+<A NAME="IDX1304"></A>
+<A NAME="IDX1305"></A>
+<A NAME="IDX1306"></A>
+<A NAME="IDX1307"></A>
+<A NAME="IDX1308"></A>
+<A NAME="IDX1309"></A>
+<A NAME="IDX1310"></A>
+<A NAME="IDX1311"></A>
+<A NAME="IDX1312"></A>
+<A NAME="IDX1313"></A>
+<A NAME="IDX1314"></A>
+<A NAME="IDX1315"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>method-decl</VAR> ::= [ <VAR>doc-comment</VAR> ] <small>...</small>
+                <VAR>method-specification</VAR>
+                <VAR>modifiers</VAR> [ <VAR>method-or-constructor-keyword</VAR> ]
+                [ <VAR>type-spec</VAR> ] <VAR>method-head</VAR>
+                <VAR>method-body</VAR>
+        | [ <VAR>doc-comment</VAR> ] <small>...</small>
+          <VAR>modifiers</VAR> <VAR>method-or-constructor-keyword</VAR>
+          [ <VAR>type-spec</VAR> ] <VAR>method-head</VAR>
+          [ <VAR>method-specification</VAR> ]
+          <VAR>method-body</VAR>
+<VAR>method-or-constructor-keyword</VAR> ::= <CODE>method</CODE> | <CODE>constructor</CODE>
+<VAR>method-head</VAR> ::= <VAR>ident</VAR> <VAR>formals</VAR> [ <VAR>dims</VAR> ] [ <VAR>throws-clause</VAR> ]
+<VAR>method-body</VAR> ::= <VAR>compound-statement</VAR> | <CODE>;</CODE>
+<VAR>throws-clause</VAR> ::= <CODE>throws</CODE> <VAR>name</VAR> [ <CODE>,</CODE> <VAR>name</VAR> ] <small>...</small>
+</pre></td></tr></table></P><P>
+
+Notice that the specification of a method
+(see section <A HREF="jmlrefman_9.html#SEC80">9. Method Specifications</A>) may appear either before or after the
+<VAR>method-head</VAR>. 
+</P><P>
+
+<A NAME="IDX1316"></A>
+<A NAME="IDX1317"></A>
+The use of <CODE>non_null</CODE> as a <VAR>modifier</VAR> in a <VAR>method-decl</VAR>
+really is shorthand for a postcondition describing the normal result
+of a method, indicating that it must not be null.   It can also be seen as a
+modifier on the method's result type, saying that the type
+returned does not contain null.
+</P><P>
+
+<A NAME="IDX1318"></A>
+<A NAME="IDX1319"></A>
+The use of <CODE>extract</CODE> as a <VAR>modifier</VAR> in a <VAR>method-decl</VAR>
+is shorthand for writing a model program specification.
+See section <A HREF="jmlrefman_14.html#SEC182">14.2 Extracting Model Program Specifications</A>, for an explanation of
+this modifier.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC55">7.1.1.1 Formal Parameters</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC56">7.1.1.2 Model Methods and Constructors</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC57">7.1.1.3 Pure Methods and Constructors</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC58">7.1.1.4 Helper Methods and Constructors</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Formal Parameters"></A>
+<HR SIZE="6">
+<A NAME="SEC55"></A>
+<H4> 7.1.1.1 Formal Parameters </H4>
+<!--docid::SEC55::-->
+<P>
+
+<A NAME="IDX1320"></A>
+<A NAME="IDX1321"></A>
+<A NAME="IDX1322"></A>
+<A NAME="IDX1323"></A>
+<A NAME="IDX1324"></A>
+<A NAME="IDX1325"></A>
+<A NAME="IDX1326"></A>
+<A NAME="IDX1327"></A>
+<A NAME="IDX1328"></A>
+<A NAME="IDX1329"></A>
+<A NAME="IDX1330"></A>
+<A NAME="IDX1331"></A>
+<A NAME="IDX1332"></A>
+<A NAME="IDX1333"></A>
+<A NAME="IDX1334"></A>
+<A NAME="IDX1335"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>formals</VAR> ::= <CODE>(</CODE> [ <VAR>param-declaration-list</VAR> ] <CODE>)</CODE>
+<VAR>param-declaration-list</VAR> ::= <VAR>param-declaration</VAR>
+                           [ <CODE>,</CODE> <VAR>param-declaration</VAR> ] <small>...</small>
+<VAR>param-declaration</VAR> ::= [ <VAR>param-modifier</VAR> ] <small>...</small> <VAR>type-spec</VAR> <VAR>ident</VAR> [ <VAR>dims</VAR> ]
+        | <VAR>multijava-param-declaration</VAR>   <I>// When MultiJava parsing is on</I>
+<VAR>param-modifier</VAR> ::= <CODE>final</CODE> | <CODE>non_null</CODE> | <CODE>nullable</CODE>
+</pre></td></tr></table></P><P>
+
+See section <A HREF="jmlrefman_7.html#SEC61">7.1.2.2 Type-Specs</A>, for more about the nonterminals <VAR>type-spec</VAR> and
+<VAR>dims</VAR>. 
+See section <A HREF="jmlrefman_17.html#SEC202">17.2 MultiMethods</A>, for details of <VAR>multijava-param-declaration</VAR>.
+</P><P>
+
+<A NAME="IDX1336"></A>
+The modifier <CODE>non_null</CODE> when attached to a formal parameter is
+shorthand for a precondition that says that the corresponding actual
+parameter may not be null.  The type of a parameter that has the
+<CODE>non_null</CODE> modifier must be a reference type
+<A HREF="jmlrefman_27.html#BIB95">[Raghavan-Leavens05]</A>.
+</P><P>
+
+The <CODE>non_null</CODE> modifier on a parameter is inherited in the same
+way as the equivalent precondition would be, so it need not be
+declared on every declaration of the same method in a subtype or refinement.
+The <CODE>non_null</CODE> modifier may be added to a method in a refinement
+file (see section <A HREF="jmlrefman_16.html#SEC193">16. Refinement</A>), and thus does not have to appear in any
+particular file in a refinement sequence.  It can be added to a method
+override in a subtype, but that will generally make the method
+non-implementable, as the method must also satisfy an inherited
+specification without the corresponding precondition.
+</P><P>
+
+<A NAME="Model Methods and Constructors"></A>
+<HR SIZE="6">
+<A NAME="SEC56"></A>
+<H4> 7.1.1.2 Model Methods and Constructors </H4>
+<!--docid::SEC56::-->
+<P>
+
+<A NAME="IDX1337"></A>
+<A NAME="IDX1338"></A>
+<A NAME="IDX1339"></A>
+<A NAME="IDX1340"></A>
+<A NAME="IDX1341"></A>
+A method or constructor that uses the modifier <CODE>model</CODE> is called
+a <EM>model method or constructor</EM>. 
+Since a model method is not visible to Java code, the entire method,
+including its body, should be written in an annotation.
+</P><P>
+
+As usual in JML (see section <A HREF="jmlrefman_2.html#SEC10">2.2 Model and Ghost</A>), a model method or
+constructor is a specification-only feature.
+A model method or constructor may have either a body or a
+specification, or both.  The specification may be used in various
+verification tools, while the body allows it to be executed
+during runtime assertion checking.  Model methods may also be
+abstract, and both model methods and constructors may be final.
+</P><P>
+
+[[[ Can constructors be final?  Why? - DRC ]]]
+</P><P>
+
+<A NAME="IDX1342"></A>
+<A NAME="IDX1343"></A>
+<A NAME="IDX1344"></A>
+<A NAME="IDX1345"></A>
+It is usual in JML to declare model methods and constructors as
+<CODE>pure</CODE>.  However, it is possible to have a model method or
+constructor that is not pure; such methods are useful in model
+programs (see section <A HREF="jmlrefman_14.html#SEC180">14. Model Programs</A>).
+On the other hand, aside from their use in model programs, most model
+methods only exist to be called in assertions, and since only
+pure methods can be called in assertions, they should usually be
+declared as <CODE>pure</CODE>.
+</P><P>
+
+<A NAME="Pure Methods and Constructors"></A>
+<HR SIZE="6">
+<A NAME="SEC57"></A>
+<H4> 7.1.1.3 Pure Methods and Constructors </H4>
+<!--docid::SEC57::-->
+<P>
+
+<A NAME="IDX1346"></A>
+<A NAME="IDX1347"></A>
+<A NAME="IDX1348"></A>
+<A NAME="IDX1349"></A>
+<A NAME="IDX1350"></A>
+<A NAME="IDX1351"></A>
+This subsubsection, which describes the effect of the <CODE>pure</CODE> modifier
+on methods and constructor declarations, is quoted from the preliminary design
+document <A HREF="jmlrefman_27.html#BIB54">[Leavens-Baker-Ruby06]</A>.
+</P><P>
+
+We say a method
+is <EM>pure</EM> if it is either specified with
+the modifier <CODE>pure</CODE> or is a method that
+appears in the specification of a <CODE>pure</CODE> interface or class.
+Similarly, a constructor is pure if it is either specified with
+the modifier <CODE>pure</CODE> or appears in the specification of a <CODE>pure</CODE>
+class.
+</P><P>
+
+A <EM>pure method</EM> that is not a constructor
+implicitly has a specification that does not allow any side-effects.
+That is, its specification
+has the clauses
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>           diverges false;
+           assignable \nothing;
+</pre></td></tr></table>added to each specification case; if the method has no specification
+given explicitly, then these clauses are added as a lightweight specification.
+For this reason, if one is writing a pure method, it is not necessary
+to otherwise specify an assignable clause
+(see section <A HREF="jmlrefman_9.html#SEC111">9.9.9 Assignable Clauses</A>), although doing so may improve the
+specification's clarity.
+</P><P>
+
+<A NAME="IDX1352"></A>
+<A NAME="IDX1353"></A>
+A <EM>pure constructor</EM> has the clauses
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>           diverges false;
+           assignable this.*;
+</pre></td></tr></table>added to each specification case; if the constructor has no specification
+given explicitly, then these clauses are added as a lightweight specification.
+This specification allows the constructor to assign to the non-static
+fields of the class in which it appears (including those inherited
+from its superclasses and ghost model instance fields from the interfaces
+that it implements).
+</P><P>
+
+<A NAME="IDX1354"></A>
+<A NAME="IDX1355"></A>
+Implementations of pure methods and constructors
+will be checked to see that they meet these conditions on what
+locations they can assign to.
+To make such checking modular, some JML tools prohibit a pure method
+or constructor implementation from calling methods or constructors
+that are not pure.  However, more sophisticated tools could more
+directly check the intended semantics <A HREF="jmlrefman_27.html#BIB101">[Salcianu-Rinard05]</A>.
+</P><P>
+
+<A NAME="IDX1356"></A>
+A pure method or constructor must also be provably terminating.
+Although JML does not force users to make such proofs of termination,
+users writing pure methods and constructors are supposed to make pure
+methods total in the sense that whenever, a pure method is called it either
+returns normally or throws some exception.
+This is supposed to lessen the possibility that assertion evaluation
+could loop forever, aids the runtime assertion checker, which turns
+exceptions into arbitrary values of the appropriate result type, and
+helps make pure methods more like mathematical functions for
+verification purposes.  [[[ I think this has changed - exceptions in a pure
+method make the result undefined, not arbitrary - DRC]]]
+</P><P>
+
+<A NAME="IDX1357"></A>
+Furthermore, a pure method is supposed to always either terminate
+normally or throw an exception, even for calls that do not satisfy its
+precondition.  Static verification
+tools for JML should enforce this condition, by requiring a proof
+that a pure method implementation satisfies the following
+specification
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>   private behavior
+     requires true;
+     diverges false;
+     assignable \nothing;
+</pre></td></tr></table>(and similarly for constructors, except that the assignable clause
+becomes <CODE>assignable this.*;</CODE> for constructors).
+</P><P>
+
+However, this implicit verification condition is a
+specification, and thus cannot be used in reasoning about
+calls to the method, even calls from within the class itself and recursive
+calls from within the implementation.
+For this reason we recommend writing the method or constructor
+specification in such a way that the effective precondition of the
+method is "true," making the proof of the above implicit verification
+condition trivial, and allowing the
+termination behavior of the implementation to be relied upon by all clients.
+</P><P>
+
+<A NAME="IDX1358"></A>
+Recursion is permitted, both in the implementation of pure methods
+and the data structures they manipulate, and in the specifications of
+pure methods.
+When recursion is used in a specification,
+the proof of well-formedness for the specification
+involves the use of JML's <CODE>measured_by</CODE> clause.
+</P><P>
+
+Since a pure method may not go into an infinite loop,
+if it has a non-trivial precondition, it should throw an exception
+when its normal precondition is not met.
+This exceptional behavior does not have to be specified or programmed
+explicitly, but technically there is an obligation to meet the specification
+that the method never loops forever.
+</P><P>
+
+<A NAME="IDX1359"></A>
+<A NAME="IDX1360"></A>
+Furthermore, a pure method must be deterministic, in
+the sense that when called in a given state, it must always return the
+same value.  Similarly a pure constructor should be deterministic in
+the sense that when called in a given state, it always initializes the
+object in the same way.
+</P><P>
+
+A pure method can be declared in any class or interface,
+and a pure constructor can be declared in any class.
+JML will specify the pure methods and constructors
+in the standard Java libraries as pure.
+</P><P>
+
+<A NAME="IDX1361"></A>
+As a convenience, instead of writing <CODE>pure</CODE> on each
+method declared in a class and interface,
+one can use the modifier <CODE>pure</CODE> on classes and
+interfaces and classes.
+This simply means that each non-static method and each constructor
+declared in such a class or interface is <CODE>pure</CODE>.
+Note that this does not mean that all methods inherited (but not
+declared in and hence not overridden in) the class or interface are
+pure.
+For example, every class inherits ultimately from
+<CODE>java.lang.Object</CODE>,
+which has some methods, such as <CODE>notify</CODE> and <CODE>notifyAll</CODE>
+that are manifestly not pure.
+Thus each class will have some methods that are not pure.
+Despite this, it is convenient to refer to classes and interfaces declared
+with the <CODE>pure</CODE> modifier as <EM>pure</EM>.
+</P><P>
+
+<A NAME="IDX1362"></A>
+<A NAME="IDX1363"></A>
+In JML the modifiers <CODE>model</CODE> and <CODE>pure</CODE>
+are orthogonal.  (Recall something declared with
+the modifier <CODE>model</CODE> does not have to be
+implemented, and is used purely for specification purposes.)
+Therefore, one can have a model method
+that is not pure (these might be useful in JML's model programs)
+and a pure method that is not a model method.
+Nevertheless, usually a model method (or constructor) should be pure,
+since there is no way to use non-pure methods in an assertion,
+and model methods cannot be used in normal Java code.
+</P><P>
+
+<A NAME="IDX1364"></A>
+<A NAME="IDX1365"></A>
+By the same reasoning, model classes should, in
+general, also be pure.
+Model classes cannot be used in normal Java code, and hence their
+methods are only useful in assertions (and JML's model programs).
+Hence it is typical, although not required, that a model class also be
+a pure class.
+</P><P>
+
+<A NAME="IDX1366"></A>
+<A NAME="IDX1367"></A>
+As can be seen from the semantics,
+if a pure method has a return type of <CODE>void</CODE>, then it can
+essentially only do nothing.  So, while pure methods
+with <CODE>void</CODE> as their return type are not illegal, they are
+useless.
+</P><P>
+
+<A NAME="Helper Methods and Constructors"></A>
+<HR SIZE="6">
+<A NAME="SEC58"></A>
+<H4> 7.1.1.4 Helper Methods and Constructors </H4>
+<!--docid::SEC58::-->
+<P>
+
+<A NAME="IDX1368"></A>
+<A NAME="IDX1369"></A>
+<A NAME="IDX1370"></A>
+<A NAME="IDX1371"></A>
+<A NAME="IDX1372"></A>
+The <CODE>helper</CODE> modifier may only be used on a private method or
+constructor.  [[[ This restriction needs to be clarified - ESC/Java limits
+helper to non-overridable methods. ]]] Such a helper method or constructor has a
+specification that is not augmented by invariants and history constraints
+that would otherwise apply to it.  It can thus be thought of as not
+really a method or constructor, but merely an abbreviation device.
+However, whatever specifications are given explicitly for such a
+method or constructor still apply.
+See section <A HREF="jmlrefman_8.html#SEC65">8.2 Invariants</A>, for more details.
+</P><P>
+
+<A NAME="Field and Variable Declarations"></A>
+<HR SIZE="6">
+<A NAME="SEC59"></A>
+<H3> 7.1.2 Field and Variable Declarations </H3>
+<!--docid::SEC59::-->
+<P>
+
+The following is the syntax of field and variable declarations.
+</P><P>
+
+<A NAME="IDX1373"></A>
+<A NAME="IDX1374"></A>
+<A NAME="IDX1375"></A>
+<A NAME="IDX1376"></A>
+<A NAME="IDX1377"></A>
+<A NAME="IDX1378"></A>
+<A NAME="IDX1379"></A>
+<A NAME="IDX1380"></A>
+<A NAME="IDX1381"></A>
+<A NAME="IDX1382"></A>
+<A NAME="IDX1383"></A>
+<A NAME="IDX1384"></A>
+<A NAME="IDX1385"></A>
+<A NAME="IDX1386"></A>
+<A NAME="IDX1387"></A>
+<A NAME="IDX1388"></A>
+<A NAME="IDX1389"></A>
+<A NAME="IDX1390"></A>
+<A NAME="IDX1391"></A>
+<A NAME="IDX1392"></A>
+<A NAME="IDX1393"></A>
+<A NAME="IDX1394"></A>
+<A NAME="IDX1395"></A>
+<A NAME="IDX1396"></A>
+<A NAME="IDX1397"></A>
+<A NAME="IDX1398"></A>
+<A NAME="IDX1399"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>variable-definition</VAR> ::= [ <VAR>doc-comment</VAR> ] <small>...</small> <VAR>modifiers</VAR> <VAR>variable-decls</VAR>
+<VAR>variable-decls</VAR> ::= [ <CODE>field</CODE> ] <VAR>type-spec</VAR> <VAR>variable-declarators</VAR> <CODE>;</CODE>
+                   [ <VAR>jml-data-group-clause</VAR> ] <small>...</small>
+<VAR>variable-declarators</VAR> ::= <VAR>variable-declarator</VAR>
+                         [ <CODE>,</CODE> <VAR>variable-declarator</VAR> ] <small>...</small>
+<VAR>variable-declarator</VAR> ::= <VAR>ident</VAR> [ <VAR>dims</VAR> ] [ <CODE>=</CODE> <VAR>initializer</VAR> ]
+<VAR>initializer</VAR> ::= <VAR>expression</VAR> | <VAR>array-initializer</VAR>
+<VAR>array-initializer</VAR> ::= <CODE>{</CODE> [ <VAR>initializer-list</VAR> ] <CODE>}</CODE> 
+<VAR>initializer-list</VAR> ::= <VAR>initializer</VAR> [ <CODE>,</CODE> <VAR>initializer</VAR> ] <small>...</small> [ <CODE>,</CODE> ]
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX1400"></A>
+The <CODE>field</CODE> keyword is not normally needed, but can be used to
+change JML's parsing mode.  Within an annotation, such as within a
+declaration of a model method, it is sometimes necessary to switch
+from JML annotation mode to JML spec-expression mode, in order to
+parse words that are JML keywords but should be recognized as Java
+identifiers.  This can be accomplished in a field declaration by using
+the keyword <CODE>field</CODE>, which changes parsing to spec-expression
+mode.  [[[ When does the mode revert back?  e.g. in a method declaration - DRC]]]
+</P><P>
+
+[[[Needs example, move elsewhere?]]]
+</P><P>
+
+In a non-Java file, such as a file with suffix <TT>`.refines-java'</TT>
+(see section <A HREF="jmlrefman_16.html#SEC193">16. Refinement</A>), one
+may omit the initializer of a <VAR>variable-declarator</VAR>, even one
+declared to be <CODE>final</CODE>.  In such a file, one may also omit the body
+of a <VAR>method-decl</VAR>.  Of course, in a <TT>`.java'</TT> file, one must
+obey all the rules of Java for declarations that are not in annotations.
+</P><P>
+
+See section <A HREF="jmlrefman_10.html#SEC118">10. Data Groups</A>, for more about <VAR>jml-data-group-clause</VAR>s.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>expression</VAR>.
+In the following we discuss the modifiers for field and variable
+declarations and <VAR>type-spec</VAR>s.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC60">7.1.2.1 JML Modifiers for Fields</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_7.html#SEC61">7.1.2.2 Type-Specs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="JML Modifiers for Fields"></A>
+<HR SIZE="6">
+<A NAME="SEC60"></A>
+<H4> 7.1.2.1 JML Modifiers for Fields </H4>
+<!--docid::SEC60::-->
+<P>
+
+<A NAME="IDX1401"></A>
+<A NAME="IDX1402"></A>
+The <CODE>ghost</CODE> and <CODE>model</CODE> modifiers for fields both say that
+the field is a specification-only field; it thus cannot be accessed by
+the Java code.  The difference is that a ghost field is explicitly
+manipulated by initializations and set statements
+(see section <A HREF="jmlrefman_12.html#SEC163">12. Statements and Annotation Statements</A>),
+whereas a model field cannot be explicitly manipulated.  Instead a
+model field is indirectly given a value by a represents clause
+(see section <A HREF="jmlrefman_8.html#SEC74">8.4 Represents Clauses</A>).
+See section <A HREF="jmlrefman_2.html#SEC10">2.2 Model and Ghost</A>, for a general discussion of this distinction in
+JML.
+</P><P>
+
+While fields can be declared as either model or ghost fields, a field
+cannot be both.  Furthermore, local variables cannot be declared with
+the <CODE>model</CODE> modifier.
+</P><P>
+
+<A NAME="IDX1403"></A>
+The <CODE>non_null</CODE> modifier in a variable declaration is shorthand
+for an invariant saying that each variable declared in the
+<VAR>variable-decls</VAR> may not be null.  This invariant has the same
+visibility as the visibility declaration of the
+<VAR>variable-definition</VAR> itself. See section <A HREF="jmlrefman_8.html#SEC65">8.2 Invariants</A>, for more about
+invariants.
+</P><P>
+
+<A NAME="IDX1404"></A>
+<A NAME="IDX1405"></A>
+<A NAME="IDX1406"></A>
+<A NAME="IDX1407"></A>
+The <CODE>monitored</CODE> modifier says that each variable declared in the
+<VAR>variable-decls</VAR> can only be accessed by a thread that holds the lock
+on the object that contains the field
+<A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>.
+It may not be used with model fields.
+</P><P>
+
+<A NAME="IDX1408"></A>
+<A NAME="IDX1409"></A>
+<A NAME="IDX1410"></A>
+The <CODE>instance</CODE> modifier says that the field is to be found in
+instances instead of in class objects; it is the opposite of
+<CODE>static</CODE>.  It is typically only needed for model or ghost fields
+declared in interfaces.  When used in an interface, it makes the field
+both non-static and non-final (unless the <CODE>final</CODE> modifier is
+used explicitly). 
+See section <A HREF="jmlrefman_2.html#SEC13">2.5 Instance vs. Static</A>.
+[[[ So how does one declare a static non-final field in an interface? - DRC ]]]
+</P><P>
+
+<A NAME="Type-Specs"></A>
+<HR SIZE="6">
+<A NAME="SEC61"></A>
+<H4> 7.1.2.2 Type-Specs </H4>
+<!--docid::SEC61::-->
+<P>
+
+<A NAME="IDX1411"></A>
+<A NAME="IDX1412"></A>
+The syntax of a <VAR>type-spec</VAR> is as in Java <A HREF="jmlrefman_27.html#BIB32">[Gosling-etal00]</A>,
+except for the addition of the type <CODE>\TYPE</CODE> and the possibility
+of using <VAR>ownership-modifiers</VAR>.
+The <VAR>ownership-modifiers</VAR> are only available when the Universe
+type system is turned on.  See section <A HREF="jmlrefman_18.html#SEC203">18. Universe Type System</A>, for how to do
+that, and for the syntax and semantics of <VAR>ownership-modifiers</VAR>.
+</P><P>
+
+<A NAME="IDX1413"></A>
+<A NAME="IDX1414"></A>
+<A NAME="IDX1415"></A>
+<A NAME="IDX1416"></A>
+<A NAME="IDX1417"></A>
+<A NAME="IDX1418"></A>
+<A NAME="IDX1419"></A>
+<A NAME="IDX1420"></A>
+<A NAME="IDX1421"></A>
+<A NAME="IDX1422"></A>
+<A NAME="IDX1423"></A>
+<A NAME="IDX1424"></A>
+<A NAME="IDX1425"></A>
+<A NAME="IDX1426"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>type-spec</VAR> ::= [ <VAR>ownership-modifiers</VAR> ] <VAR>type</VAR> [ <VAR>dims</VAR> ]
+         | <CODE>\TYPE</CODE> [ <VAR>dims</VAR> ]
+<VAR>type</VAR> ::= <VAR>reference-type</VAR> | <VAR>built-in-type</VAR>
+<VAR>reference-type</VAR> ::= <VAR>name</VAR>
+<VAR>dims</VAR> ::= `<CODE>[</CODE>' `<CODE>]</CODE>' [ `<CODE>[</CODE>' `<CODE>]</CODE>' ] <small>...</small>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX1427"></A>
+<A NAME="IDX1428"></A>
+The type <CODE>\TYPE</CODE> represents the kind of all Java types.  It can
+only be used in annotations.  It is equivalent to
+<CODE>java.lang.Class</CODE>.
+</P><P>
+
+<A NAME="Class Initializer Declarations"></A>
+<HR SIZE="6">
+<A NAME="SEC62"></A>
+<H2> 7.2 Class Initializer Declarations </H2>
+<!--docid::SEC62::-->
+<P>
+
+The following is the syntax of class initializers.
+</P><P>
+
+<A NAME="IDX1429"></A>
+<A NAME="IDX1430"></A>
+<A NAME="IDX1431"></A>
+<A NAME="IDX1432"></A>
+<A NAME="IDX1433"></A>
+<A NAME="IDX1434"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>class-initializer-decl</VAR> ::= [ <VAR>method-specification</VAR> ]
+                           [ <CODE>static</CODE> ] <VAR>compound-statement</VAR>
+        | <VAR>method-specification</VAR> <CODE>static_initializer</CODE> 
+        | <VAR>method-specification</VAR> <CODE>initializer</CODE> 
+</pre></td></tr></table></P><P>
+
+The first form above is the form of Java class instance and static
+initializers.  The initializer is static, and thus run when the class
+is loaded, if it is labeled <CODE>static</CODE>. The effect of the
+initializer can be specified by a JML method specification
+(see section <A HREF="jmlrefman_9.html#SEC80">9. Method Specifications</A>), which
+treats the initializer as a private helper method with return type
+<CODE>void</CODE>, whose body is given by the <VAR>compound-statement</VAR>
+(see section <A HREF="jmlrefman_12.html#SEC163">12. Statements and Annotation Statements</A>).
+</P><P>
+
+The last two forms are used in JML to specify static and
+instance initializers without giving the body of the initializer.
+They would be used in annotations in non-Java files
+(see section <A HREF="jmlrefman_16.html#SEC193">16. Refinement</A>).  At most one of each of these may appear in a type
+specification file.  Such a specification is satisfied if there is at
+least one corresponding initializer in the implementation, and if
+the sequential composition of the bodies of the corresponding
+initializer(s), when considered as the body of a private helper method
+with return type <CODE>void</CODE>, satisfy the specification given
+(see section <A HREF="jmlrefman_9.html#SEC80">9. Method Specifications</A>).
+</P><P>
+
+Note that, due to this semantics, the <VAR>method-specification</VAR>s for
+an initializer can only have private specification cases.
+</P><P>
+
+[[[ But initializers can be interspersed between field initializations,
+which will affect their meaning.  Thus I think the composition has to 
+include the field initializations.  The effect is that the post-condition
+of the JML initializer refers to the state before a constructor begins
+executing; a static_initializer refers to the state after class loading,
+I think. -- DRCok ]]] [[[ Is the restriction to private true for static
+initialization as well - don't think it should be. - DRCOk ]]]
+</P><P>
+
+<A NAME="Type Specifications"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_7.html#SEC53"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_8.html#SEC63"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

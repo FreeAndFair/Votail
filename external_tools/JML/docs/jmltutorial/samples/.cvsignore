@@ -1,0 +1,12 @@
+junk
+*.java
+*.jml
+*.jml-refined
+*.refines-jml
+*.spec
+*.spec-refined
+*.refines-spec
+*.java-refined
+*.refines-java
+*~
+.DS_Store

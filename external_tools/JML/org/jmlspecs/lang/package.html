@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- $Id: package.html,v 1.2 2005/07/07 21:03:06 leavens Exp $ -->
+<title>JML Language Types</title>
+</head>
+<body bgcolor="white">
+
+<p>
+This package is a collection of types used in the definition of the
+JML language.
+</p>
+
+<p>
+At present the only type in this package is
+<kbd><a href="JMLDataGroup.html">JMLDataGroup</a></kbd>.
+The type <kbd><a href="JMLDataGroup.html">JMLDataGroup</a></kbd> is
+useful for specifications that want to use Rustan Leino's notion of
+data groups. 
+This type has exactly one non-null value.
+(That is, all non-null objects of the
+type are <kbd>.equals</kbd> to each other.)
+To declare the equivalent of a data group, declare a model value of
+this type and make it depend on all of the elements of the data group.
+Note that in JML, all public and protected fields also have an
+implicit data group associated with them.
+</p>
+
+<h2>Coding</h2>
+
+<p>
+The source code for this package uses the GNU Lesser General Public
+License, since it is part of the JML runtime libraries.
+</p>
+
+<h2>Acknowledgments</h2>
+
+<p>
+At Iowa State, the development of JML was partially funded by
+the (US)
+<A HREF="http://www.nsf.gov">National Science Foundation</A>
+under grants CCR-9503168, CCR-9803843, CCR-0097907, and CCR-0113181.
+</p>
+
+<!-- Put @see and @since tags down here. -->
+
+</body>
+</html>

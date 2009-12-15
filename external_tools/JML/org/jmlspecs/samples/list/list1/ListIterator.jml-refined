@@ -1,0 +1,91 @@
+// @(#) $Id: ListIterator.jml-refined,v 1.7 2005/12/24 21:20:31 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.list1;
+
+//@ model import org.jmlspecs.models.JMLObjectBag;
+import org.jmlspecs.samples.list.iterator.Iterator;
+import org.jmlspecs.samples.list.iterator.RestartableIterator;
+
+// FIXME: adapt this file to non-null-by-default and remove the following modifier.
+/*@ nullable_by_default @*/ 
+public class ListIterator implements RestartableIterator {
+
+  //@ public model E_SLList listPtr;
+
+  //@ public invariant listPtr != null;
+
+  /*@ public model int currIndex;
+    @                  in currElem, uniteratedElems, iteratedElems;
+    @*/
+  //@ public invariant 0 <= currIndex && currIndex <= listPtr.theList.int_length();
+
+  //@ public model int origChgLog;
+
+  /*@  public normal_behavior
+    @   requires lst != null;
+    @   assignable listPtr, currIndex, origChgLog;
+    @   ensures currIndex == 0
+    @         && (\forall Object obj; ;
+    @              lst.theList.count(obj) == listPtr.theList.count(obj) )
+    @         && origChgLog == lst.changeLog;
+    @*/
+  public ListIterator(E_SLList lst);
+
+  /*@ also
+    @  public normal_behavior
+    @   requires unchanged;
+    @   assignable currIndex;
+    @   ensures currIndex == 0;
+    @*/
+  public void first();
+
+  /*@ also
+    @  public normal_behavior 
+    @   requires unchanged
+    @            && currIndex < listPtr.theList.int_length();
+    @   assignable currIndex;
+    @   ensures currIndex == \pre(currIndex) + 1;
+    @*/
+  public void next();
+
+  /*@ also
+    @ implies_that
+    @  public normal_behavior 
+    @   requires unchanged;
+    @   assignable \nothing;
+    @   ensures \result == (currIndex == listPtr.theList.int_length());
+    @*/
+  public boolean isDone();
+
+  /*@ also
+    @ implies_that
+    @  public normal_behavior 
+    @   requires unchanged
+    @            && 0 <= currIndex && currIndex < listPtr.theList.int_length();
+    @   assignable \nothing;
+    @   ensures \result == listPtr.theList.itemAt(currIndex);
+    @*/
+  public /*@ pure nullable @*/ Object currentItem();
+
+}
+

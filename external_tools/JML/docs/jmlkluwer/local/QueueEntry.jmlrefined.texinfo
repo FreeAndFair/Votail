@@ -1,0 +1,52 @@
+package org.jmlspecs.samples.jmlkluwer;
+
+import org.jmlspecs.models.JMLType;
+
+public /*@@ pure @@*/ class QueueEntry implements JMLType @{
+
+    //@@ public model Object obj;
+    //@@ public model int    priorityLevel;
+    //@@ public model long   timeStamp;
+
+    /*@@ public invariant 
+      @@           priorityLevel >= 0 && timeStamp >= 0;
+      @@*/
+
+    /*@@ public normal_behavior
+      @@   requires argLevel >= 0 && argTimeStamp >= 0;
+      @@   assignable obj, priorityLevel, timeStamp;
+      @@   ensures obj == argObj && priorityLevel == argLevel
+      @@       && timeStamp == argTimeStamp;
+      @@*/
+    public QueueEntry(Object argObj, int argLevel,
+                      long argTimeStamp);
+
+    /*@@ also
+      @@  public normal_behavior
+      @@    ensures \result instanceof QueueEntry;
+      @@    ensures_redundantly this.equals(\result);
+      @@*/
+    public Object clone();
+
+    /*@@ also
+      @@  public normal_behavior
+      @@    old QueueEntry oldo = (QueueEntry)o;
+      @@    requires o instanceof QueueEntry;
+      @@    ensures \result <==>
+      @@        oldo.obj == obj
+      @@     && oldo.priorityLevel == priorityLevel
+      @@     && oldo.timeStamp == timeStamp;
+      @@ also
+      @@  public normal_behavior
+      @@    requires !(o instanceof QueueEntry);
+      @@    ensures \result == false;
+      @@*/
+    public boolean equals(/*@@ nullable @@*/ Object o);
+
+    //@@ ensures \result == priorityLevel;
+    public int getLevel();
+
+    //@@ ensures \result == obj;
+    public Object getObj();
+@}
+

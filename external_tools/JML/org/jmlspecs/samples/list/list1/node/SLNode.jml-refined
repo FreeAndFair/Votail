@@ -1,0 +1,106 @@
+// @(#) $Id: SLNode.jml-refined,v 1.6 2005/12/24 21:20:31 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.list1.node;
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+// FIXME: adapt this file to non-null-by-default and remove the following modifier.
+/*@ nullable_by_default @*/ 
+public class SLNode { // Singly Linked Node
+
+    // data members
+
+    //@ public model JMLObjectSequence entries;
+
+    /*@ public model JMLObjectSequence allButFirst;
+      @                                in entries;
+      @*/
+
+    /*@ public model Object theEntry;
+      @                     in entries;
+      @*/
+
+    /*@ public model SLNode nextNode;
+      @                     in allButFirst;
+      @*/
+
+    // The last maps-into clause above recursively includes the 
+    // rest of the entries and allButFirst referenced by this node!
+
+    /*@ public invariant entries != null && allButFirst != null
+      @            && entries.equals(allButFirst.insertFront(theEntry));
+      @*/
+
+  /*@  public normal_behavior
+    @    assignable entries;
+    @    ensures theEntry == ent && entries.int_size() == 1
+    @       &&  entries.itemAt(0) == ent && allButFirst.isEmpty();
+    @*/
+    public SLNode(Object ent);
+
+  /*@  public normal_behavior
+    @    assignable \nothing;
+    @    ensures \result == theEntry;
+    @*/
+    public /*@ pure @*/ Object getEntry();
+
+  /*@  public normal_behavior
+    @    assignable theEntry;
+    @    ensures theEntry == newEntry 
+    @       &&  entries.itemAt(0) == newEntry;
+    @*/
+    public void setEntry(Object newEntry);
+
+  /*@  public normal_behavior
+    @    assignable \nothing;
+    @    ensures \result == nextNode;
+    @*/
+    public /*@ pure @*/ SLNode getNextNode();
+
+  /*@  public normal_behavior
+    @    assignable allButFirst;
+    @    ensures allButFirst.equals(\old(allButFirst).insertFront(newEntry)); 
+    @*/
+    public void insertAfter(Object newEntry);
+
+  /*@  public normal_behavior
+    @    requires ! allButFirst.isEmpty();
+    @    assignable allButFirst;
+    @    ensures allButFirst.equals(\old(allButFirst).trailer());
+    @  also
+    @    requires allButFirst.isEmpty();
+    @    assignable \nothing;
+    @    ensures allButFirst.isEmpty();
+    @*/
+    public void removeNextNode();
+
+  /*@ also
+    @  public normal_behavior
+    @    assignable \nothing;
+    @    ensures \result instanceof SLNode 
+    @         && ((SLNode)\result).entries.equals(entries);
+    @*/
+    public /*@ non_null @*/ Object clone();
+
+}
+

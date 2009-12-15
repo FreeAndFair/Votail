@@ -1,0 +1,418 @@
+.\" @(#)$Id: jmlspec.1,v 1.19 2005/08/09 13:38:51 wdietl Exp $
+.\"
+.\" Copyright (C) 2001-2002 Iowa State University
+.\"
+.\" This file is part of JML
+.\"
+.\" JML is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2, or (at your option)
+.\" any later version.
+.\"
+.\" JML is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with JML; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.TH JMLSPEC l "$Date: 2005/08/09 13:38:51 $"
+.UC 4
+.SH NAME
+jmlspec \- generate or compare specification skeletons from Java source files
+.SH SYNOPSIS
+.BR "jmlspec" " [option] ... file1.java [file2.java] ..."
+.PP
+.BR "jmlspec" " -diff [option] ... file1 [file2] ..."
+.PP
+.B "jmlspec-gui" " [option] ... file1.java [file2.java] ..."
+.SH DESCRIPTION
+.PP
+The command
+.B jmlspec
+and the graphical user interface version
+.B jmlspec-gui
+have two major modes: generation of specification skeletons 
+and comparing specification files.
+.PP
+In generation mode (when there is no -diff option),
+for each Java(TM) source file on the command-line, 
+.B jmlspec
+generates a file that refines the given source file
+and has a empty placeholders for one to write in the specifications.
+By default the generated specification skeleton file has a name that
+is the same as the Java source file but with the suffix `.refines-spec'.
+For example, if the tool is given a file named `Foo.java', 
+then it generates a file `Foo.refines-spec'.
+The user is supposed to edit the `Foo.refines-spec' file
+to add specifications (which are presumably not in the `Foo.java') file.
+.PP
+In comparison mode (with a -diff option), for each file on the command-line,
+.B jmlspec
+finds all matching files on the classpath and compares the declarations within
+those files, printing to the standard output any differences found in their declarations.
+Matching files are those in the same package, with the same file name, but with any other 
+of the standard suffixes for refinement files.  If a java file is present, jmlspec
+will compare all specification files against the java file; otherwise, if a
+class file exists, all refinements are compared against the class file;
+otherwise all refinements are compared against the first file of the set 
+listed on the command line.
+.PP
+The
+.B jmlspec
+script sets the CLASSPATH and then runs the Java class
+org.jmlspecs.jmlspec.Main, which generates a skeleton specification file
+(or compares files) for each named source file.
+.PP
+The
+.B jmlspec-gui
+script is similar, but just runs the Java class
+org.jmlspecs.jmlspec.JspGUI, which brings up a graphical
+user-interface to do the work.
+.SH OPTIONS
+.PP
+The 
+.B jmlspec
+script and the graphical user interface support the options described below.
+On the command line, one can give the options in the form described
+below; the graphical user interface has other ways to select files and
+set the options.
+Both options without arguments and options with arguments simply set
+the option as indicated by the description below. Multiple uses of the
+same option generally have no effect that is different than a single
+use of that option.
+.PP
+For the command line, each option has both a short form and two long forms.
+The long forms consists of one or two hyphens and a word.
+To avoid duplication, we only show the long forms with two hyphens,
+since these are unambiguous; however one can use the forms with a
+single hyphen if desired.
+To avoid ambiguity between multiple short form options and the long
+form with a single hyphen, one should give each option separately.
+The short form consists of a hyphen and a single letter.
+In the synopsis below, the long form is separated from the short form
+by a comma (,), but in actual usage, you would pick one of these forms
+and not use the comma.
+.PP
+Note that options on the command line are case sensitive.
+.TP
+.B \-\-annotation <String>, -A <String>
+Determines the style of annotation comment to be placed before each method
+declaration: 'none' produces no annotation; 'comment' produces three lines
+of empty annotation (the default); 'also' produces three lines of annotation
+including the keyword 'also' (this is a reminder that the keyword 'also'
+may be necessary and will produce an output file that must be edited before
+it will successfully pass the jml checker); or a custom annotation.  A custom
+annotation is a quoted String consisting of the lines of the desired annotation,
+each preceded by an arbitrary printable character that does not appear in the
+text, and then concatenated.  For example, a custom annotation might be
+":/*@:  @ requires true;:  @ ensures true;:  @*/".  Here the colon marks the
+beginning of each line (and is not included in the output text), and four lines
+of annotation are produced.
+.TP
+.B \-\-classAnnotation <String>
+Determines the style of annotation to be placed at the beginning of each class
+and interface body.  The default is the same as the method annotation (with
+-annotation) except that the 'also' option for the method
+produces a simple 'comment' style annotation for the class and interface.
+If a separate value is provided for this option, 'none' means no annotation, 'comment' means a simple three-line comment annotation; a custom annotation in
+the same form as in the -annotation option is also allowed.
+.TP
+.B \-\-classpath <directory-list>, -C <directory-list>
+Use the given string as the CLASSPATH during compilation.
+By default the value of the environment variable CLASSPATH is used instead.
+.TP
+.B \-\-debug, \-c
+Produces (copious) debugging information.
+The default is not to produce this information.
+.TP
+.B \-\-deprecation, \-D
+Generate skeleton specifications for deprecated members in the Java
+source files.
+The default is not to generate skeleton specifications for such
+deprecated members. 
+.TP
+.B \-\-destination <directory>, \-d <directory>
+Writes files (such as a `.refines-spec' files) in a subdirectory
+corresponding to the file's package name, relative to the
+named destination directory; parent direcctories that do not
+exist are created.
+The default is to write such files in or relative to 
+the directory in which the
+source files reside (which may not be the current directory).
+.TP
+.B \-\-diff 
+Applies the tool in comparision (difference) mode; the default is generation mode.
+.TP
+.B \-\-filter <String>, \-f <String>
+Make the warning filter be the named class.
+The default is org.multijava.mjc.DefaultFilter.
+.TP
+.B \-\-help, \-h
+Display the help information and exit.
+The default is not to do this.
+.TP
+.B \-\-generic, \-G
+Accept the Java 1.5 generic syntax.  This feature is still experimental.
+The default is not to do this.
+.TP
+.B \-\-keepGoing, \-k
+Keep going when errors are encountered.
+Be warned that this may cause the tool to die with an exception.
+The default is to not keep going.
+.TP
+.B \-\-multijava, \-M
+Accept MultiJava source code.
+The default is to not accept Multijava constructs.
+.TP
+.B \-\-nomultijava
+Do not accept MultiJava source code.
+This turns off acceptance of Multijava constructs.
+.TP
+.B \-\-norecursive
+Turn off processing of subdirectories recursively.
+This is the default.
+.TP
+.B \-\-overwrite, \-O
+Allow overwriting of existing skeleton files with newly generated files; 
+without this option existing files are (silently) preserved.
+.TP
+.B \-\-relaxed, \-r
+Accept Relaxed MultiJava source code.
+The default is not to allow the special constructs in Relaxed MultiJava.
+.TP
+.B \-\-path, \-p
+Causes some filenames to be printed as absolute paths, in order to provide
+unambiguous information about which files are being compared (-diff mode only).
+.TP
+.B \-\-package
+Generate or compare members in the skeleton specification only for the public,
+protected, and package visibility members in the the named files.
+This is the default and is equivalent to the -L2 option.
+.TP
+.B \-\-private
+Generate or compare members in the skeleton specification for all
+members at all visibility levels in the the named files.
+This is equivalent to the -L3 option.
+.TP
+.B \-\-protected
+Generate or compare members in the skeleton specification only for the public and
+protected members in the the named files.
+This is equivalent to the -L1 option.
+.TP
+.B \-\-public
+Generate or compare members in the skeleton specification only for the public
+members in the the named files.
+This is equivalent to the -L0 option.
+.TP
+.B \-\-quiet, \-q
+Do not suppress information on compilation passes completed.
+The default is to suppress this information.
+.TP
+.B \-\-Quiet, \-Q
+Very quiet.  Suppress all output except errors and warnings so that a successful run is silent.
+The default is to provide selected information.
+.TP
+.B \-\-recursive, \-R
+Process all subdirectories of given directory and package arguments recursively.
+The default is not to process subdirectories.
+.TP
+.B \-\-safemath, \-s
+Turns on safe math mode. This is an experimental feature, currently
+under development, in which the checker will report a compile-time error if the
+evaluation of a constant integral expression causes an overflow.
+The default is not to report such errors.
+.TP
+.B \-\-source <release-number>
+Accept code containing source for the given Java version.
+When the release-number is "1.4", the compiler accepts code containing Java 1.4
+assert statements, and treats `assert' as a reserved word in Java
+code.
+The default is "1.3", meaning that `assert' is not a
+reserved word in Java code (although it is in annotations). 
+In some future release of JML, the default will change to "1.4".
+.TP
+.B \-\-sourcepath <directory-list>, \-S <directory-list>
+Use the given path when searching for Java and annotation source
+files.  A path is a list of directories separated by either colons (on Unix) or
+semicolons (on Windows).
+The default is to use the CLASSPATH.
+.TP
+.B \-\-specLevel=<int>, \-L<int>
+Select, according to their declared access level, the set of
+specification members to included in the generated or compared skeleton file.
+Possible values are: 0 for public,
+1 for public and protected, and 2 for public, protected
+and package, and 3 for all levels.
+For example, specifying 0 includes in the generated skeleton file only
+the public methods, constructors, and fields. The default is 2,
+which includes all but the private members.
+.TP
+.B \-\-suffix <String>, \-F <String>
+The suffix to use for the generated file.
+By default, if this option is not used,
+for a file `Foo.java', this generated skeleton specification file
+would be put in a file named `Foo.refines-spec'.
+.\" However, an existing file with this name will never be overwritten if it
+.\" already exists.
+With this option, the suffix for the generated file can be changed
+from `.refines-spec' to something else, such as `.refines-java' or
+`.refines-jml'.
+.TP
+.B \-\-suppressInheritance, \-i
+If enabled, suppresses output about methods in a specification 
+file that are not present in the class file, but are inherited from a super class.
+The default is to display this information.
+.TP
+.B \-\-suppressMissing, \-m
+If enabled, suppresses output about methods that are not present in a specification 
+file but are present in the corresponding java or class file.
+The default is to display this information.
+.TP
+.B \-\-synch, \-Y
+Make comparisons (in diff mode) be such that synchronized modifiers
+must match exactly between the files being compared.
+The default is a looser comparison, where the synchronized modifiers
+are ignored.
+
+.\" START universe-options
+.TP
+.B \-\-universesx <String>, \-E <String>
+Specify the degree of support for the Universe type system (UTS).
+.PP
+.RS
+Available option strings:
+.RS
+.PP
+"no"
+.RS
+UTS features are disabled and no keywords are reserved.
+.br
+Only the \\xxx version of the keywords are allowed
+(all UTS keywords have to be prefixed by a backslash).
+.br
+This is the default.
+.RE
+.PP
+"parse"
+.RS
+the UTS keywords are reserved and parsed.
+.RE
+.PP
+"check"
+.RS
+UTS typechecking is performed.
+.RE
+.PP
+"dynchecks"
+.RS
+code for UTS runtime checks (for downcasts and array updates)
+is generated.
+.br
+This also turns on the "check" option, because the runtime checks rely
+on a type-checked program.
+.RE
+.PP
+"purity"
+.RS
+purity of methods is checked with a conservative method, which
+might forbid some methods that do not modify existing objects.
+.RE
+.PP
+"xbytecode"
+.RS
+Universe type information is stored in special bytecode attributes.
+.br
+This also turns on the "check" option, because it is important that
+the stored information is type-checked.
+.br
+The resulting class-file is compatible with standard Java VMs.
+.RE
+.PP
+"annotations"
+.RS
+Universe type information is stored in Java 5 annotations.
+.br
+This also turns on the "check" option, because it is important that
+the stored information is type-checked.
+.br
+The resulting class-file is compatible with Java 5 VMs.
+.RE
+.PP
+"full"
+.RS
+all UTS features except "annotations" are enabled;
+this corresponds to the \-\-universes flag below.
+.RE
+.RE
+.PP
+The options "no" and "full" must be used alone.
+All other options can be combined by separating them with commas.
+First all options are turned off and then the given options
+(and the options implicitly turned on by the given options)
+are turned on.
+.RE
+.TP
+.B \-\-universes, \-e
+Enable the default Universe type system features.
+This corresponds to the "\-\-universesx full" flag.
+.br
+This option is disabled by default.
+.\" END universe-options
+
+.TP
+.B \-\-verbose, \-v
+Display verbose information during compilation.
+The default is not to display this information.
+.TP
+.B \-\-version, \-V
+Instead of doing anything else, print the checker's version information
+on standard output and exit.
+The default is not to do this.
+.TP
+.B \-\-warning=<int>, \-w<int>
+Set the `pickiness' of warnings displayed to the given integer.
+The default is 1.  Using 2 generates more picky warnings, and 3 more picky
+still.
+.TP
+.B \-\-Xnoversion
+Omits printing the version in help messages, which is useful for
+regression testing (but not normally by users).
+The default is to print the version in help messages.
+.SH ENVIRONMENT
+.PP
+The
+.B CLASSPATH
+environment variable is used to find Java class and source files,
+as well as JML specification files.
+.SH NOTES
+.PP
+This tool simply parses the input files; it does not resolve class names.
+Thus in comparison mode, two instances of a type (e.g. return or argument types) may be deemed 
+to match if one is qualified and the other is not, but resolves to a different type than the
+qualified name.
+.SH SEE ALSO
+.PP
+jml(1), jmlc(1), java(1), jmldoc(1)
+.SH AUTHOR
+.PP
+David R. Cok
+.SH COPYRIGHT
+.PP
+Copyright (c) 2003 by Iowa State University
+.PP
+JML is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+.PP
+JML is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.PP
+You should have received a copy of the GNU General Public License
+along with JML; see the file COPYING.  If not, write to
+the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.

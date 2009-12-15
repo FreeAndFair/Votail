@@ -1,0 +1,21 @@
+//@@ refine "BoundedStackInterface.jml";
+public interface BoundedStackInterface extends BoundedThing @{
+  /*@@ also
+    @@ implies_that
+    @@   public behavior
+    @@     requires !theStack.isEmpty() || theStack.isEmpty();
+    @@     assignable size, theStack;
+    @@     ensures \old(!theStack.isEmpty())
+    @@               ==> theStack.equals(\old(theStack.trailer()));
+    @@     ensures \old(theStack.isEmpty()) ==> 
+    @@                 \not_assigned(size) && \not_assigned(theStack);
+    @@     signals_only BoundedStackException;
+    @@     signals (java.lang.Exception)
+    @@              \old(!theStack.isEmpty()) ==> false;
+    @@     signals (java.lang.Exception)
+    @@              \old(theStack.isEmpty()) ==>
+    @@               \not_assigned(size) && \not_assigned(theStack)
+    @@               && true;
+    @@*/
+  public void pop( ) throws BoundedStackException;
+@}

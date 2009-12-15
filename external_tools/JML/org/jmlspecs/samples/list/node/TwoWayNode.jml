@@ -1,0 +1,87 @@
+// @(#) $Id: TwoWayNode.jml,v 1.12 2007/07/01 02:38:46 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.node;
+
+//@ refine "TwoWayNode.jml-refined";
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+public class TwoWayNode extends OneWayNode { // Doubly Linked Node
+
+    // data members
+
+    protected /*@ nullable @*/ TwoWayNode prevNode_;
+    /*@                  in prevNode;
+      @                  maps prevNode_.prevEntries \into prevEntries;
+      @                  maps prevNode_.theEntry \into prevEntries;
+      @*/
+
+    //@ protected represents prevNode <- prevNode_;
+
+    //@ protected represents prevEntries <- prevEntries();
+
+    /*@ protected invariant (prevNode == null)
+      @                     || (prevNode.nextNode == this);
+      @ protected invariant (nextNode == null)
+      @                     || (nextDL.prevNode == this);
+      @*/
+
+    /*@
+    public model pure JMLObjectSequence prevEntries() {
+	return prevEntries(prevNode_);
+    }
+    public model pure JMLObjectSequence prevEntries(nullable TwoWayNode curr) {
+	return (curr == null
+		// the following disjunct prevents infinte recursion
+		|| curr == this)
+	    ? new JMLObjectSequence()
+	    : prevEntries(curr.getPrevNode()).insertBack(curr.getEntry());
+    }
+    @*/
+
+    /*@ private normal_behavior
+      @   requires nxtNode != null;
+      @   assignable nextNode, nxtNode.prevNode;
+      @   ensures nextNode == nxtNode
+      @        && nextDL.prevNode == this;
+      @ also
+      @   requires nxtNode == null;
+      @   assignable nextNode;
+      @   ensures nextNode == null;
+      @*/
+    private /*@ helper @*/ void linkTo(/*@ nullable @*/ TwoWayNode nxtNode);
+
+  /*@ protected normal_behavior
+    @   requires (prvNode == null || prvNode.nextNode == null 
+    @             || prvNode.nextNode == nxtNode)
+    @         && (nxtNode == null || nxtNode.prevNode == null
+    @             || nxtNode.prevNode == prvNode);
+    @   assignable entries;
+    @   ensures theEntry == ent &&  entries.itemAt(0) == ent
+    @        && prevNode == prvNode &&  nextNode == nxtNode;
+    @*/
+    protected TwoWayNode(/*@ nullable @*/ Object ent,
+                         /*@ nullable @*/ TwoWayNode prvNode,
+                         /*@ nullable @*/ TwoWayNode nxtNode);
+}
+

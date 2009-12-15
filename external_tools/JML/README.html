@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- $Id: README.html,v 1.38 2006/01/18 22:33:24 leavens Exp $ -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>JML README</title>
+</head>
+<body>
+
+<h1>JML README</h1>
+
+<p>
+This is a release of a set of tools, examples, and documentation
+for the Java Modeling Language (JML),
+obtained from Iowa State University, Department of Computer Science,
+Ames, Iowa, 50011-1041, USA, probably via
+<a href="http://www.jmlspecs.org/">www.jmlspecs.org</a>
+or the SourceForge project page for JML
+<a href="http://www.sourceforge.net/projects/jmlspecs">
+www.sourceforge.net/projects/jmlspecs</a>.</p>
+
+<h2>Contents</h2>
+<p>This document provides the following information:</p>
+<ul>
+ <li><a href="#copyright">Copyright</a> notice for the release</li>
+ <li><a href="#nowarranty">No Warranty</a> is provided for JML</li>
+ <li><a href="#help">Help</a> for problems</li>
+ <li><a href="#installation">Installation</a> instructions</li> 
+ <li><a href="#running">Running the tools</a> (first steps after install)</li> 
+ <li><a href="#jmlrac">Running programs compiled with jmlc</a></li> 
+ <li><a href="#postinstall">Post-Installation (keeping in touch)</a> instructions</li> 
+ <li><a href="#problems">Problems, Questions, and Bug Reports</a></li>
+</ul>
+
+<h2><a name="copyright">COPYRIGHT</a></h2>
+
+<p>
+Except for the papers for which copyright is assigned to others
+(notably the paper in the directory docs/kluwer),
+and the runtime libraries,
+JML is copyrighted as open source software under the GNU general
+public license. See the file <a href="COPYING.txt">COPYING.txt</a>
+in this directory for details.</p>
+
+<p>
+The runtime libraries and their sources, including the specifications
+of the Java Development Kit (which become part of the runtime
+libraries), are copyrighted using the GNU Lesser general public
+license.  See the file <a href="LesserGPL.txt">LesserGPL.txt</a> in
+this directory for details.</p>
+
+<h2><a name="nowarranty">NO WARRANTY</a></h2>
+
+<p>
+JML is provided without warranty of any kind.  See the files
+<a href="COPYING.txt">COPYING.txt</a>
+and (for the runtime libraries and JDK specifications) 
+<a href="LesserGPL.txt">LesserGPL.txt</a>
+for details.</p>
+
+<h2><a name="help">HELP</a></h2>
+
+<p>
+If you have problems, please look in the <a
+href="#troubleshooting">TROUBLESHOOTING</a> section below.
+See also the HTML page <a href="JML.html">JML.html</a> in this
+directory for the documentation included in the release and other
+helpful documentation.
+If those steps don't help, please contact us by using the
+<a href="http://sourceforge.net/tracker/?group_id=65346">SourceForge
+tracking system</a> to file a 
+<a href="http://sourceforge.net/tracker/?atid=510629&amp;group_id=65346&amp;func=browse">
+bug report</a>,
+<a href="http://sourceforge.net/tracker/?atid=510630&amp;group_id=65346&amp;func=browse">
+support request</a>, or
+<a href="http://sourceforge.net/tracker/?atid=510632&amp;group_id=65346&amp;func=browse">
+feature request</a>.
+We will respond as soon as we're able to help you.</p>
+
+<p>
+The current release has a type checker (jml), a tool (jmldoc) that
+produces web pages, a run-time assertion checking compiler (jmlc), a tool for
+running applications compiled with the run-time assertion checking
+compiler (jmlrac), and tools for use with JUnit (jtest, jmlunit,
+jml-junit, and jmlrac).
+The checker and works on JML input files found with suffixes</p>
+<pre>
+  .refines-java, .refines-spec, .refines-jml, .java, .spec, and .jml,
+</pre>
+<p>and which may refer to refinements in other files with suffixes</p>
+<pre>
+  .java, .spec, .jml, .java-refined, .spec-refined, and .jml-refined.
+</pre>
+<p>Directions for running it are below.</p>
+
+<h2><a name="installation">INSTALLATION</a></h2>
+
+<p>
+The instructions below are for users of JML releases, which are precompiled.
+(If you are a developer of JML, or if you want to work from the sources,
+then read the <a href="docs/developer-tips.html">docs/developer-tips.html</a>
+file for installation of a developer's version of the JML tools.)</p>
+
+<p>
+You'll need Java (or the Java runtime environment, jre) to run the
+checker and the assertion checking compiler (jmlc).
+We've tested it with J2SDK version 1.4.1 and JDK 1.4.2.
+</p>
+
+<p>
+Note that the tools do <em>not</em> work currently with JDK 1.5.  If
+you try to use JDK 1.5 with the tools, you will get strange errors.
+We recommend that you uninstall JDK 1.5 before using the JML tools,
+unless you are very familiar with how to manipulate shell scripts, the
+Java <kbd>CLASSPATH</kbd>, etc.  (We are planning to fix this in the future.)
+</p>
+
+<h3><a name="toolsjar">The tools.jar file</a></h3>
+
+<p>
+Unless you're using Mac OS X,
+you also need to have the <kbd>tools.jar</kbd> file from
+the J2SDK 1.4.1 or J2SDK 1.4.2.
+This file is found in the <kbd>lib</kbd> directory in J2SDK 1.4.1 and
+1.4.2;
+it's needed to run <kbd>jmldoc</kbd>.
+Our experience is that later versions of the <kbd>tools.jar</kbd>
+don't necessarily work.
+Users on Mac OS X apparently don't have to worry about this if they
+have updated to J2SDK 1.4.1 or later, as the equivalent is in their
+boot class path.
+</p>
+
+<p>
+If you have the J2SDK 1.4.1 or J2SDK 1.4.2
+<kbd>tools.jar</kbd> available, and if you're not on a Mac OS X
+running at J2SDK 1.4.1 or J2SDK 1.4.2, then you need to
+copy the <kbd>tools.jar</kbd> file from the Java
+install's <kbd>lib</kbd> directory into the Java install's
+<kbd>jre/lib/ext</kbd> directory.  This makes it so that the
+<kbd>tools.jar</kbd> file can be found automatically by the
+<kbd>jmldoc</kbd> tool.  On Mac OS X, you must run either J2SDK 1.4.1
+or J2SDK 1.4.2, as the Mac OS X version of Java puts the
+<kbd>tools.jar</kbd> file in the equivalent of the boot class path,
+where it  cannot be overridden.
+</p>
+
+<p>
+<a name="toolsjre">If, when you start the JML launcher</a> you have a
+problem with jmldoc starting, then you should be sure that the
+<kbd>tools.jar</kbd> file is copied to the <kbd>jre/lib/ext</kbd> in
+the Java runtime environment that is being used when you open (double
+click) on a jar file.  On Windows machines, this may be under
+<kbd>Program Files\Java\</kbd> as opposed to where you may have
+installed the J2SDK itself.  That is, you need to copy the
+<kbd>tools.jar</kbd> file both into the J2SDK's
+<kbd>jre/lib/ext</kbd> directory and in the Java runtime
+environment's <kbd>lib/ext</kbd> directory.  On Windows, you can
+look at the file types accessible by starting the Windows explorer on
+a directory on your local machine, then clicking on "Tools", then
+"Folder Options...", then selecting the "File Types" pane, and finding
+the entry for the "JAR" extension.  Then click on "Advanced" (near the
+bottom right), select the "open" action in the "Edit File Type" window
+that pops up, and click on the "Edit..." button to the right.  This
+pops up a window ("Editing action for type ...") that
+will show, in the second box, labeled "Application used to perform
+action:"), the program that is used to start jar files when you open
+them. It will be something like 
+"<kbd>C:\Program Files\Java\j2re1.4.2\bin\javaaw.exe</kbd> ...".
+In such a case, you need to copy the <kbd>tools.jar</kbd> from
+your Java install (the J2SDK) to
+<kbd>C:\Program Files\Java\j2re1.4.2\lib\ext</kbd>.
+</p>
+
+<h3>Unpacking the tar file</h3>
+
+<p>
+Now, unpack the tar file in which you found this.
+For reference below, let's assume that you did
+</p>
+<pre>
+	c:
+	cd \
+	tar -xzvf temp\JML.tar.gz
+</pre>
+<p>
+This would make a directory named <kbd>c:\JML</kbd> containing the release.
+When you see c:\JML mentioned below,
+substitute the actual directory name for that (e.g.,
+<kbd>/usr/local/JML</kbd>).
+</p>
+
+<h2><a name="running">RUNNING THE TOOLS</a></h2>
+
+<h3>Using the Launcher (GUI)</h3>
+
+<p>
+The simplest way to use the JML tools is to make a shortcut (or link) to the
+file <kbd>JML\bin\jml-release.jar</kbd> on your desktop or "start
+menu". If you then open this shortcut (e.g., by double clicking), then
+you will get the JML launcher, which can be used to run the tools.
+Be sure to the <kbd>CLASSPATH</kbd> from the options for each tool you
+are using, and usually it must include an absolute path to the
+specifications directory of
+the release, which is <kbd>c:\JML\specs</kbd> in our example.
+</p>
+
+<p>
+This works on any platform in which you have Java installed and for
+which opening the <kbd>jml-release.jar</kbd> file runs the Java
+virtual machine on it, as in the command
+<kbd>java -jar jml-release.jar</kbd>.
+</p>
+
+<p>
+Note that the <kbd>jmldoc</kbd> tool will only launch if you have copied the
+<kbd>tools.jar</kbd> file into the extensions directory, as described
+<a href="#toolsjar">above</a>.
+</p>
+
+<p>
+If you are happy with the launchers, and if you don't want any other
+installation of command-line scripts for running the tools, then you
+are done with the installation.
+</p>
+
+<p>
+See the <a href="#jmlrac">Running Programs Compiled with jmlc</a>
+section below on how to run programs with class files that result from
+compilation with the JML compiler (jmlc) that is availble from the launcher.
+</p>
+
+<h3>Installing Command Line Scripts on Unix, Linux, or Cygwin</h3>
+
+<p>
+If you are on Unix (or a clone like Linux, or Cygwin), then
+you can use the script in <kbd>bin/Install-JML-Scripts</kbd>
+to install the shell scripts for running the various JML tools.  If
+you are on Linux, or Unix (but not cygwin), and you installed into
+<kbd>/usr/local</kbd>, then execute the following command (as root).
+</p>
+<pre>
+    /usr/local/JML/bin/Install-JML-Scripts 
+</pre>
+<p>
+This will also install the manual pages in <kbd>/usr/local/man</kbd>.
+</p>
+<p>
+If you are using cygwin on a windows machine, we also recommend
+installation into <kbd>/usr/local</kbd>, and in that case
+instead of the above command, execute the following (in the bash shell).
+</p>
+<pre>
+    INSTALLTYPE=cygwin /usr/local/JML/bin/Install-JML-Scripts
+</pre>
+<p>
+Alternatively, you could run a command such as the following.
+</p>
+<pre>
+    INSTALLTYPE=cygwin JMLDIR=/cygdrive/c/JML /usr/local/JML/bin/Install-JML-Scripts
+</pre>
+<p>
+Otherwise, either edit the <kbd>bin/Install-JML-Scripts</kbd>,
+or look at it to see what other options it supports.</p>
+
+<p>The directory you install into should be on your
+<kbd>PATH</kbd>, so your shell can find these scripts.
+For example, if you install into <kbd>/usr/local/bin</kbd>,
+then you have to make sure that <kbd>/usr/local/bin</kbd>
+is on your <kbd>PATH</kbd>.  In that case you should also be sure that
+<kbd>/usr/local/man</kbd> is in your <kbd>MANPATH</kbd>.</p>
+
+<p>See <a href="#commandline">below</a> for details on using the command
+line scripts.</p>
+
+<h3>Installing Command Line Scripts for Windows 98, ME, 2000, or XP</h3>
+
+<p>
+If you have Windows 98, ME, 2000, or XP, and you are not using cygwin,
+but you still wish to use a command line interface to the tools, the
+follow the rest of the directions in this section.
+If this applies to you, then copy from <kbd>JML\bin</kbd> all of the
+files that end in <kbd>.bat</kbd> to a directory on your <kbd>PATH</kbd>.
+(These files include <kbd>jmlenv.bat</kbd>, <kbd>jml.bat</kbd>,
+<kbd>jml-gui.bat</kbd>,
+<kbd>jmlc.bat</kbd>, <kbd>jmldoc.bat</kbd>,
+<kbd>jmlrac.bat</kbd>, <kbd>jmlunit.bat</kbd>,
+<kbd>jml-junit.bat</kbd>, <kbd>jtest.bat</kbd>, etc.)
+Then edit the copied file <kbd>jmlenv.bat</kbd>
+files changing <kbd>JMLDIR</kbd> to the correct value
+for you (whatever <kbd>c:\JML</kbd> really is, maybe <kbd>d:\JML</kbd>
+or something).
+</p>
+
+<p>
+You may also need to adjust the properties of jml.bat and the
+other scripts to increase the environment space available to them.
+</p>
+
+<p>See <a href="#commandline">below</a> for details on using the command
+line scripts.</p>
+
+<h3><a name="commandline">Running the Command Line Scripts</a></h3>
+
+<p>
+To run the jml checker, from a command prompt, execute</p>
+<pre>
+	jml file1.java file2.jml
+</pre>
+<p>for whatever your files are.</p>
+
+<p>
+Note that you can also pass directories to jml, and it will check
+whatever files there are in that directory with the suffixes
+".refines-java", ".refines-spec", ".refines-jml", ".java", ".spec",
+and ".jml".  You can, for example, execute:</p>
+<pre>
+	jml .
+</pre>
+
+<p>
+To use the run-time assertion checker, use the jmlc script, for example:</p>
+<pre>
+	jmlc -Q .
+</pre>
+
+<p>
+See the <a href="#jmlrac">Running Programs Compiled with jmlc</a>
+section below on how to run programs with class files that result from
+compilation with <kbd>jmlc</kbd> using the <kbd>jmlrac</kbd> script.
+</p>
+
+<p>
+Consult the manual pages for details on running the documentation generation tool <kbd>jmldoc</kbd>, and other JML tools.
+</p>
+
+<p>
+HTML versions of the script manual pages are available from the file 
+<a href="JML.html">JML.html</a> in this directory.
+If you installed as above on Unix or cygwin, then nroff versions have also been
+installed above.
+Plain text versions can also be found in the directory
+<kbd>JML/docs/man/</kbd> (i.e., <kbd>docs/man/</kbd> under this directory.
+</p>
+
+<h3>Installing the Info Files</h3>
+
+<p>
+If you like to use <kbd>info</kbd> to read documentation, instead of
+HTML or PDF, then you can install the makeinfo-generated info files by
+copying the files named <kbd>JML/docs/*/*.info*</kbd> to a directory such as
+<kbd>/usr/local/info</kbd>, or whereever you keep such files.</p>
+
+<h2><a name="jmlrac">RUNNING PROGRAMS COMPILED WITH JMLC</a></h2>
+
+<p>
+To run Java programs where some (or all) of the class files have been
+compiled with the JML compiler (<kbd>jmlc</kbd>), you will need to
+have the classes compile in
+your Java <kbd>CLASSPATH</kbd>. However, just having these classes in your <kbd>CLASSPATH</kbd> is not enough.
+</p>
+
+<p>
+In addition to the compiled class files, you have to run a
+<kbd>jmlc</kbd>-compiled program with
+<kbd>JML/bin/jmlruntime.jar</kbd> in the interpreter's boot class
+path, and with either <kbd>JML/bin/models.jar</kbd> or
+<kbd>JML/bin/jmlmodelsnonrac.jar</kbd> in your CLASSPATH.
+(The latter is somewhat faster in execution time, but does no dynamic checking on calls to the JML model classes.)
+</p>
+
+<p>In addition, if you are
+using <kbd>jmljunit</kbd>-generated code, you also need to have
+<kbd>JML/bin/jmljunitruntime.jar</kbd> in your <kbd>CLASSPATH</kbd>.
+</p>
+
+<p>
+There is a script file (and batch file) for doing 
+all of this easily.  This script is called <kbd>jmlrac</kbd>.  You would use it instead of the normal Java virtual machine (<kbd>java</kbd>), as follows.
+</p>
+
+<pre>
+   jmlrac my.package.name.ClassnameOfMain
+</pre>
+
+<p>where
+<kbd>ClassnameOfMain</kbd> is the class name of the class containing
+your program's main method, and <kbd>my.package.name</kbd> stands for
+the name of the package where <kbd>ClassnameOfMain</kbd> is found.</p>
+
+<p>
+See the manual page for <kbd>jmlrac</kbd> for details and more examples of
+how to run programs using it.</p>
+
+<h2><a name="postinstall">POST-INSTALLATION (KEEPING IN TOUCH)</a></h2>
+
+<p>After installation, please sign up for the mailing list
+<kbd>jmlspecs-releases@lists.sourceforge.net</kbd>
+through its <a href="http://lists.sourceforge.net/lists/listinfo/jmlspecs-releases">
+SourceForge.net web interface</a>.
+This will let us inform you of future releases.
+</p>
+
+<p>
+We are also interested in your feedback on JML: things you like, don't
+like, find confusing, etc.  Since JML is open source, we'd appreciate
+it if you'd send us any bug fixes or enhancements you are willing to
+share with others.  See the
+<a href="http://sourceforge.net/tracker/?group_id=65346">
+SourceForge tracking interface for the jmlspecs project</a>
+for places to file bug reports, support requests, patches, and feature
+requests for JML and its tools.
+</p>
+
+<p>
+General discussions of this sort about JML can be sent to the JML interest
+mailing list at <kbd>jmlspecs-interest@lists.sourceforge.net</kbd>,
+once you subscribe to that mailing list.  To subscribe,
+use the
+<a href="http://lists.sourceforge.net/lists/listinfo/jmlspecs-interest">
+SourceForge web interface for the jmlspecs-interest mailing list</a>.
+</p>
+
+<h2><a name="troubleshooting">TROUBLESHOOTING</a></h2>
+
+<h3>General Problems to Rule out First</h3>
+<p>
+Make sure that Java (e.g., the J2SDK) is installed first.  If you use
+a version of the J2SDK other than 1.4.1 or 1.4.2, then you'll also
+need to have the J2SDK 1.4.2 (or 1.4.1) <kbd>tools.jar</kbd> available
+(found in the <kbd>lib</kbd> directory in J2SDK 1.4.2 and 1.4.1) to run the
+documentation generation tool, <kbd>jmldoc</kbd>.  The easiest way to
+do this is to also install the J2SDK 1.4.2 (or 1.4.1) from
+<a href="http://java.sun.com">java.sun.com</a>.  Then follow the
+directions <a href="#toolsjar">above</a> regarding the
+<kbd>tools.jar</kbd> file.
+</p>
+
+<h3>Problems with jmldoc</h3>
+
+<p>
+If the jmldoc tool doesn't work from the launcher, be sure you are
+using J2SDK 1.4.2 (or 1.4.1) to run the launcher;
+currently this doesn't work with other versions of Java.
+If that's not the problem, see
+the directions <a href="#toolsjar">above</a> regarding the
+<kbd>tools.jar</kbd> file, in particular the
+<a href="#toolsjre">paragraph about making sure that you have copied
+the tools.jar file into the JRE install</a>.
+</p>
+
+<h3>Using both JDK 1.5 and 1.4.x?</h3>
+
+<p>
+The tools don't work currently with Java 1.5 (also known as Java 5) or
+later versions of Java.  If you have both Java 1.5 and 1.4.2 (or
+1.4.1) installed, and if you are experiencing difficulties, please
+uninstall Java 1.5 first, and then try to fix your installation
+problems.  Afterwards, you can reinstall Java 1.5, as long as you make
+sure that the JML tools are run using Java 1.4.2 (or 1.4.1).  However,
+it is easier to debug problems with your install if you are not
+simultaneously having problems getting the right version of Java to
+run the tools.  Be sure to test the JML tools you use after you
+reinstall JDK 1.5, if you do that.
+</p>
+
+<p>
+If you get an error message like the following from the tools,
+</p>
+
+<pre>
+Cannot throw "java.lang.IllegalArgumentException" it does not inherit from "java.lang.Throwable" [JLS 11.2]
+</pre>
+
+<p>
+then this may mean that you are running the tools with Java 1.5 instead of
+1.4.2 (or 1.4.1) as required.  See the paragraph above for how to
+troubleshoot this problem.
+</p>
+
+<h3>General Problems with Scripts</h3>
+
+<p>
+If you're using command line scripts,
+be sure that these scripts are installed in a directory on your
+<kbd>PATH</kbd> and are executable.
+</p>
+
+<h3>Problems with Scripts and Windows Command Line</h3>
+
+<p>
+For a Windows command line, make sure that you have 
+edited the <kbd>jmlenv.bat</kbd> file copy that you placed in a
+directory on your <kbd>PATH</kbd>.
+</p>
+
+<p>
+If you are using the Windows command line and edited the scripts, but
+still get a message like "The system cannot find the path specified"
+when you run them, it may be that the <kbd>jmlenv.bat</kbd> file still
+refers to directories that are not present at runtime.  This may
+happen in a networked installation.  To fix this, make sure that the
+<kbd>jmlenv.bat</kbd> file refers only to directories that will exist
+on the user's machine when it is run.
+</p>
+
+<p>
+The following shouldn't happen anymore, but just in case...
+If you're working under Windows, be sure that the "\r\n" (^M^J)
+sequence is used to end each line of the jml.bat file.
+If you read it in under wordpad, make it look right and save it
+then it should be ok.  If need be, remove the <kbd>@echo off</kbd>
+at the start of jml.bat and see what's going on.
+Conversely, on Unix, if you are having problems running the scripts it
+might be that the line endings are Unix style (use <kbd>dos2unix</kbd>
+if you have that to fix it).
+</p>
+
+<h3>NoClassDefFoundError, CLASSPATH Problems</h3>
+
+<p>
+Many errors are the result of misconfiguration of the tools,
+especially with respect to the CLASSPATH.
+The symptom that your <kbd>CLASSPATH</kbd> is incorrect is
+that you will get a <kbd>java.lang.NoClassDefFoundError</kbd>
+when you try to run the checker.
+If you can launch all the tools except for <kbd>jmldoc</kbd>, then you
+have a problem with the <kbd>tools.jar</kbd> file; see the
+<a href="#toolsjar">instructions above</a> to fix it.
+</p>
+
+<p>
+Another <kbd>CLASSPATH</kbd> problem occurs if you have multiple copies of the
+<kbd>java.lang</kbd> classes, such as <kbd>String</kbd> on your
+<kbd>CLASSPATH</kbd>.  The symptom of this problem is that JML tools
+complain about overriding methods such as <kbd>toString</kbd> with a
+different return type, when you are not changing the return type at
+all.  The problem here is that the different copies of the
+<kbd>java.lang</kbd> classes on your <kbd>CLASSPATH</kbd> cause the
+JML tools to think that these are different types.
+</p>
+
+<h3>Problems with Ant</h3>
+
+<p>We haven't used JML with Jakarta's Ant build tool much.  But
+Joe Kiniry reports that, since error messages are given with relative
+file names by the JML tools, it works best to run the JML tools from
+the top of one's directory structure.</p>
+
+<h3>Getting Help for Other Problems</h3>
+
+<p>If you have other troubles in the installation, please let us know
+by filing a support request through the
+<a href="http://sourceforge.net/tracker/?func=add&amp;group_id=65346&amp;atid=510630">
+SourceForge tracking system</a>
+so we can try to help you.
+</p>
+
+<pre>@(#) $Id: README.html,v 1.38 2006/01/18 22:33:24 leavens Exp $
+</pre>
+</body>
+</html>

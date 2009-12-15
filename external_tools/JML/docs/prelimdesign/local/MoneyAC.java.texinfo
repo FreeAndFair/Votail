@@ -1,0 +1,38 @@
+package org.jmlspecs.samples.prelimdesign;
+
+public /*@@ pure @@*/ abstract class MoneyAC implements Money
+@{
+  protected long numCents;
+  //@@                in pennies;
+
+  //@@ protected represents pennies <- numCents;
+
+  /*@@ protected constraint_redundantly
+    @@            numCents == \old(numCents); @@*/
+
+  public long dollars() @{
+    return numCents / 100;
+  @}
+
+  public long cents() @{
+    return numCents % 100;
+  @}
+
+  public boolean equals(/*@@ nullable @@*/ Object o2) @{
+    if (o2 instanceof Money) @{
+      Money m2 = (Money)o2;
+      return numCents
+             == (100 * m2.dollars() + m2.cents());
+    @} else @{
+      return false;
+    @}
+  @}
+
+  public int hashCode() @{
+    return (int)numCents;
+  @}
+
+  public Object clone() @{
+    return this;
+  @}
+@}

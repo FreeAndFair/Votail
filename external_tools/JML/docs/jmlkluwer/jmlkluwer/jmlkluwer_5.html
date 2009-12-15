@@ -1,0 +1,170 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML: A Notation for Detailed Design: Related Work</TITLE>
+
+<META NAME="description" CONTENT="JML: A Notation for Detailed Design: Related Work">
+<META NAME="keywords" CONTENT="JML: A Notation for Detailed Design: Related Work">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC7"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_4.html#SEC6"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_6.html#SEC8"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 5. Related Work </H1>
+<!--docid::SEC7::-->
+<P>
+
+Our general design strategy
+for making JML practical and effective
+has been to blend the Eiffel <A HREF="jmlkluwer_7.html#BIB23">[Meyer92a]</A> <A HREF="jmlkluwer_7.html#BIB24">[Meyer92b]</A> <A HREF="jmlkluwer_7.html#BIB26">[Meyer97]</A>
+and Larch <A HREF="jmlkluwer_7.html#BIB6">[Guttag-Horning93]</A> <A HREF="jmlkluwer_7.html#BIB17">[LeavensLarchFAQ]</A> <A HREF="jmlkluwer_7.html#BIB35">[Wing87]</A> <A HREF="jmlkluwer_7.html#BIB36">[Wing90a]</A>
+approaches to specification. From Eiffel
+we have used the idea that assertions are written using
+Java's expression syntax as much as possible,
+thereby avoiding large amounts of special-purpose logical notations.
+JML also adapts the <CODE>\old</CODE> notation from Eiffel,
+instead of the Larch style annotation of names with state functions.
+Currently JML does not come with tools to execute preconditions
+to help debug programs, as in Eiffel.
+We plan to eventually extend JML's tools
+to support the testing of postconditions at run-time as well.
+</P><P>
+
+However, Eiffel specifications, as written by Meyer,
+are typically not as complete as model-based specifications
+written, for example, in Larch BISLs or VDM <A HREF="jmlkluwer_7.html#BIB10">[Jones90]</A>.
+For example, Meyer partially specifies a <CODE>remove</CODE> (i.e., pop) method
+for stacks as requiring that the stack not be empty,
+and ensuring that the stack value in the post-state
+has one fewer items than in the pre-state (see p. 339 of <A HREF="jmlkluwer_7.html#BIB26">[Meyer97]</A>).
+However, the only characterization of which item is removed
+is given informally as a comment.
+Nothing is said formally that ensures that the other elements of the stack
+are unchanged.
+To allow more complete specifications,
+we need ideas from model-based specification languages.
+</P><P>
+
+JML's semantic differences from Eiffel
+(and its cousins Sather and Sather-K)
+allow one to more easily write more complete specifications,
+following the ideas of model-based specification languages.
+The most important of these is
+JML's use of specification-only declarations.
+These <CODE>model</CODE> declarations
+allow more abstract and exact specifications of behavior
+than is typically done in Eiffel.
+For example, because one has a model of the abstract values of stack
+objects, one can precisely state both which element is removed
+by <CODE>pop</CODE> and that the other elements
+on the stack are unchanged.
+The use of model fields in JML
+thus allows one to write specifications that are similar to the spirit of VDM
+or Larch BISLs.
+</P><P>
+
+A more minor difference from Eiffel is that in JML one can specify
+frame conditions, using the <CODE>assignable</CODE> clause.
+Our interpretation of the <CODE>assignable</CODE> clause is very strict,
+as even benevolent side effects are disallowed if the <CODE>assignable</CODE>
+clause is omitted <A HREF="jmlkluwer_7.html#BIB14">[Leino95]</A> <A HREF="jmlkluwer_7.html#BIB13">[Leino95a]</A>.
+</P><P>
+
+Another difference from Eiffel is that we have extended
+the syntax of Java expressions with quantifiers and other constructs
+that are needed for logical expressiveness, but which are not always
+executable.
+Finally, we ban side-effects
+and other problematic features of code in assertions.
+</P><P>
+
+On the other hand,
+our experience with Larch/C++ <A HREF="jmlkluwer_7.html#BIB16">[Leavens96b]</A> <A HREF="jmlkluwer_7.html#BIB18">[Leavens99]</A>
+has taught us to adapt
+the model-based approach in two ways, with the aim of making it more
+practical and easy to learn.
+The first adaptation is again the use of specification-only
+model (or ghost) variables.
+An object will thus have (in general) several such model fields,
+which are used only for the purpose of describing, abstractly, the values
+of objects.
+This simplifies the use of JML, as compared with most Larch BISLs,
+since specifiers (and their readers)
+hardly ever need to know about algebraic style specification.
+It also makes designing a model for a Java class or interface similar,
+in some respects, to designing an implementation data structure in Java.
+We hope that this similarity
+will make the specification language easier to understand.
+</P><P>
+
+The second adaptation is hiding of the details of mathematical
+modeling behind a facade of Java classes.
+In the Larch approach to behavioral interface specification <A HREF="jmlkluwer_7.html#BIB35">[Wing87]</A>,
+the mathematical notation used in assertions is presented directly
+to the specifier.
+This allows the same mathematical notation to be used in many different
+specification languages.
+However, it also means that the user of such a specification language has to
+learn a notation for assertions that is different than their programming
+language's notation for expressions.
+(A preliminary study by Finney <A HREF="jmlkluwer_7.html#BIB5">[Finney96]</A> indicates that
+a large number of special-purpose,
+graphic mathematical notations,
+such as those found in Z <A HREF="jmlkluwer_7.html#BIB9">[Hayes93]</A> <A HREF="jmlkluwer_7.html#BIB29">[Spivey92]</A> may make such specifications
+hard to read, even for programmers trained in the notation.)
+In JML we use a compromise approach, hiding these details behind Java classes.
+These classes are pure, in the sense that they reflect the underlying
+mathematics, and hence do not use side-effects
+(at least not in any observable way).
+Besides insulating the user of JML from the details
+of the mathematical notation,
+this compromise approach also insulates the design of JML from the details
+of the mathematical logic used for JML's semantics and for theorem proving.
+We believe that the use of slightly extended Java notation for assertions
+is appropriate, given that JML is used in detailed design,
+and thus will mostly be read and written by persons familiar with Java.
+</P><P>
+
+<A NAME="Future Work and Conclusions"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_4.html#SEC6"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_6.html#SEC8"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

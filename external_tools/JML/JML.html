@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- @(#)$Id: JML.html,v 1.65 2008/04/18 18:34:46 leavens Exp $ -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>JML Documentation Index</title>
+</head>
+<body>
+
+<h1>JML Documentation Index</h1>
+
+<hr />
+
+<p>
+Please use the headings below to find the information you need.
+</p>
+
+<ol>
+  <li><a href="#JML">JML Documentation</a>
+  <ul>
+    <li><a href="#Local">Local documentation (on this computer)</a>
+      <ul>
+        <li><a href="#IntroDocs">Introductory and overview documents</a>
+        </li>
+
+        <li><a href="#ReferenceDocs">
+	     More detailed and reference material on the JML language</a>
+        </li>
+
+        <li><a href="#Samples">Samples</a>
+        </li>
+
+        <li><a href="#APIDocs">Package documentation</a>
+        </li>
+
+	<li><a href="#ToolDocs">Tool documentation</a>
+        </li>
+
+	<li><a href="#ImplInfo">Information for implementers of JML</a>
+	</li>
+      </ul>
+    </li>
+  
+    <li><a href="#NonLocal">Non-Local documentation</a>
+    </li>
+  
+    <li><a href="#Help">Getting help with JML</a>
+      <ul>
+        <li><a href="#QuestionsBugs">Questions and Bug Reports</a>
+	</li>
+
+	<li><a href="#CommentsDisc">General Comments and Discussions</a>
+	</li>
+      </ul>
+    </li>
+    </ul>
+  </li>
+
+  <li><a href="#Acks">Acknowledgments</a>
+  </li>
+</ol>
+
+<hr />
+
+<h2><a name="JML">1. JML Documentation</a></h2>
+<h3><a name="Local">Local documentation (on this computer)</a></h3>
+
+<p>The following documentation is part of the JML release
+and should be on this computer.</p>
+
+<p>The <a href="README.html">README.html</a> file for the release.</p>
+
+<h4><a name="IntroDocs">Introductory and overview documents</a></h4>
+
+<ul>
+  <li>
+  Gary T. Leavens and Yoonsik Cheon.
+  <a href="docs/jmltutorial/jmldbc.pdf">Design by Contract with JML</a>.
+  (Tutorial for JML in PDF format.)
+  </li>
+  
+  <li>
+  Gary T. Leavens, Albert L. Baker, and Clyde Ruby.
+  <a href="docs/jmlkluwer/jmlkluwer/jmlkluwer_toc.html">JML: a Notation for Detailed Design</a>.
+  In Haim Kilov, Bernhard Rumpe, and Ian Simmonds (editors),
+  <cite>Behavioral Specifications for Businesses and Systems</cite>, chapter 12,
+  pages 175-188.
+  Copyright (c)
+  <a href="http://www.wkap.nl/">Kluwer Academic Publishers</a>, 1999,
+  used by permission.
+  </li>
+</ul>
+
+<p>
+See also the <a href="#Samples">samples</a>
+and <a href="#APIDocs">package documentation</a> below.</p>
+
+<h4><a name="ReferenceDocs">More detailed and reference material on the JML language</a></h4>
+
+<ul>
+  <li>
+  Gary T. Leavens, Albert L. Baker, and Clyde Ruby.
+  <a href="docs/prelimdesign/prelimdesign/prelimdesign_toc.html">
+  Preliminary Design of JML: A Behavioral Interface Specification Language for Java.</a>
+  <a href="http://www.sigsoft.org/SEN/">
+  <cite>ACM SIGSOFT Software Engineering Notes</cite></a>, 31(3):1-38,
+  March 2006.
+  <a href="http://doi.acm.org/10.1145/1127878.1127884">
+  http://doi.acm.org/10.1145/1127878.1127884</a>.
+  <a href="http://portal.acm.org/ft_gateway.cfm?id=1127884&amp;type=pdf">[PDF]</a>
+  <br />
+  Also Iowa State University, Department of Computer Science,
+  <a href="ftp://ftp.cs.iastate.edu/pub/techreports/TR98-06/TR.pdf">
+  TR #98-06-rev29</a>, revised January 2006.
+  </li>
+  
+  <li>
+  Gary T. Leavens, Erik Poll, Curtis Clifton, Yoonsik Cheon, Clyde Ruby,
+  David Cok, Peter M&uuml;ller, Joseph Kiniry, and Patrice Chalin.
+  <a href="docs/jmlrefman/jmlrefman/jmlrefman_toc.html">
+  JML Reference Manual</a> (DRAFT),
+  November 2007. This document
+  contains the
+  <a href="docs/jmlrefman/jmlrefman/jmlrefman_21.html">collected grammar 
+  for JML</a>.
+  </li>
+</ul>
+
+<h4><a name="Samples">Samples</a></h4>
+
+<p>
+The <a href="org/jmlspecs/samples/">samples directory</a> contains
+many different samples of JML specifications, including samples used
+in the other documents.
+</p>
+
+<p>
+The <a href="org/jmlspecs/samples/">samples directory</a> contains
+many different samples of JML specifications, including samples used
+in the other documents. 
+(See also the <a href="#APIDocs">package documentation</a> for more
+examples of JML specifications.)
+The following describes the individual
+samples in the release.
+</p>
+
+<ul>
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/dbc/package-summary.html">
+  <kbd>org.jmlspecs.samples.dbc</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/dbc/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/digraph/package-summary.html">
+  <kbd>org.jmlspecs.samples.digraph</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/digraph/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/dirobserver/package-summary.html">
+  <kbd>org.jmlspecs.samples.dirobserver</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/dirobserver/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/jmlkluwer/package-summary.html">
+  <kbd>org.jmlspecs.samples.jmlkluwer</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/jmlkluwer/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/jmlrefman/package-summary.html">
+  <kbd>org.jmlspecs.samples.jmlrefman</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/jmlrefman/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/jmltutorial/package-summary.html">
+  <kbd>org.jmlspecs.samples.jmltutorial</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/jmltutorial/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/list/package-summary.html">
+  <kbd>org.jmlspecs.samples.list</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/list/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/list/iterator/package-summary.html">
+  <kbd>org.jmlspecs.samples.list.iterator</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/list/iterator/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/list/list1/package-summary.html">
+  <kbd>org.jmlspecs.samples.list.list1</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/list/list1/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/list/list2/package-summary.html">
+  <kbd>org.jmlspecs.samples.list.list2</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/list/list2/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/list/list3/package-summary.html">
+  <kbd>org.jmlspecs.samples.list.list3</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/list/list3/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/list/node/package-summary.html">
+  <kbd>org.jmlspecs.samples.list.node</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/list/node/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/list/node2/package-summary.html">
+  <kbd>org.jmlspecs.samples.list.node2</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/list/node2/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/misc/package-summary.html">
+  <kbd>org.jmlspecs.samples.misc</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/misc/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/prelimdesign/package-summary.html">
+  <kbd>org.jmlspecs.samples.prelimdesign</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/prelimdesign/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/reader/package-summary.html">
+  <kbd>org.jmlspecs.samples.reader</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/reader/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/sets/package-summary.html">
+  <kbd>org.jmlspecs.samples.sets</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/sets/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/stacks/package-summary.html">
+  <kbd>org.jmlspecs.samples.stacks</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/stacks/">source directory</a>.
+  </li>
+
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/samples/table/package-summary.html">
+  <kbd>org.jmlspecs.samples.table</kbd> package</a>
+  and its <a href="org/jmlspecs/samples/table/">source directory</a>.
+  </li>
+</ul>
+
+<h4><a name="APIDocs">Package documentation</a></h4>
+
+<p>
+The release contains much
+<a href="javadocs/index.html">jmldoc-produced documentation</a>
+that can also be seen as examples of JML specifications.
+Aside from the <a href="#Samples">samples above</a>,
+this includes the following package documentation.
+</p>
+
+<h5>JML-specific packages</h5>
+
+<ul>
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/lang/package-summary.html">
+  <kbd>org.jmlspecs.lang</kbd> package</a>
+  and its <a href="org/jmlspecs/lang/">source directory</a>.
+  </li>
+  
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/models/package-summary.html">
+  <kbd>org.jmlspecs.models</kbd> package</a>
+  and its <a href="org/jmlspecs/models/">source directory</a>.
+  </li>
+  
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/models/resolve/package-summary.html">
+  <kbd>org.jmlspecs.models.resolve</kbd> package</a>
+  and its <a href="org/jmlspecs/models/resolve/">source directory</a>.
+  </li>
+  
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/jmlunit/strategies/package-summary.html">
+  <kbd>org.jmlspecs.jmlunit.strategies</kbd> package</a>
+  and its <a href="org/jmlspecs/jmlunit/strategies/">source directory</a>.
+  </li>
+  
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/jmlrac/runtime/package-summary.html">
+  <kbd>org.jmlspecs.jmlrac.runtime</kbd> package</a>
+  (whose source directory is not included in the release).
+  This package includes the method
+  <a href="javadocs/org/jmlspecs/jmlrac/runtime/JMLChecker.html#setLevel(int)">
+  <kbd>JMLChecker.setLevel(int)</kbd></a>,
+  which can be used to control the assertion checking level at runtime.
+  </li>
+  
+  <li>
+  The
+  <a href="javadocs/org/jmlspecs/jmlunit/package-summary.html">
+  <kbd>org.jmlspecs.jmlunit</kbd> package</a>
+  (whose source directory is not included in the release).
+  This includes the class
+  <a href="javadocs/org/jmlspecs/jmlunit/JMLTestRunner.html">
+  <kbd>JMLTestRunner</kbd></a>.
+  </li>
+</ul>
+
+<h5>Java-specific packages</h5>
+
+<ul>
+  <li>
+  The 
+  <a href="javadocs/java/awt/event/package-summary.html">
+  <kbd>java.awt.event</kbd> package</a>
+  and its <a href="specs/java/awt/event/">source directory</a>.
+  </li>
+
+  <li>
+  The 
+  <a href="javadocs/java/io/package-summary.html">
+  <kbd>java.io</kbd> package</a>
+  and its <a href="specs/java/io/">source directory</a>.
+  </li>
+  
+  <li>
+  The 
+  <a href="javadocs/java/lang/package-summary.html">
+  <kbd>java.lang</kbd> package</a>
+  and its <a href="specs/java/lang/">source directory</a>.
+  </li>
+  
+  <li>
+  The 
+  <a href="javadocs/java/lang/reflect/package-summary.html">
+  <kbd>java.lang.reflect</kbd> package</a>
+  and its <a href="specs/java/lang/reflect/">source directory</a>.
+  </li>
+  
+  <li>
+  The 
+  <a href="javadocs/java/math/package-summary.html">
+  <kbd>java.math</kbd> package</a>
+  and its <a href="specs/java/math/">source directory</a>.
+  </li>
+
+  <li>
+  The 
+  <a href="javadocs/java/net/package-summary.html">
+  <kbd>java.net</kbd> package</a>
+  and its <a href="specs/java/net/">source directory</a>.
+  </li>
+
+  <li>
+  The 
+  <a href="javadocs/java/security/package-summary.html">
+  <kbd>java.security</kbd> package</a>
+  and its <a href="specs/java/security/">source directory</a>.
+  </li>
+
+  <li>
+  The 
+  <a href="javadocs/java/sql/package-summary.html">
+  <kbd>java.sql</kbd> package</a>
+  and its <a href="specs/java/sql/">source directory</a>.
+  </li>
+  
+  <li>
+  The 
+  <a href="javadocs/java/util/package-summary.html">
+  <kbd>java.util</kbd> package</a>
+  and its <a href="specs/java/util/">source directory</a>.
+  </li>
+  
+  <li>
+  The 
+  <a href="javadocs/java/util/regex/package-summary.html">
+  <kbd>java.util.regex</kbd> package</a>
+  and its <a href="specs/java/util/regex/">source directory</a>.
+  </li>
+</ul>
+
+<h4><a name="ToolDocs">Tool documentation</a></h4>
+
+<p>
+The release contains
+unix-style manual pages for each of its tools.
+These have some information on how to use each tool, and specify their
+options and arguments.
+</p>
+
+<ul>
+  <li>
+  <a href="docs/man/jml-launcher.html">jml-launcher</a> (the launcher
+  for the graphical user interface tools).
+  </li>
+  
+  <li>
+  <a href="docs/man/jml.html">jml and jml-gui</a> (the checker).
+  </li>
+  
+  <li>
+  <a href="docs/man/jmlc.html">jmlc and jmlc-gui</a> (compile for runtime assertion checking).
+  </li>
+
+  <li>
+  <a href="docs/man/jmldoc.html">jmldoc and jmldoc-gui</a>
+  (a version of javadoc that includes JML specification information).
+  </li>
+  
+  <li>
+  <a href="docs/man/jmle.html">jmle</a> 
+  (compile for executing or prototyping specifications).
+  </li>
+
+  <li>
+  <a href="docs/man/jmlrac.html">jmlrac</a> (a version of java, the VM, that
+  includes the bin/jmlruntime.jar file in the CLASSPATH, for
+  running files compiled with <a href="docs/man/jmlc.html">jmlc</a>).
+  </li>
+
+  <li>
+  <a href="docs/man/jmlre.html">jmlre</a> (a version of java, the VM,
+  that includes the runtime support needed for executing
+  specifications, for running files compiled with 
+  <a href="docs/man/jmle.html">jmle</a>).
+  </li>
+  
+  <li>
+  <a href="docs/man/jmlspec.html">jmlspec and jmlspec-gui</a>
+  (generate skeleton specification files from Java source files).
+  </li>
+  
+  <li>
+  <a href="docs/man/jmlunit.html">jmlunit and jmlunit-gui</a>
+  (produce unit testing code stubs for use with
+   <a href="http://www.junit.org">JUnit</a>). 
+  </li>
+  
+  <li>
+  <a href="docs/man/jtest.html">jtest</a>
+  (combines the work of <a href="docs/man/jmlc.html">jmlc</a> and 
+  <a href="docs/man/jmlunit.html">jmlunit</a>)
+  </li>
+  
+  <li>
+  <a href="docs/man/jml-junit.html">jml-junit</a> (a version of
+  JUnit's swing user interface that
+  includes the bin/jmlruntime.jar and bin/jmljunitruntime.jar files
+  in the CLASSPATH, for running JML
+  and <a href="http://www.junit.org">JUnit</a> based tests on files
+  compiled with <a href="docs/man/jmlc.html">jmlc</a> and test cases
+  generated by <a href="docs/man/jmlunit.html">jmlunit</a>).
+  </li>
+</ul>
+
+<h4><a name="ImplInfo">Information for implementers of JML</a></h4>
+
+<p>
+If you are developing JML from source code, you may find the following
+additional links helpful.  Most of this is not relevant for most users of JML.
+</p>
+
+<ul>
+  <li>
+  <a href="docs/developer-tips.html">
+  Tips for developers of the JML tools</a>.
+  </li>
+  
+  <li>
+  <a href="javadocs/index.html">
+  Documentation for JML's implementation</a>
+  (which is unavailable unless you use <kbd>make jmldocs</kbd>
+  to build it from sources).
+  </li>
+</ul>
+
+<h3><a name="NonLocal">Non-Local documentation</a></h3>
+
+<p>
+The following information is accessible via the internet.
+</p>
+
+<ul>
+  <li>
+  <a href="http://www.jmlspecs.org">
+  The JML web page</a>.
+  </li>
+
+  <li>
+  <a href="http://www.sourceforge.net/projects/jmlspecs">
+  SourceForge project page for JML</a>.
+  </li>
+</ul>
+
+<h3><a name="Help">Getting help with JML</a></h3>
+
+<h4><a name="QuestionsBugs">Questions and Bug Reports</a></h4>
+
+<p>
+If you have a question that isn't answered in the documentation,
+or a bug report, please
+use the 
+<a href="http://sourceforge.net/tracker/?group_id=65346">
+SourceForge tracking interface for the jmlspecs project</a>.
+This is the place to file bug reports, make a support request,
+submit patches, and submit feature requests for JML and its tools.
+Note that you have to <a href="http://sourceforge.net/account/register.php">
+obtain a (free) SourceForge login</a> to file one of
+these requests, but this is mostly to help us get back to you.
+</p>
+
+<p>
+Since our resources for giving help are limited, please consult the
+SourceForge trackers to see if we already know of the problem before
+filing a bug report, and please read the documentation before filing a
+support request.  However, don't be shy if things are not working or
+if you need help.  We really value getting this kind of feedback.
+</p>
+
+<h4><a name="CommentsDisc">General Comments and Discussions</a></h4>
+
+<p>
+General comments and discussions about JML can be directed to the
+jmlspecs-interest mailing list.
+To subscribe, go to the SourceForge web interface for the
+jmlspecs-interest mailing list. After you are subscribed, you can post
+messages by sending mail to
+<a href="mailto:jmlspecs-interest@lists.sourceforge.net">
+jmlspecs-interest@lists.sourceforge.net</a>.</p>
+
+<h2><a name="Acks">2. Acknowledgments</a></h2>
+
+<p>See the <a href="#Local">documents</a>
+or the <a href="http://www.jmlspecs.org/acknowledgements.shtml">
+JML web site</a> for various funding acknowledgements.</p>
+
+<p>
+The JML checker uses the <a href="http://www.antlr.org/">
+ANTLR parser-generator</a> from the <a href="http://www.magelang.com/an">
+Magelang Institute</a>.
+</p>
+
+<p>
+The development of JML is hosted on <a href="http://sourceforge.net">
+sourceforge.net</a>.
+</p>
+
+<p>
+See the
+<a href="docs/prelimdesign/prelimdesign/prelimdesign_toc.html">
+preliminary design document</a>
+for more acknowledgments to all the people who have contributed thought and effort into JML.
+</p>
+
+<hr />
+
+<p>
+Last update of this file $Date: 2008/04/18 18:34:46 $
+</p>
+<pre>
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+</pre>
+</body>
+</html>

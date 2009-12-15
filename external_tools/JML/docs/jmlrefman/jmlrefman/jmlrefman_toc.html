@@ -1,0 +1,619 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Table of Contents</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Table of Contents">
+<META NAME="keywords" CONTENT="JML Reference Manual: Table of Contents">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC_Contents"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1>Table of Contents</H1>
+<UL>
+<A NAME="TOC1" HREF="jmlrefman_1.html#SEC1">1. Introduction</A>
+<BR>
+<UL>
+<A NAME="TOC2" HREF="jmlrefman_1.html#SEC2">1.1 Behavioral Interface Specifications</A>
+<BR>
+<A NAME="TOC3" HREF="jmlrefman_1.html#SEC3">1.2 A First Example</A>
+<BR>
+<A NAME="TOC4" HREF="jmlrefman_1.html#SEC4">1.3 What is JML Good For?</A>
+<BR>
+<A NAME="TOC5" HREF="jmlrefman_1.html#SEC5">1.4 Status and Plans for JML</A>
+<BR>
+<A NAME="TOC6" HREF="jmlrefman_1.html#SEC6">1.5 Historical Precedents</A>
+<BR>
+<A NAME="TOC7" HREF="jmlrefman_1.html#SEC7">1.6 Acknowledgments</A>
+<BR>
+</UL>
+<A NAME="TOC8" HREF="jmlrefman_2.html#SEC8">2. Fundamental Concepts</A>
+<BR>
+<UL>
+<A NAME="TOC9" HREF="jmlrefman_2.html#SEC9">2.1 Types can be Classes and Interfaces</A>
+<BR>
+<A NAME="TOC10" HREF="jmlrefman_2.html#SEC10">2.2 Model and Ghost</A>
+<BR>
+<A NAME="TOC11" HREF="jmlrefman_2.html#SEC11">2.3 Lightweight and Heavyweight Specifications</A>
+<BR>
+<A NAME="TOC12" HREF="jmlrefman_2.html#SEC12">2.4 Privacy Modifiers and Visibility</A>
+<BR>
+<A NAME="TOC13" HREF="jmlrefman_2.html#SEC13">2.5 Instance vs. Static</A>
+<BR>
+<A NAME="TOC14" HREF="jmlrefman_2.html#SEC14">2.6 Locations and Aliasing</A>
+<BR>
+<A NAME="TOC15" HREF="jmlrefman_2.html#SEC15">2.7 Expression Evaluation and Undefinedness</A>
+<BR>
+<A NAME="TOC16" HREF="jmlrefman_2.html#SEC16">2.8 Null is Not the Default</A>
+<BR>
+<A NAME="TOC17" HREF="jmlrefman_2.html#SEC17">2.9 Language Levels</A>
+<BR>
+<UL>
+<A NAME="TOC18" HREF="jmlrefman_2.html#SEC18">2.9.1 Level 0 Features</A>
+<BR>
+<A NAME="TOC19" HREF="jmlrefman_2.html#SEC19">2.9.2 Level 1 Features</A>
+<BR>
+<A NAME="TOC20" HREF="jmlrefman_2.html#SEC20">2.9.3 Level 2 Features</A>
+<BR>
+<A NAME="TOC21" HREF="jmlrefman_2.html#SEC21">2.9.4 Level 3 Features</A>
+<BR>
+<A NAME="TOC22" HREF="jmlrefman_2.html#SEC22">2.9.5 Level C Features</A>
+<BR>
+<A NAME="TOC23" HREF="jmlrefman_2.html#SEC23">2.9.6 Level X Features</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC24" HREF="jmlrefman_3.html#SEC24">3. Syntax Notation</A>
+<BR>
+<A NAME="TOC25" HREF="jmlrefman_4.html#SEC25">4. Lexical Conventions</A>
+<BR>
+<UL>
+<A NAME="TOC26" HREF="jmlrefman_4.html#SEC26">4.1 White Space</A>
+<BR>
+<A NAME="TOC27" HREF="jmlrefman_4.html#SEC27">4.2 Lexical Pragmas</A>
+<BR>
+<A NAME="TOC28" HREF="jmlrefman_4.html#SEC28">4.3 Comments</A>
+<BR>
+<A NAME="TOC29" HREF="jmlrefman_4.html#SEC29">4.4 Annotation Markers</A>
+<BR>
+<A NAME="TOC30" HREF="jmlrefman_4.html#SEC30">4.5 Documentation Comments</A>
+<BR>
+<A NAME="TOC31" HREF="jmlrefman_4.html#SEC31">4.6 Tokens</A>
+<BR>
+</UL>
+<A NAME="TOC32" HREF="jmlrefman_5.html#SEC32">5. Compilation Units</A>
+<BR>
+<UL>
+<A NAME="TOC33" HREF="jmlrefman_5.html#SEC33">5.1 Package Definitions</A>
+<BR>
+<A NAME="TOC34" HREF="jmlrefman_5.html#SEC34">5.2 Import Definitions</A>
+<BR>
+</UL>
+<A NAME="TOC35" HREF="jmlrefman_6.html#SEC35">6. Type Definitions</A>
+<BR>
+<UL>
+<A NAME="TOC36" HREF="jmlrefman_6.html#SEC36">6.1 Class and Interface Definitions</A>
+<BR>
+<UL>
+<A NAME="TOC37" HREF="jmlrefman_6.html#SEC37">6.1.1 Subtyping for Type Definitions</A>
+<BR>
+<A NAME="TOC38" HREF="jmlrefman_6.html#SEC38">6.1.2 Modifiers for Type Definitions</A>
+<BR>
+</UL>
+<A NAME="TOC39" HREF="jmlrefman_6.html#SEC39">6.2 Modifiers</A>
+<BR>
+<UL>
+<A NAME="TOC40" HREF="jmlrefman_6.html#SEC40">6.2.1 Suggested Modifier Ordering</A>
+<BR>
+<A NAME="TOC41" HREF="jmlrefman_6.html#SEC41">6.2.2 Spec Public</A>
+<BR>
+<A NAME="TOC42" HREF="jmlrefman_6.html#SEC42">6.2.3 Spec Protected</A>
+<BR>
+<A NAME="TOC43" HREF="jmlrefman_6.html#SEC43">6.2.4 Pure</A>
+<BR>
+<A NAME="TOC44" HREF="jmlrefman_6.html#SEC44">6.2.5 Model</A>
+<BR>
+<A NAME="TOC45" HREF="jmlrefman_6.html#SEC45">6.2.6 Ghost</A>
+<BR>
+<A NAME="TOC46" HREF="jmlrefman_6.html#SEC46">6.2.7 Instance</A>
+<BR>
+<A NAME="TOC47" HREF="jmlrefman_6.html#SEC47">6.2.8 Helper</A>
+<BR>
+<A NAME="TOC48" HREF="jmlrefman_6.html#SEC48">6.2.9 Monitored</A>
+<BR>
+<A NAME="TOC49" HREF="jmlrefman_6.html#SEC49">6.2.10 Uninitialized</A>
+<BR>
+<A NAME="TOC50" HREF="jmlrefman_6.html#SEC50">6.2.11 Math Modifiers</A>
+<BR>
+<A NAME="TOC51" HREF="jmlrefman_6.html#SEC51">6.2.12 Nullity Modifiers</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC52" HREF="jmlrefman_7.html#SEC52">7. Class and Interface Member Declarations</A>
+<BR>
+<UL>
+<A NAME="TOC53" HREF="jmlrefman_7.html#SEC53">7.1 Java Member Declarations</A>
+<BR>
+<UL>
+<A NAME="TOC54" HREF="jmlrefman_7.html#SEC54">7.1.1 Method and Constructor Declarations</A>
+<BR>
+<UL>
+<A NAME="TOC55" HREF="jmlrefman_7.html#SEC55">7.1.1.1 Formal Parameters</A>
+<BR>
+<A NAME="TOC56" HREF="jmlrefman_7.html#SEC56">7.1.1.2 Model Methods and Constructors</A>
+<BR>
+<A NAME="TOC57" HREF="jmlrefman_7.html#SEC57">7.1.1.3 Pure Methods and Constructors</A>
+<BR>
+<A NAME="TOC58" HREF="jmlrefman_7.html#SEC58">7.1.1.4 Helper Methods and Constructors</A>
+<BR>
+</UL>
+<A NAME="TOC59" HREF="jmlrefman_7.html#SEC59">7.1.2 Field and Variable Declarations</A>
+<BR>
+<UL>
+<A NAME="TOC60" HREF="jmlrefman_7.html#SEC60">7.1.2.1 JML Modifiers for Fields</A>
+<BR>
+<A NAME="TOC61" HREF="jmlrefman_7.html#SEC61">7.1.2.2 Type-Specs</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC62" HREF="jmlrefman_7.html#SEC62">7.2 Class Initializer Declarations</A>
+<BR>
+</UL>
+<A NAME="TOC63" HREF="jmlrefman_8.html#SEC63">8. Type Specifications</A>
+<BR>
+<UL>
+<A NAME="TOC64" HREF="jmlrefman_8.html#SEC64">8.1 Introductory ADT Specification Examples</A>
+<BR>
+<A NAME="TOC65" HREF="jmlrefman_8.html#SEC65">8.2 Invariants</A>
+<BR>
+<UL>
+<A NAME="TOC66" HREF="jmlrefman_8.html#SEC66">8.2.1 Static vs. instance invariants</A>
+<BR>
+<A NAME="TOC67" HREF="jmlrefman_8.html#SEC67">8.2.2 Invariants and Exceptions</A>
+<BR>
+<A NAME="TOC68" HREF="jmlrefman_8.html#SEC68">8.2.3 Access Modifiers for Invariants</A>
+<BR>
+<A NAME="TOC69" HREF="jmlrefman_8.html#SEC69">8.2.4 Invariants and Inheritance</A>
+<BR>
+</UL>
+<A NAME="TOC70" HREF="jmlrefman_8.html#SEC70">8.3 Constraints</A>
+<BR>
+<UL>
+<A NAME="TOC71" HREF="jmlrefman_8.html#SEC71">8.3.1 Static vs. instance constraints</A>
+<BR>
+<A NAME="TOC72" HREF="jmlrefman_8.html#SEC72">8.3.2 Access Modifiers for Constraints</A>
+<BR>
+<A NAME="TOC73" HREF="jmlrefman_8.html#SEC73">8.3.3 Constraints and Inheritance</A>
+<BR>
+</UL>
+<A NAME="TOC74" HREF="jmlrefman_8.html#SEC74">8.4 Represents Clauses</A>
+<BR>
+<A NAME="TOC75" HREF="jmlrefman_8.html#SEC75">8.5 Initially Clauses</A>
+<BR>
+<A NAME="TOC76" HREF="jmlrefman_8.html#SEC76">8.6 Axioms</A>
+<BR>
+<A NAME="TOC77" HREF="jmlrefman_8.html#SEC77">8.7 Readable If Clauses</A>
+<BR>
+<A NAME="TOC78" HREF="jmlrefman_8.html#SEC78">8.8 Writable If Clauses</A>
+<BR>
+<A NAME="TOC79" HREF="jmlrefman_8.html#SEC79">8.9 Monitors For Clause</A>
+<BR>
+</UL>
+<A NAME="TOC80" HREF="jmlrefman_9.html#SEC80">9. Method Specifications</A>
+<BR>
+<UL>
+<A NAME="TOC81" HREF="jmlrefman_9.html#SEC81">9.1 Basic Concepts in Method Specification</A>
+<BR>
+<A NAME="TOC82" HREF="jmlrefman_9.html#SEC82">9.2 Organization of Method Specifications</A>
+<BR>
+<A NAME="TOC83" HREF="jmlrefman_9.html#SEC83">9.3 Access Control in Specification Cases</A>
+<BR>
+<A NAME="TOC84" HREF="jmlrefman_9.html#SEC84">9.4 Lightweight Specification Cases</A>
+<BR>
+<A NAME="TOC87" HREF="jmlrefman_9.html#SEC87">9.5 Heavyweight Specification Cases</A>
+<BR>
+<A NAME="TOC88" HREF="jmlrefman_9.html#SEC88">9.6 Behavior Specification Cases</A>
+<BR>
+<UL>
+<A NAME="TOC92" HREF="jmlrefman_9.html#SEC92">9.6.1 Semantics of flat behavior specification cases</A>
+<BR>
+<A NAME="TOC93" HREF="jmlrefman_9.html#SEC93">9.6.2 Non-helper methods</A>
+<BR>
+<A NAME="TOC94" HREF="jmlrefman_9.html#SEC94">9.6.3 Non-helper constructors</A>
+<BR>
+<A NAME="TOC95" HREF="jmlrefman_9.html#SEC95">9.6.4 Helper methods and constructors</A>
+<BR>
+<A NAME="TOC96" HREF="jmlrefman_9.html#SEC96">9.6.5 Semantics of nested behavior specification cases</A>
+<BR>
+</UL>
+<A NAME="TOC97" HREF="jmlrefman_9.html#SEC97">9.7 Normal Behavior Specification Cases</A>
+<BR>
+<A NAME="TOC98" HREF="jmlrefman_9.html#SEC98">9.8 Exceptional Behavior Specification Cases</A>
+<BR>
+<UL>
+<A NAME="TOC99" HREF="jmlrefman_9.html#SEC99">9.8.1 Pragmatics of Exceptional Behavior Specifications Cases</A>
+<BR>
+</UL>
+<A NAME="TOC100" HREF="jmlrefman_9.html#SEC100">9.9 Method Specification Clauses</A>
+<BR>
+<UL>
+<A NAME="TOC101" HREF="jmlrefman_9.html#SEC101">9.9.1 Specification Variable Declarations</A>
+<BR>
+<UL>
+<A NAME="TOC102" HREF="jmlrefman_9.html#SEC102">9.9.1.1 Forall Variable Declarations</A>
+<BR>
+<A NAME="TOC103" HREF="jmlrefman_9.html#SEC103">9.9.1.2 Old Variable Declarations</A>
+<BR>
+</UL>
+<A NAME="TOC104" HREF="jmlrefman_9.html#SEC104">9.9.2 Requires Clauses</A>
+<BR>
+<A NAME="TOC105" HREF="jmlrefman_9.html#SEC105">9.9.3 Ensures Clauses</A>
+<BR>
+<A NAME="TOC106" HREF="jmlrefman_9.html#SEC106">9.9.4 Signals Clauses</A>
+<BR>
+<A NAME="TOC107" HREF="jmlrefman_9.html#SEC107">9.9.5 Signals-Only Clauses</A>
+<BR>
+<A NAME="TOC108" HREF="jmlrefman_9.html#SEC108">9.9.6 Parameters in Postconditions</A>
+<BR>
+<A NAME="TOC109" HREF="jmlrefman_9.html#SEC109">9.9.7 Diverges Clauses</A>
+<BR>
+<A NAME="TOC110" HREF="jmlrefman_9.html#SEC110">9.9.8 When Clauses</A>
+<BR>
+<A NAME="TOC111" HREF="jmlrefman_9.html#SEC111">9.9.9 Assignable Clauses</A>
+<BR>
+<A NAME="TOC112" HREF="jmlrefman_9.html#SEC112">9.9.10 Accessible Clauses</A>
+<BR>
+<A NAME="TOC113" HREF="jmlrefman_9.html#SEC113">9.9.11 Callable Clauses</A>
+<BR>
+<A NAME="TOC114" HREF="jmlrefman_9.html#SEC114">9.9.12 Measured By Clauses</A>
+<BR>
+<A NAME="TOC115" HREF="jmlrefman_9.html#SEC115">9.9.13 Captures Clauses</A>
+<BR>
+<A NAME="TOC116" HREF="jmlrefman_9.html#SEC116">9.9.14 Working Space Clauses</A>
+<BR>
+<A NAME="TOC117" HREF="jmlrefman_9.html#SEC117">9.9.15 Duration Clauses</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC118" HREF="jmlrefman_10.html#SEC118">10. Data Groups</A>
+<BR>
+<UL>
+<A NAME="TOC119" HREF="jmlrefman_10.html#SEC119">10.1 Static Data Group Inclusions</A>
+<BR>
+<A NAME="TOC120" HREF="jmlrefman_10.html#SEC120">10.2 Dynamic Data Group Mappings</A>
+<BR>
+</UL>
+<A NAME="TOC121" HREF="jmlrefman_11.html#SEC121">11. Predicates and Specification Expressions</A>
+<BR>
+<UL>
+<A NAME="TOC122" HREF="jmlrefman_11.html#SEC122">11.1 Predicates</A>
+<BR>
+<A NAME="TOC123" HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>
+<BR>
+<A NAME="TOC124" HREF="jmlrefman_11.html#SEC124">11.3 Expressions</A>
+<BR>
+<A NAME="TOC125" HREF="jmlrefman_11.html#SEC125">11.4 JML Primary Expressions</A>
+<BR>
+<UL>
+<A NAME="TOC126" HREF="jmlrefman_11.html#SEC126">11.4.1 <CODE>\result</CODE></A>
+<BR>
+<A NAME="TOC127" HREF="jmlrefman_11.html#SEC127">11.4.2 <CODE>\old</CODE> and <CODE>\pre</CODE></A>
+<BR>
+<A NAME="TOC128" HREF="jmlrefman_11.html#SEC128">11.4.3 <CODE>\not_assigned</CODE></A>
+<BR>
+<A NAME="TOC129" HREF="jmlrefman_11.html#SEC129">11.4.4 <CODE>\not_modified</CODE></A>
+<BR>
+<A NAME="TOC130" HREF="jmlrefman_11.html#SEC130">11.4.5 <CODE>\only_accessed</CODE></A>
+<BR>
+<A NAME="TOC131" HREF="jmlrefman_11.html#SEC131">11.4.6 <CODE>\only_assigned</CODE></A>
+<BR>
+<A NAME="TOC132" HREF="jmlrefman_11.html#SEC132">11.4.7 <CODE>\only_called</CODE></A>
+<BR>
+<A NAME="TOC133" HREF="jmlrefman_11.html#SEC133">11.4.8 <CODE>\only_captured</CODE></A>
+<BR>
+<A NAME="TOC134" HREF="jmlrefman_11.html#SEC134">11.4.9 <CODE>\fresh</CODE></A>
+<BR>
+<A NAME="TOC135" HREF="jmlrefman_11.html#SEC135">11.4.10 <CODE>\reach</CODE></A>
+<BR>
+<A NAME="TOC136" HREF="jmlrefman_11.html#SEC136">11.4.11 <CODE>\duration</CODE></A>
+<BR>
+<A NAME="TOC137" HREF="jmlrefman_11.html#SEC137">11.4.12 <CODE>\space</CODE></A>
+<BR>
+<A NAME="TOC138" HREF="jmlrefman_11.html#SEC138">11.4.13 <CODE>\working_space</CODE></A>
+<BR>
+<A NAME="TOC139" HREF="jmlrefman_11.html#SEC139">11.4.14 <CODE>\nonnullelements</CODE></A>
+<BR>
+<A NAME="TOC140" HREF="jmlrefman_11.html#SEC140">11.4.15 Informal Predicates</A>
+<BR>
+<A NAME="TOC141" HREF="jmlrefman_11.html#SEC141">11.4.16 <CODE>\typeof</CODE></A>
+<BR>
+<A NAME="TOC142" HREF="jmlrefman_11.html#SEC142">11.4.17 <CODE>\elemtype</CODE></A>
+<BR>
+<A NAME="TOC143" HREF="jmlrefman_11.html#SEC143">11.4.18 <CODE>\type</CODE></A>
+<BR>
+<A NAME="TOC144" HREF="jmlrefman_11.html#SEC144">11.4.19 <CODE>\lockset</CODE></A>
+<BR>
+<A NAME="TOC145" HREF="jmlrefman_11.html#SEC145">11.4.20 <CODE>\max</CODE></A>
+<BR>
+<A NAME="TOC146" HREF="jmlrefman_11.html#SEC146">11.4.21 <CODE>\is_initialized</CODE></A>
+<BR>
+<A NAME="TOC147" HREF="jmlrefman_11.html#SEC147">11.4.22 <CODE>\invariant_for</CODE></A>
+<BR>
+<A NAME="TOC148" HREF="jmlrefman_11.html#SEC148">11.4.23 <CODE>\lblneg</CODE> and <CODE>\lblpos</CODE></A>
+<BR>
+<A NAME="TOC149" HREF="jmlrefman_11.html#SEC149">11.4.24 Quantified Expressions</A>
+<BR>
+<UL>
+<A NAME="TOC150" HREF="jmlrefman_11.html#SEC150">11.4.24.1 Universal and Existential Quantifiers</A>
+<BR>
+<A NAME="TOC151" HREF="jmlrefman_11.html#SEC151">11.4.24.2 Generalized Quantifiers</A>
+<BR>
+<A NAME="TOC152" HREF="jmlrefman_11.html#SEC152">11.4.24.3 Numerical Quantifier</A>
+<BR>
+<A NAME="TOC153" HREF="jmlrefman_11.html#SEC153">11.4.24.4 Executability of Quantified Expressions</A>
+<BR>
+<A NAME="TOC154" HREF="jmlrefman_11.html#SEC154">11.4.24.5 Modifiers for Bound Variables</A>
+<BR>
+<A NAME="TOC155" HREF="jmlrefman_11.html#SEC155">11.4.24.6 Quantifying over Reference Types</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC156" HREF="jmlrefman_11.html#SEC156">11.5 Set Comprehensions</A>
+<BR>
+<A NAME="TOC157" HREF="jmlrefman_11.html#SEC157">11.6 JML Operators</A>
+<BR>
+<UL>
+<A NAME="TOC158" HREF="jmlrefman_11.html#SEC158">11.6.1 Subtype operator</A>
+<BR>
+<A NAME="TOC159" HREF="jmlrefman_11.html#SEC159">11.6.2 Equivalence and Inequivalence Operators</A>
+<BR>
+<A NAME="TOC160" HREF="jmlrefman_11.html#SEC160">11.6.3 Forward and Reverse Implication Operators</A>
+<BR>
+<A NAME="TOC161" HREF="jmlrefman_11.html#SEC161">11.6.4 Lockset Ordering</A>
+<BR>
+</UL>
+<A NAME="TOC162" HREF="jmlrefman_11.html#SEC162">11.7 Store Refs</A>
+<BR>
+</UL>
+<A NAME="TOC163" HREF="jmlrefman_12.html#SEC163">12. Statements and Annotation Statements</A>
+<BR>
+<UL>
+<A NAME="TOC164" HREF="jmlrefman_12.html#SEC164">12.1 Local Declaration Statements</A>
+<BR>
+<UL>
+<A NAME="TOC165" HREF="jmlrefman_12.html#SEC165">12.1.1 Modifiers for Local Declarations</A>
+<BR>
+</UL>
+<A NAME="TOC166" HREF="jmlrefman_12.html#SEC166">12.2 Loop Statements</A>
+<BR>
+<UL>
+<A NAME="TOC167" HREF="jmlrefman_12.html#SEC167">12.2.1 Loop Invariants</A>
+<BR>
+<A NAME="TOC168" HREF="jmlrefman_12.html#SEC168">12.2.2 Loop Variant Functions</A>
+<BR>
+</UL>
+<A NAME="TOC169" HREF="jmlrefman_12.html#SEC169">12.3 Assert Statements</A>
+<BR>
+<A NAME="TOC170" HREF="jmlrefman_12.html#SEC170">12.4 JML Annotation Statements</A>
+<BR>
+<UL>
+<A NAME="TOC171" HREF="jmlrefman_12.html#SEC171">12.4.1 Assume Statements</A>
+<BR>
+<A NAME="TOC172" HREF="jmlrefman_12.html#SEC172">12.4.2 Set Statements</A>
+<BR>
+<A NAME="TOC173" HREF="jmlrefman_12.html#SEC173">12.4.3 Refining Statements</A>
+<BR>
+<A NAME="TOC174" HREF="jmlrefman_12.html#SEC174">12.4.4 Unreachable Statements</A>
+<BR>
+<A NAME="TOC175" HREF="jmlrefman_12.html#SEC175">12.4.5 Debug Statements</A>
+<BR>
+<A NAME="TOC176" HREF="jmlrefman_12.html#SEC176">12.4.6 Hence By Statements</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC177" HREF="jmlrefman_13.html#SEC177">13. Redundancy</A>
+<BR>
+<UL>
+<A NAME="TOC178" HREF="jmlrefman_13.html#SEC178">13.1 Redundant Implications and Redundantly Clauses</A>
+<BR>
+<A NAME="TOC179" HREF="jmlrefman_13.html#SEC179">13.2 Redundant Examples</A>
+<BR>
+</UL>
+<A NAME="TOC180" HREF="jmlrefman_14.html#SEC180">14. Model Programs</A>
+<BR>
+<UL>
+<A NAME="TOC181" HREF="jmlrefman_14.html#SEC181">14.1 Ideas Behind Model Programs</A>
+<BR>
+<A NAME="TOC182" HREF="jmlrefman_14.html#SEC182">14.2 Extracting Model Program Specifications</A>
+<BR>
+<A NAME="TOC183" HREF="jmlrefman_14.html#SEC183">14.3 Details of Model Programs</A>
+<BR>
+<A NAME="TOC184" HREF="jmlrefman_14.html#SEC184">14.4 Nondeterministic Choice Statement</A>
+<BR>
+<A NAME="TOC185" HREF="jmlrefman_14.html#SEC185">14.5 Nondeterministic If Statement</A>
+<BR>
+<A NAME="TOC186" HREF="jmlrefman_14.html#SEC186">14.6 Specification Statements</A>
+<BR>
+<UL>
+<A NAME="TOC187" HREF="jmlrefman_14.html#SEC187">14.6.1 Continues Clause</A>
+<BR>
+<A NAME="TOC188" HREF="jmlrefman_14.html#SEC188">14.6.2 Breaks Clause</A>
+<BR>
+<A NAME="TOC189" HREF="jmlrefman_14.html#SEC189">14.6.3 Returns Clause</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC190" HREF="jmlrefman_15.html#SEC190">15. Specification for Subtypes</A>
+<BR>
+<UL>
+<A NAME="TOC191" HREF="jmlrefman_15.html#SEC191">15.1 Method of Specifying for Subclasses</A>
+<BR>
+<A NAME="TOC192" HREF="jmlrefman_15.html#SEC192">15.2 Code Contracts</A>
+<BR>
+</UL>
+<A NAME="TOC193" HREF="jmlrefman_16.html#SEC193">16. Refinement</A>
+<BR>
+<UL>
+<A NAME="TOC194" HREF="jmlrefman_16.html#SEC194">16.1 File Name Suffixes</A>
+<BR>
+<A NAME="TOC195" HREF="jmlrefman_16.html#SEC195">16.2 Using Separate Files</A>
+<BR>
+<A NAME="TOC196" HREF="jmlrefman_16.html#SEC196">16.3 Refinement Chains</A>
+<BR>
+<A NAME="TOC197" HREF="jmlrefman_16.html#SEC197">16.4 Type Checking Refinements</A>
+<BR>
+<A NAME="TOC198" HREF="jmlrefman_16.html#SEC198">16.5 Refinement Viewpoints</A>
+<BR>
+<UL>
+<A NAME="TOC199" HREF="jmlrefman_16.html#SEC199">16.5.1 Default Constructor Refinement</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC200" HREF="jmlrefman_17.html#SEC200">17. MultiJava Extensions to JML</A>
+<BR>
+<UL>
+<A NAME="TOC201" HREF="jmlrefman_17.html#SEC201">17.1 Augmenting Method Declarations</A>
+<BR>
+<A NAME="TOC202" HREF="jmlrefman_17.html#SEC202">17.2 MultiMethods</A>
+<BR>
+</UL>
+<A NAME="TOC203" HREF="jmlrefman_18.html#SEC203">18. Universe Type System</A>
+<BR>
+<UL>
+<A NAME="TOC204" HREF="jmlrefman_18.html#SEC204">18.1 Basic Concepts of Universes</A>
+<BR>
+<A NAME="TOC205" HREF="jmlrefman_18.html#SEC205">18.2 Rep and Peer</A>
+<BR>
+<A NAME="TOC206" HREF="jmlrefman_18.html#SEC206">18.3 Readonly</A>
+<BR>
+<A NAME="TOC207" HREF="jmlrefman_18.html#SEC207">18.4 Ownership Modifiers for Array Types</A>
+<BR>
+<A NAME="TOC208" HREF="jmlrefman_18.html#SEC208">18.5 Default Ownership Modifiers</A>
+<BR>
+<A NAME="TOC209" HREF="jmlrefman_18.html#SEC209">18.6 Ownership Type Rules</A>
+<BR>
+<UL>
+<A NAME="TOC210" HREF="jmlrefman_18.html#SEC210">18.6.1 Ownership Subtyping</A>
+<BR>
+<A NAME="TOC211" HREF="jmlrefman_18.html#SEC211">18.6.2 Ownership Typing for Expressions</A>
+<BR>
+</UL>
+<A NAME="TOC212" HREF="jmlrefman_18.html#SEC212">18.7 Casts and Ownership Types</A>
+<BR>
+</UL>
+<A NAME="TOC213" HREF="jmlrefman_19.html#SEC213">19. Safe Math Extensions</A>
+<BR>
+<UL>
+<A NAME="TOC214" HREF="jmlrefman_19.html#SEC214">19.1 \bigint</A>
+<BR>
+<A NAME="TOC215" HREF="jmlrefman_19.html#SEC215">19.2 \real</A>
+<BR>
+</UL>
+<A NAME="TOC216" HREF="jmlrefman_20.html#SEC216">20. Deprecated and Replaced Syntax</A>
+<BR>
+<UL>
+<A NAME="TOC217" HREF="jmlrefman_20.html#SEC217">20.1 Deprecated Syntax</A>
+<BR>
+<A NAME="TOC218" HREF="jmlrefman_20.html#SEC218">20.2 Replaced Syntax</A>
+<BR>
+</UL>
+<A NAME="TOC219" HREF="jmlrefman_21.html#SEC219">A. Grammar Summary</A>
+<BR>
+<UL>
+<A NAME="TOC220" HREF="jmlrefman_21.html#SEC220">A.1 Lexical Conventions</A>
+<BR>
+<A NAME="TOC221" HREF="jmlrefman_21.html#SEC221">A.2 Compilation Units</A>
+<BR>
+<A NAME="TOC222" HREF="jmlrefman_21.html#SEC222">A.3 Type Definitions</A>
+<BR>
+<A NAME="TOC223" HREF="jmlrefman_21.html#SEC223">A.4 Class and Interface Member Declarations</A>
+<BR>
+<A NAME="TOC224" HREF="jmlrefman_21.html#SEC224">A.5 Type Specifications</A>
+<BR>
+<A NAME="TOC225" HREF="jmlrefman_21.html#SEC225">A.6 Method Specifications</A>
+<BR>
+<A NAME="TOC226" HREF="jmlrefman_21.html#SEC226">A.7 Data Groups</A>
+<BR>
+<A NAME="TOC227" HREF="jmlrefman_21.html#SEC227">A.8 Predicates and Specification Expressions</A>
+<BR>
+<A NAME="TOC228" HREF="jmlrefman_21.html#SEC228">A.9 Statements and Annotation Statements</A>
+<BR>
+<A NAME="TOC229" HREF="jmlrefman_21.html#SEC229">A.10 Redundancy</A>
+<BR>
+<A NAME="TOC230" HREF="jmlrefman_21.html#SEC230">A.11 Model Programs</A>
+<BR>
+<A NAME="TOC231" HREF="jmlrefman_21.html#SEC231">A.12 Specification for Subtypes</A>
+<BR>
+<A NAME="TOC232" HREF="jmlrefman_21.html#SEC232">A.13 Refinement</A>
+<BR>
+<A NAME="TOC233" HREF="jmlrefman_21.html#SEC233">A.14 MultiJava Extensions to JML</A>
+<BR>
+<A NAME="TOC234" HREF="jmlrefman_21.html#SEC234">A.15 Universe Type System</A>
+<BR>
+<A NAME="TOC235" HREF="jmlrefman_21.html#SEC235">A.16 Safe Math Extensions</A>
+<BR>
+<A NAME="TOC236" HREF="jmlrefman_21.html#SEC236">A.17 Deprecated and Replaced Syntax</A>
+<BR>
+</UL>
+<A NAME="TOC237" HREF="jmlrefman_22.html#SEC237">B. Modifier Summary</A>
+<BR>
+<A NAME="TOC238" HREF="jmlrefman_23.html#SEC238">C. Type Checking Summary</A>
+<BR>
+<A NAME="TOC239" HREF="jmlrefman_24.html#SEC239">D. Verification Logic Summary</A>
+<BR>
+<A NAME="TOC240" HREF="jmlrefman_25.html#SEC240">E. Differences</A>
+<BR>
+<UL>
+<A NAME="TOC241" HREF="jmlrefman_25.html#SEC241">E.1 Differences Between JML and Other Tools</A>
+<BR>
+<UL>
+<A NAME="TOC242" HREF="jmlrefman_25.html#SEC242">E.1.1 Differences Between JML and ESC/Java2</A>
+<BR>
+</UL>
+<A NAME="TOC243" HREF="jmlrefman_25.html#SEC243">E.2 Differences Between JML and Java</A>
+<BR>
+<UL>
+<A NAME="TOC244" HREF="jmlrefman_25.html#SEC244">E.2.1 Non-null by Default</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC245" HREF="jmlrefman_26.html#SEC245">F. What's Missing</A>
+<BR>
+<A NAME="TOC246" HREF="jmlrefman_27.html#SEC246">Bibliography</A>
+<BR>
+<A NAME="TOC247" HREF="jmlrefman_28.html#SEC247">Example Index</A>
+<BR>
+<A NAME="TOC248" HREF="jmlrefman_29.html#SEC248">Concept Index</A>
+<BR>
+</UL>
+<HR SIZE=1>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

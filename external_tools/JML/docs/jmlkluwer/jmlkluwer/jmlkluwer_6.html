@@ -1,0 +1,129 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML: A Notation for Detailed Design: Future Work and Conclusions</TITLE>
+
+<META NAME="description" CONTENT="JML: A Notation for Detailed Design: Future Work and Conclusions">
+<META NAME="keywords" CONTENT="JML: A Notation for Detailed Design: Future Work and Conclusions">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC8"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_5.html#SEC7"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_7.html#SEC10"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 6. Future Work and Conclusions </H1>
+<!--docid::SEC8::-->
+<P>
+
+One area of future work for JML is concurrency.
+Our current plan is to use <CODE>when</CODE> clauses
+that say when a method may proceed to execute, after it is called
+<A HREF="jmlkluwer_7.html#BIB12">[Lerner91]</A> <A HREF="jmlkluwer_7.html#BIB30">[Sivaprasad95]</A>.
+This permits the specification of when the caller is delayed to obtain
+a lock, for example.
+While syntax for this exists in the JML parser,
+our exploration of this topic is still in an early stage.
+We may also be able to expand history constraints to use temporal logic.
+</P><P>
+
+Another area for future work on JML
+is to synthesize the previous work of Wahls, Leavens and Baker
+on the use of constraint logic programming to directly execute
+a significant and practical subset of JML's assertions
+<A HREF="jmlkluwer_7.html#BIB38">[Wahls-Leavens-Baker98]</A>.
+This prior work supports the
+"construction" of post-state values to satisfy ensures clauses,
+including such clauses containing quantified assertions.
+Successful integration of these assertion execution techniques
+with JML would support automatic generation
+of Java class prototypes directly from their JML specifications.
+</P><P>
+
+In conclusion, JML combines the best features of Eiffel
+and the Larch approaches to specification.
+This combination, we believe, makes it more expressive than Eiffel,
+and more practical than Larch style BISLs as a tool for
+recording detailed designs.
+</P><P>
+
+More information about JML can be found on the web at the
+following URL.<BR>
+<TT>`<A HREF="http://www.jmlspecs.org/">http://www.jmlspecs.org/</A>'</TT>
+</P><P>
+
+<A NAME="SEC9"></A>
+<H2> Acknowledgments </H2>
+<!--docid::SEC9::-->
+<P>
+
+Thanks to Rustan Leino and Peter M&uuml;ller for many discussions about
+the semantics of such specifications and verification issues relating to Java.
+For comments on JML
+we thank Peter, Jianbing Chen, Anand Ganapathy, Sevtap Oltes,
+Gary Daugherty, Karl Hoech, Jim Potts, and Tammy Scherbring.
+Thanks to Anand Ganapathy for his work on the type checker used
+to check our specifications.
+</P><P>
+
+The work of Leavens and Ruby was supported in part by
+a grant from Rockwell International Corporation
+and by the US NSF under grant CCR-9503168.
+The work of Leavens, Baker, and Ruby is supported in part by
+NSF grants CCR-9803843, CCR-0097907 and CCR-0113181.
+</P><P>
+
+This paper is adapted from
+Haim Kilov, Bernhard Rumpe, and William Harvey (editors),
+<CITE>Behavioral Specifications for Businesses and Systems</CITE>,
+chapter 12, pages 175-188.
+Copyright (C) Kluwer Academic Publishers, 1999.
+Used by permission.
+</P><P>
+
+Thanks to Faraz Hussain for comments on recent versions of this paper
+that resulted in some clarifications with respect to recent features
+of JML.
+</P><P>
+
+<A NAME="Bibliography"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_5.html#SEC7"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_7.html#SEC10"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

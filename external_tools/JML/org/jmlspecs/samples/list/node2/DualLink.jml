@@ -1,0 +1,65 @@
+// @(#) $Id: DualLink.jml,v 1.4 2005/12/09 04:20:15 leavens Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.node2;
+
+//@ refine "DualLink.jml-refined";
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+public /*@ pure @*/ class DualLink extends Link { // Dual Directional Link
+
+    /*@ protected invariant (node == null || node instanceof TwoWayNode)
+      @                  && node == dualNode;
+      @*/
+
+    protected /*@ nullable @*/ TwoWayNode dualNode_;
+    //@                      in dualNode;
+
+    //@ protected represents dualNode <- dualNode_;
+    //@ protected represents prevEntries <- prevEntriesMap(this);
+
+  /*@ protected normal_behavior
+    @   requires link != null && link.getEntry() != null;
+    @   ensures \result.equals(
+    @          prevEntriesMap(link.getPrevious()).insertBack(link.getEntry()));
+    @ also
+    @   requires link == null;
+    @   ensures \result.equals(new JMLObjectSequence());
+
+      protected pure model JMLObjectSequence prevEntriesMap(
+                                              nullable DualLink link)
+      {
+          // System.out.println("in method prevEntriesMap");
+          JMLObjectSequence newList = null;
+          if (link == null) {
+              newList = new JMLObjectSequence();
+          } else {
+              newList = prevEntriesMap(link.getPrevious()).
+                                                insertBack(link.getEntry());
+          }
+          return newList;
+      }
+    @*/
+
+}
+

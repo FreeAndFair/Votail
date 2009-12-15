@@ -1,0 +1,53 @@
+// @(#)$Id: Proof.java-refined,v 1.1 2003/05/23 22:31:06 leavens Exp $
+
+// Copyright (C) 2000 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+package org.jmlspecs.samples.misc;
+
+/** A class that demonstrates Floyd-Hoare-style proofs using JML
+ * notation.  This was originally used as an exercise for a class at
+ * the University of Iowa.
+ * @author Gary T. Leavens */
+public class Proof {
+
+    protected /*@ spec_public @*/ int min = Integer.MAX_VALUE;
+
+    /** Exercise 1: implement and prove correct a method that
+     *  satisfies the following specification. */
+    /*@ public normal_behavior
+      @   requires a != null;
+      @   assignable min;
+      @   ensures (\forall int i; 0 <= i && i < a.length; min <= a[i])
+      @      && (\exists int i; 0 <= i && i < a.length; min == a[i]);
+      @*/
+    public void find_min (int a[]);
+
+    private /*@ spec_public @*/ int res = 0;
+
+    /** Exercise 2: implement and prove correct a method that
+     *  satisfies the following specification. */
+    /*@ public normal_behavior
+      @   requires a != null
+      @      && (\exists int i; 0 <= i && i < a.length; a[i] == x);
+      @   assignable res;  // not included but necessary!
+      @   ensures 0 <= res && res < a.length && a[res] == x;
+      @*/
+    public void find(int a[], int x);
+
+}

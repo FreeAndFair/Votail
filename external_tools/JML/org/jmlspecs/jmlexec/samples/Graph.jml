@@ -1,0 +1,64 @@
+/*
+ * @(#)$Id: Graph.jml,v 1.1 2008/03/05 00:13:51 wahlst Exp $
+ *
+ * Copyright (C) 2006 Iowa State University
+ *
+ * This file is part of JML
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package org.jmlspecs.jmlexec.samples;
+
+//@ model import org.jmlspecs.models.JMLObjectSet;
+//@ model import org.jmlspecs.models.JMLObjectToObjectRelation;
+
+public class Graph {
+ //@ public model JMLObjectSet vertices;
+ //@ public model JMLObjectToObjectRelation edges;
+ 
+ /*@ assignable vertices, edges;
+     ensures \fresh(vertices, edges) && vertices.isEmpty() && 
+             edges.isEmpty(); */
+ public Graph();
+ 
+ /*@ assignable vertices;
+     ensures vertices == \old(vertices).insert(v); */
+ public void addVertex(Object v);
+ 
+  /*@ requires vertices.has(v1) && vertices.has(v2);
+      assignable edges;
+      ensures edges == \old(edges).add(v1, v2).add(v2, v1); */
+  public void addEdge(Object v1, Object v2);
+
+  /*@ //requires (\exists JMLObjectSet cliq ; ; cliq.isSubset(vertices) &&
+      //            (\forall Object v1, v2; 
+      //                cliq.has(v1) && cliq.has(v2) && v1 != v2; 
+      //                edges.has(v1, v2))
+      //            && cliq.int_size() == size); 
+      assignable \nothing;
+      ensures (\exists JMLObjectSet cliq ; ; cliq.isSubset(vertices) &&
+                  (\forall Object v1, v2; 
+                      cliq.has(v1) && cliq.has(v2) && v1 != v2; 
+                      edges.has(v1, v2))
+                  && cliq.int_size() == size && \result == cliq.toArray()); */
+  public Object [] clique(int size);
+
+  /*@ also assignable \nothing;
+      ensures \result == "(" + vertices.toString() + ", " + edges.toString()
+                          + ")"; */ 
+  public /*@ pure */ String toString();
+
+}

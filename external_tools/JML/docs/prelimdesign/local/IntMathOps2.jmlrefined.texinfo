@@ -1,0 +1,15 @@
+
+//@@ model import org.jmlspecs.models.*;
+
+public /*+@@ spec_bigint_math @@+*/ class IntMathOps2 @{
+
+ /*@@ public normal_behavior
+   @@   requires y >= 0;
+   @@   assignable \nothing;
+   @@   ensures -y <= \result && \result <= y;
+   @@   ensures \result * \result <= y;
+   @@   ensures y < (Math.abs(\result) + 1)
+   @@               * (Math.abs(\result) + 1);
+   @@*/
+  public static int isqrt(int y);
+@}

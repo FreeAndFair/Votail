@@ -1,0 +1,181 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Preliminary Design of JML: Table of Contents</TITLE>
+
+<META NAME="description" CONTENT="Preliminary Design of JML: Table of Contents">
+<META NAME="keywords" CONTENT="Preliminary Design of JML: Table of Contents">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<H1>Preliminary Design of JML:</H1><br><H2>A Behavioral Interface Specification Language for Java</H2><br><ADDRESS>by Gary T. Leavens, Albert L. Baker, and Clyde Ruby<br><br>Department of Computer Science, Iowa State University,<br>226 Atanasoff Hall, Ames, Iowa, 50011-1041 USA</ADDRESS><P><P><HR><P><A NAME="SEC_Contents"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_7.html#SEC56">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1>Table of Contents</H1>
+<UL>
+<A NAME="TOC1" HREF="prelimdesign_1.html#SEC1">1. Introduction</A>
+<BR>
+<UL>
+<A NAME="TOC2" HREF="prelimdesign_1.html#SEC2">1.1 Behavioral Interface Specification</A>
+<BR>
+<A NAME="TOC3" HREF="prelimdesign_1.html#SEC3">1.2 Lightweight Specifications</A>
+<BR>
+<A NAME="TOC4" HREF="prelimdesign_1.html#SEC4">1.3 Goals</A>
+<BR>
+<A NAME="TOC5" HREF="prelimdesign_1.html#SEC5">1.4 Tool Support</A>
+<BR>
+<UL>
+<A NAME="TOC6" HREF="prelimdesign_1.html#SEC6">1.4.1 Type Checking Specifications</A>
+<BR>
+<A NAME="TOC7" HREF="prelimdesign_1.html#SEC7">1.4.2 Generating HTML Documentation</A>
+<BR>
+<A NAME="TOC8" HREF="prelimdesign_1.html#SEC8">1.4.3 Run Time Assertion Checking</A>
+<BR>
+<A NAME="TOC9" HREF="prelimdesign_1.html#SEC9">1.4.4 Unit Testing with JML</A>
+<BR>
+</UL>
+<A NAME="TOC10" HREF="prelimdesign_1.html#SEC10">1.5 Outline</A>
+<BR>
+</UL>
+<A NAME="TOC11" HREF="prelimdesign_2.html#SEC11">2. Class and Interface Specifications</A>
+<BR>
+<UL>
+<A NAME="TOC12" HREF="prelimdesign_2.html#SEC12">2.1 Abstract Models</A>
+<BR>
+<UL>
+<A NAME="TOC13" HREF="prelimdesign_2.html#SEC13">2.1.1 Model Fields</A>
+<BR>
+<A NAME="TOC14" HREF="prelimdesign_2.html#SEC14">2.1.2 Invariants</A>
+<BR>
+<A NAME="TOC15" HREF="prelimdesign_2.html#SEC15">2.1.3 Method Specifications</A>
+<BR>
+<UL>
+<A NAME="TOC16" HREF="prelimdesign_2.html#SEC16">2.1.3.1 The Assignable Clause</A>
+<BR>
+<A NAME="TOC17" HREF="prelimdesign_2.html#SEC17">2.1.3.2 Old Values</A>
+<BR>
+<A NAME="TOC18" HREF="prelimdesign_2.html#SEC18">2.1.3.3 Reference Semantics</A>
+<BR>
+<A NAME="TOC19" HREF="prelimdesign_2.html#SEC19">2.1.3.4 Correct Implementation</A>
+<BR>
+</UL>
+<A NAME="TOC20" HREF="prelimdesign_2.html#SEC20">2.1.4 Models and Lightweight Specifications</A>
+<BR>
+</UL>
+<A NAME="TOC21" HREF="prelimdesign_2.html#SEC21">2.2 Data Groups</A>
+<BR>
+<UL>
+<A NAME="TOC22" HREF="prelimdesign_2.html#SEC22">2.2.1 Specification of BoundedThing</A>
+<BR>
+<UL>
+<A NAME="TOC23" HREF="prelimdesign_2.html#SEC23">2.2.1.1 Model Fields in Interfaces</A>
+<BR>
+<A NAME="TOC24" HREF="prelimdesign_2.html#SEC24">2.2.1.2 Invariants and History Constraint</A>
+<BR>
+<A NAME="TOC25" HREF="prelimdesign_2.html#SEC25">2.2.1.3 Details of the Method Specifications</A>
+<BR>
+<A NAME="TOC26" HREF="prelimdesign_2.html#SEC26">2.2.1.4 Adding to Method Specifications</A>
+<BR>
+<A NAME="TOC27" HREF="prelimdesign_2.html#SEC27">2.2.1.5 Specifying Exceptional Behavior</A>
+<BR>
+</UL>
+<A NAME="TOC28" HREF="prelimdesign_2.html#SEC28">2.2.2 Specification of BoundedStackInterface</A>
+<BR>
+<UL>
+<A NAME="TOC29" HREF="prelimdesign_2.html#SEC29">2.2.2.1 Data Groups and Represents Clauses</A>
+<BR>
+<A NAME="TOC30" HREF="prelimdesign_2.html#SEC30">2.2.2.2 Redundant Specification</A>
+<BR>
+<A NAME="TOC31" HREF="prelimdesign_2.html#SEC31">2.2.2.3 Multiple Specification Cases</A>
+<BR>
+<A NAME="TOC32" HREF="prelimdesign_2.html#SEC32">2.2.2.4 Pitfalls in Specifying Exceptions</A>
+<BR>
+<A NAME="TOC33" HREF="prelimdesign_2.html#SEC33">2.2.2.5 Redundant Ensures Clauses</A>
+<BR>
+</UL>
+</UL>
+<A NAME="TOC34" HREF="prelimdesign_2.html#SEC34">2.3 Types For Modeling</A>
+<BR>
+<UL>
+<A NAME="TOC35" HREF="prelimdesign_2.html#SEC35">2.3.1 Purity</A>
+<BR>
+<A NAME="TOC36" HREF="prelimdesign_2.html#SEC36">2.3.2 Money</A>
+<BR>
+<UL>
+<A NAME="TOC37" HREF="prelimdesign_2.html#SEC37">2.3.2.1 Redundant Examples</A>
+<BR>
+<A NAME="TOC38" HREF="prelimdesign_2.html#SEC38">2.3.2.2 JMLType and Informal Predicates</A>
+<BR>
+</UL>
+<A NAME="TOC39" HREF="prelimdesign_2.html#SEC39">2.3.3 MoneyComparable and MoneyOps</A>
+<BR>
+<A NAME="TOC40" HREF="prelimdesign_2.html#SEC40">2.3.4 MoneyAC</A>
+<BR>
+<A NAME="TOC41" HREF="prelimdesign_2.html#SEC41">2.3.5 MoneyComparableAC</A>
+<BR>
+<A NAME="TOC42" HREF="prelimdesign_2.html#SEC42">2.3.6 USMoney</A>
+<BR>
+</UL>
+<A NAME="TOC43" HREF="prelimdesign_2.html#SEC43">2.4 Use of Pure Classes</A>
+<BR>
+<A NAME="TOC44" HREF="prelimdesign_2.html#SEC44">2.5 Composition for Container Classes</A>
+<BR>
+<UL>
+<A NAME="TOC45" HREF="prelimdesign_2.html#SEC45">2.5.1 NodeType</A>
+<BR>
+<A NAME="TOC46" HREF="prelimdesign_2.html#SEC46">2.5.2 ArcType</A>
+<BR>
+<A NAME="TOC47" HREF="prelimdesign_2.html#SEC47">2.5.3 Digraph</A>
+<BR>
+</UL>
+<A NAME="TOC48" HREF="prelimdesign_2.html#SEC48">2.6 Behavioral Subtyping</A>
+<BR>
+</UL>
+<A NAME="TOC49" HREF="prelimdesign_3.html#SEC49">3. Extensions to Java Expressions</A>
+<BR>
+<UL>
+<A NAME="TOC50" HREF="prelimdesign_3.html#SEC50">3.1 Extensions to Java Expressions for Predicates</A>
+<BR>
+<A NAME="TOC51" HREF="prelimdesign_3.html#SEC51">3.2 Extensions to Java Expressions for Store-Refs</A>
+<BR>
+</UL>
+<A NAME="TOC52" HREF="prelimdesign_4.html#SEC52">4. Conclusions</A>
+<BR>
+<A NAME="TOC54" HREF="prelimdesign_5.html#SEC54">A. Specification Case Defaults</A>
+<BR>
+<A NAME="TOC55" HREF="prelimdesign_6.html#SEC55">Bibliography</A>
+<BR>
+<A NAME="TOC56" HREF="prelimdesign_7.html#SEC56">Example Index</A>
+<BR>
+<A NAME="TOC57" HREF="prelimdesign_8.html#SEC57">Concept Index</A>
+<BR>
+</UL>
+<HR SIZE=1>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

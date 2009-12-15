@@ -1,0 +1,214 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Differences</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Differences">
+<META NAME="keywords" CONTENT="JML Reference Manual: Differences">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC240"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_24.html#SEC239"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_27.html#SEC246"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> E. Differences </H1>
+<!--docid::SEC240::-->
+<P>
+
+The subsections below detail the differences between the JML Common Tools
+release of JML and other tools and between JML and Java itself.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_25.html#SEC241">E.1 Differences Between JML and Other Tools</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_25.html#SEC243">E.2 Differences Between JML and Java</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Differences Between JML and Other Tools"></A>
+<HR SIZE="6">
+<A NAME="SEC241"></A>
+<H2> E.1 Differences Between JML and Other Tools </H2>
+<!--docid::SEC241::-->
+<P>
+
+<A NAME="IDX3023"></A>
+<A NAME="IDX3024"></A>
+<A NAME="IDX3025"></A>
+<A NAME="IDX3026"></A>
+<A NAME="IDX3027"></A>
+<A NAME="IDX3028"></A>
+<A NAME="IDX3029"></A>
+<A NAME="IDX3030"></A>
+ESC/Java <A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A> and JML share a common syntax; this is
+even more true of ESC/Java2 and JML.  The initial efforts to merge
+syntaxes were due to the efforts of Raymie Stata.  After a long
+process, the syntax of ESC/Java and JML were both changed and JML was
+nearly a superset of ESC/Java when work on ESC/Java stopped with
+ESC/Java 1.2.4. Following the open-source release of ESC/Java, Kiniry
+and Cok began work on ESC/Java2, which is now very compatible with
+JML's syntax <A HREF="jmlrefman_27.html#BIB48">[Kiniry-Cok04]</A>.  Users can thus use both tools with
+little or no changes to their files.
+</P><P>
+
+<A NAME="IDX3031"></A>
+Similarly the Daikon tool <A HREF="jmlrefman_27.html#BIB30">[Ernst-etal01]</A> also uses a variant of JML's
+syntax, as do several other tools <A HREF="jmlrefman_27.html#BIB11">[Burdy-etal03]</A>.  While efforts are
+ongoing to avoid differences, some differences are unavoidable, as
+research is ongoing (and people have other things to do).
+</P><P>
+
+We discuss the differences between the JML language described in this
+manual and the variants used in these other tools below.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_25.html#SEC242">E.1.1 Differences Between JML and ESC/Java2</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Differences Between JML and ESC/Java2"></A>
+<HR SIZE="6">
+<A NAME="SEC242"></A>
+<H3> E.1.1 Differences Between JML and ESC/Java2 </H3>
+<!--docid::SEC242::-->
+<P>
+
+This section discusses the current state of affairs of ESC/Java2
+compatibility with JML's syntax.
+</P><P>
+
+The following differences remain between ESC/Java2 and JML.
+</P><P>
+
+<UL>
+
+<LI>ESC/Java2 is tolerant (with a suppressible warning) of missing semicolons
+at the ends of annotations, in many circumstances.
+<P>
+
+<LI>ESC/Java2 does not enforce the visibility modifiers.
+<P>
+
+<LI>ESC/Java2 strictly requires whole syntactic constructs within a single
+annotation comment; JML tools are more lenient.
+<P>
+
+<LI>JML and ESC/Java2 differ in the search order for refinement files in
+the classpath.
+<P>
+
+<LI>JML and ESC/Java2 differ in where <CODE>helper</CODE> annotations are permitted.
+<P>
+
+<LI>JML does not support model classes (at least in runtime assertion checking).
+<P>
+
+<LI>ESC/Java2 reads but ignores model programs.
+<P>
+
+</UL>
+<P>
+
+The following differences between ESC/Java2 and JML are designed to
+remain differences.  While the plan is for ESC/Java2 to parse all of
+JML's syntax, there are times when one needs to write annotations for
+one of these tool that are not understood by the other.
+Thus these differences are intended to allow users of both tools to write
+such annotations. 
+</P><P>
+
+<UL>
+<LI>
+JML supports annotation forms <CODE>//+@</CODE> and <CODE>/*+@</CODE>
+... <CODE>@+*/</CODE>, so that annotations that JML understands but
+ESC/Java doesn't can be written.
+<P>
+
+<LI>
+ESC/Java2 supports annotation forms <CODE>//-@</CODE> and <CODE>/*-@</CODE>
+... <CODE>@-*/</CODE>, so that annotations that ESC/Java2 understands but
+JML doesn't can be written.
+<P>
+
+</UL>
+<P>
+
+<A NAME="Differences Between JML and Java"></A>
+<HR SIZE="6">
+<A NAME="SEC243"></A>
+<H2> E.2 Differences Between JML and Java </H2>
+<!--docid::SEC243::-->
+<P>
+
+This section describes differences between JML and Java without JML.
+Currently the major differences are the way that JML treats
+<CODE>null</CODE>.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_25.html#SEC244">E.2.1 Non-null by Default</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Non-null by Default"></A>
+<HR SIZE="6">
+<A NAME="SEC244"></A>
+<H3> E.2.1 Non-null by Default </H3>
+<!--docid::SEC244::-->
+<P>
+
+<A NAME="IDX3032"></A>
+<A NAME="IDX3033"></A>
+<A NAME="IDX3034"></A>
+As described earlier (see section <A HREF="jmlrefman_2.html#SEC16">2.8 Null is Not the Default</A>),
+JML does not, by default, allow <CODE>null</CODE> to be a value in a field,
+formal parameter, method or a bound variable (see section <A HREF="jmlrefman_11.html#SEC154">11.4.24.5 Modifiers for Bound Variables</A>).  
+To allow <CODE>null</CODE> as
+a value, one has to use the <CODE>nullable</CODE> modifier on the
+declaration, or the <CODE>nullable_by_default</CODE> modifier on the type
+where the declaration occurs
+See section <A HREF="jmlrefman_6.html#SEC51">6.2.12 Nullity Modifiers</A>, for more details.
+</P><P>
+
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_25.html#SEC241"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_27.html#SEC246"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

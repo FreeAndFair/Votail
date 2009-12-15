@@ -1,0 +1,151 @@
+// @(#) $Id: SLList.jml,v 1.7 2007/07/01 02:38:45 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.list1;
+
+//@ refine "SLList.jml-refined";
+
+import org.jmlspecs.samples.list.list1.node.SLNode;
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+// FIXME: adapt this file to non-null-by-default and remove the following modifier.
+/*@ nullable_by_default @*/ 
+public class SLList {
+
+    protected /*@non_null*/ SLNode theListNode_;
+    /*@                 in theList; 
+      @                 maps theListNode_.entries \into theList;
+      @*/
+
+   /*@ protected invariant theListNode_ != null
+     @       && indexOf(theListNode_) == -1 // first node is a sentinel
+     @       && nodeAt(-1) == theListNode_;
+     @*/ 
+
+    //@ protected represents theList <- theListNode_.entries.trailer();
+    /*@ protected represents_redundantly theList \such_that 
+      @            (\forall int i; i<=0 && i<theList.int_length();
+      @                       theList.itemAt(i) == nodeAt(i).getEntry());
+      @*/
+
+    protected SLNode cursorNode_;
+    //@                  in cursor;
+
+    /*@ protected invariant \reach(theListNode_).has(cursorNode_) 
+      @                   || cursorNode_ == null;
+      @*/
+
+    //@ protected represents cursor <- indexOf(cursorNode_);
+
+    /*@ protected normal_behavior
+      @   requires !isOffFront();
+      @   assignable cursor;
+      @   ensures cursor == \pre(cursor) - 1;
+      @*/
+    protected void decreaseCursor();
+
+    /*@ protected normal_behavior
+      @   requires listNode != null;
+      @   assignable theList, cursor;
+      @   ensures cursor == 0
+      @     && theListNode_.entries.equals(listNode.entries); 
+      @*/
+    protected SLList(SLNode listNode);
+
+    /*@ protected normal_behavior
+      @   requires othLst != null;
+      @   assignable theList, cursor;
+      @   ensures cursor == 0 && theList.equals(othLst.theList); 
+      @*/
+    protected SLList(SLList othLst);
+
+    /*@ protected normal_behavior
+      @   requires hasNode(theListNode_, nd);
+      @   {|
+      @      requires nd.getNextNode() == null;
+      @      ensures \result == -1;           // first node is a sentinel
+      @    also
+      @      requires nd.getNextNode() != null;
+      @      ensures \result == indexOf(nd.getNextNode()) + 1;
+      @   |}
+      @ also
+      @   requires nd == null;
+      @   ensures \result == theList.int_length();
+      @
+      protected pure model int indexOf(SLNode nd) {
+          // System.out.println("in method indexOf("+nd+")");
+          SLNode currNode = theListNode_;
+     
+          int index = -1;
+          //@  maintaining currNode != null && currNode != nd;
+          //@  decreasing theList.int_length() - indexOf(currNode);
+          while (currNode != null && currNode != nd) {
+              index++;
+              currNode = currNode.getNextNode();
+          }
+          return index;
+      }
+      @*/
+
+    /*@ protected normal_behavior
+      @   requires -1 <= index && index <= theList.int_length();
+      @   ensures indexOf(\result) == index;
+      @
+      protected pure model SLNode nodeAt(int index) {
+          // System.out.println("in method nodeAt("+index+")");
+          SLNode currNode = theListNode_;
+     
+          int i = -1;
+          //@  maintaining currNode != null && i != index;
+          //@  decreasing index - i;
+          while (currNode != null && i != index) {
+              currNode = currNode.getNextNode();
+              i++;
+          }
+          return (i == index)? currNode : null;
+      }
+      @*/
+
+    /*@ protected normal_behavior
+      @   requires currNode != null;
+      @   {|
+      @      requires nd != null;
+      @      {|
+      @         requires nd == currNode;
+      @         ensures \result == true;
+      @       also
+      @         requires nd != currNode;
+      @         ensures \result == hasNode(currNode.getNextNode(), nd);
+      @      |}
+      @    also
+      @      requires nd == null;
+      @      ensures \result == false;
+      @   |}
+      @
+      protected pure model boolean hasNode(SLNode currNode, SLNode nd) {
+          return (currNode != null) 
+              && (currNode == nd || hasNode(currNode.getNextNode(), nd)); 
+      }
+      @*/
+}
+

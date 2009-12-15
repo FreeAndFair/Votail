@@ -1,0 +1,98 @@
+// @(#) $Id: TwoWayNode.jml-refined,v 1.12 2007/11/13 11:45:56 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.node;
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+public class TwoWayNode extends OneWayNode { // Doubly Linked Node
+
+    // data members
+
+    /*@ public model JMLObjectSequence prevEntries;
+      @                                in entries;
+      @*/
+    /*@ public model nullable TwoWayNode nextDL;
+      @                         in nextNode;
+      @*/
+
+    //@ public invariant (nextNode == null || nextNode instanceof TwoWayNode);
+    //@ public represents nextDL <- (TwoWayNode) nextNode;
+
+    /*@ public model nullable TwoWayNode prevNode;
+      @                         in prevEntries;
+      @*/
+
+    //@ public invariant_redundantly prevEntries != null;
+
+  /*@ public normal_behavior
+    @   assignable entries;
+    @   ensures theEntry == null && entries.itemAt(0) == null 
+    @       && entries.int_size() == 1 &&  prevEntries.isEmpty();
+    @*/
+    public TwoWayNode();
+
+  /*@ public normal_behavior
+    @   assignable entries;
+    @   ensures theEntry == ent &&  entries.itemAt(0) == ent 
+    @       && entries.int_size() == 1 &&  prevEntries.isEmpty();
+    @*/
+    public TwoWayNode(/*@ nullable @*/ Object ent);
+
+  /*@ also
+    @ public normal_behavior
+    @   assignable entries;
+    @   ensures \not_modified(prevEntries);
+    @*/
+    public void insertAfter(/*@ nullable @*/ Object newEntry);
+
+  /*@ also
+    @ public normal_behavior
+    @   assignable entries;
+    @   ensures \not_modified(prevEntries);
+    @*/
+    public void removeNextNode();
+
+  /*@ public normal_behavior
+    @   assignable \nothing;
+    @   ensures \result == prevNode;
+    @*/
+    public /*@ pure nullable @*/ TwoWayNode getPrevNode();
+
+  /*@ public normal_behavior
+    @    assignable prevEntries;
+    @    ensures prevEntries.equals(\old(prevEntries).insertBack(newEntry)) 
+    @        && (nextNode != null ==> \not_modified(nextNode.entries));
+    @*/
+    public void insertBefore(/*@ nullable @*/ Object newEntry);
+
+  /*@ also
+    @  public normal_behavior
+    @    assignable \nothing;
+    @    ensures \result instanceof TwoWayNode
+    @         && ((TwoWayNode)\result).entries.equals(entries)
+    @         && ((TwoWayNode)\result).prevEntries.equals(prevEntries);
+    @*/
+    public Object clone();
+
+}
+

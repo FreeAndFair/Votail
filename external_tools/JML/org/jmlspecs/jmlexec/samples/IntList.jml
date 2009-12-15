@@ -1,0 +1,62 @@
+/*
+ * @(#)$Id: IntList.jml,v 1.1 2008/03/05 00:13:51 wahlst Exp $
+ *
+ * Copyright (C) 2006 Iowa State University
+ *
+ * This file is part of JML
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package org.jmlspecs.jmlexec.samples;
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+public class IntList {
+ //@ public model JMLObjectSequence theList;
+ 
+ /*@ assignable theList;
+     ensures \fresh(theList) && theList.isEmpty(); */
+ public IntList();
+ 
+ /*@ assignable theList;
+     ensures ((Integer) theList.first()).intValue() == e && 
+              theList.trailer()  == \old(theList); */
+ public void addElem(int e);
+ 
+ /*@ assignable theList;
+     ensures ((Integer) theList.first()).intValue() == Integer.parseInt(e) && 
+              theList.trailer()  == \old(theList); */
+ public void addElem(String e);
+
+ /*@ requires 0 <= ind && ind < theList.int_size();
+     assignable \nothing;
+     ensures \result == ((Integer) theList.itemAt(ind)).intValue(); */
+ public int getElem(int ind);
+ 
+  /*@ assignable theList;
+      ensures theList.int_size() == \old(theList.int_size()) &&
+         (\forall Integer i; \old(theList.has(i)); theList.count(i) ==
+              \old(theList.count(i))) &&
+         (\forall int j; 0 <= j && j < \old(theList.int_size()) - 1;
+              ((Integer) theList.itemAt(j)).intValue() <=
+                  ((Integer) theList.itemAt(j + 1)).intValue()); */
+  public void sort();
+
+  /*@ also assignable \nothing;
+      ensures \result.equals(theList.toString()); */
+  public String toString();
+
+}

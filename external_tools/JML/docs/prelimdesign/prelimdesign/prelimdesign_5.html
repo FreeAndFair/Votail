@@ -1,0 +1,240 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Preliminary Design of JML: Specification Case Defaults</TITLE>
+
+<META NAME="description" CONTENT="Preliminary Design of JML: Specification Case Defaults">
+<META NAME="keywords" CONTENT="Preliminary Design of JML: Specification Case Defaults">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC54"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_4.html#SEC52"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_6.html#SEC55"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_7.html#SEC56">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> A. Specification Case Defaults </H1>
+<!--docid::SEC54::-->
+<P>
+
+<A NAME="IDX818"></A>
+<A NAME="IDX819"></A>
+<A NAME="IDX820"></A>
+<A NAME="IDX821"></A>
+<A NAME="IDX822"></A>
+As noted above (see section <A HREF="prelimdesign_1.html#SEC3">1.2 Lightweight Specifications</A>),
+specifications in JML do not need to be as detailed
+as most of the examples given in this document.
+If a <A HREF="#spec-case"><VAR>spec-case</VAR></A> 
+does not use one of the behavior keywords
+(<CODE>behavior</CODE>, <CODE>normal_behavior</CODE>, or <CODE>exceptional_behavior</CODE>),
+or if an <A HREF="#example"><VAR>example</VAR></A>
+does not use one of the example keywords
+(<CODE>example</CODE>, <CODE>normal_example</CODE>,
+<CODE>exceptional_example</CODE>),
+then it is called a <EM>lightweight</EM> specification or example.
+Otherwise it is a <EM>heavyweight</EM> specification or example.
+</P><P>
+
+<A NAME="IDX823"></A>
+<A NAME="IDX824"></A>
+<A NAME="IDX825"></A>
+<A NAME="IDX826"></A>
+<A NAME="IDX827"></A>
+<A NAME="IDX828"></A>
+<A NAME="IDX829"></A>
+<A NAME="IDX830"></A>
+<A NAME="IDX831"></A>
+<A NAME="IDX832"></A>
+When the various clauses of a <A HREF="#spec-case"><VAR>spec-case</VAR></A>
+or <A HREF="#example"><VAR>example</VAR></A> are omitted, they have
+the defaults given in the table below.  The table distinguishes between
+lightweight and heavyweight specifications and examples.  In most cases
+the default for the lightweight form is that
+no assumption is made about the omitted clause.  There are only two
+exceptions to this rule.  The first is that for an omitted
+<CODE>diverges</CODE> clause defaults to <CODE>false</CODE>.  The second is that
+an omitted <CODE>signals_only</CODE> has a default that depends on the
+exceptions declared in the method.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif">   <TT>                                Default</TT>
+   <TT>Omitted clause  lightweight                 heavyweight</TT> 
+   <TT>___________________________________________________________</TT>
+   <TT>requires        \not_specified              true</TT> 
+   <TT>diverges        false                       false</TT>
+   <TT>measured_by     \not_specified              \not_specified</TT>
+   <TT>assignable      \not_specified              \everything</TT> 
+   <TT>when            \not_specified              true</TT> 
+   <TT>working_space   \not_specified              \not_specified</TT>
+   <TT>duration        \not_specified              \not_specified</TT>
+   <TT>ensures         \not_specified              true</TT>
+   <TT>signals_only    <I>see text</I>                    <I>see text</I></TT>
+   <TT>signals         \not_specified              (Exception) true</TT> 
+</pre></td></tr></table></P><P>
+
+However, in a heavyweight
+specification or example, the specifier is assumed to be giving a complete
+specification or example.  Therefore, in a heavyweight specification the
+meaning of an omitted clause is given a definite default.
+For example, the meaning of an omitted <CODE>assignable</CODE> clause
+is that all locations (that can otherwise be legally assigned to)
+can be assigned.
+<A NAME="IDX833"></A>
+Furthermore, in a non-lightweight specification, the meaning of an
+omitted diverges clause is that the method may not diverge in that case.
+(The <CODE>diverges</CODE> clause is almost always omitted; it can be used
+to say what should be true, of the pre-state, when the specification
+is allowed to loop forever or signal an error.)
+</P><P>
+
+The defaults for omitted <CODE>signals_only</CODE> and <CODE>signals</CODE> clauses do
+not apply to <CODE>normal_behavior</CODE> specification cases, since
+<CODE>normal_behavior</CODE> specification cases cannot contain these clauses.
+</P><P>
+
+<A NAME="IDX834"></A>
+The default for the <CODE>signals_only</CODE> clause is the same in both
+heavyweight and lightweight specifications, but depends on the list of
+exceptions declared in the method.  If the method declares no
+exceptions, then the default clause is <CODE>signals_only \nothing;</CODE>
+(which means that the method cannot throw any exceptions).
+However, if the method header declares that the method may throw
+exceptions <I>DE1</I>, <small>...</small>, <I>DEn</I>, then the default
+<CODE>signals_only</CODE> clause is as follows.
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>   signals_only <I>DE1</I>, <small>...</small>, <I>DEn</I>
+</pre></td></tr></table>This default applies whenever the <CODE>signals_only</CODE> clause is
+omitted from a specification case, even if the method has a
+<CODE>signals</CODE> clause.  If this default is too strong, the effect can
+be changed by either writing an explicit <CODE>signals_only</CODE> clause,
+or by declaring further exceptions in the method's header.
+Note that although Java allows runtime exceptions (subtypes of
+<CODE>java.lang.RuntimeException</CODE>) to be thrown 
+without being declared in a method's header, JML does not take make a
+special case for these.
+</P><P>
+
+<A NAME="IDX835"></A>
+<A NAME="IDX836"></A>
+<A NAME="IDX837"></A>
+<A NAME="IDX838"></A>
+<A NAME="IDX839"></A>
+A completely omitted specification is taken to be a lightweight
+specification.
+If the default (zero-argument) constructor of a class is omitted
+because its code is omitted,  then its specification defaults to
+an assignable clause that allows all the locations that the
+default (zero-argument) constructor of its superclass assigns -- in
+essence a copy of the superclass's default constructor's assignable clause.
+If some other frame is desired, then one has to write the specification,
+or at least the code, explicitly.
+</P><P>
+
+<A NAME="IDX840"></A>
+<A NAME="IDX841"></A>
+<A NAME="IDX842"></A>
+<A NAME="IDX843"></A>
+A method or constructor with code present has a
+<EM>completely omitted</EM> specification if it has no
+<VAR>specification-case</VAR>s and does not use 
+annotations like <CODE>non_null</CODE> or <CODE>pure</CODE> that add implicit
+specifications.
+</P><P>
+
+If a method or constructor has code, has a completely omitted
+specification, and does not override another method, then 
+its meaning is taken as the lightweight specification
+<CODE>diverges \not_specified;</CODE>. 
+Thus, its meaning can be read
+from the lightweight column of table above, except that the diverges
+clause is not given its usual default.
+This is done so that the default
+specification when no specification is given truly says nothing about
+the method's behavior.
+However, if a method with code and a completely omitted
+specification overrides some other method, then its meaning is taken
+to be the lightweight specification <CODE>also requires false;</CODE>.  This somewhat
+counter-intuitive specification is the unit under specification
+conjunction with <CODE>also</CODE>; it is used so as not to
+change the meaning of the inherited specification.
+</P><P>
+
+If the code is annotated with keywords like <CODE>non_null</CODE> or
+<CODE>pure</CODE> that add implicit specifications, then these implicit
+specifications are used instead of the default.  Code with such
+annotations is considered to have an implicit specification.
+</P><P>
+
+<A NAME="IDX844"></A>
+It is intended that the meaning of <CODE>\not_specified</CODE> may vary
+between different uses of a JML specification.
+For example, a static checker might treat a <CODE>requires</CODE> clause 
+that is <CODE>\not_specified</CODE> as if it were <CODE>true</CODE>,
+while a verification logic might treat it as if it were <CODE>false</CODE>.
+However, a reasonable default for the interpretation for <CODE>\not_specified</CODE>
+in a lightweight specification is the most liberal possible
+(i.e., the one that permits the most correct implementations); this is
+generally the same as the heavyweight default, except for the
+<CODE>diverges</CODE> clause (where the most liberal interpretation would be
+<CODE>true</CODE>).
+</P><P>
+
+<A NAME="IDX845"></A>
+<A NAME="IDX846"></A>
+<A NAME="IDX847"></A>
+Note that specification statements
+(see the <CITE>JML Reference manual</CITE> <A HREF="prelimdesign_6.html#BIB40">[Leavens-etal-JMLRef]</A> for details)
+cannot be lightweight.  In addition, a <A HREF="#spec-statement"><VAR>spec-statement</VAR></A> can specify
+abrupt termination.  The additional clauses possible in a <A HREF="#spec-statement"><VAR>spec-statement</VAR></A>
+have the following defaults.  These are not liberally interpreted, but
+instead prohibit the statement from having abrupt behavior by default.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif">   <TT>               Default</TT>
+   <TT>Omitted clause (heavyweight)</TT> 
+   <TT>____________________________</TT>
+   <TT>continues      false</TT>
+   <TT>breaks         false</TT> 
+   <TT>returns        false</TT>
+</pre></td></tr></table></P><P>
+
+<A NAME="Bibliography"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_4.html#SEC52"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_6.html#SEC55"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_7.html#SEC56">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="prelimdesign_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

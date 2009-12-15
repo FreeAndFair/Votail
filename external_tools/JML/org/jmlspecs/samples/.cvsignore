@@ -1,0 +1,10 @@
+*.out
+*.dout
+*_JML_Test.java
+*.class
+TestSuite.java
+*.*-ckd
+*~
+classes.stamp
+buildtests.stamp
+.DS_Store

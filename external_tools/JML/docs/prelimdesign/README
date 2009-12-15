@@ -1,0 +1,16 @@
+	How to retrieve ISU CS Dept. TR98-06
+
+0. Use anononymous ftp to ftp.cs.iastate.edu [129.186.3.15].
+1. Change to the directory pub/techreports/TR98-06.
+	cd pub/techreports/TR98-06
+2. Set binary mode on.
+	binary
+3. To retreive the compressed postscript file for the report, execute:
+	get TR.ps.gz
+4. Uncompress (use gunzip TR.ps.gz).
+
+This report is
+		      Preliminary Design of JML:
+	A Behavioral Interface Specification Language for Java
+				  by
+	   Gary T. Leavens, Albert L. Baker, and Clyde Ruby

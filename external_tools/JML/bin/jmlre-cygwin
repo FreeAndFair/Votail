@@ -1,0 +1,47 @@
+#!/bin/sh
+# @(#)$Date 2003/05/04 11:58:27 $
+#
+# jmlre -- script for running java programs compiled with
+#           the JML executable specification compiler
+#
+# SYNOPSIS: set CLASSPATH and run java.
+
+# If needed, change the following configuration parameters for your system
+# by changing what is to the right of the equals sign (=) on the lines below
+: ${JPATHSEP=';'}                              # change to ':' for Unix
+: ${JFILESEP="\\"}                             # change to "/" for Unix
+: ${JMLDIR=`cygpath -wa "/usr/local/JML"`}     # local home of JML
+
+USAGE="Usage: jmlre [java-option] FQClassName"
+
+# arguments required
+if test $# -lt 1 ; 
+then 
+    echo "$USAGE" >&2
+    exit 2
+fi
+
+CLASSPATH="${CLASSPATH}${JPATHSEP}${JMLDIR}${JFILESEP}bin${JFILESEP}jml-release.jar"
+export CLASSPATH
+
+# You can use `java' or `jre -classpath "$CLASSPATH"' below
+# but these have to be in your PATH
+exec java "$@"
+
+# Copyright (C) 2002-2003 Iowa State University
+#
+# This file is part of JML
+#
+# JML is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# JML is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with JML; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.

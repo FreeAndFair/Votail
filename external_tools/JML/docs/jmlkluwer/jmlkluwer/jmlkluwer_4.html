@@ -1,0 +1,114 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML: A Notation for Detailed Design: Other Features of JML</TITLE>
+
+<META NAME="description" CONTENT="JML: A Notation for Detailed Design: Other Features of JML">
+<META NAME="keywords" CONTENT="JML: A Notation for Detailed Design: Other Features of JML">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC6"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_3.html#SEC5"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_5.html#SEC7"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 4. Other Features of JML </H1>
+<!--docid::SEC6::-->
+<P>
+
+Following Leino <A HREF="jmlkluwer_7.html#BIB15">[Leino98]</A>,
+JML uses data groups, with <CODE>in</CODE> and <CODE>maps \into</CODE> clauses
+to relate model fields to the concrete fields of objects.
+For example, in the following
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  private ArrayList theElems; //@ in size;
+</pre></td></tr></table></P><P>
+
+the <CODE>in</CODE> clause
+says that <CODE>theElems</CODE> is in the data group of the model field
+<CODE>size</CODE>.  This allows <CODE>theElems</CODE> to be assigned to 
+whenever <CODE>size</CODE> is assignable, and also says that the
+value of <CODE>size</CODE> can be partly determined by <CODE>theElems</CODE>.
+</P><P>
+
+One can also use a <CODE>represents</CODE> clause to say how the model field
+<CODE>size</CODE> and the concrete field <CODE>theElems</CODE> are related.
+For example, the following says that the value of <CODE>size</CODE> is
+determined by calling the <CODE>size()</CODE> method of <CODE>theElems</CODE>.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  private represents size &#60;- theElems.size();
+</pre></td></tr></table></P><P>
+
+The <CODE>represents</CODE> clause 
+gives additional facts that can be used
+in reasoning about the specification.
+This clause serves the same purpose as an abstraction function in various
+proof methods for abstract data types (such as <A HREF="jmlkluwer_7.html#BIB8">[Hoare72a]</A>).
+The <CODE>represents</CODE> clause above tells how to extract
+the value of <CODE>size</CODE> from the value of <CODE>theElems</CODE>.
+A represents clause has to be declared to be <CODE>private</CODE> if, as
+in this example, some variables mentioned in it are private
+(as is usually the case).
+</P><P>
+
+JML also has history constraints <A HREF="jmlkluwer_7.html#BIB22">[Liskov-Wing94]</A>.
+A history constraint is used to say how values can change between earlier
+and later states, such as a method's pre-state and its post-state.
+This prohibits subtypes from making certain state changes, even
+if they implement more methods than are specified in a given class.
+For example, the following history constraint
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  public constraint MAX_SIZE == \old(MAX_SIZE);
+</pre></td></tr></table>says that the value of <CODE>MAX_SIZE</CODE> cannot change.
+</P><P>
+
+JML has the ability to specify what methods a method may call,
+using a <CODE>callable</CODE> clause.
+This allows one to know which methods need to be looked at
+when overriding a method <A HREF="jmlkluwer_7.html#BIB11">[Kiczales-Lamping92]</A>,
+and to apply the ideas of "reuse contracts"
+<A HREF="jmlkluwer_7.html#BIB31">[Steyaert-etal96]</A>.
+</P><P>
+
+<A NAME="Related Work"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_3.html#SEC5"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_5.html#SEC7"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

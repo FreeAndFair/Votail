@@ -1,0 +1,93 @@
+// @(#) $Id: DLNode.jml-refined,v 1.6 2005/12/24 21:20:31 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+// Author:  Clyde Ruby
+
+package org.jmlspecs.samples.list.list1.node;
+
+//@ model import org.jmlspecs.models.JMLObjectSequence;
+
+// FIXME: adapt this file to non-null-by-default and remove the following modifier.
+/*@ nullable_by_default @*/ 
+public class DLNode extends SLNode { // Doubly Linked Node
+
+    // data members
+
+    /*@ public model JMLObjectSequence prevEntries;
+      @                                in entries;
+      @*/
+    /*@ public model DLNode nextDL;
+      @                     in nextNode;
+      @*/
+
+    //@ public invariant (nextNode == null || nextNode instanceof DLNode);
+    //@ public represents nextDL <- (DLNode) nextNode;
+
+    /*@ public model DLNode prevNode;
+      @                     in prevEntries;
+      @*/
+
+    //@ public invariant prevEntries != null;
+
+  /*@ public normal_behavior
+    @   assignable entries;
+    @   ensures theEntry == ent &&  entries.itemAt(0) == ent 
+    @       && allButFirst.isEmpty() &&  prevEntries.isEmpty();
+    @*/
+    public DLNode(Object ent);
+
+  /*@ also
+    @ public normal_behavior
+    @   assignable entries;
+    @   ensures \not_modified(prevEntries);
+    @*/
+    public void insertAfter(Object newEntry);
+
+  /*@ also
+    @ public normal_behavior
+    @   assignable entries;
+    @   ensures \not_modified(prevEntries);
+    @*/
+    public void removeNextNode();
+
+  /*@ public normal_behavior
+    @   assignable \nothing;
+    @   ensures \result == prevNode;
+    @*/
+    public /*@ pure @*/ DLNode getPrevNode();
+
+  /*@ public normal_behavior
+    @    assignable prevEntries;
+    @    ensures prevEntries.equals(\old(prevEntries).insertBack(newEntry)) 
+    @        && \not_modified(allButFirst);
+    @*/
+    public void insertBefore(Object newEntry);
+
+  /*@ also
+    @  public normal_behavior
+    @    assignable \nothing;
+    @    ensures \result instanceof DLNode
+    @         && ((DLNode)\result).entries.equals(entries)
+    @         && ((DLNode)\result).prevEntries.equals(prevEntries);
+    @*/
+    public /*@ non_null @*/ Object clone();
+
+}
+

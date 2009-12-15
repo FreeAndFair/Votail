@@ -1,0 +1,1455 @@
+<!-- Creator     : groff version 1.18.1 -->
+<!-- CreationDate: Tue Aug  1 19:32:39 2006 -->
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta name="Content-Style" content="text/css">
+<title>JMLUNIT</title>
+</head>
+<body>
+
+<h1 align=center>JMLUNIT</h1>
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#EXAMPLES">EXAMPLES</a><br>
+<a href="#ENVIRONMENT">ENVIRONMENT</a><br>
+<a href="#BUGS">BUGS</a><br>
+<a href="#TROUBLESHOOTING">TROUBLESHOOTING</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+<a href="#COPYRIGHT">COPYRIGHT</a><br>
+
+<hr>
+<a name="NAME"></a>
+<h2>NAME</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>jmlunit &minus; generate file for running JUnit tests on
+JML annotated Java files</p>
+</td>
+</table>
+<a name="SYNOPSIS"></a>
+<h2>SYNOPSIS</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>jmlunit</b> [option] ... file-or-directory-or-package
+[file-or-directory-or-package] ...</p>
+<!-- INDENTATION -->
+<p><b>jmlunit-gui</b> [option] ...
+file-or-directory-or-package [file-or-directory-or-package]
+...</p>
+</td>
+</table>
+<a name="DESCRIPTION"></a>
+<h2>DESCRIPTION</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>For each Java(TM) or JML source file, and for the
+top-level class or interface defined in that source file
+with the name of the source file, the commmand
+<b>jmlunit</b>, or the graphical user interface version
+<b>jmlunit-gui ,</b> generates code for an abstract test
+oracle class, that can be used to test that class or
+interface with JUnit. For example, if <b>jmlunit</b> is
+given a file &lsquo;Foo.java&rsquo;, containing a top-level
+class &lsquo;Foo&rsquo;, then it generates code for a test
+oracle class &lsquo;Foo_JML_Test&rsquo; and places it in
+&lsquo;Foo_JML_Test.java&rsquo;.</p>
+<!-- INDENTATION -->
+<p>By default, the tool also generates another file to hold
+a subclass of the test oracle class, unless that file
+already exists. For example, if <b>jmlunit</b> is given a
+file &lsquo;Foo.java&rsquo;, containing a top-level class
+&lsquo;Foo&rsquo;, then if the file
+&lsquo;Foo_JML_TestData.java&rsquo; does not exist, it
+generates a class &lsquo;Foo_JML_TestData&rsquo; and places
+it in that file. The user is supposed to edit the concrete
+subclass of &lsquo;Foo_JML_Test&rsquo; in
+&lsquo;Foo_JML_TestData.java&rsquo; to provide the test data
+used in the testing. This behavior can be suppressed by the
+use of the <b>-t</b> option.</p>
+<!-- INDENTATION -->
+<p>The file &lsquo;Foo_JML_TestData.java&rsquo; is used to
+hold test data. Comments in the file indicate how to supply
+test data. Note that it is safe to add test data to such
+&lsquo;_JML_TestData.java&rsquo; files, because such files
+are never modified by <b>jmlunit</b> if they exist.</p>
+<!-- INDENTATION -->
+<p>When given a directory argument instead of a file
+argument, <b>jmlunit</b> processes all the
+&lsquo;.java&rsquo; files in that directory that do not have
+names that end in &lsquo;_JML_Test.java&rsquo; or
+&lsquo;_JML_TestData.java&rsquo;.</p>
+<!-- INDENTATION -->
+<p>The <b>jmlunit</b> script sets the CLASSPATH and then
+runs the Java class org.jmlspecs.jmlunit.Main, which
+generates a test oracle class and, if necessary, a test data
+class for each named Java source file.</p>
+<!-- INDENTATION -->
+<p>The <b>jmlunit-gui</b> script is similar, but just runs
+the Java class org.jmlspecs.jmlunit.JntGUI, which brings up
+a graphical user-interface to do the work.</p>
+<!-- INDENTATION -->
+<p>If <b>jmlunit</b> finds an error, the file name, line
+number, and column number where the error occurred are
+reported. In such cases, by default, no output will be
+produced for the file with the error and the following
+files.</p>
+<!-- INDENTATION -->
+<p>See the EXAMPLES section below for a more tutorial
+introduction to using <b>jmlunit</b>.</p>
+</td>
+</table>
+<a name="OPTIONS"></a>
+<h2>OPTIONS</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The <b>jmlunit</b> script and the graphical user
+interface support the options described below. On the
+command line, one can give the options in the form described
+below; the graphical user interface has other ways to select
+files and set the options. Both options without arguments
+and options with arguments simply set the option as
+indicated by the description below. Multiple uses of the
+same option generally have no effect that is different than
+a single use of that option.</p>
+<!-- INDENTATION -->
+<p>For the command line, each option has both a short form
+and two long forms. The long forms consists of one or two
+hyphens and a word. To avoid duplication, we only show the
+long forms with two hyphens, since these are unambiguous;
+however one can use the forms with a single hyphen if
+desired. To avoid ambiguity between multiple short form
+options and the long form with a single hyphen, one should
+give each option separately. The short form consists of a
+hyphen and a single letter. In the synopsis below, the long
+form is separated from the short form by a comma (,), but in
+actual usage, you would pick one of these forms and not use
+the comma.</p>
+<!-- INDENTATION -->
+<p>Note that options on the command line are case
+sensitive.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;testdata, &minus;t</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Do not generate Java source code for a skeleton test data
+class. By default, if this option is not used, for a file
+&lsquo;Foo.java&rsquo;, this source code would be put in a
+file named &lsquo;Foo_JML_TestData.java&rsquo;. However, an
+existing file with this name will never be overwritten if it
+already exists. The test data class inherits from the
+generated test oracle class, e.g., from the class in
+&lsquo;Foo_JML_Test.java&rsquo;. The default is to produce
+this skeleton test data file.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;classpath &lt;directory-list&gt;, -C
+&lt;directory-list&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Use the given string as the CLASSPATH during compilation.
+By default the value of the environment variable CLASSPATH
+is used instead.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;debug, &minus;c</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Produces (copious) debugging information. The default is
+not to produce this information.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;deprecation, &minus;D</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Generate tests for deprecated members in the
+&lsquo;&lsquo;_JML_Test.java&rsquo;&rsquo; file. The default
+is not to generate tests for such deprecated members.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;destination &lt;directory&gt;, &minus;d
+&lt;directory&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Writes files (such as the &lsquo;_JML_Test.java&rsquo;
+file) in a subdirectory corresponding to the file&rsquo;s
+package name, relative to the named destination directory.
+The default is to write such files in the directory in which
+the source files reside (which may not be the current
+directory).</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;filter &lt;String&gt;, &minus;f
+&lt;String&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Make the warning filter be the named class. The default
+is org.multijava.mjc.DefaultFilter.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;generic, &minus;G</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Accept the Java 1.5 generic syntax. This feature is still
+experimental. The default is not to do this.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;help, &minus;h</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Display the help information and exit. The default is not
+to do this.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;keepGoing, &minus;k</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Keep going when errors are encountered. Be warned that
+this may cause the tool to die with an exception. The
+default is to not keep going.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;multijava, &minus;M</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Accept MultiJava source code. The default is to not
+accept Multijava constructs.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;nomultijava</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Do not accept MultiJava source code. This turns off
+acceptance of Multijava constructs.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;package</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Generate tests for all but private methods and
+constructors in the named files. The default is to only
+generate tests for public methods and constructors. This is
+equivalent to the -L2 option.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;packageName, &minus;N</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>The name of the package for the generated classes. The
+default is the same package as the source files. An empty
+string argument produces generated classes in the unnamed
+package. If the argument ends in a &rsquo;+&rsquo;, then the
+argument is prefixed (with a separating &rsquo;.&rsquo;
+character replacing the &rsquo;+&rsquo;) to the package name
+of the source file.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;protected</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Generate tests for public and protected methods and
+constructors in the named files. The default is to only
+generate tests for public methods and constructors. This is
+equivalent to the -L1 option.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;public</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Generate tests for only the public methods and
+constructors in the named files. This is the default, and is
+also equivalent to the -L0 option.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;quiet, &minus;q</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Do not suppress information on compilation passes
+completed. The default is to suppress this information.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;recursive, &minus;R</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Process all subdirectories of given directory and package
+arguments recursively. The default is not to process
+subdirectories.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;relaxed, &minus;r</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Accept Relaxed MultiJava source code. The default is not
+to allow the special constructs in Relaxed MultiJava.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;safemath, &minus;s</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Turns on safe math mode. This is an experimental feature,
+currently under development, in which the checker will
+report a compile-time error if the evaluation of a constant
+integral expression causes an overflow. The default is not
+to report such errors.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;source
+&lt;release-number&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Accept code containing source for the given Java version.
+When the release-number is &quot;1.4&quot;, the compiler
+accepts code containing Java 1.4 assert statements, and
+treats &lsquo;assert&rsquo; as a reserved word in Java code.
+The default is &quot;1.3&quot;, meaning that
+&lsquo;assert&rsquo; is not a reserved word in Java code
+(although it is in annotations). In some future release of
+JML, the default will change to &quot;1.4&quot;.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;sourcepath &lt;directory-list&gt;,
+&minus;S &lt;directory-list&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Use the given path when searching for Java and annotation
+source files. A path is a list of directories separated by
+either colons (on Unix) or semicolons (on Windows). The
+default is to use the CLASSPATH.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;testLevel=&lt;int&gt;,
+&minus;L&lt;int&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Select, according to their declared access level, the set
+of methods and constructors to generate test methods for.
+Possible values are: 0 for public, 1 for public and
+protected, and 2 for public, protected and package. For
+example, specifying 0 generates test methods only for public
+methods and constructors. The default is 0.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;universes, &minus;e</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Enable Universe type modifiers and checking. This feature
+is not enabled by default.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;universesx &lt;String&gt;, &minus;E
+&lt;String&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Specify the degree of support for the Universe type
+modifiers and checking. The string option can be either
+&quot;no&quot;, &quot;parse&quot;, or &quot;full&quot;. The
+option &quot;no&quot;, means that these features are not
+recognized; this is the default. The option
+&quot;parse&quot;, means that these features are parsed but
+not used otherwise. The option &quot;full&quot;, means that
+these features are checked during type checking.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;useGenerator, &minus;g</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Without this option the &lsquo;_JML_TestData&rsquo; file
+is created with inline comments at those points in the file
+where the user must added test data generation code. This is
+a problem when the file being subject to test is changed
+(because the inlined data generate code must be recopied
+into any newly generated &lsquo;_JML_TestData&rsquo; file.
+Use of this option will cause the
+&lsquo;_JML_TestData&rsquo; file to make use of calls to a
+test data generation class instead of requiring inlined
+code. Hence, even if the file being subject to tests is
+changed, no inlined code need to be copied; instead simply
+rerun jmlunit with the -g. IMPORTANT NOTE: use of this
+option will always generate a &lsquo;_JML_TestData&rsquo;
+file, overwriting one if it exists. By default, the name of
+the test data generator class is
+&lsquo;TestDataGenerator&rsquo;. To change this default use
+&lsquo;-generatorClassName&rsquo; and to change the package
+(from the default package) use
+&lsquo;-generatorPackageName&rsquo;.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;verbose, &minus;v</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Display verbose information during compilation. The
+default is not to display this information.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;version, &minus;V</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Istead of doing anything else, print the checker&rsquo;s
+version information on standard output and exit. The default
+is not to do this.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;warning=&lt;int&gt;,
+&minus;w&lt;int&gt;</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Set the &lsquo;pickiness&rsquo; of warnings displayed to
+the given integer. The default is 1. Using 2 generates more
+picky warnings, and 3 more picky still.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p><b>&minus;&minus;Xnoversion</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="21%"></td>
+<td width="77%">
+<p>Omits printing the version in help messages, which is
+useful for regression testing (but not normally by users).
+The default is to print the version in help messages.</p>
+</td>
+</table>
+<a name="EXAMPLES"></a>
+<h2>EXAMPLES</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Normal usage</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Suppose you have a file &lsquo;Person.java&rsquo;,
+containing a class &lsquo;Person&rsquo;.</p>
+<!-- INDENTATION -->
+<p>The first step is to execute</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>jmlc Person.java
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>to compile the code and specifications using JML&rsquo;s
+runtime assertion checking compiler. This is helpful in
+settling the specification of the class.</p>
+<!-- INDENTATION -->
+<p>Next, you start using <b>jmlunit.</b> After
+executing</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>jmlunit Person.java
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>you will then have two files</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>Person_JML_Test.java
+Person_JML_TestData.java
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>in the current directory. The first file,
+&lsquo;Person_JML_Test.java&rsquo; has methods to test all
+the methods of class Person, but does not have any test
+data.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Supplying Test Data</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>To supply test data, you have to fill in the data in the
+file &lsquo;Person_JML_TestData.java&rsquo;. You do this by
+following the directions written in that file&rsquo;s
+comments. These comments will indicate some places to fill
+in code that supplies test data of each type needed.</p>
+<!-- INDENTATION -->
+<p>Contining the &lsquo;Person&rsquo; example, suppose that
+the methods in class Person have arguments of types
+&lsquo;Person&rsquo;, &lsquo;int&rsquo;, and
+&lsquo;String&rsquo;. In this case, the file
+&lsquo;Person_JML_TestData.java&rsquo; will contain methods
+named &lsquo;vpkg_name_PersonIter&rsquo; (assuming that
+Person lives in the package pkg.name),
+&lsquo;vintIter&rsquo;, and
+&lsquo;vjava_lang_StringIter&rsquo;. These test data supplly
+methods are called by the test driver when it needs test
+data of the corresponding type.</p>
+<!-- INDENTATION -->
+<p>Usually one can supply appropriate test data without
+changing the test data supply methods directly, by changing
+the initialization for the strategy objects that are used in
+the bodies of these methods.</p>
+<!-- INDENTATION -->
+<p>For example, the &lsquo;vpkg_name_PersonIter&rsquo;
+method has the following body</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  return vpkg_name_PersonStrategy.iterator();
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>which indicates that you can supply test data by changing
+the initializer for the strategy object named
+&lsquo;vpkg_name_PersonStrategy&rsquo; in the class.</p>
+<!-- INDENTATION -->
+<p>Initially, the output of <b>jmlunit</b> would contain an
+initializer for &lsquo;vpkg_name_PersonStrategy&rsquo; that
+looks as follows (assuming that Person is a class without a
+public &lsquo;clone&rsquo; method).</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>   /** The strategy for generating test data of type
+    * pkg.name.Person. */
+   private org.jmlspecs.jmlunit.strategies.StrategyType
+       vpkg_name_PersonStrategy
+       = new org.jmlspecs.jmlunit.strategies.NewObjectAbstractStrategy()
+           {
+               protected Object make(int n) {
+                   switch (n) {
+                   // replace this comment with test data if desired
+                   default:
+                       break;
+                   }
+                   throw new java.util.NoSuchElementException();
+               }
+           };
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>In this case you would replace the comment in the body of
+the &lsquo;switch&rsquo; statement with code to return
+various Person objects for use in testing. The class
+&lsquo;NewObjectAbstractStrategy&rsquo; (which is being
+extended in place in this example to override the method
+&lsquo;make&rsquo;), supplies &lsquo;null&rsquo; as the only
+test data by default, so one does not need to supply that
+piece of data explicitly. Instead, one should write code for
+various more interesting Person objects. For example, the
+following might be suitable as the edited version of this
+field&rsquo;s initialization.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>   /** The strategy for generating test data of type
+    * pkg.name.Person. */
+   private org.jmlspecs.jmlunit.strategies.StrategyType
+       vpkg_name_PersonStrategy
+       = new org.jmlspecs.jmlunit.strategies.NewObjectAbstractStrategy()
+           {
+               protected Object make(int n) {
+                   switch (n) {
+                   case 0:
+                       return new Person(&quot;Yoonsik&quot;);
+                   case 1:
+                       return new Person(&quot;Clyde&quot;);
+                   case 2:
+                       return new Person(&quot;Curt&quot;);
+                   default:
+                       break;
+                   }
+                   throw new java.util.NoSuchElementException();
+               }
+           };
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>To supply test data of type &lsquo;String&rsquo; is
+easier. The method &lsquo;vjava_lang_StringIter&rsquo; has
+the following body.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  return vjava_lang_StringStrategy.iterator();
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Thus to supply the test data, one changes the initializer
+for the &lsquo;vjava_lang_StringStrategy&rsquo;. Initially,
+jmlunit generates the following code for this
+initializer.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  /** The strategy for generating test data of type
+   * java.lang.String. */
+  private org.jmlspecs.jmlunit.strategies.StrategyType
+      vjava_lang_StringStrategy
+      = new org.jmlspecs.jmlunit.strategies.StringStrategy()
+          {
+              protected java.lang.Object[] addData() {
+                  return new java.lang.String[] {
+                      // replace this comment with test data if desired
+                  };
+              }
+          };
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>By default the type &lsquo;StringStrategy&rsquo; provides
+only a minimal amount of test data (namely
+&lsquo;null&rsquo; and the empty string). To supply
+additional test data, one can replace the comment in the
+array initializer with a list of additional test data. For
+example, to add the strings &quot;Curt&quot;,
+&quot;Joe&quot;, and &quot;Patrice&quot;, one would
+write:</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  /** The strategy for generating test data of type
+   * java.lang.String. */
+  private org.jmlspecs.jmlunit.strategies.StrategyType
+      vjava_lang_StringStrategy
+      = new org.jmlspecs.jmlunit.strategies.StringStrategy()
+          {
+              protected java.lang.Object[] addData() {
+                  return new java.lang.String[] {
+                      &quot;Curt&quot;, &quot;Joe&quot;, &quot;Patrice&quot;,
+                  };
+              }
+          };
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>(The comma at the end of the edited line is not needed,
+but makes adding more data later easier.)</p>
+<!-- INDENTATION -->
+<p>Similarly, to supply test data of type &lsquo;int&rsquo;
+one would change the initializer for the field
+&lsquo;vintStrategy&rsquo;. Initially, jmlunit generates an
+initializer that looks like the following.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  /** The strategy for generating test data of type
+   * int. */
+  private org.jmlspecs.jmlunit.strategies.IntStrategyType
+      vintStrategy
+      = new org.jmlspecs.jmlunit.strategies.IntStrategy()
+          {
+              protected int[] addData() {
+                  return new int[] {
+                      // replace this comment with test data if desired
+                  };
+              }
+          };
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>By default the type &lsquo;IntStrategy&rsquo; provides
+only a minimal amount of test data (namely -1, 0, and 1). To
+supply additional test data, one can replace the comment in
+the array initializer with a list of additional test data,
+as shown above in the example of supplying test data for
+strings. An alternative is to use a different strategy. For
+each primitive Java type, T, JML provides a strategy named
+TBigStrategy that has more test data. For example, there is
+a strategy named &lsquo;IntBigStrategy&rsquo; (in the
+package org.jmlspecs.jmlunit.strategies) that supplies more
+test data of type &lsquo;int&rsquo; than does
+&lsquo;IntStrategy&rsquo;. (For example,
+&lsquo;IntBigStrategy&rsquo; includes 3, -5,
+&lsquo;Integer.MIN_VALUE&rsquo;, and
+&lsquo;Integer.MAX_VALUE&rsquo;.) To use
+&lsquo;IntBigStrategy&rsquo; to initialize the field
+&lsquo;vintStrategy&rsquo; one would edit the automatically
+generated initializer to look as follows.</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  /** The strategy for generating test data of type
+   * int. */
+  private org.jmlspecs.jmlunit.strategies.IntStrategyType
+      vintStrategy
+      = new org.jmlspecs.jmlunit.strategies.IntBigStrategy();
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Documentation for the various strategies is included in
+the JML release is found in the jmldoc-produced
+documentation for the org.jmlspecs.jmlunit.strategies
+package, which is included in the JML release. (Use the file
+&lsquo;JML.html&rsquo;, located in the top level directory
+of the release, to access this and other JML documentation
+that ships with the release. You have to click on the
+&lsquo;&lsquo;Description&rsquo;&rsquo; link at the top, or
+scroll down past the lists to see this overview
+document.)</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Dealing with Changes</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Note that your edits to the
+&lsquo;_JML_TestData.java&rsquo; file will not be lost when
+you run jmlunit again, as <b>jmlunit</b> never changes such
+files if they exist. However, if you add new methods to a
+class that have types of arguments that were not present the
+first time you ran <b>jmlunit</b>, then you can do one of
+two things. One is to put in code for methods that supply
+test data of the appropriate type by hand, following the
+pattern used in the file already to write the required code.
+Another option is to first move the
+&lsquo;_JML_TestData.java&rsquo; file to another file name
+(but not one ending with &lsquo;_JML_Test.java&rsquo;!).
+Then rerun jmlunit to generate a new
+&lsquo;_JML_TestData.java&rsquo; file. Finally, merge in
+your old test data initializations into the new file, and
+add initializations to supply test data of the new
+types.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Running the Tests</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>After supplying the test data by editing the file
+&lsquo;Person_JML_TestData.java&rsquo; you can compile and
+run the tests.</p>
+<!-- INDENTATION -->
+<p>First, compile the code in the
+&lsquo;Person_JML_Test.java&rsquo; and
+&lsquo;Person_JML_TestData.java&rsquo; files. These can be
+compiled using a normal java compiler (e.g., mjc or javac);
+however, you must have the JUnit jar file
+(&lsquo;junit.jar&rsquo;), and two of JML&rsquo;s jar files,
+namely &lsquo;JML/bin/jmlruntime.jar&rsquo; and
+&lsquo;JML/bin/jmljunitruntime.jar&rsquo;, in your CLASSPATH
+for this compilation to work, as in the following example
+(for Linux):</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  export CLASSPATH=.:/opt/junit/junit.jar:/opt/JML/bin/jmlruntime.jar:/opt/JML/bin/jmljunitruntime.jar
+  javac Person_JML_Test*.java
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>If you have all of these in your CLASSPATH, then you can
+use the java interpreter (i.e., the command java(1)), to run
+the tests, as in the following example (for Linux):</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  java pkg.name.Person_JML_Test
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Alternatively one can test this using the command
+jml-junit(1), which sets the CLASSPATH automatically, as
+follows,</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  jml-junit pkg.name.Person_JML_Test
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>where &lsquo;pkg.name&rsquo; is the name of the package
+that contains the class &lsquo;Person&rsquo;, to run JUnit
+on the result.</p>
+<!-- INDENTATION -->
+<p>It is also possible to use a command such as</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>  jmlrac pkg.name.Person_JML_Test org.jmlspecs.junit.JMLTestRunner
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>to get JML&rsquo;s text version of the test runner, which
+is found in JML/bin/jmljunitruntime.jar. The jmlrac(1)
+script is like jml-junit, but uses a text-based instead of a
+graphical user interface. It avoids the need to carefully
+adjust the CLASSPATH for yourself to include the appropriate
+jar files (as described above), which you would have to do
+if you use java directly.</p>
+</td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="4%"></td>
+<td width="95%">
+<p><b>Use of -t</b></p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The command</p></td>
+</table>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="20%"></td>
+<td width="79%">
+<pre>jmlunit -t Person.java
+</pre>
+</td>
+</table>
+<!-- INDENTATION -->
+
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>will generate only the file
+&lsquo;Person_JML_Test.java&rsquo;, and will never generate
+&lsquo;Person_JML_TestData.java&rsquo; (even if it does not
+exist). This is useful if you already have a test data
+class, or if the test data class has a different name other
+than &lsquo;Person_JML_TestData&rsquo;.</p>
+</td>
+</table>
+<a name="ENVIRONMENT"></a>
+<h2>ENVIRONMENT</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The <b>CLASSPATH</b> environment variable is used to find
+Java class and source files, as well as JML specification
+files.</p>
+</td>
+</table>
+<a name="BUGS"></a>
+<h2>BUGS</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>The <b>jmlunit</b> script sets the CLASSPATH environment
+variable, but does not look at any -classpath option that
+might be used. If you use a -classpath option, then you must
+explicitly include paths to the jar files and directories
+that this script would have otherwise included. On the other
+hand, this allows you to override the default orderings for
+such jar files and directories.</p>
+</td>
+</table>
+<a name="TROUBLESHOOTING"></a>
+<h2>TROUBLESHOOTING</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>If you get CLASSPATH errors when compiling the files
+generated by <b>jmlunit</b>, make sure that, besides the
+directories you would otherwise need to have in your
+CLASSPATH, your CLASSPATH environment variable&rsquo;s value
+also includes the JUnit jar file (&lsquo;junit.jar&rsquo;),
+and JML&rsquo;s &lsquo;jmlruntime.jar&rsquo; and
+&lsquo;jmljunitruntime.jar&rsquo;. These last two jar files
+are found in the JML release&rsquo;s directory, under the
+bin directory (&lsquo;JML/bin&rsquo;). If you use the
+classes in the package org.jmlspecs.models, then you will
+also need to include JML&rsquo;s jar file
+&lsquo;jmlmodels.jar&rsquo;, which is also found under
+JML&rsquo;s bin directory &lsquo;JML/bin&rsquo;. Verify that
+these are present in your system and that the path names are
+correct. The script jtest(1) manages these CLASSPATH issues
+for compilation, and the scripts jmlrac(1) or jml-junit(1)
+can be used to manage them during the running of the
+tests.</p>
+</td>
+</table>
+<a name="SEE ALSO"></a>
+<h2>SEE ALSO</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>jtest(1), jmlc(1), jml-junit(1), jmlrac(1), jml(1),
+java(1), jmldoc(1)</p>
+<!-- INDENTATION -->
+<p>See the JUnit Web page, http://www.junit.org/, to obtain
+and install JUnit.</p>
+</td>
+</table>
+<a name="COPYRIGHT"></a>
+<h2>COPYRIGHT</h2>
+<!-- INDENTATION -->
+<table width="100%" border=0 rules="none" frame="void"
+       cols="2" cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="10%"></td>
+<td width="89%">
+<p>Copyright (c) 2001-2002 by Iowa State University</p>
+<!-- INDENTATION -->
+<p>JML is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version
+2, or (at your option) any later version.</p>
+<!-- INDENTATION -->
+<p>JML is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+the GNU General Public License for more details.</p>
+<!-- INDENTATION -->
+<p>You should have received a copy of the GNU General Public
+License along with JML; see the file COPYING. If not, write
+to the Free Software Foundation, 675 Mass Ave, Cambridge, MA
+02139, USA.</p>
+</td>
+</table>
+<hr>
+</body>
+</html>

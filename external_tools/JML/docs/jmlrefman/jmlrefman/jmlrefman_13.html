@@ -1,0 +1,420 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Redundancy</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Redundancy">
+<META NAME="keywords" CONTENT="JML Reference Manual: Redundancy">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC177"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_12.html#SEC163"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_14.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 13. Redundancy </H1>
+<!--docid::SEC177::-->
+<P>
+
+<A NAME="IDX2624"></A>
+<A NAME="IDX2625"></A>
+JML has several features that allow the specification of implications <A HREF="jmlrefman_27.html#BIB105">[Tan95]</A>
+and examples <A HREF="jmlrefman_27.html#BIB66">[Leavens97c]</A> <A HREF="jmlrefman_27.html#BIB52">[Leavens-Baker99]</A>.  
+They are redundant in the sense that they do not constrain an
+implementation directly.
+Instead, they are useful for pointing out consequences to the specification's
+readers, for example to draw attention to some consequences of the
+specification of a method, or to illustrate it by an example.
+</P><P>
+
+In addition to clauses of the form <I>X</I><CODE>_redundantly</CODE>, such as
+<CODE>requires_redundantly</CODE>, <CODE>ensures_redundantly</CODE>, etc., there
+are two sections of a method specification that are devoted to such
+redundant specifications.
+These sections of a method specification are described by the
+following grammar. 
+</P><P>
+
+<A NAME="IDX2626"></A>
+<A NAME="IDX2627"></A>
+<A NAME="IDX2628"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>redundant-spec</VAR> ::= <VAR>implications</VAR> [ <VAR>examples</VAR> ] | <VAR>examples</VAR>
+</pre></td></tr></table></P><P>
+
+The two subsections below explain these features.  The description of 
+clauses of the form <I>X</I><CODE>_redundantly</CODE> is contained in the first
+section.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_13.html#SEC178">13.1 Redundant Implications and Redundantly Clauses</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_13.html#SEC179">13.2 Redundant Examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Redundant Implications and Redundantly Clauses"></A>
+<HR SIZE="6">
+<A NAME="SEC178"></A>
+<H2> 13.1 Redundant Implications and Redundantly Clauses </H2>
+<!--docid::SEC178::-->
+<P>
+
+<A NAME="IDX2629"></A>
+<A NAME="IDX2630"></A>
+<A NAME="IDX2631"></A>
+<A NAME="IDX2632"></A>
+<A NAME="IDX2633"></A>
+A <EM>redudant implication</EM> is a way of stating a claim about a
+specification.
+By itself it does not constrain an implication, but can be thought of
+a stating a theorem to be proven about a specification.
+Such redundant implications are useful for drawing the reader's
+attention to some point that might otherwise be overlooked, or that is
+important for rhetorical purposes <A HREF="jmlrefman_27.html#BIB52">[Leavens-Baker99]</A>.
+</P><P>
+
+Redundant implications can be specified in two ways in JML.
+The first is by using clauses of the form 
+<I>X</I><CODE>_redundantly</CODE>.
+The second is by use of the <VAR>implications</VAR> section of a method
+specification, which starts with the keyword <CODE>implies_that</CODE>.
+(See section <A HREF="jmlrefman_9.html#SEC82">9.2 Organization of Method Specifications</A>, for the syntax of 
+<VAR>spec-case-seq</VAR>.)
+</P><P>
+
+<A NAME="IDX2634"></A>
+<A NAME="IDX2635"></A>
+<A NAME="IDX2636"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>implications</VAR> ::= <CODE>implies_that</CODE> <VAR>spec-case-seq</VAR>
+</pre></td></tr></table></P><P>
+
+The <VAR>implications</VAR> section of a method
+specification says that for each visibility level <I>V</I>,
+and for each <VAR>spec-case</VAR> of visibility <I>V</I> in its 
+<VAR>spec-case-seq</VAR>, that <VAR>spec-case</VAR>
+is refined by the entire non-redundant specification of the method that
+applies at visibility level <I>V</I>.
+Thus every correct implementation of the non-redundant specification 
+must satisfy each of the <VAR>spec-case</VAR>s in the
+<VAR>implications</VAR> section.
+</P><P>
+
+For example, suppose that the (desugared) meaning of the non-redundant
+part of a method's specification has the form:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre><I>V</I> behavior        // non-redundant
+   requires <I>Pre</I>;
+   assignable <I>x1</I>, <I>x2</I>;
+   ensures <I>NormPost</I>;
+   signals_only <I>Ex1</I>;
+   signals (Exception e) <I>ExPost</I>;
+</pre></td></tr></table></P><P>
+
+and suppose that one of the <VAR>spec-case</VAR>s in its <VAR>implications</VAR>
+section has the following (desugared) meaning:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre><I>V</I> behavior        // redundant
+   requires <I>RedPre</I>;
+   assignable <I>x1</I>, <I>x2</I>;
+   ensures <I>RedNormPost</I>;
+   signals_only <I>Ex1</I>;
+   signals (Exception e) <I>RedExPost</I>;
+</pre></td></tr></table></P><P>
+
+Then it must be the case that
+(by definition of refinement for method specifications <A HREF="jmlrefman_27.html#BIB59">[Leavens-Naumann06]</A>)
+the following implications hold:
+</P><P>
+
+<UL>
+<LI>
+<CODE>\old(<I>RedPre</I>) ==&#62; <I>Pre</I></CODE>,
+<P>
+
+<LI>
+<CODE>(\old(<I>RedPre</I>) &#38;&#38; <I>NormPost</I>) ==&#62; <I>RedNormPost</I></CODE>, and
+<P>
+
+<LI>
+<CODE>(\old(<I>RedPre</I>) &#38;&#38; <I>ExPost</I>) ==&#62; <I>RedExPost</I></CODE>.
+</UL>
+<P>
+
+These implications are only sensible if the
+specifications have the same visibility (<CODE><I>V</I></CODE>), 
+the same <CODE>assignable</CODE> clauses,
+and the same <CODE>signals_only</CODE> clauses.
+<A NAME="IDX2637"></A>
+<A NAME="IDX2638"></A>
+If the <CODE>assignable</CODE> clauses differ, one can adjust by adding elements to
+the non-redundant parts of the assignable clause, to widen it,
+but preserve its meaning by adding restrictions 
+(e.g., using the <CODE>\only_assigned</CODE> predicate), to the postconditions.
+Similar adjustments can be made to the non-redundant
+<CODE>signals_only</CODE> clause, by adding exceptions (or supertypes of
+exceptions) to the non-redundant <CODE>signals_only</CODE>,
+preserving its meaning by adding restrictions in the <CODE>signals</CODE> clause.
+</P><P>
+
+<A NAME="IDX2639"></A>
+<A NAME="IDX2640"></A>
+<A NAME="IDX2641"></A>
+<A NAME="IDX2642"></A>
+<A NAME="IDX2643"></A>
+Redundant clauses are a syntactic variant of Tan's procedure claims
+<A HREF="jmlrefman_27.html#BIB105">[Tan95]</A>.
+The meaning of a redundant clause,
+of the form <I>X</I><CODE>_redundantly</CODE> is also defined as making a claim
+about implications, but in this case only one simple implication.
+The claim is that the predicate in the redundant clause follows from
+the meaning of the non-redundant <I>X</I> clauses.
+</P><P>
+
+As an example, consider the following requires clauses.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>   requires <I>Pre</I>;
+   requires_redundantly <I>RedPre</I>;
+</pre></td></tr></table></P><P>
+
+These state the claim that <CODE><I>Pre</I> ==&#62; <I>RedPre</I></CODE>.
+That is, in all pre-states, whenever <CODE><I>Pre</I></CODE> is true, then
+<CODE><I>RedPre</I></CODE> must be true.
+The same pattern holds for all other clauses and their redundant
+counterparts, including ensures clauses, signals clauses (which must
+first be standardized to have the same exception
+<A HREF="jmlrefman_27.html#BIB95">[Raghavan-Leavens05]</A>), invariants, etc.
+</P><P>
+
+For example, recall that multiple clauses are conjoined, and thus
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>   ensures <I>Q1</I>;
+   ensures <I>Q2</I>;
+   ensures_redundantly <I>RedQ1</I>;
+   ensures_redundantly <I>RedQ2</I>;
+</pre></td></tr></table></P><P>
+
+is equivalent to
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>   ensures <I>Q1</I> &#38;&#38; <I>Q2</I>;
+   ensures_redundantly <I>RedQ1</I> &#38;&#38; <I>RedQ2</I>;
+</pre></td></tr></table></P><P>
+
+In this example, the claim stated is that:
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (<I>Q1</I> &#38;&#38; <I>Q2</I>) ==&#62; (<I>RedQ1</I> &#38;&#38; <I>RedQ2</I>).
+</pre></td></tr></table></P><P>
+
+If one is using a theorem prover, then these implications can be
+thought of as theorems to prove (in the context of the overall class
+or interface specification).
+</P><P>
+
+A runtime assertion checker is free to check the specifications in
+the <VAR>implications</VAR> section,
+since they must all hold, as they should be refined by the
+non-redundant specification.
+If a redundant specification case in a method's <VAR>implications</VAR>
+section is violated, this could indicate that either:
+(a) the implications
+described above do not hold, or that 
+(b) there is a violation of the
+specification by the caller (e.g., if the precondition does not hold)
+or by the implementation of the method (e.g., if the normal
+postcondition does not hold).
+</P><P>
+
+[[[Needs concrete examples.]]]
+</P><P>
+
+<A NAME="Redundant Examples"></A>
+<HR SIZE="6">
+<A NAME="SEC179"></A>
+<H2> 13.2 Redundant Examples </H2>
+<!--docid::SEC179::-->
+<P>
+
+<A NAME="IDX2644"></A>
+<A NAME="IDX2645"></A>
+<A NAME="IDX2646"></A>
+<A NAME="IDX2647"></A>
+<A NAME="IDX2648"></A>
+Examples are, used to point out, to readers or testing tools,
+particular cases of a method specification <A HREF="jmlrefman_27.html#BIB66">[Leavens97c]</A>
+<A HREF="jmlrefman_27.html#BIB52">[Leavens-Baker99]</A> <A HREF="jmlrefman_27.html#BIB54">[Leavens-Baker-Ruby06]</A>.
+The following gives the syntax of the <VAR>examples</VAR> section of a
+method specification.
+This section starts with the <CODE>for_example</CODE> keyword, and includes
+one or more <VAR>example</VAR>s.
+Each <VAR>example</VAR> is much like a <VAR>spec-case</VAR>
+(see section <A HREF="jmlrefman_9.html#SEC82">9.2 Organization of Method Specifications</A>),
+but uses various <CODE>example</CODE> keywords instead of <CODE>behavior</CODE>
+keywords, and does not permit <VAR>model-program</VAR> cases.
+</P><P>
+
+<A NAME="IDX2649"></A>
+<A NAME="IDX2650"></A>
+<A NAME="IDX2651"></A>
+<A NAME="IDX2652"></A>
+<A NAME="IDX2653"></A>
+<A NAME="IDX2654"></A>
+<A NAME="IDX2655"></A>
+<A NAME="IDX2656"></A>
+<A NAME="IDX2657"></A>
+<A NAME="IDX2658"></A>
+<A NAME="IDX2659"></A>
+<A NAME="IDX2660"></A>
+<A NAME="IDX2661"></A>
+<A NAME="IDX2662"></A>
+<A NAME="IDX2663"></A>
+<A NAME="IDX2664"></A>
+<A NAME="IDX2665"></A>
+<A NAME="IDX2666"></A>
+<A NAME="IDX2667"></A>
+<A NAME="IDX2668"></A>
+<A NAME="IDX2669"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>examples</VAR> ::= <CODE>for_example</CODE> <VAR>example</VAR> [ <CODE>also</CODE> <VAR>example</VAR> ] <small>...</small>
+<VAR>example</VAR> ::= [ [ <VAR>privacy</VAR> ] <CODE>example</CODE> ]
+            [ <VAR>spec-var-decls</VAR> ]
+            [ <VAR>spec-header</VAR> ]
+            <VAR>simple-spec-body</VAR>
+        | [ <VAR>privacy</VAR> ] <CODE>exceptional_example</CODE>
+          [ <VAR>spec-var-decls</VAR> ]
+          <VAR>spec-header</VAR>
+          [ <VAR>exceptional-example-body</VAR> ]
+        | [ <VAR>privacy</VAR> ] <CODE>exceptional_example</CODE>
+          [ <VAR>spec-var-decls</VAR> ]
+          <VAR>exceptional-example-body</VAR>
+        | [ <VAR>privacy</VAR> ] <CODE>normal_example</CODE>
+          [ <VAR>spec-var-decls</VAR> ]
+          <VAR>spec-header</VAR>
+          [ <VAR>normal-example-body</VAR> ]
+        | [ <VAR>privacy</VAR> ] <CODE>normal_example</CODE>
+          [ <VAR>spec-var-decls</VAR> ]
+          <VAR>normal-example-body</VAR>
+<VAR>exceptional-example-body</VAR> ::= <VAR>exceptional-spec-clause</VAR>
+                             [ <VAR>exceptional-spec-clause</VAR> ] <small>...</small>
+<VAR>normal-example-body</VAR> ::= <VAR>normal-spec-clause</VAR>
+                        [ <VAR>normal-spec-clause</VAR> ] <small>...</small>
+</pre></td></tr></table></P><P>
+
+As in method <VAR>spec-case</VAR>s
+(see section <A HREF="jmlrefman_9.html#SEC82">9.2 Organization of Method Specifications</A>)
+there are both heavyweight and lightweight examples.
+<A NAME="IDX2670"></A>
+<A NAME="IDX2671"></A>
+A <EM>lightweight</EM> example does not use one of the <CODE>example</CODE>
+keywords.
+<A NAME="IDX2672"></A>
+<A NAME="IDX2673"></A>
+A <EM>heavyweight</EM> example uses one of the example keywords.
+As with <VAR>spec-case</VAR>s, only heavyweight examples can have a
+specified visibility; lightweight examples all have the same
+visibility as the method (or constructor) being specified.
+</P><P>
+
+<A NAME="IDX2674"></A>
+The defaults for omitted clauses in lightweight <VAR>example</VAR>s are the
+same as those for omitted clauses in lightweight <VAR>spec-case</VAR>s.
+Similarly, heavyweight <VAR>example</VAR>s have the same defaults as heavyweight
+<VAR>spec-case</VAR>s. 
+(See section <A HREF="jmlrefman_9.html#SEC92">9.6.1 Semantics of flat behavior specification cases</A>, for the
+defaults for a lightweight and heavyweight specification cases.)
+</P><P>
+
+<A NAME="IDX2675"></A>
+<A NAME="IDX2676"></A>
+<A NAME="IDX2677"></A>
+<A NAME="IDX2678"></A>
+As described in the "Preliminary Design of JML"
+<A HREF="jmlrefman_27.html#BIB54">[Leavens-Baker-Ruby06]</A> (section 2.3.2.1)
+"the specification in each example should be such that:
+<UL>
+<LI>
+the example's precondition implies
+the precondition of the expanded meaning of the specified behaviors,
+<P>
+
+<LI>
+the example's assignable clause
+specifies a subset of the locations that are assignable
+according to the expanded meaning of the specified behaviors, and
+<P>
+
+<LI>
+assuming the example's assignable clause,
+the conjunction of:
+<UL>
+<LI>
+the example's precondition (wrapped by <CODE>\old()</CODE>),
+<P>
+
+<LI>
+the precondition of the expanded meaning of the specified behaviors
+(also wrapped by <CODE>\old()</CODE>),
+and
+<P>
+
+<LI>
+the postcondition of the expanded meaning of the specified behaviors
+</UL>
+should be equivalent to the example's postcondition.
+</UL>
+Requiring equivalence to the example's postcondition
+means that it can serve as a test oracle for the
+inputs described by the example's precondition.
+If there is only one specified <CODE>public normal_behavior</CODE>"
+specification case
+"and if there are no preconditions and assignable clauses,
+then the example's postcondition should the equivalent to
+the conjunction of the example's precondition
+and the postcondition of the <CODE>public normal_behavior</CODE> specification."
+<P>
+
+[[[(Needs concrete examples :-)]]]
+</P><P>
+
+<A NAME="Model Programs"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_13.html#SEC177"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_14.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

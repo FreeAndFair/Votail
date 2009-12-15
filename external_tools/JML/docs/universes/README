@@ -1,0 +1,45 @@
+Support for the Universe type system in JML
+===========================================
+
+The Java Universe Type System (JUTS) is an extension to the MultiJava
+compiler that supports an ownership type system to guarantee strong
+encapsulation of objects.
+We also added support for JUTS to JML and JUTS annotations can be used
+in JML specifications.
+
+Four new keywords are introduced: peer, rep, readonly and pure.
+In addition, only within JML specifications, the keywords: \peer, \rep
+and \readonly can always be used as alternatives.
+
+To enable the support for JUTS, we added the following compiler
+options:
+
+  --universes, -e:      Enable Universe type modifiers and type checking
+  --universesx, -E <String>: Universe type system: no, parse, check, full [no]
+
+By default JUTS is disabled.
+If "-E no" is used, then the keywords are not recognized and no
+additional typechecking is performed.
+If "-E parse" is used, then the JUTS annotations are parsed, but ignored.
+If "-E check" is given, then only the \xxx form of the keywords can be
+used. The typechecking is performed.
+If "-e" or "-E full" is used, then the annotations are parsed and the
+typechecking is enabled.
+
+
+At the moment we only have descriptions of the Universe type system in
+our research literature:
+
+http://sct.inf.ethz.ch/publications/index.html
+
+But beware, some keywords were renamed and many extensions were added.
+
+We plan to make developer-friendly documentation and examples
+available at:
+
+http://www.inf.ethz.ch/~dietlw/ethz/research/juts/
+
+in the very near future.
+
+Cheers,
+WMD for the JUTS Team

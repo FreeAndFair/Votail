@@ -1,0 +1,449 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML: A Notation for Detailed Design: Behavioral Interface Specification</TITLE>
+
+<META NAME="description" CONTENT="JML: A Notation for Detailed Design: Behavioral Interface Specification">
+<META NAME="keywords" CONTENT="JML: A Notation for Detailed Design: Behavioral Interface Specification">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC1"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_2.html#SEC4"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<A NAME="Behavioral Interface Specification"></A>
+<H1> 1. Behavioral Interface Specification </H1>
+<!--docid::SEC1::-->
+<P>
+
+<center>
+ <B>Abstract</B>
+</center>
+</P><P>
+
+<BLOCKQUOTE>
+JML is a behavioral interface specification language tailored
+to Java.
+It is designed to be written and read by working software engineers,
+and should require only modest mathematical training.
+It uses Eiffel-style syntax
+combined with model-based semantics, as in VDM and Larch.
+JML supports quantifiers, specification-only variables,
+and other enhancements
+that make it more expressive for specification than Eiffel
+and easier to use than VDM and Larch.
+</BLOCKQUOTE>
+<P>
+
+JML <A HREF="jmlkluwer_7.html#BIB20">[Leavens-Baker-Ruby01]</A>, which stands for "Java Modeling Language,"
+is a behavioral interface specification language (BISL)
+<A HREF="jmlkluwer_7.html#BIB35">[Wing87]</A>
+designed to specify
+Java <A HREF="jmlkluwer_7.html#BIB1">[Arnold-Gosling98]</A> <A HREF="jmlkluwer_7.html#BIB7">[Gosling-Joy-Steele96]</A> 
+modules.
+Java <EM>modules</EM> are classes and interfaces.
+</P><P>
+
+A <EM>behavioral interface specification</EM> describes both the
+details of a module's interface with clients,
+and its behavior from the client's point of view.
+Such specifications are not good for the specification of whole programs,
+but are good for recording
+detailed design decisions or documentation of intended behavior,
+for a software module.
+</P><P>
+
+The goal of this chapter is to explain JML and the concepts behind
+its approach to specification.
+Since JML is used in detailed design of Java modules,
+we use the detailed design of an interface and class for
+priority queues as an example.
+The rest of this section explains interfaces
+and behavioral interface specification.
+In the next section we describe how to specify new types
+as conceptual models for detailed design.
+Following that we finish the example by giving the details
+of a class specification.
+We conclude after mentioning some other features of JML.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlkluwer_1.html#SEC2">1.1 Interfaces</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlkluwer_1.html#SEC3">1.2 A First Example of Behavioral Specification</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Interfaces"></A>
+<HR SIZE="6">
+<A NAME="SEC2"></A>
+<H2> 1.1 Interfaces </H2>
+<!--docid::SEC2::-->
+<P>
+
+A module's <EM>interface</EM> consists of its name,
+and the names and types of its fields and methods.
+Java interfaces declare such interface information,
+but class declarations do as well.
+As in the Larch family of BISLs
+<A HREF="jmlkluwer_7.html#BIB6">[Guttag-Horning93]</A> <A HREF="jmlkluwer_7.html#BIB17">[LeavensLarchFAQ]</A> <A HREF="jmlkluwer_7.html#BIB35">[Wing87]</A> <A HREF="jmlkluwer_7.html#BIB36">[Wing90a]</A>,
+interface information in JML
+is declared using the declaration syntax of the programming language
+to which the BISL is tailored;
+thus, JML uses Java declaration syntax.
+</P><P>
+
+An example is given in the file
+<TT>`PriorityQueueUser.java-refined'</TT>, which is shown below.
+This example gives the information a Java program needs
+to use a <CODE>PriorityQueueUser</CODE> object,
+including the package to which it belongs, the accessibility of the
+methods (<CODE>public</CODE>), the names of the methods,
+the types of their arguments and results, and what
+exceptions they can throw.
+</P><P>
+
+<A NAME="IDX1"></A>
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>package org.jmlspecs.samples.jmlkluwer;
+public interface PriorityQueueUser {
+ /*@ pure @*/ boolean contains(Object argObj);
+ /*@ pure @*/ Object next() throws PQException;
+ void remove(Object argObj);
+ /*@ pure @*/ boolean isEmpty();
+}
+</pre></td></tr></table></P><P>
+
+Also included in the above file are three JML <EM>annotations</EM>.
+These annotations are enclosed within these annotation comments
+of the form <CODE>/*@</CODE> <small>...</small> <CODE>@*/</CODE>;
+one can also write annotation comments using the form <CODE>//@</CODE>,
+and such comments extend to the end of the corresponding line.<A NAME="DOCF1" HREF="jmlkluwer_fot.html#FOOT1">(1)</A>
+Java ignores both kinds of JML annotation comments,
+but they are significant to JML.
+The <CODE>pure</CODE> annotations on the methods <CODE>next</CODE>,
+<CODE>contains</CODE>, and <CODE>isEmpty</CODE> require these methods to be
+<EM>pure</EM>, meaning that they cannot have any side effects.
+</P><P>
+
+<A NAME="A First Example of Behavioral Specification"></A>
+<HR SIZE="6">
+<A NAME="SEC3"></A>
+<H2> 1.2 A First Example of Behavioral Specification </H2>
+<!--docid::SEC3::-->
+<P>
+
+In JML, behavioral specification information is also given in the form
+of annotations.
+As in the Larch approach, such specifications are model-based.
+That is, they are stated in terms of a mathematical model
+<A HREF="jmlkluwer_7.html#BIB6">[Guttag-Horning93]</A> <A HREF="jmlkluwer_7.html#BIB8">[Hoare72a]</A> <A HREF="jmlkluwer_7.html#BIB34">[Wing83]</A> <A HREF="jmlkluwer_7.html#BIB35">[Wing87]</A>
+of the states (or values) of objects.
+Unlike most Larch-style specification languages, however,
+in JML such models are described by declaring <EM>model fields</EM>,
+which are only used for purposes of specification.
+In JML, a declaration can include the modifier <CODE>model</CODE>,
+which means that the declaration need not appear in a correct implementation;
+all non-model declarations must appear in a correct implementation.
+</P><P>
+
+As an example, the file <TT>`PriorityQueueUser.jml-refined'</TT> below
+specifies a model for priority queues.
+This specification is a refinement of the one
+given in the file (shown above) <TT>`PriorityQueueUser.java-refined'</TT>,
+which is why the <CODE>refine</CODE> clause appears in the specification
+following the <CODE>package</CODE> declaration.
+The meaning of the <CODE>refine</CODE> clause is that the given specification adds
+to the one in the file named, by imposing additional constraints
+on that specification.
+Such a refinement might be done,
+for example, when one is starting to make detailed design decisions
+or when starting to specify the behavior of existing software modules.
+In a refinement, existing specification information is inherited;
+that is, the method declarations in the interface <CODE>PriorityQueueUser</CODE>
+are inherited, and thus not
+repeated below.
+</P><P>
+
+<A NAME="IDX2"></A>
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>package org.jmlspecs.samples.jmlkluwer;
+
+//@ refine "PriorityQueueUser.java-refined";
+//@ model import org.jmlspecs.models.*;
+
+public interface PriorityQueueUser {
+
+ /*@ public model instance JMLValueSet entries;
+   @ public initially entries.isEmpty();
+   @*/
+ /*@ public instance invariant
+   @      (\forall JMLType e; entries.has(e);
+   @                           e instanceof QueueEntry);
+   @ public instance invariant
+   @   (\forall QueueEntry e1; entries.has(e1);
+   @       (\forall QueueEntry e2;
+   @         entries.has(e2) &#38;&#38; !(e1.equals(e2));
+   @           e2.obj != e1.obj
+   @           &#38;&#38; e2.timeStamp != e1.timeStamp ) );
+   @*/
+}
+</pre></td></tr></table></P><P>
+
+Following the <CODE>refine</CODE> clause above is a <CODE>model import</CODE> declaration.
+This has the effect like a Java <CODE>import</CODE> declaration for JML,
+but the use of <CODE>model</CODE> means
+that the import does not have to appear
+in an implementation, as it is only needed for specification purposes.
+The package being imported, <CODE>org.jmlspecs.models</CODE>,
+consists of several pure classes including sets, sequences, relations,
+maps, and so on, which are useful in behavioral specification.
+These fill the role of the built-in types used for specification in VDM and Z,
+or the traits used in Larch.
+Since they are pure (side-effect free) classes,
+they can be used in assertions without affecting the state of
+the computation, which allows assertions to have a well-defined
+mathematical meaning (unlike Eiffel's assertions).
+However, since they are Java classes, their methods are invoked using
+the usual Java syntax.
+</P><P>
+
+In the specification above we use the class <CODE>JMLValueSet</CODE>
+as the type of the model field <CODE>entries</CODE>.
+That is, for purposes of specification, we imagine that every
+object that implements the interface <CODE>PriorityQueueUser</CODE>
+has a public field <CODE>entries</CODE> of type <CODE>JMLValueSet</CODE>.
+This model field appears (to clients) to have started out initially
+as empty, as stated in the <CODE>initially</CODE> clause
+attached to its declaration
+<A HREF="jmlkluwer_7.html#BIB27">[Ogden-etal94]</A> <A HREF="jmlkluwer_7.html#BIB25">[Morgan94]</A>.
+</P><P>
+
+The two <CODE>invariant</CODE> clauses further describe the intended state
+of <CODE>entries</CODE>.
+The first states that all of its elements
+have type <CODE>QueueEntry</CODE>.
+(By default JML implicitly adds an invariant that <CODE>entries</CODE> 
+is non-null <A HREF="jmlkluwer_7.html#BIB3">[Chalin-Rioux05]</A>.)
+</P><P>
+
+The <CODE>\forall</CODE> notation is an addition to the Java syntax for
+expressions; it gives universal quantification over the declared variables.
+Within such an expression of the form <CODE>(\forall T x; R(x); P(x))</CODE>,
+the expression <CODE>R(x)</CODE> specifies the <EM>range</EM> over which the bound
+variable, <CODE>x</CODE>, can take on values; it is separated from the
+<EM>term</EM> predicate, <CODE>P(x)</CODE>, by a semicolon (<CODE>;</CODE>).
+For example, the first invariant means that for all
+<CODE>JMLType</CODE> objects <CODE>e</CODE> such that <CODE>entries.has(e)</CODE>,
+<CODE>e</CODE> has type <CODE>QueueEntry</CODE>.
+The second invariant states that every such <CODE>QueueEntry</CODE> object
+has a unique <CODE>obj</CODE> and <CODE>timeStamp</CODE>.
+</P><P>
+
+In the file <TT>`PriorityQueueUser.java'</TT> below
+we make yet another refinement,
+to specify the behavior of the methods of <CODE>PriorityQueueUser</CODE>.
+This specification, because it refines the
+specification in <TT>`PriorityQueueUser.jml-refined'</TT>,
+inherits the model fields specified there, as well as the <CODE>initially</CODE>
+and <CODE>invariant</CODE> clauses.
+(Inheritance of specifications is explained further below.)
+</P><P>
+
+<A NAME="IDX3"></A>
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>package org.jmlspecs.samples.jmlkluwer;
+//@ refine "PriorityQueueUser.jml-refined";
+
+public interface PriorityQueueUser {
+
+ /*@ also
+   @   public normal_behavior
+   @     ensures \result &#60;==&#62;
+   @       (\exists QueueEntry e; entries.has(e);
+   @                              e.obj == argObj);
+   @*/
+ /*@ pure @*/ boolean contains(Object argObj);
+
+ /*@ also
+   @   public normal_behavior
+   @     requires !entries.isEmpty();
+   @     ensures
+   @       (\exists QueueEntry r;
+   @           entries.has(r) &#38;&#38; \result == r.obj;
+   @           (\forall QueueEntry o;
+   @               entries.has(o) &#38;&#38; !(r.equals(o));
+   @               r.priorityLevel &#62;= o.priorityLevel
+   @               &#38;&#38; (r.priorityLevel == o.priorityLevel
+   @                   ==&#62; r.timeStamp &#60; o.timeStamp) ) );
+   @ also
+   @   public exceptional_behavior
+   @     requires entries.isEmpty();
+   @     signals_only PQException;
+   @*/
+ /*@ pure @*/ Object next() throws PQException;
+
+ /*@ also
+   @   public normal_behavior
+   @     requires contains(argObj);
+   @     assignable entries;
+   @     ensures (\exists QueueEntry e;
+   @         \old(entries.has(e)) &#38;&#38; e.obj == argObj;
+   @         entries.equals(\old(entries.remove(e))));
+   @ also
+   @   public normal_behavior
+   @     requires !contains(argObj);
+   @     assignable \nothing;
+   @     ensures \not_modified(entries);
+   @*/
+ void remove(Object argObj);
+
+ /*@ also
+   @   public normal_behavior
+   @     ensures \result &#60;==&#62; entries.isEmpty();
+   @*/
+ /*@ pure @*/ boolean isEmpty();
+}
+</pre></td></tr></table></P><P>
+
+The specification of <CODE>contains</CODE> above shows the simplest form of a
+behavioral specification for a method:
+a single <CODE>public normal_behavior</CODE> clause
+followed by a method header.
+This specification says that the method
+returns true just when its argument is the same as some object in the queue.
+The <CODE>public normal_behavior</CODE> clause in this specification
+consists of a single <CODE>ensures</CODE> clause.
+This <CODE>ensures</CODE> clause gives the method's total-correctness
+postcondition;
+that is, calls to <CODE>contains</CODE> must terminate
+(as opposed to looping forever or aborting)
+in a state that satisfies the postcondition.
+The <CODE>public</CODE> keyword says that the specification is intended for clients;
+while the "normal" in <CODE>normal_behavior</CODE> prohibits throwing exceptions.
+The meaning of <CODE>&#38;&#38;</CODE> and <CODE>==</CODE> are as in Java;
+that is, <CODE>&#38;&#38;</CODE> is short-circuit logical conjunction,
+and <CODE>e.obj == argObj</CODE> means that <CODE>e.obj</CODE> and <CODE>argObj</CODE>
+are the same object.
+The keyword <CODE>\result</CODE> denotes the return value of the method,
+which in this case is a boolean.
+The operator <CODE>&#60;==&#62;</CODE> means "if and only if";
+it is equivalent to <CODE>==</CODE> for booleans, but has a lower precedence.
+The notation <CODE>\exists</CODE> is used for existential quantification.
+Like universal quantifiers,
+existential quantifiers can also have a range expression
+that is separated from the term expression by a semicolon (<CODE>;</CODE>).
+</P><P>
+
+The specification of the method <CODE>next</CODE> shows one way to specify
+methods with exceptions in JML.
+This uses a <CODE>public normal_behavior</CODE> clause for the case where no
+exceptions are thrown, and an <CODE>public exceptional_behavior</CODE>
+clause for when exceptions are thrown.
+The semantics is that a correct implementation must satisfy
+both of these behaviors <A HREF="jmlkluwer_7.html#BIB19">[Leavens-Baker99]</A> <A HREF="jmlkluwer_7.html#BIB37">[Wills94]</A> <A HREF="jmlkluwer_7.html#BIB34">[Wing83]</A>.
+In the specification of <CODE>next</CODE>,
+the <CODE>public exceptional_behavior</CODE> clause states that
+only an instance of the <CODE>PQException</CODE> class
+(not shown here) may be thrown when <CODE>entries</CODE> is empty.
+The <CODE>requires</CODE> clause gives a precondition for that case,
+and when it is true, the method must terminate
+(in this case by throwing an exception).
+Since no other exceptions are allowed, this effectively says that the
+method must thorw an instance of <CODE>PQException</CODE> when the
+exceptional behavior's precondition is satisfied by a call.
+as that case's postcondition must be satisfied.
+</P><P>
+
+The public normal behavior of <CODE>next</CODE> must be obeyed
+when its precondition is true;
+that is, when <CODE>entries</CODE> is not empty.
+The normal behavior's postcondition
+says that <CODE>next</CODE> returns an object with the lowest timestamp
+in the highest priority level.
+</P><P>
+
+It would, of course, be possible to only specify the public normal behavior
+for <CODE>next</CODE>.  If this were done,
+then implementations could just assume the precondition of
+the normal behavior--that <CODE>entries</CODE> is not empty.
+That would be an appropriate design for clients that can be trusted,
+and might permit more efficient implementation.
+The given specification is appropriate for untrusted clients
+<A HREF="jmlkluwer_7.html#BIB23">[Meyer92a]</A> <A HREF="jmlkluwer_7.html#BIB26">[Meyer97]</A>.
+</P><P>
+
+The specification <CODE>remove</CODE> uses case analysis
+<A HREF="jmlkluwer_7.html#BIB19">[Leavens-Baker99]</A> <A HREF="jmlkluwer_7.html#BIB37">[Wills94]</A> <A HREF="jmlkluwer_7.html#BIB34">[Wing83]</A>
+in the specification of normal behavior.
+The two cases are separated by the keyword <CODE>also</CODE>,
+and each must be obeyed when its precondition is true.
+The first case contains a <CODE>assignable</CODE> clause.<A NAME="DOCF2" HREF="jmlkluwer_fot.html#FOOT2">(2)</A>
+This is a frame condition
+<A HREF="jmlkluwer_7.html#BIB2">[Borgida-Mylopoulos-Reiter95]</A>;
+it states that only the fields mentioned
+(and any on which they depend <A HREF="jmlkluwer_7.html#BIB14">[Leino95]</A> <A HREF="jmlkluwer_7.html#BIB13">[Leino95a]</A>)
+can be assigned to; no other fields, including fields in other objects,
+can be assigned.
+Omitting the <CODE>assignable</CODE> clause means that all fields
+can be assigned.
+(Technically, the assignable clause is also concerned with array elements.
+Local variables, including the formal parameters of a method,
+and also fields of newly-created objects may also be
+freely assigned by a method <A HREF="jmlkluwer_7.html#BIB20">[Leavens-Baker-Ruby01]</A>.)
+Note that the precondition of <CODE>remove</CODE> uses the method <CODE>contains</CODE>,
+which is permitted because it is pure.
+</P><P>
+
+The most interesting thing about the specification of <CODE>remove</CODE>
+is that it uses the JML reserved word <CODE>\old</CODE>.
+As in Eiffel,
+the meaning of <CODE>\old(</CODE><I>E</I><CODE>)</CODE> is as if <I>E</I> were evaluated
+in the pre-state and that value is used in place of
+<CODE>\old(</CODE><I>E</I><CODE>)</CODE> in the assertion.
+</P><P>
+
+While we have broken up the specification of <CODE>PriorityQueueUser</CODE>
+into three pieces, that was done partly to demonstrate refinement and partly
+so that each piece would fit on a page.
+In common use, this specification would be written in one file.
+</P><P>
+
+<A NAME="Specifying New Pure Types For Modeling"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_2.html#SEC4"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlkluwer_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

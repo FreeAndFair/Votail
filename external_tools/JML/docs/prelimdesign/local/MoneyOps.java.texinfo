@@ -1,0 +1,66 @@
+package org.jmlspecs.samples.prelimdesign;
+
+public /*@@ pure @@*/ interface MoneyOps extends MoneyComparable
+@{
+  /*@@  public normal_behavior
+    @@     old double epsilon = 1.0;
+    @@     assignable \nothing;
+    @@     ensures \result
+    @@        <==> Long.MIN_VALUE + epsilon < d
+    @@             && d < Long.MAX_VALUE - epsilon;
+    @@ public model boolean inRange(double d);
+    @@
+    @@  public normal_behavior
+    @@     requires m2!= null;
+    @@     assignable \nothing;
+    @@     ensures \result
+    @@        <==> inRange((double) pennies + m2.pennies);
+    @@ public model boolean can_add(Money m2);
+    @@
+    @@  public normal_behavior
+    @@     ensures \result <==> inRange(factor * pennies);
+    @@ public model boolean can_scaleBy(double factor);
+    @@*/
+
+  /*@@   public normal_behavior
+    @@     old boolean can_add = can_add(m2); // FIXME: inline.
+    @@     requires m2 != null && can_add;
+    @@     assignable \nothing;
+    @@     ensures \result != null
+    @@          && \result.pennies == this.pennies + m2.pennies;
+    @@ for_example
+    @@   public normal_example
+    @@     requires this.pennies == 300 && m2.pennies == 400;
+    @@     assignable \nothing;
+    @@     ensures \result != null && \result.pennies == 700;
+    @@*/
+  public MoneyOps plus(Money m2);
+
+  /*@@   public normal_behavior
+    @@     old boolean inRange = inRange((double) pennies - m2.pennies); // FIXME: inline.
+    @@     requires m2 != null
+    @@           && inRange;
+    @@     assignable \nothing;
+    @@     ensures \result != null
+    @@          && \result.pennies == this.pennies - m2.pennies;
+    @@ for_example
+    @@   public normal_example
+    @@     requires this.pennies == 400 && m2.pennies == 300;
+    @@     assignable \nothing;
+    @@     ensures  \result != null && \result.pennies == 100;
+    @@*/
+  public MoneyOps minus(Money m2);
+
+  /*@@   public normal_behavior
+    @@     requires can_scaleBy(factor);
+    @@     assignable \nothing;
+    @@     ensures \result != null
+    @@          && \result.pennies == (long)(factor * pennies);
+    @@ for_example
+    @@   public normal_example
+    @@     requires pennies == 400 && factor == 1.01;
+    @@     assignable \nothing;
+    @@     ensures \result != null && \result.pennies == 404;
+    @@*/
+  public MoneyOps scaleBy(double factor);
+@}

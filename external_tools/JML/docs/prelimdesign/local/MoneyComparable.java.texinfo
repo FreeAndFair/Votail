@@ -1,0 +1,32 @@
+package org.jmlspecs.samples.prelimdesign;
+
+public /*@@ pure @@*/ interface MoneyComparable extends Money
+@{
+  /*@@ public normal_behavior
+    @@   requires m2 != null;
+    @@   assignable \nothing;
+    @@   ensures \result <==> pennies > m2.pennies;
+    @@*/
+  public boolean greaterThan(Money m2);
+
+  /*@@ public normal_behavior
+    @@   requires m2 != null;
+    @@   assignable \nothing;
+    @@   ensures \result <==> pennies >= m2.pennies;
+    @@*/
+  public boolean greaterThanOrEqualTo(Money m2);
+
+  /*@@ public normal_behavior
+    @@   requires m2 != null;
+    @@   assignable \nothing;
+    @@   ensures \result <==> pennies < m2.pennies;
+    @@*/
+  public boolean lessThan(Money m2);
+
+  /*@@ public normal_behavior
+    @@   requires m2 != null;
+    @@   assignable \nothing;
+    @@   ensures \result <==> pennies <= m2.pennies;
+    @@*/
+  public boolean lessThanOrEqualTo(Money m2);
+@}

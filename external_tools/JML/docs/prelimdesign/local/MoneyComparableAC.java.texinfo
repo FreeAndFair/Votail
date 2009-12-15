@@ -1,0 +1,34 @@
+package org.jmlspecs.samples.prelimdesign;
+
+public /*@@ pure @@*/ abstract class MoneyComparableAC
+    extends MoneyAC implements MoneyComparable
+@{
+  protected static /*@@ pure @@*/
+  long totalCents(Money m2)
+  @{
+    long res = 100 * m2.dollars() + m2.cents();
+    //@@ assert res == m2.pennies;
+    return res;
+  @}
+
+  public boolean greaterThan(Money m2)
+  @{
+    return numCents > totalCents(m2);
+  @}
+
+  public boolean greaterThanOrEqualTo(Money m2)
+  @{
+    return numCents >= totalCents(m2);
+  @}
+
+  public boolean lessThan(Money m2)
+  @{
+    return numCents < totalCents(m2);
+  @}
+
+  public boolean lessThanOrEqualTo(Money m2)
+  @{
+    return numCents <= totalCents(m2);
+  @}
+@}
+

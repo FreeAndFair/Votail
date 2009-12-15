@@ -1,0 +1,267 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Modifier Summary</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Modifier Summary">
+<META NAME="keywords" CONTENT="JML Reference Manual: Modifier Summary">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC237"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_21.html#SEC219"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_23.html#SEC238"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> B. Modifier Summary </H1>
+<!--docid::SEC237::-->
+<P>
+
+<A NAME="IDX3022"></A>
+This table summarizes which Java and JML modifiers may be used in 
+various grammatical contexts.
+</P><P>
+
+<TABLE>
+
+<TR><TD>Grammatical construct </TD><TD> </TD><TD> Java modifiers </TD><TD> </TD><TD> JML modifiers</TD>
+
+</TR>
+<TR><TD>All modifiers</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private abstract static final synchronized transient volatile native strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>spec_public spec_protected model ghost pure instance helper non_null nullable nullable_by_default monitored uninitialized</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Class declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public final abstract strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>pure model nullable_by_default spec_public spec_protected</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Interface declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>pure model nullable_by_default spec_public spec_protected</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Nested Class declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private static final abstract strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>spec_public spec_protected model pure</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Nested interface declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private static strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>spec_public spec_protected model pure</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Local Class (and local model class) declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>final abstract strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>pure model</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Type specification (e.g. invariant)</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private static</CODE>
+</TD><TD>
+</TD><TD> <CODE>instance</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Field declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private final volatile transient static</CODE>
+</TD><TD>
+</TD><TD> <CODE>spec_public spec_protected non_null nullable instance monitored</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Ghost Field declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private static final</CODE>
+</TD><TD>
+</TD><TD> <CODE>non_null nullable instance monitored</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Model Field declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private static</CODE>
+</TD><TD>
+</TD><TD> <CODE>non_null nullable instance</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Method declaration in a class</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private abstract final static synchronized native strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>spec_public spec_protected pure non_null nullable helper extract</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Method declaration in an interface</TD>
+</TD><TD>
+</TD><TD> <CODE>public abstract</CODE>
+</TD><TD>
+</TD><TD> <CODE>spec_public spec_protected pure non_null nullable helper</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Constructor declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private</CODE>
+</TD><TD>
+</TD><TD> <CODE>spec_public spec_protected helper pure extract</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Model method (in a class or interface)</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private abstract static final synchronized strictfp</CODE>
+</TD><TD>
+</TD><TD> <CODE>pure non_null nullable helper extract</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Model constructor</TD>
+</TD><TD>
+</TD><TD> <CODE>public protected private</CODE>
+</TD><TD>
+</TD><TD> <CODE>pure helper extract</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Java initialization block</TD>
+</TD><TD>
+</TD><TD> <CODE>static</CODE>
+</TD><TD>
+</TD><TD> -
+
+</TR>
+<TR><TD>JML initializer and static_initializer annotation</TD>
+</TD><TD>
+</TD><TD> -
+</TD><TD>
+</TD><TD> -
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Formal parameter</TD>
+</TD><TD>
+</TD><TD> <CODE>final</CODE>
+</TD><TD>
+</TD><TD> <CODE>non_null nullable</CODE>
+
+</TR>
+<TR><TD></TD>
+
+</TR>
+<TR><TD>Local variable and local ghost variable declaration</TD>
+</TD><TD>
+</TD><TD> <CODE>final</CODE>
+</TD><TD>
+</TD><TD> <CODE>ghost non_null nullable uninitialized</CODE>
+
+</TR></TABLE>
+<P>
+
+Note that within interfaces, fields are implicitly public, static and
+final <A HREF="jmlrefman_27.html#BIB32">[Gosling-etal00]</A>.
+In an interface, ghost and model fields are implicitly public and
+static, though they may be declared as <CODE>instance</CODE> fields, which
+makes them not static.
+</P><P>
+
+Also within an interface, methods may not be static and are implicitly
+abstract.  Model methods in interfaces, however, are not implicitly 
+abstract and may be declared static.
+</P><P>
+
+<A NAME="Type Checking Summary"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_21.html#SEC219"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_23.html#SEC238"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

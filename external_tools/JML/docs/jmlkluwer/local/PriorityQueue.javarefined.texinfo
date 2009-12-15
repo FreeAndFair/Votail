@@ -1,0 +1,68 @@
+package org.jmlspecs.samples.jmlkluwer;
+//@@ model import org.jmlspecs.models.*;
+
+public class PriorityQueue implements PriorityQueueUser @{
+
+ /*@@ public normal_behavior
+   @@  assignable entries;
+   @@  ensures entries != null && entries.isEmpty();
+   @@  ensures_redundantly
+   @@          entries.equals(new JMLValueSet());
+   @@*/
+ public PriorityQueue();
+
+ //@@ private pure model JMLValueSet abstractValue();
+
+ /*@@   public normal_behavior
+   @@     requires entries.isEmpty();
+   @@     assignable \nothing;
+   @@     ensures \result == -1;
+   @@ also
+   @@   public normal_behavior
+   @@     requires !(entries.isEmpty());
+   @@     assignable \nothing;
+   @@     ensures (\forall QueueEntry e; entries.has(e);
+   @@                       \result >= e.timeStamp);
+   @@     ensures (\exists QueueEntry e; entries.has(e);
+   @@                       \result == e.timeStamp);
+   @@
+    public pure model long largestTimeStamp() @{
+	// FIXME: once model fields become usable within model methods
+	// then delete the following local declaration
+	JMLValueSet entries = abstractValue();
+
+	if(entries.isEmpty())
+	    return -1;
+	long max = Long.MIN_VALUE;
+	JMLValueSetEnumerator i = null;
+	for(i = entries.elements(); i.hasMoreElements(); ) @{
+	    QueueEntry e = (QueueEntry)i.nextElement();
+	    if (max < e.timeStamp)
+		max = e.timeStamp;
+	@}
+	return max;
+    @}
+   @@*/
+
+ /*@@ public normal_behavior
+   @@     old long lts = largestTimeStamp();
+   @@     requires !contains(argObj);
+   @@     requires argPriorityLevel >= 0;
+   @@     requires largestTimeStamp() < Long.MAX_VALUE;
+   @@     assignable entries;
+   @@     ensures entries.equals(\old(entries).insert(
+   @@                new QueueEntry(argObj, argPriorityLevel, lts+1)));
+   @@ also
+   @@   public exceptional_behavior
+   @@     requires contains(argObj) || argPriorityLevel < 0;
+   @@     assignable \nothing;
+   @@     signals_only PQException;
+   @@*/
+  public void addEntry(Object argObj, int argPriorityLevel)
+                     throws PQException;
+
+  public /*@@ pure @@*/ boolean contains(Object argObj);
+  public /*@@ pure @@*/ Object next() throws PQException;
+  public void remove(Object argObj);
+  public /*@@ pure @@*/ boolean isEmpty();
+@}

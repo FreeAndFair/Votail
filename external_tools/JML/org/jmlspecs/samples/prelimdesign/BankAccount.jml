@@ -1,0 +1,85 @@
+// @(#)$Id: BankAccount.jml,v 1.4 2002/12/18 12:08:39 leavens Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
+package org.jmlspecs.samples.prelimdesign;
+
+public class BankAccount {
+
+  //@ public model USMoney credit;
+  //@ public model String owner;
+  /*@ public invariant credit != null && owner != null
+    @             && credit.greaterThanOrEqualTo(new USMoney(0));
+    @ public constraint owner == \old(owner);
+    @*/
+
+
+  /*@  public normal_behavior
+    @    requires (new USMoney(1)).lessThanOrEqualTo(amt);
+    @    assignable credit, owner;
+    @    ensures credit.equals(amt) && owner.equals(own);
+    @*/
+  public BankAccount(Money amt, String own);
+
+  /*@  public normal_behavior
+    @    assignable \nothing;
+    @    ensures \result != null && \result.equals(credit);
+    @*/
+  public Money balance();
+
+  /*@  public normal_behavior
+    @    requires 0.0 <= rate && rate <= 1.0;
+    @    assignable credit;
+    @    ensures credit == \old(credit).scaleBy(1.0 + rate);
+    @ for_example
+    @  public normal_example
+    @    requires rate == 0.05 && credit.equals(new USMoney(4000));
+    @    assignable credit;
+    @    ensures credit.equals(new USMoney(4200));
+    @*/
+  public void payInterest(double rate);
+
+  /*@  public normal_behavior
+    @    requires amt.greaterThanOrEqualTo(new USMoney(0));
+    @    assignable credit;
+    @    ensures credit.equals(\old(credit).plus(amt));
+    @ for_example
+    @  public normal_example
+    @    requires credit.equals(new USMoney(40000))
+    @         && amt.equals(new USMoney(1));
+    @    assignable credit;
+    @    ensures credit.equals(new USMoney(40001));
+    @*/
+  public void deposit(MoneyComparable amt);
+
+  /*@  public normal_behavior
+    @    requires (new USMoney(0)).lessThanOrEqualTo(amt)
+    @           && amt.lessThanOrEqualTo(credit);
+    @    assignable credit;
+    @    ensures credit.equals(\old(credit).minus(amt));
+    @ for_example
+    @  public normal_example
+    @    requires credit.equals(new USMoney(40001))
+    @          && amt.equals(new USMoney(40000));
+    @    assignable credit;
+    @    ensures credit.equals(new USMoney(1));
+    @*/
+  public void withdraw(MoneyComparable amt);
+}

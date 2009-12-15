@@ -1,0 +1,15 @@
+*-ckd
+*.*~
+*.class
+*.sym
+*.java.gen
+*.out
+*.dout
+*_JML_Test.java
+*_JML_TestCase.java
+TestSuite.java
+buildtests.stamp
+classes.stamp
+raccompile.stamp
+java.stamp
+.DS_Store

@@ -1,0 +1,149 @@
+                       Answers to Referee Comments
+		          $Date: 2004/08/11 12:10:19 $
+
+
+We have tried to address the main comments by the referees, as detailed
+below. Note that given the referees wanted more details about specific 
+issues, the paper has become quite a bit longer.
+
+Comments from referee 1:
+
+> The paper provides a nice overview of the JML tools that are available
+> and how JML is applied. One of the problems of a paper that describes
+> a variety of tools such as this is deciding how much details that
+> should be discussed in the paper. While I found that the descriptions
+> of each tool was quite nice, however, I thought that the content could
+> be improved to go beyond the FMICS 2003 paper as follows.
+> 
+> The authors should establish some criteria that can be used to
+> evaluate the tools. These criteria should be listed explicitly, e.g.,
+> in Section 3: Tools for JML. For example, one of the criteria can be
+> tool automation, i.e., how much manual efforts the user has to do to
+> use the tool.  Once the criteria are established, then the authors can
+> give a brief description on how each tool fits in, preferably with a
+> diagram to illustrate it.
+
+Since the tools serve so many different purposes, we don't believe
+there is a useful or helpful citeria that could be used for this
+purpose.  The only sensible way to compare them is how "mature" they
+are, ie. are they just a vehicle for ongoing for research or are they
+ready for real use. The size of the biggest examples that have been
+handled should give some idea about this.  We have added that to the
+document, but don't plan to devote a section to this, as the point of
+the paper is not to compare the different tools.
+
+> In the subsections for each tool, it may be beneficial to the readers
+> if the subsections have similar structure, preferably using explicit
+> paragraph headers.  For example, the structure can be as follows:
+> - Tool overview
+> - Goals, design decisions, rationale
+> - Discussion of the features of the tool
+>   - discussion on how the tool check/generate documentation of
+>     some of the specifications in Figure 1
+>   - a methodology for using the tool
+> - Assessment of the tool wrt. to the criteria established above
+> - Experience when using the tool
+> - Discussion about ongoing work
+
+This is a change we have made to the paper.  We adopted the following
+general outline for each section:
+
+ x.1. Overview and Goals
+
+ x.2. Design of the Tool
+
+ x.3. Example
+    
+ x.4. Experience
+
+ x.5. Future Work  (optional)
+
+ x.6. Availability  (optional)
+
+> Furthermore, the discussion about the future work that is embedded in
+> the Conclusions section should be expanded, e.g., in a separate
+> section, by giving a more detailed discussion or by using examples to
+> illustrate the problems.  This may interest some readers who are
+> considering using JML or contributing to the JML effort.
+
+All sections about the individual tools now include a subsection
+about future work, and the future work discussion in the Conclusions
+has been expanded.
+
+Comments from referee 2:
+
+> JML seems to have been gaining momentum over the recent few years, particular 
+> regarding the availability of tools, so a survey paper on this subject seems
+> topical and well motivated. The submitted paper covers, as far as I am
+> able to tell, all the major initiatives to an adequate depth for a survey
+> paper. The emphasis is clearly on tools, and the applications section is
+> mainly a reference to a JavaCard study done on the basis of ESC/Java.
+> This is a bit disappointing, even if several of the tool sections have
+> references to user experience reports. I would suppose there would more
+> documented and systematic points to make at the level of JML concerning 
+> application studies overall, usability, overhead, learning curves, etc.
+
+We have included more details about experiences with the tools, also
+following the recommendations of the first referee.
+
+> In the section on the jack prover I would like more factual information
+> and less slogans. The information given is often too vague. Which application
+> studies have been made? Are there references? What about usability studies?
+> Are the cited statistics supported by any published material? The idea of
+> a checked state doesn't appear to me as a major advance, are there theorem
+> provers around which does not allow claims to be made?
+
+We have included more discussion about the differences between JACK
+and the other provers.
+
+> The authors clearly have major gripes against OCL.
+
+Maybe the impression that the discussion about OCL gives is stronger
+than we intend. We just want to point out some differences, as the 
+question why we don't use OCL is frequently asked.
+
+> As an outsider I have
+> somewhat of a difficulty understanding this. I can understand that OCL
+> in general is aimed at UML, a different ballgame, true, but what are
+> the conceptual difficulties in creating Java oriented instantiations
+> of OCL, including a sutiable semantics (which the JML tools apparently
+> don't agree that much about either)? Adding a little prettyprinter would 
+> probably allow such a tool to produce rather convincing JML-looking output.
+
+Work on such prettyprinters in fact exists, and we added a reference to this.
+
+> By the way I think a reference to the Key tool would be proper.
+
+We included a reference to the KeY tool.
+
+> In general I would say that a shared syntax is nice; this point is
+> made repeatedly in the paper, and it is a rationale of writing the
+> survey in the first place. But, the point can be overdone. After all,
+> the real, difficult points concerning adaption of formal methods in
+> industry do not so much concern notation (despite the authors
+> evident optimism). I certainly do not subscribe to the authors view
+> that the biggest hurdle to formal methods adoption is the overhead of
+> having to learn another language - in my experience this is simply false.
+> Any tool with sufficient return on investment will be used.
+
+Maybe this point has been a bit overstated. We should note however
+that in our experience using the verification tools the lack of formally 
+specified APIs is a major bottleneck, and that developing such specs is 
+a huge effort, which has to be done before these verification tools 
+can begin providing any reasonable return on investment.
+
+> The point concerning lack of discrrepancies between actual code and
+> formal model (p. 10): Is this really true?  At the same time you're
+> saying that you cannot handle lots of standard Java features (like:
+> aliasing and concurrency). Also what about all the features, like
+> time, memory consumption etc etc that you do not handle?
+
+We believe the point about lack of discrepancy is really true. Of course, 
+approaches where there is a discrepancy between code and formal model 
+may have the advantage of a nicer (mathematical) universe of formal model.
+Initial work on resource usage (time & memory) has begun, but we feel
+it would be going into to much detail to discuss all this.
+
+> Overall, however, the paper is well-written even if I would occasionally
+> prefer more factual information that drum-beating. I am happy to recommend
+> the paper for publication.

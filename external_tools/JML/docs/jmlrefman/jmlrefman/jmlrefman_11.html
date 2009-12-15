@@ -1,0 +1,2052 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Predicates and Specification Expressions</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Predicates and Specification Expressions">
+<META NAME="keywords" CONTENT="JML Reference Manual: Predicates and Specification Expressions">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC121"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_10.html#SEC118"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_12.html#SEC163"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 11. Predicates and Specification Expressions </H1>
+<!--docid::SEC121::-->
+<P>
+
+This chapter describes predicates in JML and JML's extensions to
+Java's expressions.  It also describes store references, which are
+similar to specification expressions, but are used to describe
+locations instead of values.  Details are found in the sections below.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC122">11.1 Predicates</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC124">11.3 Expressions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC125">11.4 JML Primary Expressions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC156">11.5 Set Comprehensions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC157">11.6 JML Operators</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC162">11.7 Store Refs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Predicates"></A>
+<HR SIZE="6">
+<A NAME="SEC122"></A>
+<H2> 11.1 Predicates </H2>
+<!--docid::SEC122::-->
+<P>
+
+<A NAME="IDX1999"></A>
+<A NAME="IDX2000"></A>
+<A NAME="IDX2001"></A>
+A <EM>predicate</EM>
+The following gives the syntax of predicates, which are simply
+<VAR>spec-expression</VAR>s that must have a boolean value.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of specification
+expressions. 
+</P><P>
+
+<A NAME="IDX2002"></A>
+<A NAME="IDX2003"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>predicate</VAR> ::= <VAR>spec-expression</VAR>
+</pre></td></tr></table></P><P>
+
+<A NAME="Specification Expressions"></A>
+<HR SIZE="6">
+<A NAME="SEC123"></A>
+<H2> 11.2 Specification Expressions </H2>
+<!--docid::SEC123::-->
+<P>
+
+The following gives the syntax of specification expressions in JML.
+See section <A HREF="jmlrefman_11.html#SEC124">11.3 Expressions</A>, for the syntax of <VAR>expression</VAR>.
+</P><P>
+
+<A NAME="IDX2004"></A>
+<A NAME="IDX2005"></A>
+<A NAME="IDX2006"></A>
+<A NAME="IDX2007"></A>
+<A NAME="IDX2008"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>spec-expression-list</VAR> ::= <VAR>spec-expression</VAR>
+                         [ <CODE>,</CODE> <VAR>spec-expression</VAR> ] <small>...</small>
+<VAR>spec-expression</VAR> ::= <VAR>expression</VAR> 
+</pre></td></tr></table></P><P>
+
+Within a <VAR>spec-expression</VAR>, one cannot use any of the operators
+(such as <CODE>++</CODE>, <CODE>--</CODE>, and the assignment operators) that
+would necessarily cause side effects.  In addition, one can use
+extensions that are specific to JML, in particular the JML primary
+expressions.
+</P><P>
+
+<A NAME="Expressions"></A>
+<HR SIZE="6">
+<A NAME="SEC124"></A>
+<H2> 11.3 Expressions </H2>
+<!--docid::SEC124::-->
+<P>
+
+<A NAME="IDX2009"></A>
+The JML syntax for expressions extends the Java syntax
+with several operators and primitives.
+</P><P>
+
+<A NAME="IDX2010"></A>
+<A NAME="IDX2011"></A>
+<A NAME="IDX2012"></A>
+<A NAME="IDX2013"></A>
+The precedence of operators in JML expressions is similar to that in Java
+The precedence levels are given in the following table,
+where the parentheses, quantified expressions, 
+<CODE>[]</CODE>, <CODE>.</CODE>, and method calls 
+on the first three lines all have the highest precedence,
+and for the rest, only the operators on the same line have the same precedence.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif">  highest   <CODE>new ()</CODE> <CODE>\forall</CODE> <CODE>\exists</CODE> <CODE>\max</CODE> <CODE>\min</CODE>
+                <CODE>\num_of</CODE> <CODE>\product</CODE> <CODE>\sum</CODE> <VAR>informal-description</VAR> 
+                <CODE>[] .</CODE> and method calls 
+            unary <CODE>+</CODE> and <CODE>-</CODE> <CODE>~</CODE> <CODE>!</CODE> <CODE>(</CODE>typecast<CODE>)</CODE>
+            <CODE>* / %</CODE> 
+            <CODE>+</CODE> (binary) <CODE>-</CODE> (binary) 
+            <CODE>&#60;&#60; &#62;&#62; &#62;&#62;&#62;</CODE> 
+            <CODE>&#60; &#60;= &#62; &#62;= &#60;: instanceof</CODE> 
+            <CODE>== !=</CODE> 
+            <CODE>&#38;</CODE> 
+            <CODE>^</CODE> 
+            <CODE>|</CODE> 
+            <CODE>&#38;&#38;</CODE> 
+            <CODE>||</CODE> 
+            <CODE>==&#62;</CODE> <CODE>&#60;==</CODE> 
+            <CODE>&#60;==&#62;</CODE> <CODE>&#60;=!=&#62;</CODE>
+            <CODE>?:</CODE>
+  lowest    <CODE>= *= /= %= += -= &#60;&#60;= &#62;&#62;= &#62;&#62;&#62;= &#38;= ^= |=</CODE>
+</pre></td></tr></table></P><P>
+
+The following is the syntax of Java expressions, with JML additions.
+The additions are
+the operators <CODE>==&#62;</CODE>, <CODE>&#60;==</CODE>, <CODE>&#60;==&#62;</CODE>, <CODE>&#60;=!=&#62;</CODE>,
+and <CODE>&#60;:</CODE>, and the syntax found under the
+nonterminals <VAR>jml-primary</VAR>
+(see section <A HREF="jmlrefman_11.html#SEC125">11.4 JML Primary Expressions</A>) and
+<VAR>set-comprehension</VAR> (see section <A HREF="jmlrefman_11.html#SEC156">11.5 Set Comprehensions</A>).
+The JML additions to the Java syntax can only be used
+in assertions and other annotations.
+Furthermore, within assertions, one cannot use any of the operators
+(such as <CODE>++</CODE>, <CODE>--</CODE>, and the assignment operators) that
+would necessarily cause side effects.
+</P><P>
+
+<A NAME="IDX2014"></A>
+<A NAME="IDX2015"></A>
+<A NAME="IDX2016"></A>
+<A NAME="IDX2017"></A>
+<A NAME="IDX2018"></A>
+<A NAME="IDX2019"></A>
+<A NAME="IDX2020"></A>
+<A NAME="IDX2021"></A>
+<A NAME="IDX2022"></A>
+<A NAME="IDX2023"></A>
+<A NAME="IDX2024"></A>
+<A NAME="IDX2025"></A>
+<A NAME="IDX2026"></A>
+<A NAME="IDX2027"></A>
+<A NAME="IDX2028"></A>
+<A NAME="IDX2029"></A>
+<A NAME="IDX2030"></A>
+<A NAME="IDX2031"></A>
+<A NAME="IDX2032"></A>
+<A NAME="IDX2033"></A>
+<A NAME="IDX2034"></A>
+<A NAME="IDX2035"></A>
+<A NAME="IDX2036"></A>
+<A NAME="IDX2037"></A>
+<A NAME="IDX2038"></A>
+<A NAME="IDX2039"></A>
+<A NAME="IDX2040"></A>
+<A NAME="IDX2041"></A>
+<A NAME="IDX2042"></A>
+<A NAME="IDX2043"></A>
+<A NAME="IDX2044"></A>
+<A NAME="IDX2045"></A>
+<A NAME="IDX2046"></A>
+<A NAME="IDX2047"></A>
+<A NAME="IDX2048"></A>
+<A NAME="IDX2049"></A>
+<A NAME="IDX2050"></A>
+<A NAME="IDX2051"></A>
+<A NAME="IDX2052"></A>
+<A NAME="IDX2053"></A>
+<A NAME="IDX2054"></A>
+<A NAME="IDX2055"></A>
+<A NAME="IDX2056"></A>
+<A NAME="IDX2057"></A>
+<A NAME="IDX2058"></A>
+<A NAME="IDX2059"></A>
+<A NAME="IDX2060"></A>
+<A NAME="IDX2061"></A>
+<A NAME="IDX2062"></A>
+<A NAME="IDX2063"></A>
+<A NAME="IDX2064"></A>
+<A NAME="IDX2065"></A>
+<A NAME="IDX2066"></A>
+<A NAME="IDX2067"></A>
+<A NAME="IDX2068"></A>
+<A NAME="IDX2069"></A>
+<A NAME="IDX2070"></A>
+<A NAME="IDX2071"></A>
+<A NAME="IDX2072"></A>
+<A NAME="IDX2073"></A>
+<A NAME="IDX2074"></A>
+<A NAME="IDX2075"></A>
+<A NAME="IDX2076"></A>
+<A NAME="IDX2077"></A>
+<A NAME="IDX2078"></A>
+<A NAME="IDX2079"></A>
+<A NAME="IDX2080"></A>
+<A NAME="IDX2081"></A>
+<A NAME="IDX2082"></A>
+<A NAME="IDX2083"></A>
+<A NAME="IDX2084"></A>
+<A NAME="IDX2085"></A>
+<A NAME="IDX2086"></A>
+<A NAME="IDX2087"></A>
+<A NAME="IDX2088"></A>
+<A NAME="IDX2089"></A>
+<A NAME="IDX2090"></A>
+<A NAME="IDX2091"></A>
+<A NAME="IDX2092"></A>
+<A NAME="IDX2093"></A>
+<A NAME="IDX2094"></A>
+<A NAME="IDX2095"></A>
+<A NAME="IDX2096"></A>
+<A NAME="IDX2097"></A>
+<A NAME="IDX2098"></A>
+<A NAME="IDX2099"></A>
+<A NAME="IDX2100"></A>
+<A NAME="IDX2101"></A>
+<A NAME="IDX2102"></A>
+<A NAME="IDX2103"></A>
+<A NAME="IDX2104"></A>
+<A NAME="IDX2105"></A>
+<A NAME="IDX2106"></A>
+<A NAME="IDX2107"></A>
+<A NAME="IDX2108"></A>
+<A NAME="IDX2109"></A>
+<A NAME="IDX2110"></A>
+<A NAME="IDX2111"></A>
+<A NAME="IDX2112"></A>
+<A NAME="IDX2113"></A>
+<A NAME="IDX2114"></A>
+<A NAME="IDX2115"></A>
+<A NAME="IDX2116"></A>
+<A NAME="IDX2117"></A>
+<A NAME="IDX2118"></A>
+<A NAME="IDX2119"></A>
+<A NAME="IDX2120"></A>
+<A NAME="IDX2121"></A>
+<A NAME="IDX2122"></A>
+<A NAME="IDX2123"></A>
+<A NAME="IDX2124"></A>
+<A NAME="IDX2125"></A>
+<A NAME="IDX2126"></A>
+<A NAME="IDX2127"></A>
+<A NAME="IDX2128"></A>
+<A NAME="IDX2129"></A>
+<A NAME="IDX2130"></A>
+<A NAME="IDX2131"></A>
+<A NAME="IDX2132"></A>
+<A NAME="IDX2133"></A>
+<A NAME="IDX2134"></A>
+<A NAME="IDX2135"></A>
+<A NAME="IDX2136"></A>
+<A NAME="IDX2137"></A>
+<A NAME="IDX2138"></A>
+<A NAME="IDX2139"></A>
+<A NAME="IDX2140"></A>
+<A NAME="IDX2141"></A>
+<A NAME="IDX2142"></A>
+<A NAME="IDX2143"></A>
+<A NAME="IDX2144"></A>
+<A NAME="IDX2145"></A>
+<A NAME="IDX2146"></A>
+<A NAME="IDX2147"></A>
+<A NAME="IDX2148"></A>
+<A NAME="IDX2149"></A>
+<A NAME="IDX2150"></A>
+<A NAME="IDX2151"></A>
+<A NAME="IDX2152"></A>
+<A NAME="IDX2153"></A>
+<A NAME="IDX2154"></A>
+<A NAME="IDX2155"></A>
+<A NAME="IDX2156"></A>
+<A NAME="IDX2157"></A>
+<A NAME="IDX2158"></A>
+<A NAME="IDX2159"></A>
+<A NAME="IDX2160"></A>
+<A NAME="IDX2161"></A>
+<A NAME="IDX2162"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>expression-list</VAR> ::= <VAR>expression</VAR> [ <CODE>,</CODE> <VAR>expression</VAR> ] <small>...</small>
+<VAR>expression</VAR> ::= <VAR>assignment-expr</VAR> 
+<VAR>assignment-expr</VAR> ::= <VAR>conditional-expr</VAR>
+                    [ <VAR>assignment-op</VAR> <VAR>assignment-expr</VAR> ]
+<VAR>assignment-op</VAR> ::=  <CODE>=</CODE> | <CODE>+=</CODE> | <CODE>-=</CODE> | <CODE>*=</CODE> | <CODE>/=</CODE> | <CODE>%=</CODE> | <CODE>&#62;&#62;=</CODE>  
+        | <CODE>&#62;&#62;&#62;=</CODE> | <CODE>&#60;&#60;=</CODE> | <CODE>&#38;=</CODE> | `<CODE>|=</CODE>' | <CODE>^=</CODE>
+<VAR>conditional-expr</VAR> ::= <VAR>equivalence-expr</VAR>
+                   [ <CODE>?</CODE> <VAR>conditional-expr</VAR> <CODE>:</CODE> <VAR>conditional-expr</VAR> ]
+<VAR>equivalence-expr</VAR> ::= <VAR>implies-expr</VAR>
+                     [ <VAR>equivalence-op</VAR> <VAR>implies-expr</VAR> ] <small>...</small>
+<VAR>equivalence-op</VAR> ::= <CODE>&#60;==&#62;</CODE> | <CODE>&#60;=!=&#62;</CODE>
+<VAR>implies-expr</VAR> ::= <VAR>logical-or-expr</VAR>
+             [ <CODE>==&#62;</CODE> <VAR>implies-non-backward-expr</VAR> ]
+        | <VAR>logical-or-expr</VAR> <CODE>&#60;==</CODE> <VAR>logical-or-expr</VAR>
+             [ <CODE>&#60;==</CODE> <VAR>logical-or-expr</VAR> ] <small>...</small>
+<VAR>implies-non-backward-expr</VAR> ::= <VAR>logical-or-expr</VAR>
+             [ <CODE>==&#62;</CODE> <VAR>implies-non-backward-expr</VAR> ]
+<VAR>logical-or-expr</VAR> ::= <VAR>logical-and-expr</VAR> [ `<CODE>||</CODE>' <VAR>logical-and-expr</VAR> ] <small>...</small>
+<VAR>logical-and-expr</VAR> ::= <VAR>inclusive-or-expr</VAR> [ <CODE>&#38;&#38;</CODE> <VAR>inclusive-or-expr</VAR> ] <small>...</small>
+<VAR>inclusive-or-expr</VAR> ::= <VAR>exclusive-or-expr</VAR> [ `<CODE>|</CODE>' <VAR>exclusive-or-expr</VAR> ] <small>...</small>
+<VAR>exclusive-or-expr</VAR> ::= <VAR>and-expr</VAR> [ <CODE>^</CODE> <VAR>and-expr</VAR> ] <small>...</small>
+<VAR>and-expr</VAR> ::= <VAR>equality-expr</VAR> [ <CODE>&#38;</CODE> <VAR>equality-expr</VAR> ] <small>...</small>
+<VAR>equality-expr</VAR> ::= <VAR>relational-expr</VAR> [ <CODE>==</CODE> <VAR>relational-expr</VAR>] <small>...</small>
+        | <VAR>relational-expr</VAR> [ <CODE>!=</CODE> <VAR>relational-expr</VAR>] <small>...</small>
+<VAR>relational-expr</VAR> ::= <VAR>shift-expr</VAR> <CODE>&#60;</CODE> <VAR>shift-expr</VAR>
+        | <VAR>shift-expr</VAR> <CODE>&#62;</CODE> <VAR>shift-expr</VAR>
+        | <VAR>shift-expr</VAR> <CODE>&#60;=</CODE> <VAR>shift-expr</VAR>
+        | <VAR>shift-expr</VAR> <CODE>&#62;=</CODE> <VAR>shift-expr</VAR>
+        | <VAR>shift-expr</VAR> <CODE>&#60;:</CODE> <VAR>shift-expr</VAR>
+        | <VAR>shift-expr</VAR> [ <CODE>instanceof</CODE> <VAR>type-spec</VAR> ]
+<VAR>shift-expr</VAR> ::= <VAR>additive-expr</VAR> [ <VAR>shift-op</VAR> <VAR>additive-expr</VAR> ] <small>...</small>
+<VAR>shift-op</VAR> ::= <CODE>&#60;&#60;</CODE> | <CODE>&#62;&#62;</CODE> | <CODE>&#62;&#62;&#62;</CODE>
+<VAR>additive-expr</VAR> ::= <VAR>mult-expr</VAR> [ <VAR>additive-op</VAR> <VAR>mult-expr</VAR> ] <small>...</small>
+<VAR>additive-op</VAR> ::= <CODE>+</CODE> | <CODE>-</CODE>
+<VAR>mult-expr</VAR> ::= <VAR>unary-expr</VAR> [ <VAR>mult-op</VAR> <VAR>unary-expr</VAR> ] <small>...</small>
+<VAR>mult-op</VAR> ::= <CODE>*</CODE> | <CODE>/</CODE> | <CODE>%</CODE>
+<VAR>unary-expr</VAR> ::= <CODE>(</CODE> <VAR>type-spec</VAR> <CODE>)</CODE> <VAR>unary-expr</VAR>
+        | <CODE>++</CODE> <VAR>unary-expr</VAR>
+        | <CODE>--</CODE> <VAR>unary-expr</VAR>
+        | <CODE>+</CODE> <VAR>unary-expr</VAR>
+        | <CODE>-</CODE> <VAR>unary-expr</VAR>
+        | <VAR>unary-expr-not-plus-minus</VAR>
+<VAR>unary-expr-not-plus-minus</VAR> ::= <CODE>~</CODE> <VAR>unary-expr</VAR>
+        | <CODE>!</CODE> <VAR>unary-expr</VAR>
+        | <CODE>(</CODE> <VAR>built-in-type</VAR> <CODE>)</CODE> <VAR>unary-expr</VAR>
+        | <CODE>(</CODE> <VAR>reference-type</VAR> <CODE>)</CODE> <VAR>unary-expr-not-plus-minus</VAR>
+        | <VAR>postfix-expr</VAR>
+<VAR>postfix-expr</VAR> ::= <VAR>primary-expr</VAR> [ <VAR>primary-suffix</VAR> ] <small>...</small> [ <CODE>++</CODE> ]
+        | <VAR>primary-expr</VAR> [ <VAR>primary-suffix</VAR> ] <small>...</small> [ <CODE>--</CODE> ]
+        | <VAR>built-in-type</VAR> [ `<CODE>[</CODE>' `<CODE>]</CODE>' ] <small>...</small> <CODE>.</CODE> <CODE>class</CODE>
+<VAR>primary-suffix</VAR> ::= <CODE>.</CODE> <VAR>ident</VAR>
+        | <CODE>.</CODE> <CODE>this</CODE>
+        | <CODE>.</CODE> <CODE>class</CODE>
+        | <CODE>.</CODE> <VAR>new-expr</VAR>
+        | <CODE>.</CODE> <CODE>super</CODE> <CODE>(</CODE> [ <VAR>expression-list</VAR> ] <CODE>)</CODE>
+        | <CODE>(</CODE> [ <VAR>expression-list</VAR> ] <CODE>)</CODE>
+        | `<CODE>[</CODE>' <VAR>expression</VAR> `<CODE>]</CODE>'
+        | [ `<CODE>[</CODE>' `<CODE>]</CODE>' ] <small>...</small> <CODE>.</CODE> <CODE>class</CODE>
+<VAR>primary-expr</VAR> ::= <VAR>ident</VAR> | <VAR>new-expr</VAR> 
+        | <VAR>constant</VAR> | <CODE>super</CODE> | <CODE>true</CODE>
+        | <CODE>false</CODE> | <CODE>this</CODE> | <CODE>null</CODE>
+        | <CODE>(</CODE> <VAR>expression</VAR> <CODE>)</CODE>
+        | <VAR>jml-primary</VAR>
+<VAR>built-in-type</VAR> ::= <CODE>void</CODE> | <CODE>boolean</CODE> | <CODE>byte</CODE>
+        | <CODE>char</CODE> | <CODE>short</CODE> | <CODE>int</CODE>
+        | <CODE>long</CODE> | <CODE>float</CODE> | <CODE>double</CODE>
+<VAR>constant</VAR> ::= <VAR>java-literal</VAR>
+<VAR>new-expr</VAR> ::= <CODE>new</CODE> <VAR>type</VAR> <VAR>new-suffix</VAR>
+<VAR>new-suffix</VAR> ::= <CODE>(</CODE> [ <VAR>expression-list</VAR> ] <CODE>)</CODE> [ <VAR>class-block</VAR> ]
+        | <VAR>array-decl</VAR> [ <VAR>array-initializer</VAR> ]
+        | <VAR>set-comprehension</VAR>
+<VAR>array-decl</VAR> ::= <VAR>dim-exprs</VAR> [ <VAR>dims</VAR> ]
+<VAR>dim-exprs</VAR> ::= `<CODE>[</CODE>' <VAR>expression</VAR> `<CODE>]</CODE>' [ `<CODE>[</CODE>' <VAR>expression</VAR> `<CODE>]</CODE>' ] <small>...</small>
+<VAR>array-initializer</VAR> ::= <CODE>{</CODE> [ <VAR>initializer</VAR> [ <CODE>,</CODE> <VAR>initializer</VAR> ] <small>...</small> [ <CODE>,</CODE> ] ] <CODE>}</CODE>
+<VAR>initializer</VAR> ::= <VAR>expression</VAR>
+        | <VAR>array-initializer</VAR>
+</pre></td></tr></table></P><P>
+
+[[[Need to have semantics of the new things explained here.]]]
+</P><P>
+
+<A NAME="JML Primary Expressions"></A>
+<HR SIZE="6">
+<A NAME="SEC125"></A>
+<H2> 11.4 JML Primary Expressions </H2>
+<!--docid::SEC125::-->
+<P>
+
+The following is the syntax of <VAR>jml-primary</VAR>.
+</P><P>
+
+<A NAME="IDX2163"></A>
+<A NAME="IDX2164"></A>
+<A NAME="IDX2165"></A>
+<A NAME="IDX2166"></A>
+<A NAME="IDX2167"></A>
+<A NAME="IDX2168"></A>
+<A NAME="IDX2169"></A>
+<A NAME="IDX2170"></A>
+<A NAME="IDX2171"></A>
+<A NAME="IDX2172"></A>
+<A NAME="IDX2173"></A>
+<A NAME="IDX2174"></A>
+<A NAME="IDX2175"></A>
+<A NAME="IDX2176"></A>
+<A NAME="IDX2177"></A>
+<A NAME="IDX2178"></A>
+<A NAME="IDX2179"></A>
+<A NAME="IDX2180"></A>
+<A NAME="IDX2181"></A>
+<A NAME="IDX2182"></A>
+<A NAME="IDX2183"></A>
+<A NAME="IDX2184"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>jml-primary</VAR> ::= <VAR>result-expression</VAR>
+        | <VAR>old-expression</VAR>
+        | <VAR>not-assigned-expression</VAR>
+        | <VAR>not-modified-expression</VAR>
+        | <VAR>only-accessed-expression</VAR>
+        | <VAR>only-assigned-expression</VAR>
+        | <VAR>only-called-expression</VAR>
+        | <VAR>only-captured-expression</VAR>
+        | <VAR>fresh-expression</VAR>
+        | <VAR>reach-expression</VAR>
+        | <VAR>duration-expression</VAR>
+        | <VAR>space-expression</VAR>
+        | <VAR>working-space-expression</VAR>
+        | <VAR>nonnullelements-expression</VAR>
+        | <VAR>informal-description</VAR>
+        | <VAR>typeof-expression</VAR>
+        | <VAR>elemtype-expression</VAR>
+        | <VAR>type-expression</VAR>
+        | <VAR>lockset-expression</VAR>
+        | <VAR>max-expression</VAR>
+        | <VAR>is-initialized-expression</VAR>
+        | <VAR>invariant-for-expression</VAR>
+        | <VAR>lblneg-expression</VAR>
+        | <VAR>lblpos-expression</VAR>
+        | <VAR>spec-quantified-expr</VAR>
+</pre></td></tr></table></P><P>
+
+All of the JML keywords that can be used in expressions which would
+otherwise start with an alphabetic character
+start with a backslash (<CODE>\</CODE>),
+so that they cannot clash with the program's variable names.
+</P><P>
+
+The new expressions that JML introduces are described below.
+Several of the descriptions below quote, without attribution,
+descriptions from <A HREF="jmlrefman_27.html#BIB54">[Leavens-Baker-Ruby06]</A>.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC126">11.4.1 <CODE>\result</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC127">11.4.2 <CODE>\old</CODE> and <CODE>\pre</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC128">11.4.3 <CODE>\not_assigned</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC129">11.4.4 <CODE>\not_modified</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC130">11.4.5 <CODE>\only_accessed</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC131">11.4.6 <CODE>\only_assigned</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC132">11.4.7 <CODE>\only_called</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC133">11.4.8 <CODE>\only_captured</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC134">11.4.9 <CODE>\fresh</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC135">11.4.10 <CODE>\reach</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC136">11.4.11 <CODE>\duration</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC137">11.4.12 <CODE>\space</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC138">11.4.13 <CODE>\working_space</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC139">11.4.14 <CODE>\nonnullelements</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC140">11.4.15 Informal Predicates</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC141">11.4.16 <CODE>\typeof</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC142">11.4.17 <CODE>\elemtype</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC143">11.4.18 <CODE>\type</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC144">11.4.19 <CODE>\lockset</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC145">11.4.20 <CODE>\max</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC146">11.4.21 <CODE>\is_initialized</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC147">11.4.22 <CODE>\invariant_for</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC148">11.4.23 <CODE>\lblneg</CODE> and <CODE>\lblpos</CODE></A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC149">11.4.24 Quantified Expressions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Backslash result"></A>
+<HR SIZE="6">
+<A NAME="SEC126"></A>
+<H3> 11.4.1 <CODE>\result</CODE> </H3>
+<!--docid::SEC126::-->
+<P>
+
+The syntax of a <VAR>result-expression</VAR> is as follows.
+</P><P>
+
+<A NAME="IDX2185"></A>
+<A NAME="IDX2186"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>result-expression</VAR> ::= <CODE>\result</CODE>
+</pre></td></tr></table></P><P>
+
+The primary <CODE>\result</CODE> can only be used in <CODE>ensures</CODE>,
+<CODE>duration</CODE>, and <CODE>workingspace</CODE>
+clauses of a non-void method.  Its value is the value returned by the
+method.  Its type is the return type of the method; hence it is a type
+error to use <CODE>\result</CODE> in a void method or in a constructor.
+</P><P>
+
+<A NAME="Backslash old and Backslash pre"></A>
+<HR SIZE="6">
+<A NAME="SEC127"></A>
+<H3> 11.4.2 <CODE>\old</CODE> and <CODE>\pre</CODE> </H3>
+<!--docid::SEC127::-->
+<P>
+
+<A NAME="IDX2187"></A>
+An <VAR>old-expression</VAR> has the following syntax.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression</VAR>.
+</P><P>
+
+<A NAME="IDX2188"></A>
+<A NAME="IDX2189"></A>
+<A NAME="IDX2190"></A>
+<A NAME="IDX2191"></A>
+<A NAME="IDX2192"></A>
+<A NAME="IDX2193"></A>
+<A NAME="IDX2194"></A>
+<A NAME="IDX2195"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>old-expression</VAR> ::= <CODE>\old</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> [ <CODE>,</CODE> <VAR>ident</VAR> ] <CODE>)</CODE>
+        | <CODE>\pre</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+An expression of the form
+<CODE>\old(</CODE><I>Expr</I><CODE>)</CODE> refers to the value that the expression
+<I>Expr</I> had in the pre-state of a method.
+</P><P>
+
+<A NAME="IDX2196"></A>
+JML uses Java's reference semantics, hence the pre-state value of an
+expression whose type is a reference type is simply the reference;
+it is <EM>not</EM> a clone of the object the reference points to.
+For example, suppose in the pre-state that
+<CODE>v</CODE> is field that holds a reference to a <CODE>HashMap</CODE>;
+concretely, suppose that the location stored in <CODE>v</CODE> is
+0x952ab340.  Then the expression <CODE>\old(v)</CODE> denotes the pre-state value
+of <CODE>v</CODE>, which is the same reference, i.e.,
+it is the address 0x952ab340.  Note that <CODE>\old(v)</CODE> is not a
+reference to a copy of the <CODE>HashMap</CODE> stored at that location, but
+simply a copy of the location's address (the reference), which is the
+value of <CODE>v</CODE>.  If the fields of the object
+at that location have changed in the post-state, then changes to those
+fields will be visible through <CODE>\old(v)</CODE>; for example,
+<CODE>\old(v).size()</CODE> will be the same as <CODE>v.size()</CODE>.
+To write a post-condition that refers to <CODE>v</CODE>'s size in the pre-state,
+one should instead write <CODE>\old(v.size())</CODE>.
+Indeed as a general rule, it is always safest to use <CODE>\old()</CODE> only around
+expressions whose type is a value type or a type with immutable
+values, such as <CODE>String</CODE>. 
+</P><P>
+
+Expressions of this form may be used in both normal and exceptional
+postconditions (see section <A HREF="jmlrefman_9.html#SEC80">9. Method Specifications</A>,
+for more about such <CODE>ensures</CODE> and <CODE>signals</CODE> clauses), 
+in history constraints, in duration and working space clauses, 
+and also in assertions that appear in the bodies of methods
+(see section <A HREF="jmlrefman_12.html#SEC163">12. Statements and Annotation Statements</A>, for more about
+<CODE>assert</CODE> and <CODE>assume</CODE> statements, loop
+invariants, and variant functions).
+</P><P>
+
+However, we recommend that inside the bodies of methods, one of the
+two other forms of <VAR>old-expression</VAR> (see below) be used instead.
+The reason for this is that the reader 
+may wonder whether <CODE>\old(<I>Expr</I>)</CODE> in the body of a method means
+the pre-state value of <I>Expr</I> (which it does) or the value of
+<I>Expr</I> before some previous statement (which it does not).
+</P><P>
+
+<A NAME="IDX2197"></A>
+An expression of the form
+<CODE>\pre(</CODE><I>Expr</I><CODE>)</CODE> also refers to the value that the expression
+<I>Expr</I> had in the pre-state of a method.
+Expressions of this form may only be used in assertions that appear in
+the bodies of methods 
+(i.e., in <CODE>assert</CODE> and <CODE>assume</CODE> statements, and in loop
+invariants and variant functions).
+That is, such expressions may not be used in specification cases, and
+hence may not appear in normal or exceptional
+postconditions, in history constraints, or in duration and working
+space clauses.
+</P><P>
+
+An expression of the form
+<CODE>\old(</CODE><I>Expr</I><CODE>,</CODE> <I>Label</I><CODE>)</CODE>
+refers to the value that the expression
+<I>Expr</I> had when control last reached the statement label <I>Label</I>.
+That is, it refers to the value of the expression just before control
+reached the statement the label is attached to.
+Expressions of this form may only be used in assertions that appear in
+the bodies of methods (i.e., in <CODE>assert</CODE> and <CODE>assume</CODE>
+statements, and in loop invariants and variant functions).
+That is, such expressions may not be used in specification cases, and
+hence may not appear in normal or exceptional
+postconditions, in history constraints, or in duration and working
+space clauses.
+</P><P>
+
+In an expression of the form
+<CODE>\old(</CODE><I>Expr</I><CODE>,</CODE> <I>Label</I><CODE>)</CODE>,
+<I>Label</I> must be a label defined in the current method.
+The type of 
+<CODE>\old(</CODE><I>Expr</I><CODE>)</CODE>,
+<CODE>\old(</CODE><I>Expr</I><CODE>,</CODE> <I>Label</I><CODE>)</CODE>,
+or <CODE>\pre(</CODE><I>Expr</I><CODE>)</CODE>,
+is simply the type of <I>Expr</I>.
+</P><P>
+
+It is a type error if <CODE>\old()</CODE> or <CODE>\pre()</CODE>
+encloses a free occurrence of a
+quantified variable.  For example, in the following,
+<CODE>\old()</CODE> encloses a free occurrence of the quantified variable
+<CODE>i</CODE>, which is declared in the surrounding quantifier, and thus
+the example is illegal.
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>    (\forall int i; 0 &#60;= i &#38;&#38; i &#60; 7; \old(i &#60; y))  // illegal
+</pre></td></tr></table>The problem with the above example is that there is no easy way to
+evaluate <CODE>\old(i &#60; y)</CODE> in the pre-state.
+</P><P>
+
+However, constructions like the following are legal, as in the first
+the use of <CODE>\old()</CODE> does not enclose the quantified variable,
+<CODE>i</CODE>, and in the second use of <CODE>\old()</CODE> does not enclose a
+free occurrence of the quantified variable (the variable is bound by
+the declaration which is inside of <CODE>\old()</CODE>.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>     (\forall int i; 0 &#60;= i &#38;&#38; i &#60; 7; i &#60; \old(y))  // ok
+     \old((\forall int i; 0 &#60;= i &#38;&#38; i &#60; 7; i &#60; y))  // ok
+</pre></td></tr></table></P><P>
+
+<A NAME="Backslash not_assigned"></A>
+<HR SIZE="6">
+<A NAME="SEC128"></A>
+<H3> 11.4.3 <CODE>\not_assigned</CODE> </H3>
+<!--docid::SEC128::-->
+<P>
+
+The syntax of a <VAR>not-assigned-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC162">11.7 Store Refs</A>, for the syntax of <VAR>store-ref-list</VAR>. 
+</P><P>
+
+<A NAME="IDX2198"></A>
+<A NAME="IDX2199"></A>
+<A NAME="IDX2200"></A>
+<A NAME="IDX2201"></A>
+<A NAME="IDX2202"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>not-assigned-expression</VAR> ::= <CODE>\not_assigned</CODE> <CODE>(</CODE> <VAR>store-ref-list</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+The JML operator <CODE>\not_assigned</CODE> can be used in both normal and
+exceptional preconditions (i.e., in <CODE>ensures</CODE> and <CODE>signals</CODE>
+clauses), and in history constraints.  It asserts that the locations
+in the data group (see section <A HREF="jmlrefman_10.html#SEC118">10. Data Groups</A>) named by the argument were not
+assigned to during 
+the execution of the method being specified (or all methods to which a
+history constraint applies).
+For example, <CODE>\not_assigned(xval,yval)</CODE> says that the locations
+in the data groups named by <CODE>xval</CODE> and <CODE>yval</CODE> were not
+assigned during the method's execution.
+</P><P>
+
+A predicate such as <CODE>\not_assigned(x.f)</CODE> refers to the entire
+data group named by <CODE>x.f</CODE> not just to the location <CODE>x.f</CODE>
+itself.  This allows one to specify absence of even temporary
+side-effects in various cases of a method.
+See section <A HREF="jmlrefman_11.html#SEC129">11.4.4 <CODE>\not_modified</CODE></A>, for ways to specify that just the value
+of a given field was not changed, which allows temporary side effects.
+</P><P>
+
+The <CODE>\not_assigned</CODE> operator can be applied to both concrete and
+model or ghost fields.  When applied to a model field, the meaning is
+that all (concrete) locations in that model field's data group were
+not assigned. 
+[[[A real example would help here.]]]
+</P><P>
+
+The type of a <CODE>\not_assigned</CODE> expression is <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash not_modified"></A>
+<HR SIZE="6">
+<A NAME="SEC129"></A>
+<H3> 11.4.4 <CODE>\not_modified</CODE> </H3>
+<!--docid::SEC129::-->
+<P>
+
+The syntax of a <VAR>not-modified-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC162">11.7 Store Refs</A>, for the syntax of <VAR>store-ref-list</VAR>. 
+</P><P>
+
+<A NAME="IDX2203"></A>
+<A NAME="IDX2204"></A>
+<A NAME="IDX2205"></A>
+<A NAME="IDX2206"></A>
+<A NAME="IDX2207"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>not-modified-expression</VAR> ::= <CODE>\not_modified</CODE> <CODE>(</CODE> <VAR>store-ref-list</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2208"></A>
+The JML operator <CODE>\not_modified</CODE> can be used in both normal and
+exceptional preconditions (i.e., in <CODE>ensures</CODE> and <CODE>signals</CODE>
+clauses), and in history constraints.  It asserts that the values of
+the named fields are the same in the post-state as in the pre-state;
+for example, <CODE>\not_modified(xval,yval)</CODE> says that the fields
+<CODE>xval</CODE> and <CODE>yval</CODE> 
+have the same value in the pre- and post-states
+(in the sense of the <CODE>equals</CODE> method for their types).
+</P><P>
+
+A predicate such as <CODE>\not_modified(x.f)</CODE> refers to the location
+named by <CODE>x.f</CODE>, not to the entire data group of <CODE>x.f</CODE>.  This
+allows one to specify benevolent side-effects, as one can name
+<CODE>x.f</CODE> (or a data group in which it participates) in an assignable
+clause, but use <CODE>\not_modified(x.f)</CODE> in the postcondition.
+See section <A HREF="jmlrefman_11.html#SEC128">11.4.3 <CODE>\not_assigned</CODE></A>, for ways to specify that no assignments
+were made to any location in a data group, disallowing temporary side effects.
+</P><P>
+
+The <CODE>\not_modified</CODE> operator can be applied to both concrete and
+model or ghost fields.  When applied to a model field, the meaning is
+that only the value of the model field is unchanged (in the sense of
+its type's equals operation); concrete fields involved in its
+representation may have changed.
+[[[A real example would help here.]]]
+</P><P>
+
+The type of a <CODE>\not_modified</CODE> expression is <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash only_accessed"></A>
+<HR SIZE="6">
+<A NAME="SEC130"></A>
+<H3> 11.4.5 <CODE>\only_accessed</CODE> </H3>
+<!--docid::SEC130::-->
+<P>
+
+The syntax of an <VAR>only-accessed-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC162">11.7 Store Refs</A>, for the syntax of <VAR>store-ref-list</VAR>. 
+</P><P>
+
+<A NAME="IDX2209"></A>
+<A NAME="IDX2210"></A>
+<A NAME="IDX2211"></A>
+<A NAME="IDX2212"></A>
+<A NAME="IDX2213"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>only-accessed-expression</VAR> ::= <CODE>\only_accessed</CODE> <CODE>(</CODE> <VAR>store-ref-list</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2214"></A>
+The JML operator <CODE>\only_accessed</CODE> can be used in both normal and
+exceptional preconditions (i.e., in <CODE>ensures</CODE> and <CODE>signals</CODE>
+clauses), and in history constraints.  Used in a method's
+postcondition (perhaps implicitly in a history constraint), it asserts
+that the method's execution only reads from a subset of the data groups
+named by the given fields.
+For example, <CODE>\only_accessed(xval,yval)</CODE> says that no fields,
+outside of the data groups of <CODE>xval</CODE> and <CODE>yval</CODE> were read by
+the method. This includes both direct reads in the body of the
+method, and reads during calls that were made by the method (and
+methods those methods called, etc.).
+</P><P>
+
+A predicate such as <CODE>\only_accessed(x.f)</CODE> refers to the entire
+data group named by <CODE>x.f</CODE> not just to the location <CODE>x.f</CODE>
+itself. 
+</P><P>
+
+The <CODE>\only_accessed</CODE> operator can be applied to both concrete and
+model or ghost fields.  When applied to a model field, the meaning is
+that the (concrete) locations in that model field's data group are
+permitted to be accessed during the method's execution.
+</P><P>
+
+The type of an <CODE>\only_accessed</CODE> expression is <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash only_assigned"></A>
+<HR SIZE="6">
+<A NAME="SEC131"></A>
+<H3> 11.4.6 <CODE>\only_assigned</CODE> </H3>
+<!--docid::SEC131::-->
+<P>
+
+The syntax of an <VAR>only-assigned-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC162">11.7 Store Refs</A>, for the syntax of <VAR>store-ref-list</VAR>. 
+</P><P>
+
+<A NAME="IDX2215"></A>
+<A NAME="IDX2216"></A>
+<A NAME="IDX2217"></A>
+<A NAME="IDX2218"></A>
+<A NAME="IDX2219"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>only-assigned-expression</VAR> ::= <CODE>\only_assigned</CODE> <CODE>(</CODE> <VAR>store-ref-list</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2220"></A>
+The JML operator <CODE>\only_assigned</CODE> can be used in both normal and
+exceptional preconditions (i.e., in <CODE>ensures</CODE> and <CODE>signals</CODE>
+clauses), and in history constraints.  Used in a method's
+postcondition (perhaps implicitly in a history constraint), it asserts
+that the method's execution only assigned to a subset of the data groups
+named by the given fields.
+For example, <CODE>\only_assigned(xval,yval)</CODE> says that no fields,
+outside of the data groups of <CODE>xval</CODE> and <CODE>yval</CODE> were assigned by
+the method.  This includes both direct assignments in the body of the
+method, and assignments during calls that were made by the method (and
+methods those methods called, etc.).
+</P><P>
+
+A predicate such as <CODE>\only_assigned(x.f)</CODE> refers to the entire
+data group named by <CODE>x.f</CODE> not just to the location <CODE>x.f</CODE>
+itself. 
+</P><P>
+
+The <CODE>\only_assigned</CODE> operator can be applied to both concrete and
+model or ghost fields.  When applied to a model field, the meaning is
+that the (concrete) locations in that model field's data group are
+permitted to be assigned during the method's execution.
+</P><P>
+
+The type of an <CODE>\only_assigned</CODE> expression is <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash only_called"></A>
+<HR SIZE="6">
+<A NAME="SEC132"></A>
+<H3> 11.4.7 <CODE>\only_called</CODE> </H3>
+<!--docid::SEC132::-->
+<P>
+
+The syntax of an <VAR>only-called-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_8.html#SEC70">8.3 Constraints</A>, for the syntax of <VAR>method-name-list</VAR>. 
+</P><P>
+
+<A NAME="IDX2221"></A>
+<A NAME="IDX2222"></A>
+<A NAME="IDX2223"></A>
+<A NAME="IDX2224"></A>
+<A NAME="IDX2225"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>only-called-expression</VAR> ::= <CODE>\only_called</CODE> <CODE>(</CODE> <VAR>method-name-list</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2226"></A>
+The JML operator <CODE>\only_called</CODE> can be used in both normal and
+exceptional preconditions (i.e., in <CODE>ensures</CODE> and <CODE>signals</CODE>
+clauses), and in history constraints.  Used in a method's
+postcondition (perhaps implicitly in a history constraint), it asserts
+that the method's execution only called from a subset of methods given
+in the <VAR>method-name-list</VAR>.
+For example, <CODE>\only_called(p,q)</CODE> says that methods, apart from
+<CODE>p</CODE> and <CODE>q</CODE>, were called during this method's execution.
+</P><P>
+
+The type of an <CODE>\only_called</CODE> expression is <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash only_captured"></A>
+<HR SIZE="6">
+<A NAME="SEC133"></A>
+<H3> 11.4.8 <CODE>\only_captured</CODE> </H3>
+<!--docid::SEC133::-->
+<P>
+
+The syntax of an <VAR>only-captured-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC162">11.7 Store Refs</A>, for the syntax of <VAR>store-ref-list</VAR>. 
+</P><P>
+
+<A NAME="IDX2227"></A>
+<A NAME="IDX2228"></A>
+<A NAME="IDX2229"></A>
+<A NAME="IDX2230"></A>
+<A NAME="IDX2231"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>only-captured-expression</VAR> ::= <CODE>\only_captured</CODE> <CODE>(</CODE> <VAR>store-ref-list</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2232"></A>
+The JML operator <CODE>\only_captured</CODE> can be used in both normal and
+exceptional preconditions (i.e., in <CODE>ensures</CODE> and <CODE>signals</CODE>
+clauses), and in history constraints.  Used in a method's
+postcondition (perhaps implicitly in a history constraint), it asserts
+that the method's execution only captured references from a subset of
+the data groups named by the given fields.
+For example, <CODE>\only_captured(xv,yv)</CODE> says that no references,
+outside of the data groups of <CODE>xv</CODE> and <CODE>yv</CODE> were captured by
+the method.
+</P><P>
+
+<A NAME="IDX2233"></A>
+A reference is <EM>captured</EM> when it is stored into a field (as
+opposed to a local variable).  Typically a method captures a formal
+parameter (or a reference stored in a static field) by assigning it to
+a field in the method's receiver (the <CODE>this</CODE> object), a field in
+some object (or to an array element), or to a static field.
+</P><P>
+
+A predicate such as <CODE>\only_captured(x.f)</CODE> refers to the
+references stored in the entire data group named by <CODE>x.f</CODE> in the
+pre-state, not just to those stored in the location <CODE>x.f</CODE> itself. 
+However, since the references being captured are usually found in
+formal parameters, the complications of data groups can usually be ignored.
+</P><P>
+
+The <CODE>\only_captured</CODE> operator can be applied to both concrete and
+model or ghost fields.  When applied to a model field, the meaning is
+that the (concrete) locations in that model field's data group are
+permitted to be captured during the method's execution.
+</P><P>
+
+The type of an <CODE>\only_captured</CODE> expression is <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash fresh"></A>
+<HR SIZE="6">
+<A NAME="SEC134"></A>
+<H3> 11.4.9 <CODE>\fresh</CODE> </H3>
+<!--docid::SEC134::-->
+<P>
+
+The syntax of a <VAR>fresh-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression-list</VAR>.
+</P><P>
+
+<A NAME="IDX2234"></A>
+<A NAME="IDX2235"></A>
+<A NAME="IDX2236"></A>
+<A NAME="IDX2237"></A>
+<A NAME="IDX2238"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>fresh-expression</VAR> ::= <CODE>\fresh</CODE> <CODE>(</CODE> <VAR>spec-expression-list</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2239"></A>
+The operator <CODE>\fresh</CODE> asserts that objects were freshly allocated;
+for example, <CODE>\fresh(x,y)</CODE> asserts that
+<CODE>x</CODE> and <CODE>y</CODE> are not null
+and that the objects bound to these identifiers
+were not allocated in the pre-state.
+The arguments to <CODE>\fresh</CODE> can have any reference type,
+and the type of the overall expression is <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="IDX2240"></A>
+<A NAME="IDX2241"></A>
+<A NAME="IDX2242"></A>
+Note that it is wrong to use <CODE>\fresh(this)</CODE> in the specification
+of a constructor, because Java's <CODE>new</CODE> operator allocates storage
+for the object; the constructor's job is just to initialize that
+storage.
+</P><P>
+
+<A NAME="Backslash reach"></A>
+<HR SIZE="6">
+<A NAME="SEC135"></A>
+<H3> 11.4.10 <CODE>\reach</CODE> </H3>
+<!--docid::SEC135::-->
+<P>
+
+The syntax of a <VAR>reach-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression</VAR>.
+</P><P>
+
+<A NAME="IDX2243"></A>
+<A NAME="IDX2244"></A>
+<A NAME="IDX2245"></A>
+<A NAME="IDX2246"></A>
+<A NAME="IDX2247"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>reach-expression</VAR> ::= <CODE>\reach</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2248"></A>
+The <CODE>\reach</CODE> expression 
+allows one to refer to the set of objects reachable from some particular object.
+The syntax <CODE>\reach(</CODE><I>x</I><CODE>)</CODE>
+denotes the smallest <CODE>JMLObjectSet</CODE> containing the object denoted by
+<I>x</I>, if any,
+and all objects accessible through all fields of objects in this set.
+That is, if <I>x</I> is <CODE>null</CODE>, then this set is empty
+otherwise it contains <I>x</I>,
+all objects accessible through all fields of <I>x</I>,
+all objects accessible through all fields of these objects,
+and so on, recursively.
+If <I>x</I> denotes a model field (or data group), then 
+<CODE>\reach(</CODE><I>x</I><CODE>)</CODE>
+denotes the smallest <CODE>JMLObjectSet</CODE> containing the objects
+reachable from <I>x</I> or reachable from the objects referenced by 
+fields in that data group.
+</P><P>
+
+<A NAME="Backslash duration"></A>
+<HR SIZE="6">
+<A NAME="SEC136"></A>
+<H3> 11.4.11 <CODE>\duration</CODE> </H3>
+<!--docid::SEC136::-->
+<P>
+
+The syntax of a <VAR>duration-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC124">11.3 Expressions</A>, for the syntax of <VAR>expression</VAR>.
+</P><P>
+
+<A NAME="IDX2249"></A>
+<A NAME="IDX2250"></A>
+<A NAME="IDX2251"></A>
+<A NAME="IDX2252"></A>
+<A NAME="IDX2253"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>duration-expression</VAR> ::= <CODE>\duration</CODE> <CODE>(</CODE> <VAR>expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2254"></A>
+<A NAME="IDX2255"></A>
+<A NAME="IDX2256"></A>
+<CODE>\duration</CODE>, which describes the specified maximum number of
+virtual machine cycle times needed to execute the method call or
+explicit constructor invocation expression that is its argument; e.g.,
+<CODE>\duration(myStack.push(o))</CODE> is the maximum number of virtual
+machine cycles needed to execute the call <CODE>myStack.push(o)</CODE>,
+according to the contract of the static type of <CODE>myStack</CODE>'s
+type's <CODE>push</CODE> method, when passed argument <CODE>o</CODE>.  Note that
+the expression used as an argument to <CODE>\duration</CODE> should be
+thought of as quoted, in the sense that it is not to be executed; thus
+the method or constructor called need not be free of side effects.
+Note that the argument to <CODE>\duration</CODE> is an
+<VAR>expression</VAR> instead of just the name of a method,
+because different method calls, i.e., those with different parameters,
+can take different amounts of time <A HREF="jmlrefman_27.html#BIB49">[Krone-Ogden-Sitaraman03]</A>. 
+</P><P>
+
+The argument expression passed to <CODE>\duration</CODE>
+must be a method call or explicit constructor
+invocation expression; the type of a <CODE>\duration</CODE> expression is
+<CODE>long</CODE>.
+</P><P>
+
+<A NAME="IDX2257"></A>
+<A NAME="IDX2258"></A>
+<A NAME="IDX2259"></A>
+For a given Java Virtual Machine, a <EM>virtual machine cycle</EM> is
+defined to be the minimum of the maximum over all Java Virtual Machine
+instructions, <I>i</I>, of the length of time needed to execute
+instruction <I>i</I>.
+</P><P>
+
+<A NAME="Backslash space"></A>
+<HR SIZE="6">
+<A NAME="SEC137"></A>
+<H3> 11.4.12 <CODE>\space</CODE> </H3>
+<!--docid::SEC137::-->
+<P>
+
+The syntax of a <VAR>space-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression</VAR>.
+[[[ Shouldn't this take an expression instead of a spec-expression? - DRC]]]
+<A NAME="IDX2260"></A>
+<A NAME="IDX2261"></A>
+<A NAME="IDX2262"></A>
+<A NAME="IDX2263"></A>
+<A NAME="IDX2264"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>space-expression</VAR> ::= <CODE>\space</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2265"></A>
+<A NAME="IDX2266"></A>
+<A NAME="IDX2267"></A>
+<CODE>\space</CODE>, which describes the amount of heap space, in bytes,
+allocated to the object referred to by its argument <A HREF="jmlrefman_27.html#BIB49">[Krone-Ogden-Sitaraman03]</A>;
+e.g., <CODE>\space(myStack)</CODE> is number of bytes in the heap used by
+<CODE>myStack</CODE>, not including the objects it contains.  The type of
+the <VAR>spec-expression</VAR> that is the argument must be a reference
+type, and the result type of a <CODE>\space</CODE> expression is
+<CODE>long</CODE>.  
+</P><P>
+
+<A NAME="Backslash working space"></A>
+<HR SIZE="6">
+<A NAME="SEC138"></A>
+<H3> 11.4.13 <CODE>\working_space</CODE> </H3>
+<!--docid::SEC138::-->
+<P>
+
+<A NAME="IDX2268"></A>
+<A NAME="IDX2269"></A>
+<A NAME="IDX2270"></A>
+<A NAME="IDX2271"></A>
+<A NAME="IDX2272"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>working-space-expression</VAR> ::= <CODE>\working_space</CODE> <CODE>(</CODE> <VAR>expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2273"></A>
+<A NAME="IDX2274"></A>
+<A NAME="IDX2275"></A>
+<CODE>\working_space</CODE>, which describes the maximum specified amount of
+heap space, in bytes, used by the method call or explicit constructor
+invocation expression that is its argument; e.g.,
+<CODE>\working_space(myStack.push(o))</CODE> is the maximum number of bytes
+needed on the heap to execute the call <CODE>myStack.push(o)</CODE>,
+according to the contract of the static type of <CODE>myStack</CODE>'s
+type's <CODE>push</CODE> method, when passed argument <CODE>o</CODE>.  
+Note that
+the expression used as an argument to <CODE>\working_space</CODE> should be
+thought of as quoted, in the sense that it is not to be executed; thus
+the method or constructor called need not be free of side effects.
+The detailed arguments are needed in the specification of the call
+because different method calls, i.e., those with different parameters,
+can use take different amounts of space <A HREF="jmlrefman_27.html#BIB49">[Krone-Ogden-Sitaraman03]</A>. 
+The argument expression must be a method call or explicit constructor
+invocation expression; the result type of a <CODE>\working_space</CODE>
+expression is <CODE>long</CODE>.
+</P><P>
+
+<A NAME="Backslash nonnullelements"></A>
+<HR SIZE="6">
+<A NAME="SEC139"></A>
+<H3> 11.4.14 <CODE>\nonnullelements</CODE> </H3>
+<!--docid::SEC139::-->
+<P>
+
+The syntax of a <VAR>nonnullelements-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression</VAR>.
+</P><P>
+
+<A NAME="IDX2276"></A>
+<A NAME="IDX2277"></A>
+<A NAME="IDX2278"></A>
+<A NAME="IDX2279"></A>
+<A NAME="IDX2280"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>nonnullelements-expression</VAR> ::= <CODE>\nonnullelements</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2281"></A>
+<A NAME="IDX2282"></A>
+The operator <CODE>\nonnullelements</CODE>
+can be used to assert that an array and its elements are all non-null.
+For example, <CODE>\nonnullelements(myArray)</CODE>, is equivalent to
+<A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  myArray != null &#38;&#38;
+  (\forall int i; 0 &#60;= i &#38;&#38; i &#60; myArray.length;
+                  myArray[i] != null)
+</pre></td></tr></table></P><P>
+
+<A NAME="Informal Predicates"></A>
+<HR SIZE="6">
+<A NAME="SEC140"></A>
+<H3> 11.4.15 Informal Predicates </H3>
+<!--docid::SEC140::-->
+<P>
+
+An <VAR>informal-description</VAR> is some text enclosed in <CODE>(*</CODE> and
+<CODE>*)</CODE>.
+See section <A HREF="jmlrefman_4.html#SEC31">4.6 Tokens</A>, for details of its syntax.
+It is used as an escape form formality.
+</P><P>
+
+An informal description used as a predicate has type boolean.
+Hence the text in an informal description should describe a condition,
+for example <CODE>(* the value of x is displayed *)</CODE>.
+</P><P>
+
+The value of an informal description is only known to the user, not to
+any JML tools, so it is never executable.  Informal descriptions
+should thus be avoided when possible, but can be used to avoid
+formalizing everything when doing so would be too expensive.
+</P><P>
+
+<A NAME="Backslash typeof"></A>
+<HR SIZE="6">
+<A NAME="SEC141"></A>
+<H3> 11.4.16 <CODE>\typeof</CODE> </H3>
+<!--docid::SEC141::-->
+<P>
+
+The syntax of a <VAR>typeof-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression</VAR>.
+</P><P>
+
+<A NAME="IDX2283"></A>
+<A NAME="IDX2284"></A>
+<A NAME="IDX2285"></A>
+<A NAME="IDX2286"></A>
+<A NAME="IDX2287"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>typeof-expression</VAR> ::= <CODE>\typeof</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2288"></A>
+<A NAME="IDX2289"></A>
+The operator <CODE>\typeof</CODE> returns the most-specific dynamic type of an
+expression's value <A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>.  The meaning of
+<CODE>\typeof(</CODE><I>E</I><CODE>)</CODE> is unspecified if <I>E</I> is null.  If <I>E</I>
+has a static type that is a reference type, then
+<CODE>\typeof(</CODE><I>E</I><CODE>)</CODE> means the same thing as
+<I>E</I><CODE>.getClass()</CODE>.  For example, if <CODE>c</CODE> is a variable of
+static type <CODE>Collection</CODE> that holds an object of class
+<CODE>HashSet</CODE>, then <CODE>\typeof(c)</CODE> is <CODE>HashSet.class</CODE>, which is
+the same thing as <CODE>\type(HashSet)</CODE>.  If <I>E</I> has a static type
+that is not a reference type, then <CODE>\typeof(</CODE><I>E</I><CODE>)</CODE> means
+the instance of <CODE>java.lang.Class</CODE> that represents its static type.
+For example, <CODE>\typeof(true)</CODE> is <CODE>Boolean.TYPE</CODE>, which is the
+same as <CODE>\type(boolean)</CODE>.  Thus an expression of the form
+<CODE>\typeof(</CODE><I>E</I><CODE>)</CODE> has type <CODE>\TYPE</CODE>, which JML considers
+to be the same as <CODE>java.lang.Class</CODE>.
+</P><P>
+
+<A NAME="Backslash elemtype"></A>
+<HR SIZE="6">
+<A NAME="SEC142"></A>
+<H3> 11.4.17 <CODE>\elemtype</CODE> </H3>
+<!--docid::SEC142::-->
+<P>
+
+The syntax of a <VAR>elemtype-expression</VAR> is as follows.
+</P><P>
+
+<A NAME="IDX2290"></A>
+<A NAME="IDX2291"></A>
+<A NAME="IDX2292"></A>
+<A NAME="IDX2293"></A>
+<A NAME="IDX2294"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>elemtype-expression</VAR> ::= <CODE>\elemtype</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2295"></A>
+<A NAME="IDX2296"></A>
+The <CODE>\elemtype</CODE> operator returns the most-specific static type
+shared by all elements of its array argument <A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>.  For
+example, <CODE>\elemtype(\type(int[]))</CODE> is <CODE>\type(int)</CODE>.  The
+argument to <CODE>\elemtype</CODE> must be an expression of type <CODE>\TYPE</CODE>,
+which JML considers to be the same as <CODE>java.lang.Class</CODE>, and its
+result also has type <CODE>\TYPE</CODE> (see section <A HREF="jmlrefman_7.html#SEC61">7.1.2.2 Type-Specs</A>).  If the argument is not an array type,
+then the result is <CODE>null</CODE>.  For example, <CODE>\elemtype(\type(int))</CODE>
+and <CODE>\elemtype(\type(Object))</CODE> are both <CODE>null</CODE>.
+</P><P>
+
+<A NAME="Backslash type"></A>
+<HR SIZE="6">
+<A NAME="SEC143"></A>
+<H3> 11.4.18 <CODE>\type</CODE> </H3>
+<!--docid::SEC143::-->
+<P>
+
+The syntax of a <VAR>type-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_7.html#SEC61">7.1.2.2 Type-Specs</A>, for the syntax of <VAR>type</VAR>.
+</P><P>
+
+<A NAME="IDX2297"></A>
+<A NAME="IDX2298"></A>
+<A NAME="IDX2299"></A>
+<A NAME="IDX2300"></A>
+<A NAME="IDX2301"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>type-expression</VAR> ::= <CODE>\type</CODE> <CODE>(</CODE> <VAR>type</VAR> <CODE>)</CODE>
+</pre></td></tr></table><A NAME="IDX2302"></A>
+<A NAME="IDX2303"></A>
+<A NAME="IDX2304"></A>
+The operator <CODE>\type</CODE> can be used to introduce literals of type
+<CODE>\TYPE</CODE> in expressions.
+An expression of the form <CODE>\type(T)</CODE>,
+where <CODE>T</CODE> is a type name, has the type <CODE>\TYPE</CODE>.
+Since in JML <CODE>\TYPE</CODE> is the same as <CODE>java.lang.Class</CODE>,
+an expression of the form <CODE>\type(</CODE><I>T</I><CODE>)</CODE>
+means the same thing as <I>T</I><CODE>.class</CODE>, if <I>T</I> is a reference type.
+If <I>T</I> is a primitive type, then <CODE>\type(T)</CODE> is equivalent to the value
+of the <CODE>TYPE</CODE> field of the corresponding reference type.  Thus
+<CODE>\type(boolean)</CODE> equals <CODE>Boolean.TYPE</CODE>.
+</P><P>
+
+For example, in
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>   \typeof(myObj) &#60;: \type(PlusAccount)
+</pre></td></tr></table></P><P>
+
+the use of <CODE>\type(PlusAccount)</CODE> is used to introduce 
+the type <CODE>PlusAccount</CODE> into this expression context.
+</P><P>
+
+<A NAME="Backslash lockset"></A>
+<HR SIZE="6">
+<A NAME="SEC144"></A>
+<H3> 11.4.19 <CODE>\lockset</CODE> </H3>
+<!--docid::SEC144::-->
+<P>
+
+The syntax of a <VAR>lockset-expression</VAR> is as follows.
+</P><P>
+
+<A NAME="IDX2305"></A>
+<A NAME="IDX2306"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>lockset-expression</VAR> ::= <CODE>\lockset</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2307"></A>
+<A NAME="IDX2308"></A>
+<A NAME="IDX2309"></A>
+<A NAME="IDX2310"></A>
+The <CODE>\lockset</CODE> primitive denotes
+the set of locks held by the current thread.
+It is of type <CODE>JMLObjectSet</CODE>.
+(This is an adaptation from ESC/Java <A HREF="jmlrefman_27.html#BIB70">[Leino-etal00]</A>
+<A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A> for dealing with threads.)
+</P><P>
+
+<A NAME="Backslash max"></A>
+<HR SIZE="6">
+<A NAME="SEC145"></A>
+<H3> 11.4.20 <CODE>\max</CODE> </H3>
+<!--docid::SEC145::-->
+<P>
+
+The syntax of a <VAR>max-expression</VAR> is as follows. 
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression</VAR>.
+</P><P>
+
+<A NAME="IDX2311"></A>
+<A NAME="IDX2312"></A>
+<A NAME="IDX2313"></A>
+<A NAME="IDX2314"></A>
+<A NAME="IDX2315"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>max-expression</VAR> ::= <CODE>\max</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table><A NAME="IDX2316"></A>
+<A NAME="IDX2317"></A>
+The <CODE>\max</CODE> operator returns the "largest" (as defined by <CODE>&#60;</CODE>) of a
+set of lock objects, given a lock set as an argument.  The result is of type Object.
+(This is an adaptation from ESC/Java <A HREF="jmlrefman_27.html#BIB70">[Leino-etal00]</A>
+<A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A> for dealing with threads.)
+</P><P>
+
+If you are looking to take the maximum of several integers, use the
+max quantifier
+(see section <A HREF="jmlrefman_11.html#SEC151">11.4.24.2 Generalized Quantifiers</A>).
+</P><P>
+
+<A NAME="Backslash is_initialized"></A>
+<HR SIZE="6">
+<A NAME="SEC146"></A>
+<H3> 11.4.21 <CODE>\is_initialized</CODE> </H3>
+<!--docid::SEC146::-->
+<P>
+
+The syntax of the <VAR>is-initialized-expression</VAR> is as follows.
+See section <A HREF="jmlrefman_7.html#SEC61">7.1.2.2 Type-Specs</A>, for the syntax of <VAR>reference-type</VAR>
+</P><P>
+
+<A NAME="IDX2318"></A>
+<A NAME="IDX2319"></A>
+<A NAME="IDX2320"></A>
+<A NAME="IDX2321"></A>
+<A NAME="IDX2322"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>is-initialized-expression</VAR> ::= <CODE>\is_initialized</CODE> <CODE>(</CODE> <VAR>reference-type</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2323"></A>
+<A NAME="IDX2324"></A>
+The <CODE>\is_initialized</CODE> operator returns true just when its
+<VAR>reference-type</VAR> argument is a class that has finished its static
+initialization.  It is of type <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash invariant_for"></A>
+<HR SIZE="6">
+<A NAME="SEC147"></A>
+<H3> 11.4.22 <CODE>\invariant_for</CODE> </H3>
+<!--docid::SEC147::-->
+<P>
+
+<A NAME="IDX2325"></A>
+<A NAME="IDX2326"></A>
+<A NAME="IDX2327"></A>
+<A NAME="IDX2328"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>invariant-for-expression</VAR> ::= <CODE>\invariant_for</CODE> <CODE>(</CODE> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2329"></A>
+The <CODE>\invariant_for</CODE> operator returns true just when its argument
+satisfies the invariant of its static type; for example,
+<CODE>\invariant_for((MyClass)o)</CODE> is true when <CODE>o</CODE> satisfies the
+invariant of <CODE>MyClass</CODE>.  The entire <CODE>\invariant_for</CODE>
+expression is of type <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Backslash lblneg and lblpos"></A>
+<HR SIZE="6">
+<A NAME="SEC148"></A>
+<H3> 11.4.23 <CODE>\lblneg</CODE> and <CODE>\lblpos</CODE> </H3>
+<!--docid::SEC148::-->
+<P>
+
+The syntax of the two kinds of labeled expressions is as follows.
+See section <A HREF="jmlrefman_11.html#SEC123">11.2 Specification Expressions</A>, for the syntax of <VAR>spec-expression</VAR>.
+</P><P>
+
+<A NAME="IDX2330"></A>
+<A NAME="IDX2331"></A>
+<A NAME="IDX2332"></A>
+<A NAME="IDX2333"></A>
+<A NAME="IDX2334"></A>
+<A NAME="IDX2335"></A>
+<A NAME="IDX2336"></A>
+<A NAME="IDX2337"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>lblneg-expression</VAR> ::= <CODE>(</CODE> <CODE>\lblneg</CODE> <VAR>ident</VAR> <VAR>spec-expression</VAR> <CODE>)</CODE>
+<VAR>lblpos-expression</VAR> ::= <CODE>(</CODE> <CODE>\lblpos</CODE> <VAR>ident</VAR> <VAR>spec-expression</VAR> <CODE>)</CODE>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2338"></A>
+<A NAME="IDX2339"></A>
+Parenthesized expressions that start with
+<CODE>\lblneg</CODE> and <CODE>\lblpos</CODE>
+can be used to attach labels to expressions <A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>;
+these labels might be printed in various messages by support tools,
+for example, to identify an assertion that failed.
+Such an expression has a <EM>label</EM> and a <EM>body</EM>;
+for example, in
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>   (\lblneg indexInBounds 0 &#60;= index &#38;&#38; index &#60; length)
+</pre></td></tr></table></P><P>
+
+the label is <CODE>indexInBounds</CODE>
+and the body is the expression <CODE>0 &#60;= index &#38;&#38; index &#60; length</CODE>.
+The value of a labeled expression is the value of its body,
+hence its type is the type of its body.
+The idea is that if this expression is used in an assertion
+and its value is <CODE>false</CODE> (e.g., when doing run-time checking
+of assertions), then a warning will be printed that includes
+the label <CODE>indexInBounds</CODE>.
+The form using <CODE>\lblpos</CODE> has a similar syntax,
+but should be used for warnings when the value of the enclosed expression
+is <CODE>true</CODE>.
+</P><P>
+
+<A NAME="Quantified Expressions"></A>
+<HR SIZE="6">
+<A NAME="SEC149"></A>
+<H3> 11.4.24 Quantified Expressions </H3>
+<!--docid::SEC149::-->
+<P>
+
+<A NAME="IDX2340"></A>
+<A NAME="IDX2341"></A>
+<A NAME="IDX2342"></A>
+<A NAME="IDX2343"></A>
+<A NAME="IDX2344"></A>
+<A NAME="IDX2345"></A>
+<A NAME="IDX2346"></A>
+<A NAME="IDX2347"></A>
+<A NAME="IDX2348"></A>
+<A NAME="IDX2349"></A>
+<A NAME="IDX2350"></A>
+<A NAME="IDX2351"></A>
+<A NAME="IDX2352"></A>
+<A NAME="IDX2353"></A>
+<A NAME="IDX2354"></A>
+<A NAME="IDX2355"></A>
+<A NAME="IDX2356"></A>
+<A NAME="IDX2357"></A>
+<A NAME="IDX2358"></A>
+<A NAME="IDX2359"></A>
+<A NAME="IDX2360"></A>
+<A NAME="IDX2361"></A>
+<A NAME="IDX2362"></A>
+<A NAME="IDX2363"></A>
+<A NAME="IDX2364"></A>
+<A NAME="IDX2365"></A>
+<A NAME="IDX2366"></A>
+<A NAME="IDX2367"></A>
+<A NAME="IDX2368"></A>
+<A NAME="IDX2369"></A>
+<A NAME="IDX2370"></A>
+<A NAME="IDX2371"></A>
+<A NAME="IDX2372"></A>
+<A NAME="IDX2373"></A>
+<A NAME="IDX2374"></A>
+<A NAME="IDX2375"></A>
+<A NAME="IDX2376"></A>
+<A NAME="IDX2377"></A>
+<A NAME="IDX2378"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>spec-quantified-expr</VAR> ::= <CODE>(</CODE> <VAR>quantifier</VAR> <VAR>quantified-var-decls</VAR> <CODE>;</CODE>
+                           [ [ <VAR>predicate</VAR> ] <CODE>;</CODE> ]
+                           <VAR>spec-expression</VAR> <CODE>)</CODE>
+<VAR>quantifier</VAR> ::= <CODE>\forall</CODE> | <CODE>\exists</CODE>
+        | <CODE>\max</CODE> | <CODE>\min</CODE>
+        | <CODE>\num_of</CODE> | <CODE>\product</CODE> | <CODE>\sum</CODE>
+<VAR>quantified-var-decls</VAR> ::= [ <VAR>bound-var-modifiers</VAR> ] <VAR>type-spec</VAR> <VAR>quantified-var-declarator</VAR>
+                         [ <CODE>,</CODE> <VAR>quantified-var-declarator</VAR> ] <small>...</small>
+<VAR>quantified-var-declarator</VAR> ::= <VAR>ident</VAR> [ <VAR>dims</VAR> ]
+<VAR>spec-variable-declarators</VAR> ::= <VAR>spec-variable-declarator</VAR>
+                          [ <CODE>,</CODE> <VAR>spec-variable-declarator</VAR> ] <small>...</small>
+<VAR>spec-variable-declarator</VAR> ::= <VAR>ident</VAR> [ <VAR>dims</VAR> ]
+                             [ <CODE>=</CODE> <VAR>spec-initializer</VAR> ]
+<VAR>spec-array-initializer</VAR> ::= <CODE>{</CODE> [ <VAR>spec-initializer</VAR>
+             [ <CODE>,</CODE> <VAR>spec-initializer</VAR> ] <small>...</small> [ <CODE>,</CODE> ] ] <CODE>}</CODE>
+<VAR>spec-initializer</VAR> ::= <VAR>spec-expression</VAR>
+        | <VAR>spec-array-initializer</VAR>
+</pre></td></tr></table></P><P>
+
+Note that each quantified expression includes a set of parentheses; these
+parentheses cannot be omitted.  The first part of a quantified expression is
+the <VAR>quantifier</VAR>, which determines the operation to be performed. Every
+quantifier starts with a backslash (<CODE>\</CODE>).  Following the quantifier are
+<VAR>quantified-var-decls</VAR>, which declare <EM>bound variables</EM> whose scope is
+the <VAR>spec-quantified-expr</VAR>. The bound variables may not conflict with
+existing local variables, but may hide static and instance fields. The
+optional predicate between the two semicolons is the <EM>range predicate</EM>; a
+quantifier ranges over all possible values of its bound variables that satisfy
+the range predicate (for a discussion of the ranges of values for reference
+types, see section <A HREF="jmlrefman_11.html#SEC155">11.4.24.6 Quantifying over Reference Types</A>). If the range predicate is
+omitted, it defaults to <CODE>true</CODE>. The final <VAR>spec-expression</VAR> is called
+the <EM>body</EM> of the quantifier. 
+</P><P>
+
+We discuss the various kinds of quantified expressions below.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC150">11.4.24.1 Universal and Existential Quantifiers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC151">11.4.24.2 Generalized Quantifiers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC152">11.4.24.3 Numerical Quantifier</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC153">11.4.24.4 Executability of Quantified Expressions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC154">11.4.24.5 Modifiers for Bound Variables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC155">11.4.24.6 Quantifying over Reference Types</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Universal and Existential Quantifiers"></A>
+<HR SIZE="6">
+<A NAME="SEC150"></A>
+<H4> 11.4.24.1 Universal and Existential Quantifiers </H4>
+<!--docid::SEC150::-->
+<P>
+
+<A NAME="IDX2379"></A>
+<A NAME="IDX2380"></A>
+The quantifiers
+<CODE>\forall</CODE> and <CODE>\exists</CODE>,
+are universal and existential quantifiers (respectively).
+For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (\forall int i,j; 0 &#60;= i &#38;&#38; i &#60; j &#38;&#38; j &#60; 10; a[i] &#60; a[j])
+</pre></td></tr></table></P><P>
+
+says that the values <CODE>a[0]</CODE> <small>...</small> <CODE>a[9]</CODE> are sorted. 
+</P><P>
+
+The body of a universal or existential quantifier must be of type 
+<CODE>boolean</CODE>. The type of a universal or existential quantified expression 
+as a whole is <CODE>boolean</CODE>. When the range predicate is not satisfiable, the value of a <CODE>\forall</CODE> expression is <CODE>true</CODE> and the value of an <CODE>\exists</CODE> expression is <CODE>false</CODE>. For example:
+<A NAME="IDX2381"></A>
+<A NAME="IDX2382"></A>
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (\forall int i; 0 &#60; i &#38;&#38; i &#60; 0; 0 &#60; i) == true
+  (\exists int i; 0 &#60; i &#38;&#38; i &#60; 0; 0 &#60; i) == false
+</pre></td></tr></table></P><P>
+
+<A NAME="Generalized Quantifiers"></A>
+<HR SIZE="6">
+<A NAME="SEC151"></A>
+<H4> 11.4.24.2 Generalized Quantifiers </H4>
+<!--docid::SEC151::-->
+<P>
+
+<A NAME="IDX2383"></A>
+<A NAME="IDX2384"></A>
+<A NAME="IDX2385"></A>
+<A NAME="IDX2386"></A>
+<A NAME="IDX2387"></A>
+<A NAME="IDX2388"></A>
+<A NAME="IDX2389"></A>
+<A NAME="IDX2390"></A>
+<A NAME="IDX2391"></A>
+<A NAME="IDX2392"></A>
+<A NAME="IDX2393"></A>
+<A NAME="IDX2394"></A>
+<A NAME="IDX2395"></A>
+<A NAME="IDX2396"></A>
+<A NAME="IDX2397"></A>
+<A NAME="IDX2398"></A>
+<A NAME="IDX2399"></A>
+<A NAME="IDX2400"></A>
+<A NAME="IDX2401"></A>
+The quantifiers <CODE>\max</CODE>, <CODE>\min</CODE>, <CODE>\product</CODE>, and
+<CODE>\sum</CODE>, are generalized quantifiers that return the maximum,
+minimum, product, or sum of the values of the expressions given, where
+the variables satisfy the given range. The expression in the body must be of a 
+built-in numeric type, such as <CODE>int</CODE> or <CODE>double</CODE>; the type of the
+quantified expression as a whole is the type of its body.  For example, the 
+following equations are all true (see chapter 3 of <A HREF="jmlrefman_27.html#BIB19">[Cohen90]</A>):
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (\sum int i; 0 &#60;= i &#38;&#38; i &#60; 5; i) == 0 + 1 + 2 + 3 + 4
+  (\product int i; 0 &#60; i &#38;&#38; i &#60; 5; i) == 1 * 2 * 3 * 4
+  (\max int i; 0 &#60;= i &#38;&#38; i &#60; 5; i) == 4
+  (\min int i; 0 &#60;= i &#38;&#38; i &#60; 5; i-1) == -1
+</pre></td></tr></table></P><P>
+
+For computing the value of a sum or product, Java's arithmetic is
+used.  [[[ This would depend on the arithmetic mode in force - DRC]]]The meaning thus depends on the type of the expression.  For
+example, in Java, floating point numbers use the IEEE 754 standard,
+and thus when an overflow occurs, the appropriate positive or negative
+infinity is returned.  However, Java integers wrap on overflow.
+Consider the following examples.
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (\product float f; 1.0e30f &#60; f &#38;&#38; f &#60; 1.0e38f; f)
+    == Float.POSITIVE_INFINITY
+
+  (\sum int i; i == Integer.MAX_VALUE || i == 1; i)
+    == Integer.MAX_VALUE + 1
+    == Integer.MIN_VALUE
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2402"></A>
+<A NAME="IDX2403"></A>
+When the range predicate is not satisfiable, the sum is 0 and the
+product is 1; for example:
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (\sum int i; false; i) == 0
+  (\product double d; false; d*d) == 1.0
+</pre></td></tr></table></P><P>
+
+When the range predicate is not satisfiable for <CODE>\max</CODE> the result
+is the smallest number with the type of the expression in the body;
+for floating point numbers, negative infinity is used.  Similarly,
+when the range predicate is not satisfiable for <CODE>\min</CODE>, the
+result is the largest number with the type of the expression in the
+body.  [[[ Or should this be undefined - DRC]]]
+</P><P>
+
+<A NAME="Numerical Quantifier"></A>
+<HR SIZE="6">
+<A NAME="SEC152"></A>
+<H4> 11.4.24.3 Numerical Quantifier </H4>
+<!--docid::SEC152::-->
+<P>
+
+<A NAME="IDX2404"></A>
+<A NAME="IDX2405"></A>
+<A NAME="IDX2406"></A>
+The numerical quantifier, <CODE>\num_of</CODE>, returns the number of values
+for its variables for which the range and the expression in its body
+are true.  The body must have type <CODE>boolean</CODE>, and the entire quantified 
+expression has type <CODE>long</CODE>.  The meaning of this quantifier is defined by 
+the following equation (see p. 57 of <A HREF="jmlrefman_27.html#BIB19">[Cohen90]</A>).
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (\num_of T x; R(x); P(x)) == (\sum T x; R(x) &#38;&#38; P(x); 1L)
+</pre></td></tr></table></P><P>
+
+<A NAME="Executability of Quantified Expressions"></A>
+<HR SIZE="6">
+<A NAME="SEC153"></A>
+<H4> 11.4.24.4 Executability of Quantified Expressions </H4>
+<!--docid::SEC153::-->
+<P>
+
+<A NAME="IDX2407"></A>
+<A NAME="IDX2408"></A>
+<A NAME="IDX2409"></A>
+When are universal or existential quantifiers executable for purposes
+of runtime assertion checking?
+If the type of the quantified variable is <CODE>boolean</CODE>, then it is
+always executable.  Otherwise a <VAR>spec-quantified-expr</VAR> 
+is only executable if the form of the expression
+matches a pattern that the runtime assertion checker understands. 
+This varies by tool implementation, but you can expect that the
+runtime assertion checker understands patterns where the range predicate
+gives a finite range for an ordinal primitive value type (such as
+<CODE>int</CODE>) or where the range predicate requires the quantified
+variable to be drawn from some set.
+Examples include the following.
+[[[Make these examples be real examples in the samples directory]]]
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>     (\forall int x; 0 &#60;= x &#38;&#38; x &#60; somelimit; ...)
+     (\forall Object x; someSet.has(x); ...)
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2410"></A>
+<A NAME="IDX2411"></A>
+You should get warnings from the <CODE>jmlc</CODE> tool
+when assertions are not executable,
+but you have to use the <CODE>-w2</CODE> flag to see them.
+</P><P>
+
+If a <VAR>spec-quantified-expr</VAR>, <I>QE</I>, is executable, then a tool executing
+it should only evaluate any range expression in <I>QE</I>
+once per execution of <I>QE</I>.  Since the value of such a range expression
+cannot change, this evaluation strategy will not change the value of
+<I>QE</I>, but it will save time to only evaluate the
+range expression once for each evaluation of <I>QE</I>.
+</P><P>
+
+<A NAME="Modifiers for Bound Variables"></A>
+<HR SIZE="6">
+<A NAME="SEC154"></A>
+<H4> 11.4.24.5 Modifiers for Bound Variables </H4>
+<!--docid::SEC154::-->
+<P>
+
+<A NAME="IDX2412"></A>
+<A NAME="IDX2413"></A>
+<A NAME="IDX2414"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>bound-var-modifiers</VAR> ::= <CODE>non_null</CODE> | <CODE>nullable</CODE>
+</pre></td></tr></table></P><P>
+
+Logical variables can be bound in 
+</P><P>
+
+<UL>
+<LI>quantified expressions (see section <A HREF="jmlrefman_11.html#SEC149">11.4.24 Quantified Expressions</A>),
+<LI>set comprehension expressions (see section <A HREF="jmlrefman_11.html#SEC156">11.5 Set Comprehensions</A>),
+<LI>forall clauses of method contracts (see section <A HREF="jmlrefman_9.html#SEC102">9.9.1.1 Forall Variable Declarations</A>), or
+<LI>old clauses of method contracts (see section <A HREF="jmlrefman_9.html#SEC103">9.9.1.2 Old Variable Declarations</A>).
+</UL>
+<P>
+
+Note that in JML, <CODE>non_null</CODE> and <CODE>nullable</CODE> are not reserved
+words, hence such identifiers can be used as type names. In order to
+quantify over the elements of a type named <CODE>non_null</CODE> or
+<CODE>nullable</CODE> is necessary to provide an explicit nullity
+modifier.  For example,
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  (\forall non_null non_null nn; ...)
+</pre></td></tr></table>where the first <CODE>non_null</CODE> is one of the <VAR>bound-var-modifiers</VAR> and
+the second is the type <CODE>non_null</CODE>.
+</P><P>
+
+<A NAME="Quantifying over Reference Types"></A>
+<HR SIZE="6">
+<A NAME="SEC155"></A>
+<H4> 11.4.24.6 Quantifying over Reference Types </H4>
+<!--docid::SEC155::-->
+<P>
+
+The range of values for a quantified variable that is declared to be of a reference type:
+<UL>
+<LI>
+Does not include <CODE>null</CODE> unless the bound variable is declared
+<CODE>nullable</CODE> (see section <A HREF="jmlrefman_25.html#SEC244">E.2.1 Non-null by Default</A>). 
+<A NAME="IDX2415"></A>
+<A NAME="IDX2416"></A>
+<P>
+
+<LI>
+May include references to objects that are not constructed by the program;
+one should use a range predicate to eliminate such cases if they are not desired.
+</UL>
+<P>
+
+<A NAME="Set Comprehensions"></A>
+<HR SIZE="6">
+<A NAME="SEC156"></A>
+<H2> 11.5 Set Comprehensions </H2>
+<!--docid::SEC156::-->
+<P>
+
+<A NAME="IDX2417"></A>
+The syntax of a <VAR>set-comprehension</VAR> expression is as follows.
+</P><P>
+
+<A NAME="IDX2418"></A>
+<A NAME="IDX2419"></A>
+<A NAME="IDX2420"></A>
+<A NAME="IDX2421"></A>
+<A NAME="IDX2422"></A>
+<A NAME="IDX2423"></A>
+<A NAME="IDX2424"></A>
+<A NAME="IDX2425"></A>
+<A NAME="IDX2426"></A>
+<A NAME="IDX2427"></A>
+<A NAME="IDX2428"></A>
+<A NAME="IDX2429"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>set-comprehension</VAR> ::= <CODE>{</CODE> [ <VAR>bound-var-modifiers</VAR> ] <VAR>type-spec</VAR>
+            <VAR>quantified-var-declarator</VAR> `<CODE>|</CODE>'
+            <VAR>postfix-expr</VAR> <CODE>&#38;&#38;</CODE> <VAR>predicate</VAR> <CODE>}</CODE>
+</pre></td></tr></table></P><P>
+
+The set comprehension notation can be used to succinctly define sets.
+For example, the following is the <CODE>JMLObjectSet</CODE> that is the
+subset of non-<CODE>null</CODE> <CODE>Integer</CODE> objects found in the set
+<CODE>myIntSet</CODE> whose values are between 0 and 10, inclusive.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  new JMLObjectSet {Integer i | myIntSet.has(i) &#38;&#38; 
+      i != null &#38;&#38; 0 &#60;= i.intValue() &#38;&#38; i.intValue() &#60;= 10 }
+</pre></td></tr></table></P><P>
+
+The syntax of JML limits set comprehensions so that the <VAR>postfix-expr</VAR>
+following the vertical bar (<CODE>|</CODE>) is always a method invocation with the 
+bound variable declared in the <VAR>quantified-var-declarator</VAR> as its 
+parameter; the method may be either the <CODE>has</CODE> method of an 
+<CODE>org.jmlspecs.models.JMLObjectSet</CODE> or 
+<CODE>org.jmlspecs.models.JMLValueSet</CODE>, or the <CODE>contains</CODE> method of a 
+<CODE>java.util.Collection</CODE>. This restriction is used to avoid Russell's 
+paradox [Whitehead-Russell25]. The bound variable, whose scope is the 
+<VAR>set-comprehension</VAR>, may not conflict with existing local variables, but 
+may hide static and instance fields. The bound variable type is used to restrict the objects that become part of the resulting set; if the set called in the <VAR>postfix-expr</VAR> contains objects that are not assignable to the bound variable, they are not contained in the resulting set comprehension. Thus, the following two set comprehension expressions result in identical sets:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  new JMLObjectSet {Integer i | s.has(i) &#38;&#38; 0 &#60; i.intValue() }
+  new JMLObjectSet {Object i | s.has(i) &#38;&#38; i instanceof Integer &#38;&#38; 
+      0 &#60; ((Integer) i).intValue() }
+</pre></td></tr></table></P><P>
+
+In practice, one starts either from some relevant set at hand or from the sets 
+found in <CODE>JMLObjectSet</CODE> and <CODE>JMLValueSet</CODE> containing the objects of 
+primitive types. The type of a set comprehension is the type named following 
+<CODE>new</CODE>, which must be <CODE>JMLObjectSet</CODE> or <CODE>JMLValueSet</CODE>. The bound
+variable type must be compatible with the set comprehension type; in 
+particular, the bound variable type must be a subtype of
+<CODE>org.jmlspecs.models.JMLType</CODE> if the set comprehension type is 
+<CODE>JMLValueSet</CODE>. 
+</P><P>
+
+<A NAME="JML Operators"></A>
+<HR SIZE="6">
+<A NAME="SEC157"></A>
+<H2> 11.6 JML Operators </H2>
+<!--docid::SEC157::-->
+<P>
+
+<A NAME="IDX2430"></A>
+In this section we describe the various new operators that JML adds to
+Java expressions.  The following can all be used in <VAR>spec-expression</VAR>s.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC158">11.6.1 Subtype operator</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC159">11.6.2 Equivalence and Inequivalence Operators</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC160">11.6.3 Forward and Reverse Implication Operators</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_11.html#SEC161">11.6.4 Lockset Ordering</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Subtype operator"></A>
+<HR SIZE="6">
+<A NAME="SEC158"></A>
+<H3> 11.6.1 Subtype operator </H3>
+<!--docid::SEC158::-->
+<P>
+
+<A NAME="IDX2431"></A>
+<A NAME="IDX2432"></A>
+<A NAME="IDX2433"></A>
+<A NAME="IDX2434"></A>
+The relational operator <CODE>&#60;:</CODE> compares two reference types and
+returns true when the type on the left is a subtype of the type on the
+right <A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>.  Although the notation might suggest
+otherwise, this operator is also reflexive; a type will compare as
+<CODE>&#60;:</CODE> with itself.  In an expression of the form <I>E1</I> <CODE>&#60;:</CODE>
+<I>E2</I>, both <I>E1</I> and <I>E2</I> must have type <CODE>\TYPE</CODE>; since in JML
+<CODE>\TYPE</CODE> is the same as <CODE>java.lang.Class</CODE> the expression <I>E1</I>
+<CODE>&#60;:</CODE> <I>E2</I> means the same thing as the expression
+<I>E2</I><CODE>.isAssignableFrom(</CODE><I>E1</I><CODE>)</CODE>.
+As a result, primitive types are not subtypes of <CODE>java.lang.Object</CODE>,
+nor of each other, though they are of themselves; so, for example, <CODE>Integer.TYPE &#60;: Integer.TYPE</CODE> is true.
+</P><P>
+
+<A NAME="Equivalence and Inequivalence Operators"></A>
+<HR SIZE="6">
+<A NAME="SEC159"></A>
+<H3> 11.6.2 Equivalence and Inequivalence Operators </H3>
+<!--docid::SEC159::-->
+<P>
+
+<A NAME="IDX2435"></A>
+<A NAME="IDX2436"></A>
+The operators <CODE>&#60;==&#62;</CODE> and <CODE>&#60;=!=&#62;</CODE> work only on
+boolean-subexpressions and have the same meaning as <CODE>==</CODE> and
+<CODE>!=</CODE>, respectively.  However, they have very low precedence, and
+so are useful at the top-level of a <VAR>spec-expression</VAR>.
+Unlike <CODE>==</CODE> and <CODE>!=</CODE>, the
+operators <CODE>&#60;==&#62;</CODE> and <CODE>&#60;=!=&#62;</CODE> are also associative and symmetric.
+</P><P>
+
+The notation <CODE>&#60;==&#62;</CODE> can be read "if and only if".  It has the same
+meaning for Boolean  values as <CODE>==</CODE>, but has a lower precedence.
+Therefore, the expression "<CODE>\result <==> size == 0</CODE>"
+means the same thing as "<CODE>\result == (size == 0)</CODE>".
+</P><P>
+
+The notation <CODE>&#60;=!=&#62;</CODE> can be read "is not equivalent to".
+It has the same meaning for Boolean  values as <CODE>!=</CODE>, but has a
+lower precedence. Therefore, the expression "<CODE>\result <=!=> size == 0</CODE>"
+means the same thing as "<CODE>\result != (size == 0)</CODE>".
+</P><P>
+
+The expressions on either side of these operators must be of type
+<CODE>boolean</CODE>, and the type of the result is also <CODE>boolean</CODE>.
+</P><P>
+
+<A NAME="Forward and Reverse Implication Operators"></A>
+<HR SIZE="6">
+<A NAME="SEC160"></A>
+<H3> 11.6.3 Forward and Reverse Implication Operators </H3>
+<!--docid::SEC160::-->
+<P>
+
+<A NAME="IDX2437"></A>
+<A NAME="IDX2438"></A>
+<A NAME="IDX2439"></A>
+<A NAME="IDX2440"></A>
+<A NAME="IDX2441"></A>
+The operators <CODE>==&#62;</CODE> and <CODE>&#60;==</CODE> work only on
+boolean-subexpressions.  They compute forward and reverse
+implications, respectively.
+</P><P>
+
+For example, the formula <CODE>raining ==&#62; getsWet</CODE> is true if either
+<CODE>raining</CODE> is false or <CODE>getsWet</CODE> is true.
+The formula <CODE>getsWet &#60;== raining</CODE> means the same thing.
+The <CODE>==&#62;</CODE> operator associates to the right, but
+the <CODE>&#60;==</CODE> operator associates to the left.
+The expressions on either side of these operators must be of type
+<CODE>boolean</CODE>, and the type of the result is also <CODE>boolean</CODE>.
+</P><P>
+
+These two operators are evaluated in short-circuit fashion, left to right.
+Thus, in <CODE>a ==&#62; b</CODE>, if <CODE>a</CODE> is false, then the expression is true
+and <CODE>b</CODE> is not evaluated.  Similarly, in <CODE>a &#60;== b</CODE>, if <CODE>a</CODE> is true, the expression is true and <CODE>b</CODE> is not evaluated.  In other words, <CODE>a ==&#62; b</CODE> is equivalent to <CODE>!a || b</CODE> and <CODE>a &#60;== b</CODE> is equivalent to <CODE> a || !b</CODE>.
+</P><P>
+
+Because of this short-circuit evaluation, <CODE>a ==&#62; b</CODE> is not quite 
+equivalent to <CODE>b &#60;== a</CODE>.  For example, <CODE>x != null ==&#62; x.a &#62; 0</CODE>
+will be true if <CODE>x</CODE> is <CODE>null</CODE>, but <CODE>x.a&#62;0 &#60;== x != null</CODE>
+would be undefined (or throw a NullPointerException) if <CODE>x</CODE> is <CODE>null</CODE>.
+</P><P>
+
+<A NAME="Lockset Ordering"></A>
+<HR SIZE="6">
+<A NAME="SEC161"></A>
+<H3> 11.6.4 Lockset Ordering </H3>
+<!--docid::SEC161::-->
+<P>
+
+<A NAME="IDX2442"></A>
+<A NAME="IDX2443"></A>
+<A NAME="IDX2444"></A>
+JML uses
+<CODE>&#60;</CODE> and <CODE>&#60;=</CODE> to test order of locks.
+JML extends these two operators, but not
+<CODE>&#62;</CODE> and <CODE>&#62;=</CODE>, as comparisons on Objects.
+Using <CODE>synchronized</CODE> statements, Java
+programs can establish monitor locks to permit only one thread at a
+time to execute given sections of code. Any object can be used as
+a lock. In order for ESC/Java <A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A> to
+reason about the possibility of deadlocks among threads, a partial order
+must be statically declared on lock objects, with "larger" objects
+being objects whose locks should be acquired later.  ESC/Java suggests
+the use of <VAR>axiom-clause</VAR>s to declare this partial order.
+</P><P>
+
+The <CODE>&#60;</CODE> and <CODE>&#60;=</CODE> operators test this partial order in assertions.
+When used in this way, the subexpressions to either side of <CODE>&#60;</CODE>
+or <CODE>&#60;=</CODE> must be reference types, and the result is of type boolean.
+</P><P>
+
+<A NAME="Store Refs"></A>
+<HR SIZE="6">
+<A NAME="SEC162"></A>
+<H2> 11.7 Store Refs </H2>
+<!--docid::SEC162::-->
+<P>
+
+The syntax related to the <VAR>store-ref</VAR> production is used in several places.
+</P><P>
+
+<A NAME="IDX2445"></A>
+<A NAME="IDX2446"></A>
+<A NAME="IDX2447"></A>
+<A NAME="IDX2448"></A>
+<A NAME="IDX2449"></A>
+<A NAME="IDX2450"></A>
+<A NAME="IDX2451"></A>
+<A NAME="IDX2452"></A>
+<A NAME="IDX2453"></A>
+<A NAME="IDX2454"></A>
+<A NAME="IDX2455"></A>
+<A NAME="IDX2456"></A>
+<A NAME="IDX2457"></A>
+<A NAME="IDX2458"></A>
+<A NAME="IDX2459"></A>
+<A NAME="IDX2460"></A>
+<A NAME="IDX2461"></A>
+<A NAME="IDX2462"></A>
+<A NAME="IDX2463"></A>
+<A NAME="IDX2464"></A>
+<A NAME="IDX2465"></A>
+<A NAME="IDX2466"></A>
+<A NAME="IDX2467"></A>
+<A NAME="IDX2468"></A>
+<A NAME="IDX2469"></A>
+<A NAME="IDX2470"></A>
+<A NAME="IDX2471"></A>
+<A NAME="IDX2472"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>store-ref-list</VAR> ::= <VAR>store-ref-keyword</VAR> | <VAR>store-ref</VAR> [ <CODE>,</CODE> <VAR>store-ref</VAR> ] <small>...</small>
+<VAR>store-ref</VAR> ::= <VAR>store-ref-expression</VAR>
+        | <VAR>informal-description</VAR> 
+<VAR>store-ref-expression</VAR> ::= <VAR>store-ref-name</VAR> [ <VAR>store-ref-name-suffix</VAR> ] <small>...</small>
+<VAR>store-ref-name</VAR> ::= <VAR>ident</VAR> | <CODE>super</CODE> | <CODE>this</CODE>
+<VAR>store-ref-name-suffix</VAR> ::= <CODE>.</CODE> <VAR>ident</VAR> | <CODE>.</CODE> <CODE>this</CODE> | `<CODE>[</CODE>' <VAR>spec-array-ref-expr</VAR> `<CODE>]</CODE>' | <CODE>.</CODE> <CODE>*</CODE> 
+<VAR>spec-array-ref-expr</VAR> ::= <VAR>spec-expression</VAR>
+        | <VAR>spec-expression</VAR> <CODE>..</CODE> <VAR>spec-expression</VAR>
+        | <CODE>*</CODE>
+<VAR>store-ref-keyword</VAR> ::= <CODE>\nothing</CODE> | <CODE>\everything</CODE> | <CODE>\not_specified</CODE>
+</pre></td></tr></table></P><P>
+
+A <VAR>store-ref</VAR> denotes a set of locations in general.
+</P><P>
+
+The form <CODE>\nothing</CODE> denotes the empty set of locations.
+The form <CODE>\everything</CODE> denotes the set of all locations in the program.
+The form <CODE>\not_specified</CODE> denotes a unspecified set of locations,
+whose usage is determined by the tool.
+</P><P>
+
+The form <I>SR</I><CODE>.*</CODE> refers to all fields of the object denoted by <I>SR</I>.
+Similarly, the form <I>A</I><CODE>[*]</CODE> refers to all locations of
+elements in the array <I>A</I>.  [[[ And their datagroups? - DRC]]]
+</P><P>
+
+Otherwise if a <VAR>store-ref</VAR> refers to a field, it denotes that
+field's data group (see section <A HREF="jmlrefman_10.html#SEC118">10. Data Groups</A>).
+If a <VAR>store-ref</VAR> refers to an element or a range of elements, it
+refers to all of the named locations in that array.
+</P><P>
+
+<A NAME="Statements and Annotation Statements"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_11.html#SEC157"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_12.html#SEC163"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

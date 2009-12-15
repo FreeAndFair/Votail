@@ -1,0 +1,40 @@
+		      Preliminary Design of JML:
+	A Behavioral Interface Specification Language for Java
+				  by
+	   Gary T. Leavens, Albert L. Baker, and Clyde Ruby
+
+			       Abstract
+
+JML is a behavioral interface specification language tailored to
+Java(TM).  Besides pre- and postconditions, it also allows assertions
+to be intermixed with Java code; these aid verification and debugging.
+JML is designed to be used by working software engineers; to do this
+it follows Eiffel in using Java expressions in assertions.  JML
+combines this idea from Eiffel with the model-based approach to
+specifications, typified by VDM and Larch, which results in greater
+expressiveness.  Other expressiveness advantages over Eiffel include
+quantifiers, specification-only variables, and frame conditions.
+
+This paper discusses the goals of JML, the overall approach, and
+describes the basic features of the language through examples.  It is
+intended for readers who have some familiarity with both Java and
+behavioral specification using pre- and postconditions.
+
+Keywords: Behavioral interface specification, Java,
+JML, Eiffel, Larch, model-based specification, assertion,
+precondition, postcondition, frame.
+
+
+2000 CR Categories:
+D.2.1 [Software Engineering]
+        Requirements/Specifications --- languages, tools, theory,
+        Larch, Eiffel, JML, ESC/Java;
+D.2.4 [Software Engineering]
+        Software/Program Verification --- assertion checkers, class invariants,
+        formal methods, programming by contract;
+D.2.7 [Software Engineering]
+        Distribution and Maintenance --- documentation;
+F.3.1 [Logics and Meanings of Programs]
+        Specifying and Verifying and Reasoning about Programs ---
+                assertions, invariants, logics of programs,
+                pre- and post-conditions, specification techniques.

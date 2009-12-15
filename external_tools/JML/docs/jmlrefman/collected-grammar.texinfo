@@ -1,0 +1,863 @@
+@appendixsec Lexical Conventions
+@display
+
+@var{microsyntax} ::= @var{lexeme} [ @var{lexeme} ] @dots{}
+@var{lexeme} ::= @var{white-space} | @var{lexical-pragma} | @var{comment}
+        | @var{annotation-marker} | @var{doc-comment} | @var{token} 
+@var{token} ::= @var{ident} | @var{keyword} | @var{special-symbol}
+        | @var{java-literal} | @var{informal-description}
+@var{white-space} ::= @var{non-nl-white-space} | @var{end-of-line}
+@var{non-nl-white-space} ::= a blank, tab, or formfeed character
+@var{end-of-line} ::= @var{newline} | @var{carriage-return}
+        | @var{carriage-return} @var{newline}
+@var{newline} ::= a newline character
+@var{carriage-return} ::= a carriage return character
+@var{lexical-pragma} ::= @var{nowarn-pragma}
+@var{nowarn-pragma} ::= @code{nowarn} [ @var{spaces} ] [ @var{nowarn-label-list} ] @code{;}
+@var{spaces} ::= @var{non-nl-white-space} [ @var{non-nl-white-space} ] @dots{}
+@var{nowarn-label-list} ::= @var{nowarn-label} [ @var{spaces} ]
+             [ @code{,} [ @var{spaces} ] @var{nowarn-label} [ @var{spaces} ] ] @dots{}
+@var{nowarn-label} ::= @var{letter} [ @var{letter} ] @dots{}
+@var{comment} ::= @var{C-style-comment} | @var{C++-style-comment}
+@var{C-style-comment} ::= @code{/*} [ @var{C-style-body} ] @var{C-style-end}
+@var{C-style-body} ::= @var{non-at-plus-star} [ @var{non-stars-slash} ] @dots{}
+        | @code{+} @var{non-at} [ @var{non-stars-slash} ] @dots{}
+        | @var{stars-non-slash} [ @var{non-stars-slash} ] @dots{}
+@var{non-stars-slash} ::= @var{non-star}
+        | @var{stars-non-slash}
+@var{stars-non-slash} ::= @code{*} [ @code{*} ] @dots{} @var{non-star-slash}
+@var{non-at-plus-star} ::= any character except @code{@@}, @code{+}, or @code{*}
+@var{non-at} ::= any character except @code{@@}
+@var{non-star} ::= any character except @code{*}
+@var{non-slash} ::= any character except @code{/}
+@var{non-star-slash} ::= any character except @code{*} or @code{/}
+@var{C-style-end} ::= [ @code{*} ] @dots{} @code{*/}
+@var{C++-style-comment} ::= @code{//} [ @code{+} ] @var{end-of-line}
+        | @code{//} @var{non-at-plus-end-of-line} [ @var{non-end-of-line} ] @dots{} @var{end-of-line}
+        | @code{//+} @var{non-at-end-of-line} [ @var{non-end-of-line} ] @dots{} @var{end-of-line}
+@var{non-end-of-line} ::= any character except a newline or carriage return
+@var{non-at-plus-end-of-line} ::= any character except @code{@@}, @code{+}, newline, or carriage return
+@var{non-at-end-of-line} ::= any character except @code{@@}, newline, or carriage return
+@var{annotation-marker} ::= @code{//@@} [ @code{@@} ] @dots{} | @code{//+@@} [ @code{@@} ] @dots{}
+        | @code{/*@@} [ @code{@@} ] @dots{} | @code{/*+@@} [ @code{@@} ] @dots{} | [ @code{@@} ] @dots{} @code{@@+*/} | [ @code{@@} ] @dots{} @code{*/}
+@var{ignored-at-in-annotation} ::= @code{@@}
+@var{doc-comment} ::= @code{/**} [ @code{*} ] @dots{} @var{doc-comment-body} @code{*/}
+@var{doc-comment-ignored} ::= @var{doc-comment}
+@var{doc-comment-body} ::= [ @var{description} ] @dots{}
+                     [ @var{tagged-paragraph} ] @dots{} 
+                     [ @var{jml-specs} ]
+@var{description} ::= @var{doc-non-empty-textline}
+@var{tagged-paragraph} ::= @var{paragraph-tag} [ @var{doc-non-nl-ws} ] @dots{}
+             [ @var{doc-atsign} ] @dots{} [ @var{description} ] @dots{}
+@var{jml-specs} ::= @var{jml-tag} [ @var{method-specification} ] @var{end-jml-tag}
+             [ @var{jml-tag} [ @var{method-specification} ] @var{end-jml-tag} ] @dots{}
+@var{paragraph-tag} ::= @code{@@author} | @code{@@deprecated} | @code{@@exception} 
+        | @code{@@param} | @code{@@return} | @code{@@see}
+        | @code{@@serial} | @code{@@serialdata} | @code{@@serialfield}
+        | @code{@@since} | @code{@@throws} | @code{@@version}
+        | @code{@@} @var{letter} [ @var{letter} ] @dots{}
+@var{doc-atsign} ::= @code{@@}
+@var{doc-nl-ws} ::= @var{end-of-line}
+          [ @var{doc-non-nl-ws} ] @dots{} [ @code{*} [ @code{*} ] @dots{} [ @var{doc-non-nl-ws} ] @dots{} ]
+@var{doc-non-nl-ws} ::= @var{non-nl-white-space}
+@var{doc-non-empty-textline} ::= @var{non-at-end-of-line} [ @var{non-end-of-line} ] @dots{}
+@var{jml-tag} ::= @code{<jml>} | @code{<JML>} | @code{<esc>} | @code{<ESC>}
+@var{end-jml-tag} ::= @code{</jml>} | @code{</JML>} | @code{</esc>} | @code{</ESC>}
+@var{ident} ::= @var{letter} [ @var{letter-or-digit} ] @dots{}
+@var{letter} ::= @code{_}, @code{$}, @code{a} through @code{z}, or @code{A} through @code{Z}
+@var{digit} ::= @code{0} | @code{1} | @code{2} | @code{3} | @code{4} | @code{5} | @code{6} | @code{7} | @code{8} | @code{9}
+@var{letter-or-digit} ::= @var{letter} | @var{digit}
+@var{keyword} ::= @var{java-reserved-word}
+        | @var{jml-predicate-keyword} | @var{jml-keyword}
+@var{java-reserved-word} ::= @code{abstract} | @code{assert}
+        | @code{boolean} | @code{break} | @code{byte}
+        | @code{case} | @code{catch} | @code{char}
+        | @code{class} | @code{const} | @code{continue}
+        | @code{default} | @code{do} | @code{double}
+        | @code{else} | @code{extends} | @code{false}
+        | @code{final} | @code{finally} | @code{float}
+        | @code{for} | @code{goto} | @code{if}
+        | @code{implements} | @code{import} | @code{instanceof}
+        | @code{int} | @code{interface} | @code{long}
+        | @code{native} | @code{new} | @code{null}
+        | @code{package} | @code{private} | @code{protected}
+        | @code{public} | @code{return} | @code{short}
+        | @code{static} | @code{strictfp} | @code{super}
+        | @code{switch} | @code{synchronized} | @code{this}
+        | @code{throw} | @code{throws} | @code{transient}
+        | @code{true} | @code{try} | @code{void}
+        | @code{volatile} | @code{while}
+        | @var{multijava-reserved}      @i{// When the MultiJava option is on}
+        | @var{java-universe-reserved}  @i{// When the Universe option is on}
+@var{multijava-reserved} ::= @code{resend}
+@var{java-universe-reserved} ::= @code{peer} | @code{pure}
+        | @code{readonly} | @code{rep}
+@var{jml-predicate-keyword} ::= @code{\TYPE}
+        | @code{\bigint} | @code{\bigint_math} | @code{\duration}
+        | @code{\elemtype} | @code{\everything} | @code{\exists}
+        | @code{\forall} | @code{\fresh}
+        | @code{\into} | @code{\invariant_for} | @code{\is_initialized}
+        | @code{\java_math} | @code{\lblneg} | @code{\lblpos}
+        | @code{\lockset} | @code{\max} | @code{\min}
+        | @code{\nonnullelements} | @code{\not_assigned}
+        | @code{\not_modified} | @code{\not_specified}
+        | @code{\nothing} | @code{\nowarn} | @code{\nowarn_op}
+        | @code{\num_of} | @code{\old} | @code{\only_accessed} 
+        | @code{\only_assigned} | @code{\only_called}
+        | @code{\only_captured} | @code{\pre}
+        | @code{\product} | @code{\reach} | @code{\real}
+        | @code{\result} | @code{\same} | @code{\safe_math}
+        | @code{\space} | @code{\such_that} | @code{\sum}
+        | @code{\typeof} | @code{\type} | @code{\warn_op}
+        | @code{\warn} | @code{\working_space} 
+        | @var{jml-universe-pkeyword}
+@var{jml-universe-pkeyword} ::= @code{\peer} | @code{\readonly} | @code{\rep}
+@var{jml-keyword} ::= @code{abrupt_behavior} | @code{abrupt_behaviour}
+        | @code{accessible} | @code{accessible_redundantly}
+        | @code{also} | @code{assert_redundantly}
+        | @code{assignable} | @code{assignable_redundantly}
+        | @code{assume} | @code{assume_redundantly} | @code{axiom}
+        | @code{behavior} | @code{behaviour}
+        | @code{breaks} | @code{breaks_redundantly}
+        | @code{callable} | @code{callable_redundantly}
+        | @code{captures} | @code{captures_redundantly}
+        | @code{choose} | @code{choose_if} 
+        | @code{code} | @code{code_bigint_math} | 
+        | @code{code_java_math} | @code{code_safe_math}
+        | @code{constraint} | @code{constraint_redundantly}
+        | @code{constructor} | @code{continues} | @code{continues_redundantly}
+        | @code{decreases} | @code{decreases_redundantly} 
+        | @code{decreasing} | @code{decreasing_redundantly} 
+        | @code{diverges} | @code{diverges_redundantly}
+        | @code{duration} | @code{duration_redundantly}
+        | @code{ensures} | @code{ensures_redundantly} | @code{example}
+        | @code{exceptional_behavior} | @code{exceptional_behaviour}
+        | @code{exceptional_example}
+        | @code{exsures} | @code{exsures_redundantly} | @code{extract}
+        | @code{field} | @code{forall}
+        | @code{for_example} | @code{ghost}
+        | @code{helper} | @code{hence_by} | @code{hence_by_redundantly}
+        | @code{implies_that} | @code{in} | @code{in_redundantly}
+        | @code{initializer} | @code{initially} | @code{instance}
+        | @code{invariant} | @code{invariant_redundantly}
+        | @code{loop_invariant} | @code{loop_invariant_redundantly}
+        | @code{maintaining} | @code{maintaining_redundantly}
+        | @code{maps} | @code{maps_redundantly}
+        | @code{measured_by} | @code{measured_by_redundantly}
+        | @code{method} | @code{model} | @code{model_program}
+        | @code{modifiable} | @code{modifiable_redundantly}
+        | @code{modifies} | @code{modifies_redundantly}
+        | @code{monitored} | @code{monitors_for} | @code{non_null}
+        | @code{normal_behavior} | @code{normal_behaviour}
+        | @code{normal_example} | @code{nowarn}
+        | @code{nullable} | @code{nullable_by_default}
+        | @code{old} | @code{or}
+        | @code{post} | @code{post_redundantly}
+        | @code{pre} | @code{pre_redundantly}
+        | @code{pure} | @code{readable} 
+        | @code{refine} | @code{refines} | @code{refining}
+        | @code{represents} | @code{represents_redundantly}
+        | @code{requires} | @code{requires_redundantly}
+        | @code{returns} | @code{returns_redundantly}
+        | @code{set} | @code{signals} | @code{signals_only}
+        | @code{signals_only_redundantly} | @code{signals_redundantly}
+        | @code{spec_bigint_math} | @code{spec_java_math}
+        | @code{spec_protected} | @code{spec_public} | @code{spec_safe_math}
+        | @code{static_initializer} | @code{uninitialized}
+        | @code{unreachable} | @code{weakly}
+        | @code{when} | @code{when_redundantly}
+        | @code{working_space} | @code{working_space_redundantly}
+        | @code{writable}
+        | @var{jml-universe-keyword}
+@var{jml-universe-keyword} ::= @code{peer} | @code{readonly} | @code{rep}
+@var{special-symbol} ::= @var{java-special-symbol} | @var{jml-special-symbol}
+@var{java-special-symbol} ::= @var{java-separator} | @var{java-operator}
+@var{java-separator} ::= @code{(} | @code{)} | @code{@{} | @code{@}} | `@code{[}' | `@code{]}' | @code{;} | @code{,} | @code{.}
+        | @var{multijava-separator}   @i{// When the MultiJava option is on}
+@var{multijava-separator} ::= @code{@@} | @code{@@@@}
+@var{java-operator} ::= @code{=} | @code{<} | @code{>} | @code{!} | @code{~} | @code{?} | @code{:}
+        | @code{==} | @code{<=} | @code{>=} | @code{!=} | @code{&&} | `@code{||}' | @code{++} | @code{--}
+        | @code{+} | @code{-} | @code{*} | @code{/} | @code{&} | `@code{|}' | @code{^} | @code{%} | @code{<<} | @code{>>} | @code{>>>}
+        | @code{+=} | @code{-=} | @code{*=} | @code{/=} | @code{&=} | `@code{|=}' | @code{^=} | @code{%=}
+        | @code{<<=} | @code{>>=} | @code{>>>=}
+@var{jml-special-symbol} ::= @code{==>} | @code{<==} | @code{<==>} | @code{<=!=>}
+        | @code{->} | @code{<-} | @code{<:} | @code{..} | `@code{@{|}' | `@code{|@}}'
+@var{java-literal} ::= @var{integer-literal}
+        | @var{floating-point-literal} | @var{boolean-literal}
+        | @var{character-literal} | @var{string-literal} | @var{null-literal}
+@var{integer-literal} ::= @var{decimal-integer-literal}
+        | @var{hex-integer-literal} | @var{octal-integer-literal}
+@var{decimal-integer-literal} ::= @var{decimal-numeral} [ @var{integer-type-suffix} ]
+@var{decimal-numeral} ::= @code{0} | @var{non-zero-digit} [ @var{digits} ]
+@var{digits} ::= @var{digit} [ @var{digit} ] @dots{}
+@var{digit} ::= @code{0} | @var{non-zero-digit}
+@var{non-zero-digit} ::= @code{1} | @code{2} | @code{3} | @code{4} | @code{5} | @code{6} | @code{7} | @code{8} | @code{9}
+@var{integer-type-suffix} ::= @code{l} | @code{L}
+@var{hex-integer-literal} ::= @var{hex-numeral}  [ @var{integer-type-suffix} ]
+@var{hex-numeral} ::= @code{0x} @var{hex-digit} [ @var{hex-digit} ] @dots{}
+        | @code{0X} @var{hex-digit}  [ @var{hex-digit} ] @dots{}
+@var{hex-digit} ::= @var{digit} | @code{a} | @code{b} | @code{c} | @code{d} | @code{e} | @code{f}
+        | @code{A} | @code{B} | @code{C} | @code{D} | @code{E} | @code{F}
+@var{octal-integer-literal} ::= @var{octal-numeral}  [ @var{integer-type-suffix} ]
+@var{octal-numeral} ::= @code{0} @var{octal-digit} [ @var{octal-digit} ] @dots{} 
+@var{octal-digit} ::= @code{0} | @code{1} | @code{2} | @code{3} | @code{4} | @code{5} | @code{6} | @code{7}
+@var{floating-point-literal} ::= @var{digits} @code{.} [ @var{digits} ]
+          [ @var{exponent-part} ] [ @var{float-type-suffix} ]
+        | @code{.} @var{digits} [ @var{exponent-part} ] [ @var{float-type-suffix} ]
+        | @var{digits} @var{exponent-part} [ @var{float-type-suffix} ]
+        | @var{digits} [ @var{exponent-part} ] @var{float-type-suffix}
+@var{exponent-part} ::= @var{exponent-indicator} @var{signed-integer}
+@var{exponent-indicator} ::= @code{e} | @code{E}
+@var{signed-integer} ::= [ @var{sign} ] @var{digits}
+@var{sign} ::= @code{+} | @code{-}
+@var{float-type-suffix} ::= @code{f} | @code{F} | @code{d} | @code{D}
+@var{boolean-literal} ::= @code{true} | @code{false}
+@var{character-literal} ::= @code{'} @var{single-character} @code{'} | @code{'} @var{escape-sequence} @code{'}
+@var{single-character} ::= any character except @code{'}, @code{\}, carriage return, or newline
+@var{escape-sequence} ::= @code{\b}    @i{// backspace}
+         | @code{\t}                   @i{// tab}
+         | @code{\n}                   @i{// newline}
+         | @code{\r}                   @i{// carriage return}
+         | @code{\'}                   @i{// single quote}
+         | @code{\"}                   @i{// double quote}
+         | @code{\\}                   @i{// backslash}
+         | @var{octal-escape}
+         | @var{unicode-escape}
+@var{octal-escape} ::= @code{\} @var{octal-digit} [ @var{octal-digit} ]
+         | @code{\} @var{zero-to-three} @var{octal-digit} @var{octal-digit}
+@var{zero-to-three} ::= @code{0} | @code{1} | @code{2} | @code{3}
+@var{unicode-escape} ::= @code{\u} @var{hex-digit} @var{hex-digit} @var{hex-digit} @var{hex-digit}
+@var{string-literal} ::= @code{"} [ @var{string-character} ] @dots{} @code{"}
+@var{string-character} ::= @var{escape-sequence}
+         | any character except @code{"}, @code{\}, carriage return, or newline
+@var{null-literal} ::= @code{null}
+@var{informal-description} ::= @code{(*} @var{non-stars-close} [ @var{non-stars-close} ] @dots{} @code{*)}
+@var{non-stars-close} ::= @var{non-star}
+        | @var{stars-non-close}
+@var{stars-non-close} ::= @code{*} [ @code{*} ] @dots{} @var{non-star-close}
+@var{non-star-close} ::= any character except @code{)} or @code{*}
+@end display
+
+@appendixsec Compilation Units
+@display
+
+@var{compilation-unit} ::= [ @var{package-definition} ]
+              [ @var{refine-prefix} ] 
+              [ @var{import-definition} ] @dots{}
+              [ @var{top-level-definition} ] @dots{}
+@var{top-level-definition} ::= @var{type-definition}
+        | @var{multijava-top-level-declaration}  @i{// When parsing MultiJava}
+@var{package-definition} ::= @code{package} @var{name} @code{;}
+@var{name} ::= @var{ident}  [ @code{.} @var{ident} ] @dots{}
+@var{import-definition} ::= [ @code{model} ] @code{import} @var{name-star} @code{;}
+@var{name-star} ::= @var{ident} [ @code{.} @var{ident} ] @dots{} [ @code{.} @code{*} ]
+@end display
+
+@appendixsec Type Definitions
+@display
+
+@var{type-definition} ::= @var{class-definition}
+        | @var{interface-definition}
+        | @code{;}
+@var{class-definition} ::= [ @var{doc-comment} ] @var{modifiers} @code{class} @var{ident}
+            [ @var{class-extends-clause} ] [ @var{implements-clause} ]
+            @var{class-block}
+@var{class-block} ::= @code{@{} [ @var{field} ] @dots{} @code{@}}
+@var{interface-definition} ::= [ @var{doc-comment} ] @var{modifiers} @code{interface} @var{ident}
+           [ @var{interface-extends} ]
+           @var{class-block}
+@var{class-extends-clause} ::= [ @code{extends} @var{name} [ @code{weakly} ] ]
+@var{implements-clause} ::= @code{implements} @var{name-weakly-list}
+@var{name-weakly-list} ::= @var{name} [ @code{weakly} ] [ @code{,} @var{name} [ @code{weakly} ] ] @dots{}
+@var{interface-extends} ::= @code{extends} @var{name-weakly-list}
+@var{modifiers} ::= [ @var{modifier} ] @dots{}
+@var{modifier} ::= @code{public} | @code{protected} | @code{private}
+        | @code{abstract} | @code{static} |
+        | @code{final} | @code{synchronized}
+        | @code{transient} | @code{volatile}
+        | @code{native} | @code{strictfp}
+        | @code{const}             @i{// reserved but not used in Java}
+        | @var{jml-modifier}
+@var{jml-modifier} ::= @code{spec_public} | @code{spec_protected}
+        | @code{model} | @code{ghost} | @code{pure}
+        | @code{instance} | @code{helper}
+        | @code{uninitialized}
+        | @code{spec_java_math} | @code{spec_safe_math} | @code{spec_bigint_math}
+        | @code{code_java_math} | @code{code_safe_math} | @code{code_bigint_math}
+        | @code{non_null} | @code{nullable} | @code{nullable_by_default}
+        | @code{extract}
+@end display
+
+@appendixsec Class and Interface Member Declarations
+@display
+
+@var{field} ::= @var{member-decl}
+        | @var{jml-declaration}
+        | @var{class-initializer-decl}
+        | @code{;}
+@var{member-decl} ::= @var{method-decl}
+        | @var{variable-definition}
+        | @var{class-definition}
+        | @var{interface-definition}
+@var{method-decl} ::= [ @var{doc-comment} ] @dots{}
+                @var{method-specification}
+                @var{modifiers} [ @var{method-or-constructor-keyword} ]
+                [ @var{type-spec} ] @var{method-head}
+                @var{method-body}
+        | [ @var{doc-comment} ] @dots{}
+          @var{modifiers} @var{method-or-constructor-keyword}
+          [ @var{type-spec} ] @var{method-head}
+          [ @var{method-specification} ]
+          @var{method-body}
+@var{method-or-constructor-keyword} ::= @code{method} | @code{constructor}
+@var{method-head} ::= @var{ident} @var{formals} [ @var{dims} ] [ @var{throws-clause} ]
+@var{method-body} ::= @var{compound-statement} | @code{;}
+@var{throws-clause} ::= @code{throws} @var{name} [ @code{,} @var{name} ] @dots{}
+@var{formals} ::= @code{(} [ @var{param-declaration-list} ] @code{)}
+@var{param-declaration-list} ::= @var{param-declaration}
+                           [ @code{,} @var{param-declaration} ] @dots{}
+@var{param-declaration} ::= [ @var{param-modifier} ] @dots{} @var{type-spec} @var{ident} [ @var{dims} ]
+        | @var{multijava-param-declaration}   @i{// When MultiJava parsing is on}
+@var{param-modifier} ::= @code{final} | @code{non_null} | @code{nullable}
+@var{variable-definition} ::= [ @var{doc-comment} ] @dots{} @var{modifiers} @var{variable-decls}
+@var{variable-decls} ::= [ @code{field} ] @var{type-spec} @var{variable-declarators} @code{;}
+                   [ @var{jml-data-group-clause} ] @dots{}
+@var{variable-declarators} ::= @var{variable-declarator}
+                         [ @code{,} @var{variable-declarator} ] @dots{}
+@var{variable-declarator} ::= @var{ident} [ @var{dims} ] [ @code{=} @var{initializer} ]
+@var{initializer} ::= @var{expression} | @var{array-initializer}
+@var{array-initializer} ::= @code{@{} [ @var{initializer-list} ] @code{@}} 
+@var{initializer-list} ::= @var{initializer} [ @code{,} @var{initializer} ] @dots{} [ @code{,} ]
+@var{type-spec} ::= [ @var{ownership-modifiers} ] @var{type} [ @var{dims} ]
+         | @code{\TYPE} [ @var{dims} ]
+@var{type} ::= @var{reference-type} | @var{built-in-type}
+@var{reference-type} ::= @var{name}
+@var{dims} ::= `@code{[}' `@code{]}' [ `@code{[}' `@code{]}' ] @dots{}
+@var{class-initializer-decl} ::= [ @var{method-specification} ]
+                           [ @code{static} ] @var{compound-statement}
+        | @var{method-specification} @code{static_initializer} 
+        | @var{method-specification} @code{initializer} 
+@end display
+
+@appendixsec Type Specifications
+@display
+
+@var{jml-declaration} ::= @var{modifiers} @var{invariant}
+        | @var{modifiers} @var{history-constraint}
+        | @var{modifiers} @var{represents-clause}
+        | @var{modifiers} @var{initially-clause} 
+        | @var{modifiers} @var{monitors-for-clause}
+        | @var{modifiers} @var{readable-if-clause}
+        | @var{modifiers} @var{writable-if-clause}
+        | @var{axiom-clause}
+@var{invariant} ::= @var{invariant-keyword} @var{predicate} @code{;}
+@var{invariant-keyword} ::= @code{invariant} | @code{invariant_redundantly}
+@var{history-constraint} ::= @var{constraint-keyword} @var{predicate}
+              [ @code{for} @var{constrained-list} ] @code{;}
+@var{constraint-keyword} ::= @code{constraint} | @code{constraint_redundantly}
+@var{constrained-list} ::= @var{method-name-list} | @code{\everything}
+@var{method-name-list} ::= @var{method-name} [ @code{,} @var{method-name} ] @dots{}
+@var{method-name} ::= @var{method-ref} [ @code{(} [ @var{param-disambig-list} ] @code{)} ] | @var{method-ref-start} @code{.} @code{*} 
+@var{method-ref} ::= @var{method-ref-start} [ @code{.} @var{method-ref-rest} ] @dots{}
+        | @code{new} @var{reference-type}
+@var{method-ref-start} ::=  @code{super} | @code{this} | @var{ident}
+@var{method-ref-rest} ::=  @code{this} | @var{ident}
+@var{param-disambig-list} ::= @var{param-disambig} [ @code{,} @var{param-disambig} ] @dots{}
+@var{param-disambig} ::= @var{type-spec} [ @var{ident} [ @var{dims} ] ]
+@var{represents-clause} ::= @var{represents-keyword} @var{store-ref-expression}
+                    @var{l-arrow-or-eq} @var{spec-expression} @code{;}
+        | @var{represents-keyword} @var{store-ref-expression} @code{\such_that}
+          @var{predicate} @code{;}
+@var{represents-keyword} ::= @code{represents} | @code{represents_redundantly}
+@var{l-arrow-or-eq} ::= @code{<-} | @code{=}
+@var{initially-clause} ::= @code{initially} @var{predicate} @code{;}
+@var{axiom-clause} ::= @code{axiom} @var{predicate} @code{;}
+@var{readable-if-clause} ::= @code{readable} @var{ident} @code{if} @var{predicate} @code{;}
+@var{writable-if-clause} ::= @code{writable} @var{ident} @code{if} @var{predicate} @code{;}
+@var{monitors-for-clause} ::= @code{monitors_for} @var{ident}
+                        @var{l-arrow-or-eq} @var{spec-expression-list} @code{;}
+@end display
+
+@appendixsec Method Specifications
+@display
+
+@var{method-specification} ::= @var{specification} | @var{extending-specification}
+@var{extending-specification} ::= @code{also} @var{specification}
+@var{specification} ::= @var{spec-case-seq} [ @var{redundant-spec} ]
+              | @var{redundant-spec}
+@var{spec-case-seq} ::= @var{spec-case} [ @code{also} @var{spec-case} ] @dots{}
+@var{spec-case} ::= @var{lightweight-spec-case} | @var{heavyweight-spec-case}
+        | @var{model-program}
+@var{privacy} ::= @code{public} | @code{protected} | @code{private}
+@var{lightweight-spec-case} ::= @var{generic-spec-case}
+@var{generic-spec-case} ::= [ @var{spec-var-decls} ]
+                      @var{spec-header}
+                      [ @var{generic-spec-body} ]
+        | [ @var{spec-var-decls} ]
+          @var{generic-spec-body}
+@var{generic-spec-body} ::= @var{simple-spec-body}
+        | @code{@{|} @var{generic-spec-case-seq} @code{|@}}
+@var{generic-spec-case-seq} ::= @var{generic-spec-case}
+                          [ @code{also} @var{generic-spec-case} ] @dots{}
+@var{spec-header} ::= @var{requires-clause} [ @var{requires-clause} ] @dots{}
+@var{simple-spec-body} ::= @var{simple-spec-body-clause}
+                     [ @var{simple-spec-body-clause} ] @dots{} 
+@var{simple-spec-body-clause} ::= @var{diverges-clause}
+        | @var{assignable-clause} | @var{captures-clause} 
+        | @var{when-clause} | @var{working-space-clause}
+        | @var{duration-clause} | @var{ensures-clause}
+        | @var{signals-only-clause} | @var{signals-clause}
+@var{heavyweight-spec-case} ::= @var{behavior-spec-case}
+        | @var{exceptional-behavior-spec-case}
+        | @var{normal-behavior-spec-case}
+@var{behavior-spec-case} ::= [ @var{privacy} ] [ @code{code} ] @var{behavior-keyword}
+                       @var{generic-spec-case}
+@var{behavior-keyword} ::= @code{behavior} | @code{behaviour}
+@var{normal-behavior-spec-case} ::= [ @var{privacy} ] [ @code{code} ] @var{normal-behavior-keyword}
+                              @var{normal-spec-case}
+@var{normal-behavior-keyword} ::= @code{normal_behavior} | @code{normal_behaviour}
+@var{normal-spec-case} ::= @var{generic-spec-case}
+@var{exceptional-behavior-spec-case} ::= [ @var{privacy} ] [ @code{code} ] @code{exceptional-behavior-keyword}
+                                   @var{exceptional-spec-case}
+@var{exceptional-behavior-keyword} ::= @code{exceptional_behavior} | @code{exceptional_behaviour}
+@var{exceptional-spec-case} ::= @var{generic-spec-case}
+@var{spec-var-decls} ::= @var{forall-var-decls} [ @var{old-var-decls} ]
+        | @var{old-var-decls}
+@var{forall-var-decls} ::= @var{forall-var-declarator} [ @var{forall-var-declarator} ] @dots{} 
+@var{forall-var-declarator} ::= @code{forall} [ @var{bound-var-modifiers} ] @var{quantified-var-declarator} @code{;}
+@var{old-var-decls} ::= @var{old-var-declarator} [ @var{old-var-declarator} ] @dots{}
+@var{old-var-declarator} ::= @code{old} [ @var{bound-var-modifiers} ] @var{type-spec} @var{spec-variable-declarators} @code{;}
+@var{requires-clause} ::= @var{requires-keyword} @var{pred-or-not} @code{;}
+        | @var{requires-keyword} @code{\same} @code{;}
+@var{requires-keyword} ::= @code{requires} | @code{pre} 
+        | @code{requires_redundantly} | @code{pre_redundantly}
+@var{pred-or-not} ::= @var{predicate} | @code{\not_specified}
+@var{ensures-clause} ::= @var{ensures-keyword} @var{pred-or-not} @code{;}
+@var{ensures-keyword} ::= @code{ensures} | @code{post}
+        | @code{ensures_redundantly} | @code{post_redundantly}
+@var{signals-clause} ::= @var{signals-keyword} @code{(} @var{reference-type} [ @var{ident} ] @code{)}
+                   [ @var{pred-or-not} ] @code{;}
+@var{signals-keyword} ::= @code{signals} | @code{signals_redundantly}
+        | @code{exsures} | @code{exsures_redundantly}
+@var{signals-only-clause} ::= @var{signals-only-keyword} @var{reference-type} [ @code{,} @var{reference-type} ] @dots{} @code{;}
+        | @var{signals-only-keyword} @code{\nothing} @code{;}
+@var{signals-only-keyword} ::= @code{signals_only} | @code{signals_only_redundantly}
+@var{diverges-clause} ::= @var{diverges-keyword} @var{pred-or-not} @code{;}
+@var{diverges-keyword} ::= @code{diverges} | @code{diverges_redundantly}
+@var{when-clause} ::= @var{when-keyword} @var{pred-or-not} @code{;}
+@var{when-keyword} ::= @code{when} | @code{when_redundantly}
+@var{assignable-clause} ::= @var{assignable-keyword} @var{store-ref-list} @code{;}
+@var{assignable-keyword} ::= @code{assignable} | @code{assignable_redundantly}
+        | @code{modifiable} | @code{modifiable_redundantly}
+        | @code{modifies} | @code{modifies_redundantly}
+@var{accessible-clause} ::= @var{accessible-keyword} @var{store-ref-list} @code{;}
+@var{accessible-keyword} ::= @code{accessible} | @code{accessible_redundantly}
+@var{callable-clause} ::= @var{callable-keyword} @var{callable-methods-list} @code{;}
+@var{callable-keyword} ::= @code{callable} | @code{callable_redundantly}
+@var{callable-methods-list} ::= @var{method-name-list} | @var{store-ref-keyword}
+@var{measured-clause} ::= @var{measured-by-keyword} @code{\not_specified} @code{;}
+        | @var{measured-by-keyword} @var{spec-expression} [ @code{if} @var{predicate} ] @code{;}
+@var{measured-by-keyword} ::= @code{measured_by} | @code{measured_by_redundantly}
+@var{captures-clause} ::= @var{captures-keyword} @var{store-ref-list} @code{;}
+@var{captures-keyword} ::= @code{captures} | @code{captures_redundantly}
+@var{working-space-clause} ::= @var{working-space-keyword} @code{\not_specified} @code{;}
+        | @var{working-space-keyword} @var{spec-expression} [ @code{if} @var{predicate} ] @code{;}
+@var{working-space-keyword} ::= @code{working_space} | @code{working_space_redundantly}
+@var{duration-clause} ::= @var{duration-keyword} @code{\not_specified} @code{;}
+        | @var{duration-keyword} @var{spec-expression} [ @code{if} @var{predicate} ] @code{;}
+@var{duration-keyword} ::= @code{duration} | @code{duration_redundantly}
+@end display
+
+@appendixsec Data Groups
+@display
+
+@var{jml-data-group-clause} ::= @var{in-group-clause} | @var{maps-into-clause}
+@var{in-group-clause} ::= @var{in-keyword} @var{group-list} @code{;} 
+@var{in-keyword} ::= @code{in} | @code{in_redundantly}
+@var{group-list} ::= @var{group-name} [ @code{,} @var{group-name} ] @dots{}
+@var{group-name} ::= [ @var{group-name-prefix} ] @var{ident} 
+@var{group-name-prefix} ::= @code{super} @code{.} | @code{this} @code{.} 
+@var{maps-into-clause} ::= @var{maps-keyword} @var{member-field-ref} @code{\into} @var{group-list} @code{;} 
+@var{maps-keyword} ::= @code{maps} | @code{maps_redundantly}
+@var{member-field-ref} ::= @var{ident} @code{.} @var{maps-member-ref-expr}
+          | @var{maps-array-ref-expr} [ @code{.} @var{maps-member-ref-expr} ]
+@var{maps-member-ref-expr} ::= @var{ident} | @code{*} 
+@var{maps-array-ref-expr} ::= @var{ident} @var{maps-spec-array-dim}
+                        [ @var{maps-spec-array-dim} ] @dots{} 
+@var{maps-spec-array-dim} ::= `@code{[}' @var{spec-array-ref-expr} `@code{]}'
+@end display
+
+@appendixsec Predicates and Specification Expressions
+@display
+
+@var{predicate} ::= @var{spec-expression}
+@var{spec-expression-list} ::= @var{spec-expression}
+                         [ @code{,} @var{spec-expression} ] @dots{}
+@var{spec-expression} ::= @var{expression} 
+@var{expression-list} ::= @var{expression} [ @code{,} @var{expression} ] @dots{}
+@var{expression} ::= @var{assignment-expr} 
+@var{assignment-expr} ::= @var{conditional-expr}
+                    [ @var{assignment-op} @var{assignment-expr} ]
+@var{assignment-op} ::=  @code{=} | @code{+=} | @code{-=} | @code{*=} | @code{/=} | @code{%=} | @code{>>=}  
+        | @code{>>>=} | @code{<<=} | @code{&=} | `@code{|=}' | @code{^=}
+@var{conditional-expr} ::= @var{equivalence-expr}
+                   [ @code{?} @var{conditional-expr} @code{:} @var{conditional-expr} ]
+@var{equivalence-expr} ::= @var{implies-expr}
+                     [ @var{equivalence-op} @var{implies-expr} ] @dots{}
+@var{equivalence-op} ::= @code{<==>} | @code{<=!=>}
+@var{implies-expr} ::= @var{logical-or-expr}
+             [ @code{==>} @var{implies-non-backward-expr} ]
+        | @var{logical-or-expr} @code{<==} @var{logical-or-expr}
+             [ @code{<==} @var{logical-or-expr} ] @dots{}
+@var{implies-non-backward-expr} ::= @var{logical-or-expr}
+             [ @code{==>} @var{implies-non-backward-expr} ]
+@var{logical-or-expr} ::= @var{logical-and-expr} [ `@code{||}' @var{logical-and-expr} ] @dots{}
+@var{logical-and-expr} ::= @var{inclusive-or-expr} [ @code{&&} @var{inclusive-or-expr} ] @dots{}
+@var{inclusive-or-expr} ::= @var{exclusive-or-expr} [ `@code{|}' @var{exclusive-or-expr} ] @dots{}
+@var{exclusive-or-expr} ::= @var{and-expr} [ @code{^} @var{and-expr} ] @dots{}
+@var{and-expr} ::= @var{equality-expr} [ @code{&} @var{equality-expr} ] @dots{}
+@var{equality-expr} ::= @var{relational-expr} [ @code{==} @var{relational-expr}] @dots{}
+        | @var{relational-expr} [ @code{!=} @var{relational-expr}] @dots{}
+@var{relational-expr} ::= @var{shift-expr} @code{<} @var{shift-expr}
+        | @var{shift-expr} @code{>} @var{shift-expr}
+        | @var{shift-expr} @code{<=} @var{shift-expr}
+        | @var{shift-expr} @code{>=} @var{shift-expr}
+        | @var{shift-expr} @code{<:} @var{shift-expr}
+        | @var{shift-expr} [ @code{instanceof} @var{type-spec} ]
+@var{shift-expr} ::= @var{additive-expr} [ @var{shift-op} @var{additive-expr} ] @dots{}
+@var{shift-op} ::= @code{<<} | @code{>>} | @code{>>>}
+@var{additive-expr} ::= @var{mult-expr} [ @var{additive-op} @var{mult-expr} ] @dots{}
+@var{additive-op} ::= @code{+} | @code{-}
+@var{mult-expr} ::= @var{unary-expr} [ @var{mult-op} @var{unary-expr} ] @dots{}
+@var{mult-op} ::= @code{*} | @code{/} | @code{%}
+@var{unary-expr} ::= @code{(} @var{type-spec} @code{)} @var{unary-expr}
+        | @code{++} @var{unary-expr}
+        | @code{--} @var{unary-expr}
+        | @code{+} @var{unary-expr}
+        | @code{-} @var{unary-expr}
+        | @var{unary-expr-not-plus-minus}
+@var{unary-expr-not-plus-minus} ::= @code{~} @var{unary-expr}
+        | @code{!} @var{unary-expr}
+        | @code{(} @var{built-in-type} @code{)} @var{unary-expr}
+        | @code{(} @var{reference-type} @code{)} @var{unary-expr-not-plus-minus}
+        | @var{postfix-expr}
+@var{postfix-expr} ::= @var{primary-expr} [ @var{primary-suffix} ] @dots{} [ @code{++} ]
+        | @var{primary-expr} [ @var{primary-suffix} ] @dots{} [ @code{--} ]
+        | @var{built-in-type} [ `@code{[}' `@code{]}' ] @dots{} @code{.} @code{class}
+@var{primary-suffix} ::= @code{.} @var{ident}
+        | @code{.} @code{this}
+        | @code{.} @code{class}
+        | @code{.} @var{new-expr}
+        | @code{.} @code{super} @code{(} [ @var{expression-list} ] @code{)}
+        | @code{(} [ @var{expression-list} ] @code{)}
+        | `@code{[}' @var{expression} `@code{]}'
+        | [ `@code{[}' `@code{]}' ] @dots{} @code{.} @code{class}
+@var{primary-expr} ::= @var{ident} | @var{new-expr} 
+        | @var{constant} | @code{super} | @code{true}
+        | @code{false} | @code{this} | @code{null}
+        | @code{(} @var{expression} @code{)}
+        | @var{jml-primary}
+@var{built-in-type} ::= @code{void} | @code{boolean} | @code{byte}
+        | @code{char} | @code{short} | @code{int}
+        | @code{long} | @code{float} | @code{double}
+@var{constant} ::= @var{java-literal}
+@var{new-expr} ::= @code{new} @var{type} @var{new-suffix}
+@var{new-suffix} ::= @code{(} [ @var{expression-list} ] @code{)} [ @var{class-block} ]
+        | @var{array-decl} [ @var{array-initializer} ]
+        | @var{set-comprehension}
+@var{array-decl} ::= @var{dim-exprs} [ @var{dims} ]
+@var{dim-exprs} ::= `@code{[}' @var{expression} `@code{]}' [ `@code{[}' @var{expression} `@code{]}' ] @dots{}
+@var{array-initializer} ::= @code{@{} [ @var{initializer} [ @code{,} @var{initializer} ] @dots{} [ @code{,} ] ] @code{@}}
+@var{initializer} ::= @var{expression}
+        | @var{array-initializer}
+@var{jml-primary} ::= @var{result-expression}
+        | @var{old-expression}
+        | @var{not-assigned-expression}
+        | @var{not-modified-expression}
+        | @var{only-accessed-expression}
+        | @var{only-assigned-expression}
+        | @var{only-called-expression}
+        | @var{only-captured-expression}
+        | @var{fresh-expression}
+        | @var{reach-expression}
+        | @var{duration-expression}
+        | @var{space-expression}
+        | @var{working-space-expression}
+        | @var{nonnullelements-expression}
+        | @var{informal-description}
+        | @var{typeof-expression}
+        | @var{elemtype-expression}
+        | @var{type-expression}
+        | @var{lockset-expression}
+        | @var{max-expression}
+        | @var{is-initialized-expression}
+        | @var{invariant-for-expression}
+        | @var{lblneg-expression}
+        | @var{lblpos-expression}
+        | @var{spec-quantified-expr}
+@var{result-expression} ::= @code{\result}
+@var{old-expression} ::= @code{\old} @code{(} @var{spec-expression} [ @code{,} @var{ident} ] @code{)}
+        | @code{\pre} @code{(} @var{spec-expression} @code{)}
+@var{not-assigned-expression} ::= @code{\not_assigned} @code{(} @var{store-ref-list} @code{)}
+@var{not-modified-expression} ::= @code{\not_modified} @code{(} @var{store-ref-list} @code{)}
+@var{only-accessed-expression} ::= @code{\only_accessed} @code{(} @var{store-ref-list} @code{)}
+@var{only-assigned-expression} ::= @code{\only_assigned} @code{(} @var{store-ref-list} @code{)}
+@var{only-called-expression} ::= @code{\only_called} @code{(} @var{method-name-list} @code{)}
+@var{only-captured-expression} ::= @code{\only_captured} @code{(} @var{store-ref-list} @code{)}
+@var{fresh-expression} ::= @code{\fresh} @code{(} @var{spec-expression-list} @code{)}
+@var{reach-expression} ::= @code{\reach} @code{(} @var{spec-expression} @code{)}
+@var{duration-expression} ::= @code{\duration} @code{(} @var{expression} @code{)}
+@var{space-expression} ::= @code{\space} @code{(} @var{spec-expression} @code{)}
+@var{working-space-expression} ::= @code{\working_space} @code{(} @var{expression} @code{)}
+@var{nonnullelements-expression} ::= @code{\nonnullelements} @code{(} @var{spec-expression} @code{)}
+@var{typeof-expression} ::= @code{\typeof} @code{(} @var{spec-expression} @code{)}
+@var{elemtype-expression} ::= @code{\elemtype} @code{(} @var{spec-expression} @code{)}
+@var{type-expression} ::= @code{\type} @code{(} @var{type} @code{)}
+@var{lockset-expression} ::= @code{\lockset}
+@var{max-expression} ::= @code{\max} @code{(} @var{spec-expression} @code{)}
+@var{is-initialized-expression} ::= @code{\is_initialized} @code{(} @var{reference-type} @code{)}
+@var{invariant-for-expression} ::= @code{\invariant_for} @code{(} @var{spec-expression} @code{)}
+@var{lblneg-expression} ::= @code{(} @code{\lblneg} @var{ident} @var{spec-expression} @code{)}
+@var{lblpos-expression} ::= @code{(} @code{\lblpos} @var{ident} @var{spec-expression} @code{)}
+@var{spec-quantified-expr} ::= @code{(} @var{quantifier} @var{quantified-var-decls} @code{;}
+                           [ [ @var{predicate} ] @code{;} ]
+                           @var{spec-expression} @code{)}
+@var{quantifier} ::= @code{\forall} | @code{\exists}
+        | @code{\max} | @code{\min}
+        | @code{\num_of} | @code{\product} | @code{\sum}
+@var{quantified-var-decls} ::= [ @var{bound-var-modifiers} ] @var{type-spec} @var{quantified-var-declarator}
+                         [ @code{,} @var{quantified-var-declarator} ] @dots{}
+@var{quantified-var-declarator} ::= @var{ident} [ @var{dims} ]
+@var{spec-variable-declarators} ::= @var{spec-variable-declarator}
+                          [ @code{,} @var{spec-variable-declarator} ] @dots{}
+@var{spec-variable-declarator} ::= @var{ident} [ @var{dims} ]
+                             [ @code{=} @var{spec-initializer} ]
+@var{spec-array-initializer} ::= @code{@{} [ @var{spec-initializer}
+             [ @code{,} @var{spec-initializer} ] @dots{} [ @code{,} ] ] @code{@}}
+@var{spec-initializer} ::= @var{spec-expression}
+        | @var{spec-array-initializer}
+@var{bound-var-modifiers} ::= @code{non_null} | @code{nullable}
+@var{set-comprehension} ::= @code{@{} [ @var{bound-var-modifiers} ] @var{type-spec}
+            @var{quantified-var-declarator} `@code{|}'
+            @var{postfix-expr} @code{&&} @var{predicate} @code{@}}
+@var{store-ref-list} ::= @var{store-ref-keyword} | @var{store-ref} [ @code{,} @var{store-ref} ] @dots{}
+@var{store-ref} ::= @var{store-ref-expression}
+        | @var{informal-description} 
+@var{store-ref-expression} ::= @var{store-ref-name} [ @var{store-ref-name-suffix} ] @dots{}
+@var{store-ref-name} ::= @var{ident} | @code{super} | @code{this}
+@var{store-ref-name-suffix} ::= @code{.} @var{ident} | @code{.} @code{this} | `@code{[}' @var{spec-array-ref-expr} `@code{]}' | @code{.} @code{*} 
+@var{spec-array-ref-expr} ::= @var{spec-expression}
+        | @var{spec-expression} @code{..} @var{spec-expression}
+        | @code{*}
+@var{store-ref-keyword} ::= @code{\nothing} | @code{\everything} | @code{\not_specified}
+@end display
+
+@appendixsec Statements and Annotation Statements
+@display
+
+@var{compound-statement} ::= @code{@{} @var{statement} [ @var{statement} ] @dots{} @code{@}}
+@var{statement} ::= @var{compound-statement}
+        | @var{local-declaration} @code{;}
+        | @var{ident} @code{:} @var{statement}
+        | @var{expression} @code{;}
+        | @code{if} @code{(} @var{expression} @code{)}
+          @var{statement} [ @code{else} @var{statement} ]
+        | @var{possibly-annotated-loop}
+        | @code{break} [ @var{ident} ] @code{;}
+        | @code{continue} [ @var{ident} ] @code{;}
+        | @code{return} [ @var{expression} ] @code{;}
+        | @var{switch-statement}
+        | @var{try-block} 
+        | @code{throw} @var{expression} @code{;}
+        | @code{synchronized} @code{(} @var{expression} @code{)} @var{statement}
+        | @code{;}
+        | @var{jml-annotation-statement}
+        | @var{assert-statement}
+        | @var{jml-annotation-statement}
+        | @var{model-prog-statement} @i{// only allowed in model programs}
+@var{switch-statement} ::= @code{switch} @code{(} @var{expression} @code{)} @code{@{}
+                     [ @var{switch-body} ] @dots{} @code{@}}
+@var{switch-body} ::= @var{switch-label-seq} [ @var{statement} ] @dots{}
+@var{switch-label-seq} ::= @var{switch-label} [ @var{switch-label} ] @dots{}
+@var{switch-label} ::= @code{case} @var{expression} @code{:} | @code{default} @code{:}
+@var{try-block} ::= @code{try} @var{compound-statement}
+              [ @var{handler} ] @dots{}
+              [ @code{finally} @var{compound-statement} ]
+@var{handler} ::= @code{catch} @code{(} @var{param-declaration} @code{)} @var{compound-statement}
+@var{local-declaration} ::= @var{local-modifiers} @var{variable-decls}
+@var{local-modifiers} ::= [ @var{local-modifier} ] @dots{}
+@var{local-modifier} ::= @code{ghost} | @code{final}  @code{uninitialized} | @code{non_null} | @code{nullable}
+         | @var{ownership-modifier}  @i{// when the Universe type system is on}
+@var{possibly-annotated-loop} ::=
+          [ @var{loop-invariant} ] @dots{}
+          [ @var{variant-function} ] @dots{}
+          [ @var{ident} @code{:} ] @var{loop-stmt}
+@var{loop-stmt} ::= @code{while} @code{(} @var{expression} @code{)} @var{statement}
+        | @code{do} @var{statement} @code{while} @code{(} @var{expression} @code{)} @code{;}
+        | @code{for} @code{(} [ @var{for-init} ] @code{;} [ @var{expression} ] @code{;} [ @var{expression-list} ] @code{)}
+             @var{statement}
+@var{for-init} ::= @var{local-declaration} | @var{expression-list}
+@var{loop-invariant} ::= @var{maintaining-keyword} @var{predicate} @code{;}
+@var{maintaining-keyword} ::= @code{maintaining} | @code{maintaining_redundantly}
+        | @code{loop_invariant} | @code{loop_invariant_redundantly}
+@var{variant-function} ::= @var{decreasing-keyword} @var{spec-expression} @code{;}
+@var{decreasing-keyword} ::= @code{decreasing} | @code{decreasing_redundantly}
+        | @code{decreases} | @code{decreases_redundantly}
+@var{assert-statement} ::= @code{assert} @var{expression} [ @code{:} @var{expression} ] @code{;}
+        | @code{assert} @var{predicate} [ @code{:} @var{expression} ] @code{;}
+@var{assert-redundantly-statement} ::= @code{assert_redundantly} @var{predicate}
+                                 [ @code{:} @var{expression} ] @code{;}
+@var{jml-annotation-statement} ::= @var{assert-redundantly-statement}
+        | @var{assume-statement}
+        | @var{hence-by-statement}
+        | @var{set-statement}
+        | @var{refining-statement}
+        | @var{unreachable-statement}
+        | @var{debug-statement}
+@var{assume-statement} ::= @var{assume-keyword} @var{predicate}
+                     [ @code{:} @var{expression} ] @code{;}
+@var{assume-keyword} ::= @code{assume} | @code{assume_redundantly}
+@var{set-statement} ::= @code{set} @var{assignment-expr} @code{;}
+@var{refining-statement} ::= @code{refining} @var{spec-statement} @var{statement}
+        | @code{refining} @var{generic-spec-statement-case} @var{statement}
+@var{unreachable-statement} ::= @code{unreachable} @code{;}
+@var{debug-statement} ::= @code{debug} @var{expression} @code{;}
+@var{hence-by-statement} ::= @var{hence-by-keyword} @var{predicate} @code{;}
+@var{hence-by-keyword} ::= @code{hence_by} | @code{hence_by_redundantly}
+@end display
+
+@appendixsec Redundancy
+@display
+
+@var{redundant-spec} ::= @var{implications} [ @var{examples} ] | @var{examples}
+@var{implications} ::= @code{implies_that} @var{spec-case-seq}
+@var{examples} ::= @code{for_example} @var{example} [ @code{also} @var{example} ] @dots{}
+@var{example} ::= [ [ @var{privacy} ] @code{example} ]
+            [ @var{spec-var-decls} ]
+            [ @var{spec-header} ]
+            @var{simple-spec-body}
+        | [ @var{privacy} ] @code{exceptional_example}
+          [ @var{spec-var-decls} ]
+          @var{spec-header}
+          [ @var{exceptional-example-body} ]
+        | [ @var{privacy} ] @code{exceptional_example}
+          [ @var{spec-var-decls} ]
+          @var{exceptional-example-body}
+        | [ @var{privacy} ] @code{normal_example}
+          [ @var{spec-var-decls} ]
+          @var{spec-header}
+          [ @var{normal-example-body} ]
+        | [ @var{privacy} ] @code{normal_example}
+          [ @var{spec-var-decls} ]
+          @var{normal-example-body}
+@var{exceptional-example-body} ::= @var{exceptional-spec-clause}
+                             [ @var{exceptional-spec-clause} ] @dots{}
+@var{normal-example-body} ::= @var{normal-spec-clause}
+                        [ @var{normal-spec-clause} ] @dots{}
+@end display
+
+@appendixsec Model Programs
+@display
+
+@var{model-program} ::= [ @var{privacy} ] [ @code{code} ] @code{model_program} 
+                  @var{jml-compound-statement}
+@var{jml-compound-statement} ::= @var{compound-statement}
+@var{jml-statement} ::= @var{statement}
+@var{model-prog-statement} ::= @var{nondeterministic-choice}
+        | @var{nondeterministic-if}
+        | @var{spec-statement}
+        | @var{invariant}
+@var{nondeterministic-choice} ::= @code{choose} @var{alternative-statements}
+@var{alternative-statements} ::= @var{jml-compound-statement}
+             [ @code{or} @var{jml-compound-statement} ] @dots{}
+@var{nondeterministic-if} ::= @code{choose_if} @var{guarded-statements}
+             [ @code{else} @var{jml-compound-statement} ]
+@var{guarded-statements} ::= @var{guarded-statement}
+             [ @code{or} @var{guarded-statement} ] @dots{}
+@var{guarded-statement} ::= @code{@{}
+             @var{assume-statement}
+             @var{jml-statement} [ @var{jml-statement}] @dots{} @code{@}}
+@var{spec-statement} ::= [ @var{privacy} ] @var{behavior-keyword}
+                   @var{generic-spec-statement-case}
+        | [ @var{privacy} ] @var{exceptional-behavior-keyword}
+          @var{exceptional-spec-case}
+        | [ @var{privacy} ] @var{normal-behavior-keyword}
+          @var{normal-spec-case}
+        | [ @var{privacy} ] @var{abrupt-behavior-keyword}
+          @var{abrupt-spec-case}
+@var{generic-spec-statement-case} ::= [ @var{spec-var-decls} ]
+                                @var{generic-spec-statement-body}
+        | [ @var{spec-var-decls} ]
+          @var{spec-header}
+          [ @var{generic-spec-statement-body} ]
+@var{generic-spec-statement-body} ::= @var{simple-spec-statement-body}
+        | @code{@{|} @var{generic-spec-statement-case-seq} @code{|@}}
+@var{generic-spec-statement-body-seq} ::= @var{generic-spec-statement-case}
+             [ @code{also} @var{generic-spec-statement-case} ] @dots{}
+@var{simple-spec-statement-body} ::= @var{simple-spec-statement-clause}
+                               [ @var{simple-spec-statement-clause} ] @dots{} 
+@var{simple-spec-statement-clause} ::= @var{diverges-clause}
+        | @var{assignable-clause}
+        | @var{when-clause} | @var{working-space-clause} | @var{duration-clause}
+        | @var{ensures-clause} | @var{signals-only-clause} | @var{signals-clause}
+        | @var{continues-clause} | @var{breaks-clause} | @var{returns-clause}
+@var{abrupt-behavior-keyword} ::= @code{abrupt_behavior} | @code{abrupt_behaviour}
+@var{abrupt-spec-case} ::= @var{generic-spec-statement-case}
+@var{continues-clause} ::= @var{continues-keyword} [ @var{target-label} ]
+                     [ @var{pred-or-not} ] @code{;}
+@var{continues-keyword} ::= @code{continues} | @code{continues_redundantly}
+@var{target-label} ::= @code{->} @code{(} @var{ident} @code{)}
+@var{breaks-clause} ::= @var{breaks-keyword} [ @var{target-label} ]
+                  [ @var{pred-or-not} ] @code{;}
+@var{breaks-keyword} ::= @code{breaks} | @code{breaks_redundantly}
+@var{returns-clause} ::= @var{returns-keyword} [ @var{pred-or-not} ] @code{;}
+@var{returns-keyword} ::= @code{returns} | @code{returns_redundantly}
+@end display
+
+@appendixsec Specification for Subtypes
+@display
+
+@end display
+
+@appendixsec Refinement
+@display
+
+@var{refine-prefix} ::= @var{refine-keyword} @var{string-literal} @code{;}
+@var{refine-keyword} ::= @code{refine} | @code{refines}
+@end display
+
+@appendixsec MultiJava Extensions to JML
+@display
+
+@var{multijava-top-level-declaration} ::= @var{multijava-top-level-method}
+@var{multijava-top-level-method} ::= [ @var{method-specification} ]
+              @var{modifiers} [ @code{method} ]
+              [ @var{type-spec} ] @var{extending-method-head} @var{method-body}
+@var{extending-method-head} ::= @var{name} @code{.} @code{ident} @var{formals} [@var{dims} ]
+                          [ @var{throws-clause} ]
+@var{multijava-param-declaration} ::= [ @var{param-modifier} ] @dots{}
+                 @var{type-spec} @var{specializer} @var{ident} [ @var{dims} ]
+@var{specializer} ::= @code{@@} @var{type-spec}
+        | @code{@@@@} @var{value-specializer}
+@var{value-specializer} ::= @var{expression}
+@end display
+
+@appendixsec Universe Type System
+@display
+
+@var{ownership-modifiers} ::= @var{ownership-modifier} [ @var{ownership-modifier} ]
+@var{ownership-modifier} ::= @code{\rep} | @code{\peer} | @code{\readonly}
+         | @var{reserved-ownership-modifier} @i{// with --universesx parse or --universesx full}
+@var{reserved-ownership-modifier} ::= @code{rep} | @code{peer} | @code{readonly}
+@end display
+
+@appendixsec Safe Math Extensions
+@display
+
+@end display
+
+@appendixsec Deprecated and Replaced Syntax
+@display
+
+@end display
+

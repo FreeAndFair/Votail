@@ -1,0 +1,89 @@
+// @(#)$Id: Account.jml,v 1.8 2007/07/01 14:39:10 chalin Exp $
+
+// Copyright (C) 1998, 1999 Iowa State University
+
+// This file is part of JML
+
+// JML is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or (at your option)
+// any later version.
+
+// JML is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with JML; see the file COPYING.  If not, write to
+// the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
+package org.jmlspecs.samples.prelimdesign;
+public class Account {
+  //@ public model MoneyOps credit;
+  //@ public model String accountOwner;
+  /*@ public invariant accountOwner != null && credit != null
+    @         && credit.greaterThanOrEqualTo(new USMoney(0)); @*/
+  //@ public constraint accountOwner.equals(\old(accountOwner));
+
+  /*@  public normal_behavior
+    @    requires own != null && amt != null
+    @          && (new USMoney(1)).lessThanOrEqualTo(amt);
+    @    assignable credit, accountOwner;
+    @    ensures credit.equals(amt) && accountOwner.equals(own);
+    @*/
+  public Account(MoneyOps amt, String own);
+
+  /*@  public normal_behavior
+    @    assignable \nothing;
+    @    ensures \result.equals(credit);
+    @*/
+  public /*@ pure @*/ MoneyOps balance();
+
+  /*@  public normal_behavior
+    @    old boolean can_scale = credit.can_scaleBy(1.0 + rate);
+    @    requires 0.0 <= rate && rate <= 1.0
+    @          && can_scale;
+    @    assignable credit;
+    @    ensures credit.equals(\old(credit).scaleBy(1.0 + rate));
+    @ for_example
+    @  public normal_example
+    @    requires rate == 0.05
+    @          && (new USMoney(4000)).equals(credit);
+    @    assignable credit;
+    @    ensures credit.equals(new USMoney(4200));
+    @*/
+  public void payInterest(double rate);
+
+  /*@  public normal_behavior
+    @    old boolean can_add = credit.can_add(amt);
+    @    requires amt != null
+    @          && amt.greaterThanOrEqualTo(new USMoney(0))
+    @          && can_add;
+    @    assignable credit;
+    @    ensures credit.equals(\old(credit).plus(amt));
+    @ for_example
+    @  public normal_example
+    @    requires credit.equals(new USMoney(40000))
+    @           && amt.equals(new USMoney(1));
+    @    assignable credit;
+    @    ensures credit.equals(new USMoney(40001));
+    @*/
+  public void deposit(MoneyOps amt);
+
+  /*@  public normal_behavior
+    @   requires amt != null
+   @          && (new USMoney(0)).lessThanOrEqualTo(amt)
+    @         && amt.lessThanOrEqualTo(credit);
+    @    assignable credit;
+    @    ensures credit.equals(\old(credit).minus(amt));
+    @ for_example
+    @  public normal_example
+    @    requires credit.equals(new USMoney(40001))
+    @          && amt.equals(new USMoney(40000));
+    @    assignable credit;
+    @    ensures credit.equals(new USMoney(1));
+    @*/
+  public void withdraw(MoneyOps amt);
+}

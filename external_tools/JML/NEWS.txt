@@ -1,0 +1,63 @@
+@(#)$Id: NEWS.txt,v 1.155 2008/05/20 20:55:59 leavens Exp $
+
+    NEWS.txt file for JML and the Common (formerly ISU) JML Tools
+
+New with release 5.6_rc2 (May 20, 2008)
+
+   major improvements:
+
+     - Addition of jmle, which is a tool for executing JML
+       specifications.  This can be used to validate specifications,
+       to debug them, and to allow specifications to serve as
+       prototypes.  The jmle tool generates Java code, so it can be
+       used as with any other Java code, in particular with JUnit unit
+       testing.  For more information see the README.txt file in the
+       org/jmlspecs/jmlexec directory or the paper
+       by Krause and Wahls "jmle: A Tool for Executing JML
+       Specifications via Constraint Programming" at 
+       http://users.dickinson.edu/~wahlst/papers/tool.pdf
+       Thanks to Tim Wahls.
+
+   minor improvements:
+
+     - The ant tasks for JML are back in the jml-release.jar file.
+
+     - Updates to the Universe type system, including support for
+       Generic Universe types. The largest visible change
+       is the improved defaulting of the ownership modifiers, which is
+       now described in the JML Reference manual. Also
+       multi-dimensional arays of primitive types can now take two
+       ownership modifiers. Thanks to Werner Dietl.
+
+     - Various fixes to the Universe type system annotations for the
+       JDK (and the JML tools), thanks to Werner Dietl.
+
+     - A temporary fix to bug #1961579, thanks to Tim Wahls and Werner
+       Dietl for help on this.
+
+     - Various fixes to the JML Reference Manual, thanks to Patrice
+       Chalin, Jooyong Lee, and Dan Zimmerman.  In particular
+       clarifications in the sections on quantifiers and set
+       comprehensions to better describe some of the semantics and
+       simplify the set comprehension grammar. 
+
+   incompatible changes:
+
+
+# Copyright (C) 2008 University of Central Florida
+
+# This file is part of JML
+
+# JML is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# JML is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with JML; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.

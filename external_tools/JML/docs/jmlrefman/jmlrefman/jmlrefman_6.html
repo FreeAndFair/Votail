@@ -1,0 +1,755 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 20  2008 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>JML Reference Manual: Type Definitions</TITLE>
+
+<META NAME="description" CONTENT="JML Reference Manual: Type Definitions">
+<META NAME="keywords" CONTENT="JML Reference Manual: Type Definitions">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC35"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_5.html#SEC32"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_7.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+
+<HR SIZE=2>
+<H1> 6. Type Definitions </H1>
+<!--docid::SEC35::-->
+<P>
+
+<A NAME="IDX1115"></A>
+<A NAME="IDX1116"></A>
+<A NAME="IDX1117"></A>
+The following is the syntax of type definitions.
+</P><P>
+
+<A NAME="IDX1118"></A>
+<A NAME="IDX1119"></A>
+<A NAME="IDX1120"></A>
+<A NAME="IDX1121"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>type-definition</VAR> ::= <VAR>class-definition</VAR>
+        | <VAR>interface-definition</VAR>
+        | <CODE>;</CODE>
+</pre></td></tr></table></P><P>
+
+The specification of a <VAR>type-definition</VAR> is determined as follows.
+If the <VAR>type-definition</VAR> consists only of a semicolon (<CODE>;</CODE>),
+then the specification is empty.  Otherwise the specification is that
+of the class or interface definition.  Such a specification must be
+satisfied by the corresponding class or interface definition.
+</P><P>
+
+The rest of this chapter discusses class and interface definitions,
+as well as the syntax of modifiers.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC36">6.1 Class and Interface Definitions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC39">6.2 Modifiers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Class and Interface Definitions"></A>
+<HR SIZE="6">
+<A NAME="SEC36"></A>
+<H2> 6.1 Class and Interface Definitions </H2>
+<!--docid::SEC36::-->
+<P>
+
+<A NAME="IDX1122"></A>
+<A NAME="IDX1123"></A>
+<A NAME="IDX1124"></A>
+Class and interface definitions are quite similar, as interfaces may be
+seen as a special kind of class definition that only allows the
+declaration of abstract instance methods and final static fields (in
+the Java code <A HREF="jmlrefman_27.html#BIB32">[Gosling-etal00]</A>).
+Their syntax is also similar.
+</P><P>
+
+<A NAME="IDX1125"></A>
+<A NAME="IDX1126"></A>
+<A NAME="IDX1127"></A>
+<A NAME="IDX1128"></A>
+<A NAME="IDX1129"></A>
+<A NAME="IDX1130"></A>
+<A NAME="IDX1131"></A>
+<A NAME="IDX1132"></A>
+<A NAME="IDX1133"></A>
+<A NAME="IDX1134"></A>
+<A NAME="IDX1135"></A>
+<A NAME="IDX1136"></A>
+<A NAME="IDX1137"></A>
+<A NAME="IDX1138"></A>
+<A NAME="IDX1139"></A>
+<A NAME="IDX1140"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>class-definition</VAR> ::= [ <VAR>doc-comment</VAR> ] <VAR>modifiers</VAR> <CODE>class</CODE> <VAR>ident</VAR>
+            [ <VAR>class-extends-clause</VAR> ] [ <VAR>implements-clause</VAR> ]
+            <VAR>class-block</VAR>
+<VAR>class-block</VAR> ::= <CODE>{</CODE> [ <VAR>field</VAR> ] <small>...</small> <CODE>}</CODE>
+
+<VAR>interface-definition</VAR> ::= [ <VAR>doc-comment</VAR> ] <VAR>modifiers</VAR> <CODE>interface</CODE> <VAR>ident</VAR>
+           [ <VAR>interface-extends</VAR> ]
+           <VAR>class-block</VAR>
+</pre></td></tr></table></P><P>
+
+Documentation comments for classes and interfaces may not
+contain JML specification information.
+See section <A HREF="jmlrefman_4.html#SEC30">4.5 Documentation Comments</A>, for the syntax of documentation
+comments. 
+</P><P>
+
+See section <A HREF="jmlrefman_7.html#SEC52">7. Class and Interface Member Declarations</A>, for the syntax and semantics of <VAR>field</VAR>s,
+which form the essence of classes and interfaces.
+</P><P>
+
+The rest of this section discusses subtyping for classes and
+interfaces and also the particular modifiers used in classes and
+interfaces.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC37">6.1.1 Subtyping for Type Definitions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC38">6.1.2 Modifiers for Type Definitions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Subtyping for Type Definitions"></A>
+<HR SIZE="6">
+<A NAME="SEC37"></A>
+<H3> 6.1.1 Subtyping for Type Definitions </H3>
+<!--docid::SEC37::-->
+<P>
+
+<A NAME="IDX1141"></A>
+<A NAME="IDX1142"></A>
+<A NAME="IDX1143"></A>
+<A NAME="IDX1144"></A>
+<A NAME="IDX1145"></A>
+Classes in Java can use single inheritance and may also implement any
+number of interfaces.  Interfaces may extend any number of other
+interfaces.
+</P><P>
+
+<A NAME="IDX1146"></A>
+<A NAME="IDX1147"></A>
+<A NAME="IDX1148"></A>
+<A NAME="IDX1149"></A>
+<A NAME="IDX1150"></A>
+<A NAME="IDX1151"></A>
+<A NAME="IDX1152"></A>
+<A NAME="IDX1153"></A>
+<A NAME="IDX1154"></A>
+<A NAME="IDX1155"></A>
+<A NAME="IDX1156"></A>
+<A NAME="IDX1157"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>class-extends-clause</VAR> ::= [ <CODE>extends</CODE> <VAR>name</VAR> [ <CODE>weakly</CODE> ] ]
+<VAR>implements-clause</VAR> ::= <CODE>implements</CODE> <VAR>name-weakly-list</VAR>
+<VAR>name-weakly-list</VAR> ::= <VAR>name</VAR> [ <CODE>weakly</CODE> ] [ <CODE>,</CODE> <VAR>name</VAR> [ <CODE>weakly</CODE> ] ] <small>...</small>
+<VAR>interface-extends</VAR> ::= <CODE>extends</CODE> <VAR>name-weakly-list</VAR>
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX1158"></A>
+<A NAME="IDX1159"></A>
+<A NAME="IDX1160"></A>
+<A NAME="IDX1161"></A>
+<A NAME="IDX1162"></A>
+<A NAME="IDX1163"></A>
+The meaning of inheritance in JML is similar to that in Java.
+In Java, a when class <I>S</I> names a class <I>T</I> in <I>S</I>'s
+<VAR>class-extends-clause</VAR>, then 
+<I>S</I> is a <EM>subclass</EM> of <I>T</I> and <I>T</I> is a 
+<EM>superclass</EM> of <I>S</I>; we also say that <I>S</I> <EM>inherits</EM> from
+<I>T</I>.
+This relationship also makes <I>S</I> a <EM>subtype</EM> of <I>T</I>, meaning
+that variables 
+of type <I>T</I> can refer to objects of type <I>S</I>.
+In Java, when <I>S</I> is a subclass of <I>T</I>, then <I>S</I>
+inherits all the instance fields and methods from <I>T</I>.
+</P><P>
+
+<A NAME="IDX1164"></A>
+<A NAME="IDX1165"></A>
+A class may also implement several interfaces, declared in its
+<VAR>implements-clause</VAR>; the class thus becomes a subtype of each of
+the interfaces that it implements.
+</P><P>
+
+<A NAME="IDX1166"></A>
+<A NAME="IDX1167"></A>
+Similarly, an interface may extend several other interfaces.
+In Java, such an interface inherits all of the abstract methods and static
+final fields from the interfaces it extends.
+When interface <I>U</I> extends another interface <I>V</I>,
+then <I>U</I> is a subtype of <I>V</I>.
+</P><P>
+
+<A NAME="IDX1168"></A>
+<A NAME="IDX1169"></A>
+<A NAME="IDX1170"></A>
+In JML, model and ghost features, as well as specifications are
+inherited.  A subtype inherits from its supertypes:
+<UL>
+<LI>
+all instance fields, including model and ghost fields,
+<P>
+
+<LI>
+instance methods are also inherited and their specifications,
+<P>
+
+<LI>
+instance invariants and instance history constraints.
+</UL>
+<P>
+
+<A NAME="IDX1171"></A>
+<A NAME="IDX1172"></A>
+It is an error for a type to inherit a field <I>x</I> from two different
+supertypes if that field is declared with different types.
+</P><P>
+
+<A NAME="IDX1173"></A>
+<A NAME="IDX1174"></A>
+<A NAME="IDX1175"></A>
+It is an error for a type to inherit a method with the same formal
+parameter types but with either different return types or with
+conflicting throws clauses <A HREF="jmlrefman_27.html#BIB32">[Gosling-etal00]</A>.
+(There are other restrictions on method inheritance that apply when
+MultiJava is used <A HREF="jmlrefman_27.html#BIB18">[Clifton-etal00]</A>.)
+</P><P>
+
+<A NAME="IDX1176"></A>
+In Java one cannot inherit method implementations from interfaces, but
+this is possible in JML, where one can implement a model method in an
+interface.  It is illegal for a class or interface to inherit two
+different implementations of a model method.
+</P><P>
+
+<A NAME="IDX1177"></A>
+<A NAME="IDX1178"></A>
+<A NAME="IDX1179"></A>
+<A NAME="IDX1180"></A>
+<A NAME="IDX1181"></A>
+<A NAME="IDX1182"></A>
+<A NAME="IDX1183"></A>
+<A NAME="IDX1184"></A>
+In JML, instance methods have to obey the specifications of all
+methods they override.  This, together with the inheritance of
+invariants and history constraints, forces subtypes to be behavioral subtypes
+<A HREF="jmlrefman_27.html#BIB22">[Dhara-Leavens96]</A> <A HREF="jmlrefman_27.html#BIB59">[Leavens-Naumann06]</A> <A HREF="jmlrefman_27.html#BIB67">[Leavens06b]</A>.
+However, history constraints are not inherited from supertypes whose
+names are marked with <CODE>weakly</CODE> in the relevant clause.
+Such subtypes are <EM>weak behavioral subtypes</EM>, and should only be
+used in ways that do not permit cross-type aliasing <A HREF="jmlrefman_27.html#BIB21">[Dhara-Leavens94b]</A>
+<A HREF="jmlrefman_27.html#BIB23">[Dhara97]</A>. 
+</P><P>
+
+<A NAME="IDX1185"></A>
+<A NAME="IDX1186"></A>
+See the report, "Desugaring JML Method Specifications"
+<A HREF="jmlrefman_27.html#BIB95">[Raghavan-Leavens05]</A> for more
+about the details of specification inheritance in JML.
+</P><P>
+
+<A NAME="Modifiers for Type Definitions"></A>
+<HR SIZE="6">
+<A NAME="SEC38"></A>
+<H3> 6.1.2 Modifiers for Type Definitions </H3>
+<!--docid::SEC38::-->
+<P>
+
+<A NAME="IDX1187"></A>
+<A NAME="IDX1188"></A>
+<A NAME="IDX1189"></A>
+<A NAME="IDX1190"></A>
+<A NAME="IDX1191"></A>
+<A NAME="IDX1192"></A>
+<A NAME="IDX1193"></A>
+<A NAME="IDX1194"></A>
+<A NAME="IDX1195"></A>
+<A NAME="IDX1196"></A>
+<A NAME="IDX1197"></A>
+<A NAME="IDX1198"></A>
+<A NAME="IDX1199"></A>
+<A NAME="IDX1200"></A>
+In addition to the Java modifiers that can be legally attached to a
+class or interface definition <A HREF="jmlrefman_27.html#BIB32">[Gosling-etal00]</A>,
+in JML one can use the following modifiers.
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  pure model
+  spec_java_math spec_safe_math spec_bigint_math
+  code_java_math code_safe_math code_bigint_math
+  nullable_by_default
+</pre></td></tr></table>See section <A HREF="jmlrefman_6.html#SEC39">6.2 Modifiers</A>, for the syntax and semantics of modifiers in general.
+</P><P>
+
+<A NAME="IDX1201"></A>
+<A NAME="IDX1202"></A>
+<A NAME="IDX1203"></A>
+A type definition may be modified with the JML modifier keyword <CODE>pure</CODE>.
+The effect of declaring a type <CODE>pure</CODE> is that all constructor and 
+instance method declarations within the type are automatically
+declared to be pure
+(see section <A HREF="jmlrefman_7.html#SEC57">7.1.1.3 Pure Methods and Constructors</A>, for more about pure methods).
+Hence, once an object of a class is created, it
+will be immutable, and furthermore, none of its instance methods will
+have any side effects.  However, its static methods may still have
+side effects, as the <CODE>pure</CODE> does not apply to the static methods
+declared in a type.  Furthermore, although an override of a pure
+method must be pure, instance methods declared in
+subtypes that do not override this supertype's methods
+need not be pure.  Hence, such a subtype does not necessarily have
+immutable objects.  So, in essence, declaring a class pure
+is merely a shorthand for declaring all of the constructors and
+instance methods pure.
+</P><P>
+
+[[[ Pure does not make a class immutable either, since a method might
+return a reference to an internal representation which is then modified
+by some non-pure method in its class.  Is it sufficient if all fields are
+also fields of pure types (recursively)?  Then there are arrays. 
+And also all fields would need to be private to have immutability. - DRC ]]]
+</P><P>
+
+<A NAME="IDX1204"></A>
+<A NAME="IDX1205"></A>
+<A NAME="IDX1206"></A>
+A type declaration that is declared with the modifier <CODE>model</CODE>
+is a specification-only type.
+Hence, such a type may not be used in Java code, and may only be used
+in annotations.  It follows that the
+entire type definition must be contained within an annotation comment,
+and consequently annotations within the type definition do not need to
+be separately enclosed in annotation comments, 
+as is demonstrated in the example below.
+The scope rules for a model type definition are the same as for Java type
+definitions, except that a model type definition is not in scope for any
+Java code, only for annotations.
+</P><P>
+
+[[[Model types are seldom used in JML.  Since the runtime assertion
+checker doesn't work with them, I wonder if it would be best to get
+rid of them completely.  You could always just define a Java type,
+which would be useful for runtime assertion checking.]]]
+</P><P>
+
+[[[ May a model type definition appear in more than one specification file
+of a refinement sequence, with any member declarations being combined 
+together?  I'd prefer that it only be allowed to appear once and be required
+to be completely defined in one spec file - easier for tools.  -- DRCok ]]]
+</P><P>
+
+[[[Need to explain the math modifiers.]]]
+</P><P>
+
+<A NAME="Modifiers"></A>
+<HR SIZE="6">
+<A NAME="SEC39"></A>
+<H2> 6.2 Modifiers </H2>
+<!--docid::SEC39::-->
+<P>
+
+<A NAME="IDX1207"></A>
+The following is the syntax of modifiers.
+</P><P>
+
+<A NAME="IDX1208"></A>
+<A NAME="IDX1209"></A>
+<A NAME="IDX1210"></A>
+<A NAME="IDX1211"></A>
+<A NAME="IDX1212"></A>
+<A NAME="IDX1213"></A>
+<A NAME="IDX1214"></A>
+<A NAME="IDX1215"></A>
+<A NAME="IDX1216"></A>
+<A NAME="IDX1217"></A>
+<A NAME="IDX1218"></A>
+<A NAME="IDX1219"></A>
+<A NAME="IDX1220"></A>
+<A NAME="IDX1221"></A>
+<A NAME="IDX1222"></A>
+<A NAME="IDX1223"></A>
+<A NAME="IDX1224"></A>
+<A NAME="IDX1225"></A>
+<A NAME="IDX1226"></A>
+<A NAME="IDX1227"></A>
+<A NAME="IDX1228"></A>
+<A NAME="IDX1229"></A>
+<A NAME="IDX1230"></A>
+<A NAME="IDX1231"></A>
+<A NAME="IDX1232"></A>
+<A NAME="IDX1233"></A>
+<A NAME="IDX1234"></A>
+<A NAME="IDX1235"></A>
+<A NAME="IDX1236"></A>
+<A NAME="IDX1237"></A>
+<A NAME="IDX1238"></A>
+<A NAME="IDX1239"></A>
+<A NAME="IDX1240"></A>
+<A NAME="IDX1241"></A>
+<A NAME="IDX1242"></A>
+<A NAME="IDX1243"></A>
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif"><VAR>modifiers</VAR> ::= [ <VAR>modifier</VAR> ] <small>...</small>
+<VAR>modifier</VAR> ::= <CODE>public</CODE> | <CODE>protected</CODE> | <CODE>private</CODE>
+        | <CODE>abstract</CODE> | <CODE>static</CODE> |
+        | <CODE>final</CODE> | <CODE>synchronized</CODE>
+        | <CODE>transient</CODE> | <CODE>volatile</CODE>
+        | <CODE>native</CODE> | <CODE>strictfp</CODE>
+        | <CODE>const</CODE>             <I>// reserved but not used in Java</I>
+        | <VAR>jml-modifier</VAR>
+<VAR>jml-modifier</VAR> ::= <CODE>spec_public</CODE> | <CODE>spec_protected</CODE>
+        | <CODE>model</CODE> | <CODE>ghost</CODE> | <CODE>pure</CODE>
+        | <CODE>instance</CODE> | <CODE>helper</CODE>
+        | <CODE>uninitialized</CODE>
+        | <CODE>spec_java_math</CODE> | <CODE>spec_safe_math</CODE> | <CODE>spec_bigint_math</CODE>
+        | <CODE>code_java_math</CODE> | <CODE>code_safe_math</CODE> | <CODE>code_bigint_math</CODE>
+        | <CODE>non_null</CODE> | <CODE>nullable</CODE> | <CODE>nullable_by_default</CODE>
+        | <CODE>extract</CODE>
+</pre></td></tr></table></P><P>
+
+The <VAR>jml-modifiers</VAR> are only recognized as keywords in
+annotation comments.  See section <A HREF="jmlrefman_4.html#SEC25">4. Lexical Conventions</A>, for more details.
+</P><P>
+
+<A NAME="IDX1244"></A>
+<A NAME="IDX1245"></A>
+<A NAME="IDX1246"></A>
+The Java modifiers have the same meaning as in Java <A HREF="jmlrefman_27.html#BIB32">[Gosling-etal00]</A>.
+</P><P>
+
+Note that although
+the <VAR>modifiers</VAR> grammar non-terminal is used in many places throughout
+the grammar, not all modifiers can be used
+with every grammar construct.  See the discussion regarding each grammar
+construct, which is summarized in <A HREF="jmlrefman_22.html#SEC237">B. Modifier Summary</A>.
+</P><P>
+
+In the following we first discuss the suggested ordering of modifiers
+The rest of this section discusses the JML-specific modifiers in
+general terms.  Their use and meaning for each kind of grammatical
+construct should be consulted directly for more details.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC40">6.2.1 Suggested Modifier Ordering</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC41">6.2.2 Spec Public</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC42">6.2.3 Spec Protected</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC43">6.2.4 Pure</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC44">6.2.5 Model</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC45">6.2.6 Ghost</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC46">6.2.7 Instance</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC47">6.2.8 Helper</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC48">6.2.9 Monitored</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC49">6.2.10 Uninitialized</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC50">6.2.11 Math Modifiers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="jmlrefman_6.html#SEC51">6.2.12 Nullity Modifiers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Suggested Modifier Ordering"></A>
+<HR SIZE="6">
+<A NAME="SEC40"></A>
+<H3> 6.2.1 Suggested Modifier Ordering </H3>
+<!--docid::SEC40::-->
+<P>
+
+<A NAME="IDX1247"></A>
+There are various guidelines for ordering modifiers in Java [[[citations?]]].
+As JML has several extra modifiers, we also suggest an ordering;
+although this ordering is not enforced, various tools may give
+warnings if the suggestions are not followed, as following a standard
+ordering tends to make reading declarations easier.
+For use in JML, we suggest the following ordering groups, where the
+ones at the top should appear first (leftmost), and the ones at the
+bottom should appear last (rightmost).  In each line, the modifiers
+are either mutually exclusive, or their order does not matter (or both).
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  public private protected spec_public spec_protected
+  abstract static
+  model ghost pure
+  final synchronized
+  instance helper
+  transient volatile
+  native strictfp
+  monitored uninitialized
+  spec_java_math spec_safe_math spec_bigint_math
+  code_java_math code_safe_math code_bigint_math
+  non_null nullable nullable_by_default
+  code extract
+  peer rep readonly
+</pre></td></tr></table></P><P>
+
+<A NAME="Spec Public"></A>
+<HR SIZE="6">
+<A NAME="SEC41"></A>
+<H3> 6.2.2 Spec Public </H3>
+<!--docid::SEC41::-->
+<P>
+
+<A NAME="IDX1248"></A>
+The <CODE>spec_public</CODE> modifier allows one to declare a feature as public
+for specification purposes.  It can only be used when the feature has
+a more restrictive visibility in Java.  A <CODE>spec_public</CODE> field is
+also implicitly a data group.
+</P><P>
+
+<A NAME="Spec Protected"></A>
+<HR SIZE="6">
+<A NAME="SEC42"></A>
+<H3> 6.2.3 Spec Protected </H3>
+<!--docid::SEC42::-->
+<P>
+
+<A NAME="IDX1249"></A>
+The <CODE>spec_protected</CODE> modifier allows one to declare a feature as protected
+for specification purposes.  It can only be used when the feature has
+a more restrictive visibility in Java.  That is, it can only be used
+to change the visibility of a field or method that is, for Java,
+either declared <CODE>private</CODE> or default access (package visible).
+  A <CODE>spec_protected</CODE> field is
+also implicitly a data group.
+</P><P>
+
+<A NAME="Pure"></A>
+<HR SIZE="6">
+<A NAME="SEC43"></A>
+<H3> 6.2.4 Pure </H3>
+<!--docid::SEC43::-->
+<P>
+
+<A NAME="IDX1250"></A>
+<A NAME="IDX1251"></A>
+In general terms, a <EM>pure</EM> feature is one that has no side effects when
+executed.  In essence <CODE>pure</CODE> only applies to methods and
+constructors.  The use of <CODE>pure</CODE> for a type definition is
+shorthand for applying that modifier to all constructors and instance
+methods in the type (see section <A HREF="jmlrefman_6.html#SEC38">6.1.2 Modifiers for Type Definitions</A>).
+</P><P>
+
+See section <A HREF="jmlrefman_7.html#SEC57">7.1.1.3 Pure Methods and Constructors</A>, for the exact semantics of pure
+methods and constructors.
+</P><P>
+
+<A NAME="Model"></A>
+<HR SIZE="6">
+<A NAME="SEC44"></A>
+<H3> 6.2.5 Model </H3>
+<!--docid::SEC44::-->
+<P>
+
+<A NAME="IDX1252"></A>
+The <CODE>model</CODE> modifier introduces a specification-only feature.  For
+fields it also has a special meaning, which is that the field can be
+represented by concrete fields.  See section <A HREF="jmlrefman_2.html#SEC10">2.2 Model and Ghost</A>.
+</P><P>
+
+<A NAME="IDX1253"></A>
+The modifiers <CODE>model</CODE> and <CODE>ghost</CODE> are mutually exclusive.
+</P><P>
+
+<A NAME="IDX1254"></A>
+<A NAME="IDX1255"></A>
+A <CODE>model</CODE> field may not be declared to be <CODE>final</CODE>.  This is
+because model fields are abstractions of concrete fields,
+and thus it would complicate JML to allow final model fields.
+If you feel that you want a final model field, what you should use
+instead is a final ghost field. See section <A HREF="jmlrefman_6.html#SEC45">6.2.6 Ghost</A>. 
+</P><P>
+
+<A NAME="IDX1256"></A>
+<A NAME="IDX1257"></A>
+<A NAME="IDX1258"></A>
+<A NAME="IDX1259"></A>
+Note that in an interface, a model field is implicitly declared
+to be <CODE>static</CODE>.  Thus if you want an instance field, you should use the
+modifier <CODE>instance</CODE>, so that the field will act as if it were a
+member of all objects whose type is a subtype of that interface.
+Conversely, in a class, a model field is implicitly declared to be
+<CODE>instance</CODE>.  Thus, if you want a static field, you should use the
+modifier <CODE>static</CODE>, so that the value of the model field is
+shared by all instances of the class and its subclasses.
+</P><P>
+
+<A NAME="Ghost"></A>
+<HR SIZE="6">
+<A NAME="SEC45"></A>
+<H3> 6.2.6 Ghost </H3>
+<!--docid::SEC45::-->
+<P>
+
+<A NAME="IDX1260"></A>
+The <CODE>ghost</CODE> modifier introduces a specification-only field that
+is maintained by special set statements.  See section <A HREF="jmlrefman_2.html#SEC10">2.2 Model and Ghost</A>.
+</P><P>
+
+<A NAME="IDX1261"></A>
+The modifiers <CODE>ghost</CODE> and <CODE>model</CODE> are mutually exclusive.
+</P><P>
+
+A ghost field declared in an interface is not <CODE>final</CODE> by
+default.  If you want a final <CODE>ghost</CODE> field in an interface, you
+must declare it to be <CODE>final</CODE> explicitly.  Ghost fields in
+classes are also not final by default.
+</P><P>
+
+<A NAME="IDX1262"></A>
+<A NAME="IDX1263"></A>
+<A NAME="IDX1264"></A>
+<A NAME="IDX1265"></A>
+In an interface, a ghost field is implicitly declared
+to be <CODE>static</CODE>.  Thus if you want an instance field, you should use the
+modifier <CODE>instance</CODE>, so that the field will act as if it were a
+member of all objects whose type is a subtype of that interface.
+Conversely, in a class, a ghost field is implicitly declared to be
+<CODE>instance</CODE>.  Thus, if you want a static field, you should use the
+modifier <CODE>static</CODE>, so that the value of the ghost field is
+shared by all instances of the class and its subclasses.
+</P><P>
+
+<A NAME="Instance"></A>
+<HR SIZE="6">
+<A NAME="SEC46"></A>
+<H3> 6.2.7 Instance </H3>
+<!--docid::SEC46::-->
+<P>
+
+<A NAME="IDX1266"></A>
+The <CODE>instance</CODE> modifier says that a field is not static.
+See section <A HREF="jmlrefman_2.html#SEC13">2.5 Instance vs. Static</A>.
+</P><P>
+
+<A NAME="Helper"></A>
+<HR SIZE="6">
+<A NAME="SEC47"></A>
+<H3> 6.2.8 Helper </H3>
+<!--docid::SEC47::-->
+<P>
+
+<A NAME="IDX1267"></A>
+The <CODE>helper</CODE> modifier may be used on a private method or
+constructor to say that its
+specification is not augmented by invariants and history constraints
+that would otherwise be relevant.  Normally, an invariant applies to
+all methods in a class or interface.  However, an exception is made
+for methods and constructors declared with the <CODE>helper</CODE> modifier.
+See section <A HREF="jmlrefman_8.html#SEC65">8.2 Invariants</A>.   [[[ Just on private? or just on non-overridable
+methods? or just on non-overridden methods? - DRC]]]
+</P><P>
+
+<A NAME="Monitored"></A>
+<HR SIZE="6">
+<A NAME="SEC48"></A>
+<H3> 6.2.9 Monitored </H3>
+<!--docid::SEC48::-->
+<P>
+
+<A NAME="IDX1268"></A>
+<A NAME="IDX1269"></A>
+<A NAME="IDX1270"></A>
+<A NAME="IDX1271"></A>
+The <CODE>monitored</CODE> modifier may be used on a non-model field
+declaration to say that a thread must hold the lock on the object that
+contains the field (i.e., the <CODE>this</CODE> object containing the field)
+before it may read or write the field <A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>.
+</P><P>
+
+<A NAME="Uninitialized"></A>
+<HR SIZE="6">
+<A NAME="SEC49"></A>
+<H3> 6.2.10 Uninitialized </H3>
+<!--docid::SEC49::-->
+<P>
+
+<A NAME="IDX1272"></A>
+<A NAME="IDX1273"></A>
+<A NAME="IDX1274"></A>
+<A NAME="IDX1275"></A>
+The <CODE>uninitialized</CODE> modifier may be used on a field 
+declaration to say that despite the initializer, the location declared
+is to be considered uninitialized.  Thus, the field should
+be assigned in each path before it is read.
+<A HREF="jmlrefman_27.html#BIB69">[Leino-Nelson-Saxe00]</A>.
+</P><P>
+
+<A NAME="Math Modifiers"></A>
+<HR SIZE="6">
+<A NAME="SEC50"></A>
+<H3> 6.2.11 Math Modifiers </H3>
+<!--docid::SEC50::-->
+<P>
+
+[[[Need explanation of these.]]]
+</P><P>
+
+<A NAME="Nullity Modifiers"></A>
+<HR SIZE="6">
+<A NAME="SEC51"></A>
+<H3> 6.2.12 Nullity Modifiers </H3>
+<!--docid::SEC51::-->
+<P>
+
+<A NAME="IDX1276"></A>
+<A NAME="IDX1277"></A>
+<A NAME="IDX1278"></A>
+Any declaration (other than that of a local variable)
+whose type is a reference type
+is implicitly declared <CODE>non_null</CODE> unless (explicitly or implicitly)
+declared <CODE>nullable</CODE>. Hence reference type declarations are
+assumed to be non-null by default (see section <A HREF="jmlrefman_2.html#SEC16">2.8 Null is Not the Default</A>).
+</P><P>
+
+<A NAME="IDX1279"></A>
+<A NAME="IDX1280"></A>
+A declaration can be <EM>explicitly</EM> declared <CODE>nullable</CODE> by annotating
+it with the <CODE>nullable</CODE> modifier.
+<A NAME="IDX1281"></A>
+<A NAME="IDX1282"></A>
+A declaration is <EM>implicitly</EM> declared <CODE>nullable</CODE> when the (outer
+most) class or interface containing the declaration is adorned by the 
+class-level modifier <CODE>nullable_by_default</CODE>.
+</P><P>
+
+Attempting to use both the <CODE>non_null</CODE> and <CODE>nullable</CODE>
+modifiers is a compile time error.
+</P><P>
+
+<A NAME="Class and Interface Member Declarations"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_6.html#SEC36"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_7.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_28.html#SEC247">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="jmlrefman_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary Leavens</I> on <I>May, 20  2008</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

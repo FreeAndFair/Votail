@@ -1,0 +1,7 @@
+package org.jmlspecs.samples.jmlkluwer;
+public interface PriorityQueueUser @{
+ /*@@ pure @@*/ boolean contains(Object argObj);
+ /*@@ pure @@*/ Object next() throws PQException;
+ void remove(Object argObj);
+ /*@@ pure @@*/ boolean isEmpty();
+@}

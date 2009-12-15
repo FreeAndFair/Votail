@@ -1,0 +1,43 @@
+#!/usr/bin/perl -p
+# @(#)$Header: /cvsroot/jmlspecs/JML2/docs/jmlkluwer/adjust-html-file,v 1.6 2008/01/08 22:43:42 leavens Exp $
+
+# Copyright (C) 2002 Iowa State University
+
+# This file is part of JML
+
+# JML is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# JML is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with JML; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# trim newlines (needed on cygwin)
+s/\r//g;
+
+# make URLs into links
+s/\`(http:\/\/[^\'<]*)\'/\`<A HREF="$1">$1<\/A>\'/;
+s/\`(ftp:\/\/[^\'<]*)\'/\`<A HREF="$1">$1<\/A>\'/;
+s/^(  *)(http:\/\/[^ ]*)/$1<A HREF="$2">$2<\/A>/;
+s/^(  *)(ftp:\/\/[^ ]*)/$1<A HREF="$2">$2<\/A>/;
+
+# deal with umlauts (@"a etc.)
+s/\@"a/\&#228\;/g;
+s/\@"e/\&#235\;/g;
+s/\@"e/\&#239\;/g;
+s/\@"o/\&#246\;/g;
+s/\@"u/\&#252\;/g;
+#"
+
+s/(<ADDRESS>by Gary T. Leavens, Albert L. Baker, and Clyde Ruby)<\/ADDRESS>/$1<br><br>Department of Computer Science, Iowa State University,<br>226 Atanasoff Hall, Ames, Iowa, 50011-1041 USA<br><br>Copyright (c) <a href="http:\/\/www.wkap.nl\/">Kluwer Academic Publishers<\/a>, 1999. Used by permission.<\/ADDRESS>/g;
+
+s/(<A NAME="SEC_Contents">)/<H1>JML: A Notation for Detailed Design<\/H1><br><ADDRESS>by Gary T. Leavens, Albert L. Baker, and Clyde Ruby<br><br>Department of Computer Science, Iowa State University,<br>226 Atanasoff Hall, Ames, Iowa, 50011-1041 USA<br><br>Copyright (c) <a href="http:\/\/www.wkap.nl\/">Kluwer Academic Publishers<\/a>, 1999. Used by permission.<\/ADDRESS><P><P><HR><P>$1/g;
+
+
