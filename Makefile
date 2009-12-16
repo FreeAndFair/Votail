@@ -21,10 +21,10 @@ JUNITCP = $(LIB)/junit.jar
 
 jml ?= external_tools/JML/bin/jml
 javac ?= external_tools/JML/bin/javac
-jmlrac ?= external_tools/JML/local/bin/jmlrac
-jmlc ?= external_tools/JML/local/bin/jmlc
-jmldoc ?= external_tools/JML/local/bin/jmldoc
-jmlunit ?= external_tools/JML/local/bin/jmlunit
+jmlrac ?= external_tools/JML/bin/jmlrac
+jmlc ?= external_tools/JML/bin/jmlc
+jmldoc ?= external_tools/JML/bin/jmldoc
+jmlunit ?= external_tools/JML/bin/jmlunit
 
 basedocdir = doc
 srcpath = src

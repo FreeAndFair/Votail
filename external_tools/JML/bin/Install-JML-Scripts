@@ -11,7 +11,7 @@
 # If needed, change the following configuration parameters for your system
 # by changing what is to the right of the equals sign (=) on the lines below
 : ${INSTALLTYPE="unix"}                     # change to cygwin for cygwin
-: ${INSTALLDIR="/usr/local"}                # installation target directory
+: ${INSTALLDIR="external_tools"}                # installation target directory
 : ${JMLDIR="$INSTALLDIR/JML"}               # where JML is unpacked and lives
 : ${JUNITDIR="$INSTALLDIR/junit"}           # installation home of JUnit
 
