@@ -12,19 +12,19 @@ FIGSCALE = 0.5
 # CLASSPATH components
 
 CORECP	= src
-SPECS = external_libraries/specs
+SPECS = external_tools/JML/specs
 LIB = external_libraries
-JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)jml-release.jar:$(SPECS)
+JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
 JUNITCP = $(LIB)/junit.jar
 
 # local variables for build process
 
-jml ?= external_tools/JML/bin/jml
-javac ?= external_tools/JML/bin/javac
-jmlrac ?= external_tools/JML/bin/jmlrac
-jmlc ?= external_tools/JML/bin/jmlc
-jmldoc ?= external_tools/JML/bin/jmldoc
-jmlunit ?= external_tools/JML/bin/jmlunit
+jml ?= external_tools/bin/jml
+javac ?= external_tools/bin/javac
+jmlrac ?= external_tools/bin/jmlrac
+jmlc ?= external_tools/bin/jmlc
+jmldoc ?= external_tools/bin/jmldoc
+jmlunit ?= external_tools/bin/jmlunit
 
 basedocdir = doc
 srcpath = src
@@ -34,7 +34,7 @@ jmlc_path =	jmlc_build
 jmlunit_path =	jmlunit_build
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
-ESCPATH ?= external_tools/ESCJava2
+ESCPATH ?= external_tools/ESCJava2/ESCJava2-2.0.5-04-11-08-binary
 escjava = $(ESCPATH)/Escjava/escj -source 1.4 -vclimit 2500000 -warnUnsoundIncomplete
 export ESCTOOLS_ROOT=$(ESCPATH)
 export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx
