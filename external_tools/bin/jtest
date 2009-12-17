@@ -1,0 +1,96 @@
+#!/bin/sh
+# @(#)$Date: 2003/10/05 11:40:49 $
+#
+# jtest -- generate and compile JML/JUnit tester and test case classes.
+#
+# option --{javac|make} tool for compiling the generated tester class.
+#        --quiet quiet mode
+
+# If needed, change the following configuration parameters for your system
+# by changing what is to the right of the equals sign (=) on the next 5 defs
+: ${JPATHSEP=':'}                                # change to ';' for Cygwin
+: ${JFILESEP="/"}                                # change to "\\" for Cygwin
+: ${JUNITDIR="external_tools/junit"}                 # local home of JUnit
+: ${JMLDIR="external_tools/JML"}                     # local home of JML
+
+CLASSPATH="${CLASSPATH}${JPATHSEP}${JUNITDIR}${JFILESEP}junit.jar${JPATHSEP}${JMLDIR}${JFILESEP}bin${JFILESEP}jmlruntime.jar${JPATHSEP}${JMLDIR}${JFILESEP}bin${JFILESEP}jmljunitruntime.jar${JPATHSEP}${JMLDIR}${JFILESEP}bin${JFILESEP}jmlmodels.jar"
+export CLASSPATH
+
+USAGE="Usage: jtest [--quiet] [--{javac|make}] file1.java [file2.java] ..."
+
+# arguments required
+if test $# -lt 1 ; 
+then 
+    echo "$USAGE" >&2
+    exit 2
+fi
+
+# process options
+SEEN_JAVAC_OR_MAKE=false
+QUIET=false
+while true
+do
+    case "$1" in
+    --javac|-javac|--make|-make)
+	if $SEEN_JAVAC_OR_MAKE
+	then
+	    echo "jtest: can't use both --javac and --make">&2
+	else
+	    SEEN_JAVAC_OR_MAKE=true
+	    COMPILER="$1"
+	    shift
+	    case "$COMPILER" in
+		-make)
+		    COMPILER='--make'
+		    ;;
+		*)
+		    ;;
+	    esac
+	fi
+	;;
+    --quiet|-quiet|-Q)
+	QUIET=true
+	shift
+	;;
+    -*)
+	echo "$USAGE" >&2
+	exit 2
+	;;
+    *)
+	break
+	;;
+    esac
+done
+
+ret=0
+for f
+do
+    if test -r "$f"
+    then
+	SRC="$f"
+	SRC=${SRC%.java} # remove extension
+    else
+	echo "jtest: ERROR: file $f is unreadable!" >&2
+	ret=1
+	continue
+    fi 
+    if $QUIET
+    then
+        jmlc -Q $SRC.java &&
+	jmlunit $SRC.java
+    else
+	echo "jmlc $SRC.java" &&
+	jmlc $SRC.java &&
+	echo "jmlunit $SRC.java" &&
+	jmlunit $SRC.java &&
+	echo "compiling ${SRC}_JML_Test.java and ${SRC}_JML_TestData.java"
+    fi &&
+    if test "${COMPILER}" = '--make'
+    then
+	make -s ${SRC}_JML_Test.class ${SRC}_JML_TestData.class
+    else
+	javac ${SRC}_JML_Test.java ${SRC}_JML_TestData.java
+    fi || ret=1
+done
+
+exit $ret

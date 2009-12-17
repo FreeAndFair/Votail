@@ -1,5 +1,3 @@
-# @todo kiniry 16 Aug 2005 - Remove jmlc_junit seperate compilation
-# and classfile directory as it is no longer necessary with JML 5.
 
 RELEASE = v0.0.0
 BASE	= proposal
@@ -11,7 +9,7 @@ FIGSCALE = 0.5
 
 # CLASSPATH components
 
-CORECP	= src
+CORECP	= src:unittest
 SPECS = external_tools/JML/specs
 LIB = external_libraries
 JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
@@ -28,10 +26,11 @@ jmlunit ?= external_tools/bin/jmlunit
 
 basedocdir = doc
 srcpath = src
+testpath = unittest
 specpath =$(SPECS)
 buildpath =	build
 jmlc_path =	jmlc_build
-jmlunit_path =	jmlunit_build
+jmlunit_path =	unittest
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
 ESCPATH ?= external_tools/ESCJava2/ESCJava2-2.0.5-04-11-08-binary
@@ -46,7 +45,7 @@ JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
 JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(BASE_CLASSPATH)
 ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(ESCJAVA2CP)
-UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
+UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
 javapat	=	$(srcpath)/election/tally/*.java
@@ -65,7 +64,7 @@ main_memory_use =	-ms256M -mx256M
 rac_memory_use =	-ms256M -mx320M
 test_memory_use	=	-ms256M -mx320M
 
-copyright = "Votail<br />&copy; 2006-9 Systems Research Group and University College Dublin<br />All Rights Reserved"
+copyright = "Votail<br />&copy; 2006-9 University College Dublin, Ireland <br />All Rights Reserved"
 
 # implicit rules for paper documentation generation
 
@@ -152,7 +151,6 @@ ps:		$(BASE).ps
 
 spellcheck:
 		aspell --lang=american --master=american -t -c $(BASE).tex
-#aspell --lang=british --master=british -t -c $(BASE).tex
 
 # targets related to building software
 
@@ -195,7 +193,7 @@ jmlunit.stamp:	$(javafiles)
 	@mkdir -p $(jmlunit_path)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
 	$(jmlunit) --destination $(jmlunit_path) \
-		--sourcepath $(specpath):$(srcpath) \
+		--sourcepath $(specpath):$(srcpath);$(testpath) \
 		--package --source 1.4 \
 		--testLevel=2 $(srcpath)/election/tally && \
 	touch jmlunit.stamp
@@ -247,24 +245,24 @@ checkstyle:	checkstyle.stamp
 
 main: classes
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
-	java $(main_memory_use) plugin.votail.src.election.tally.BallotCounting
+	java $(main_memory_use) election.tally.BallotCounting
 
 main-jmlrac: jmlc
-	export CLASSPATH=$(JMLC_CLASSPATH);\
-	jmlrac $(rac_memory_use) plugin.votail.src.election.tally.BallotCounting
+	export CLASSPATH=$(JMLC_CLASSPATH):$(testpath);\
+	jmlrac $(rac_memory_use) election.tally.BallotCounting
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 
 jmlrac-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.Ballot.Ballot_JML_Test
+	jmlrac $(test_memory_use) election.tally.Ballot_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.Candidate.Candidate_JML_Test
+	jmlrac $(test_memory_use) election.tally.Candidate_JML_Test
 
 jmlrac-tests-current:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) plugin.votail.src.election.tally.
+	jmlrac $(test_memory_use) election.tally.
 
 # generating source-based documentation
 
@@ -276,9 +274,9 @@ javadoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)
 	mkdir -p $(javadocdir); \
 	export CLASSPATH=$(BASE_CLASSPATH);\
 	$(javadoc) -d $(javadocdir) $(javadocflags) \
-	-sourcepath .:$(srcpath):$(jdksrcpath) \
+	-sourcepath .:$(srcpath):$(testpath):$(jdksrcpath) \
 	-overview $(basedocdir)/overview.html \
-	-doctitle "Votail: A KOA plugin for the Irish Election System" \
+	-doctitle "Votail" \
 	-header $(copyright) \
 	-footer $(copyright) \
 	-subpackages election.tally; \
@@ -292,7 +290,7 @@ jmldoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/
 	$(jmldoc) -d $(jmldocdir) $(jmldocflags) \
 	-sourcepath .:$(srcpath):$(jdksrcpath) \
 	-overview $(basedocdir)/overview.html \
-	-doctitle "Votail: A KOA plugin the Irish Election System" \
+	-doctitle "Votail" \
 	-header $(copyright) \
 	-footer $(copyright) \
 	election.tally;
@@ -306,7 +304,7 @@ usermanual.stamp:
 
 # targets related to cleaning up
 
-clean:	clean_javadoc clean_jmldoc clean_classes clean_jml clean_jmlc clean_jmlunit clean_jmlcjunit clean_other_stamps clean_distr clean_src_distr
+clean:	clean_javadoc clean_jmldoc clean_classes clean_jml clean_jmlc clean_jmlcjunit clean_other_stamps clean_distr clean_src_distr
 	rm -f $(BASE).dvi $(BASE).ps $(BASE).pdf
 	rm -f *.log *.bbl *.blg *.aux *.out
 	rm -f *.pstex *.pstex_t *.pdf *.pdf_t *.pdftex
@@ -325,9 +323,6 @@ clean_jmlc:
 
 clean_jmlcjunit:
 	rm -rf $(jmlc_jmlunit_path) jmlc_jmlunit.stamp
-
-clean_jmlunit:
-	rm -f $(generated_jmlunitfiles) jmlunit.stamp
 
 clean_javadoc:
 	rm -rf $(javadocdir)/*.html \
