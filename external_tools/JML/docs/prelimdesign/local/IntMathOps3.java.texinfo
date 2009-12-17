@@ -1,9 +1,0 @@
-
-public class IntMathOps3 @{
-
-  //@@ requires y >= 0;
-  public static int isqrt(int y)
-  @{
-    return (int) Math.sqrt(y);
-  @}
-@}
