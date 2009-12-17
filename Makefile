@@ -7,6 +7,12 @@ REFWARN = 'Rerun to get cross-references'
 LATEXMAX = 6
 FIGSCALE = 0.5
 
+# Use Java 1.4 with JMLDOC
+
+JAVA4_HOME ?= /System/Library/Frameworks/JavaVM.framework/Versions/1.4
+JAVA4_PATH ?= $(JAVA4_HOME)/bin
+java4 ?=$(JAVA4_PATH)/java
+
 # CLASSPATH components
 
 CORECP	= src:unittest
@@ -225,14 +231,12 @@ escjava2.stamp:	$(javafiles)
 escjava2-current:
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	$(escjava) -bootclasspath $(BOOTCP) \
-		election/tally/BallotCounting.java
+		election/tally/*.java
 
 escjava2-core:
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	$(escjava) -bootclasspath $(BOOTCP) \
-		election/tally/BallotCounting.java \
-		election/tally/Ballot.java \
-		election/tally/Candidate.java
+		election/tally/*.java
 
 checkstyle.stamp:
 	export CLASSPATH=$(CHECKSTYLE_CLASSPATH); \
@@ -245,24 +249,44 @@ checkstyle:	checkstyle.stamp
 
 main: classes
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
-	java $(main_memory_use) election.tally.BallotCounting
+	java $(main_memory_use) election.tally.*
 
 main-jmlrac: jmlc
 	export CLASSPATH=$(JMLC_CLASSPATH):$(testpath);\
-	jmlrac $(rac_memory_use) election.tally.BallotCounting
+	jmlrac $(rac_memory_use) election.tally.*
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 
 jmlrac-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	jmlrac $(test_memory_use) election.tally.Ballot_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.BallotBox_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.BallotCounting_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	jmlrac $(test_memory_use) election.tally.Candidate_JML_Test
-
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.CandidateStatus_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.Constituency_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.CountConfiguration_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.Decision_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.DecisionStatus_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	jmlrac $(test_memory_use) election.tally.ElectionStatus_JML_Test
+	
 jmlrac-tests-current:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.
+	jmlrac $(test_memory_use) election.tally.*
 
 # generating source-based documentation
 
@@ -286,7 +310,8 @@ jmldoc:		jmldoc.stamp
 
 jmldoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/overview.html
 	mkdir -p $(jmldocdir); \
-	export CLASSPATH=$(BASE_CLASSPATH);\
+	export JAVA_HOME=$(JAVA4_HOME)
+	export CLASSPATH=$(JAVA4_PATH):$(BASE_CLASSPATH);\
 	$(jmldoc) -d $(jmldocdir) $(jmldocflags) \
 	-sourcepath .:$(srcpath):$(jdksrcpath) \
 	-overview $(basedocdir)/overview.html \
