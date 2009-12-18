@@ -133,7 +133,7 @@ build:	classes jml jmlc jmlunit_classes
 
 escjava:	escjava2-typecheck escjava2
 
-test:	jmlrac-tests
+test:	jml-junit-tests
 
 # paper documentation-related
 
@@ -257,36 +257,29 @@ main-jmlrac: jmlc
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-
-jmlrac-tests:	classes jmlunit_classes
+	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.Ballot_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.Ballot_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotBox_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.BallotBox_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.BallotCounting_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.Candidate_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.Candidate_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.CandidateStatus_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.CandidateStatus_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.Constituency_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.Constituency_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.CountConfiguration_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.CountConfiguration_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.Decision_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.Decision_JML_Test
+	java junit.textui.TestRunner $(test_memory_use) election.tally.DecisionStatus_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.DecisionStatus_JML_Test
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.ElectionStatus_JML_Test
-	
-jmlrac-tests-current:	classes jmlunit_classes
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	jmlrac $(test_memory_use) election.tally.*
+	java junit.textui.TestRunner $(test_memory_use) election.tally.ElectionStatus_JML_Test
 
 # generating source-based documentation
 
