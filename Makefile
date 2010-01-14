@@ -22,7 +22,7 @@ JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:
 JUNITCP = $(LIB)/junit.jar
 
 # local variables for build process
-
+javac ?= /usr/bin/javac
 jml ?= ./external_tools/bin/jml
 jmlrac ?= ./external_tools/bin/jmlrac
 jmlc ?= ./external_tools/bin/jmlc
