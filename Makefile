@@ -35,7 +35,7 @@ testpath = unittest
 specpath =$(SPECS)
 buildpath =	build
 jmlc_path =	jmlc_build
-jmlunit_path =	unittest
+jmlunit_path =	jmlunit_src
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
 ESCPATH ?= external_tools/ESCJava2/ESCJava2-2.0.5-04-11-08-binary
@@ -198,7 +198,7 @@ jmlunit.stamp:	$(javafiles)
 	@mkdir -p $(jmlunit_path)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
 	$(jmlunit) --destination $(jmlunit_path) \
-		--sourcepath $(specpath):$(srcpath);$(testpath) \
+		--sourcepath $(specpath):$(srcpath):$(testpath) \
 		--package --source 1.4 \
 		--testLevel=2 $(srcpath)/election/tally && \
 	touch jmlunit.stamp
