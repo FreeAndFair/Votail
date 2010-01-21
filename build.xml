@@ -32,33 +32,7 @@
 
   <property name="libs_dir" value="${basedir}/Utils"/>
 
-  <!-- <property name="clean_build_every_time" value="t"/> -->
 
-  <!-- Source code locations for various packages...I mean "envelopes". -->
-  <property name="escjava_root_dir" value="${basedir}/Escjava"/>
-  <property name="rcc_root_dir" value="${basedir}/Rcc"/>
-  <property name="houdini_root_dir" value="${basedir}/Houdini"/>
-  <property name="calvin_root_dir" value="${basedir}/Calvin"/>
-
-  <property name="escjava_source_dir" value="${escjava_root_dir}/java"/>
-  <property name="escjava_test_dir" value="${escjava_root_dir}/test"/>
-  <property name="mochalib_source_dir" value="${escjava_root_dir}/mochalib/java"/>
-  <property name="rcc_source_dir" value="${rcc_root_dir}/java"/>
-  <property name="houdini_source_dir" value="${houdini_root_dir}/java"/>
-  <property name="calvin_source_dir" value="${calvin_root_dir}/java"/>
-
-  <!-- Note that simplify is written in Modula3, so you need a good
-  install of one of the Modula3 compiler suites to build it. -->
-  <property name="simplify_source_dir" value="Simplify/"/>
-
-  <!-- Target locations for various build results. -->
-
-  <!-- Classfiles are put here in a parallel hierarchy for each envelope. -->
-  <property name="escjava_classes_dir" value="${escjava_root_dir}/classfiles"/>
-  <property name="mochalib_classes_dir" value="${escjava_root_dir}/mochalib/classfiles"/>
-  <property name="rcc_classes_dir" value="${rcc_root_dir}/classfiles"/>
-  <property name="houdini_classes_dir" value="${houdini_root_dir}/classfiles"/>
-  <property name="calvin_classes_dir" value="${calvin_root_dir}/classfiles"/>
 
   <!-- Top-level documentation location. -->
   <property name="docs_dir" value="docs"/>  
@@ -170,33 +144,8 @@
     <path refid="base_classpath"/>
   </path>
 
-  <path id="rcc_classpath">
-    <path refid="base_classpath"/>
-    <pathelement path="${rcc_classes_dir}"/>
-  </path>
-
-  <path id="escjava_classpath">
-    <path refid="base_classpath"/>
-    <pathelement path="${escjava_classes_dir}"/>
-    <pathelement path="${mochalib_classes_dir}"/>
-  </path>
-
-  <path id="calvin_classpath">
-    <path refid="base_classpath"/>
-    <pathelement path="${calvin_classes_dir}"/>
-  </path>
-
-  <path id="houdini_classpath">
-    <path refid="base_classpath"/>
-    <pathelement path="${houdini_classes_dir}"/>
-  </path>
-
-<!--
-  <property name="escjava_classes_dir" value="${escjava_root_dir}/classes"/>
-  <property name="rcc_classes_dir" value="${rcc_root_dir}/classes"/>
-  <property name="houdini_classes_dir" value="${houdini_root_dir}/classes"/>
-  <property name="calvin_classes_dir" value="${calvin_root_dir}/classes"/>
--->
+ 
+ 
 
   <path id="test_classpath">
     <path refid="base_classpath"/>
@@ -376,30 +325,10 @@
   </target>
 
   <!-- JML specification compilation. -->
-  <target name="jmlc" depends="jmlc_escjava">
+  <target name="jmlc">
     <description>
       Compile all JML specifications to test code.
     </description>
-  </target>
-
-  <target name="jmlc_escjava" depends="compile_escjava">
-    <description>
-      Compiles JML annotated Escjava files with runtime assertion checks.
-    </description>
-    <java classname="org.jmlspecs.jmlrac.Main"
-          fork="true"
-          classpathref="jml_classpath">
-      <jvmarg value="-Xmx128m"/>
-      <arg line="--destination ${jmlc_dir}"/>
-      <arg value="--recursive"/>
-      <arg value="--quiet"/>
-      <arg value="--purity"/>
-      <arg value="--multijava"/>
-      <arg line="--sourcepath '${escjava_source_dir}'"/>
-      <arg line="escjava.ast escjava.backpred escjava.parser escjava.prover 
-                 escjava.tc escjava.translate"/>
-      <classpath refid="escjava_classpath"/>
-    </java>
   </target>
 
   <!-- Unit testing. -->
@@ -417,143 +346,13 @@
     -->
   </target>
 
-  <target name="compile" depends="compile_escjava">
+  <target name="compile">
     <description>
       Compile all source code.
     </description>
   </target>
 
-  <!-- Compile targets. -->
-  <target name="compile_rcc" depends="clean_rcc,
-                                      initialize">
-    <description>
-      @todo Compile all Rcc source code.
-      @todo kiniry 2 Jan 2002 - Rcc does not yet build---there are several missing 
-            classes (e.g. javafe.ast.CloneVisitor) that I have written HP about.
-      @review kiniry 2 Jan 2002 - Should rccwizard be built or not?
-    </description>
-    <javac srcdir="${rcc_source_dir}"
-           destdir="${rcc_classes_dir}"
-           excludes="rcc/test/**,rcc/parser/test/**,rccwizard/test/**"
-           debug="on"
-           deprecation="off"
-           optimize="off"
-           failonerror="false"
-           source="1.3"
-           target="1.1"
-           classpathref="rcc_classpath">
-      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
-                   compiler="jikes"/>
-    </javac>
-  </target>
-
-  <target name="compile_escjava" depends="compile_mochalib,
-                                          clean_escjava,
-                                          initialize">
-    <description>
-      Compile all ESC/Java source code.
-    </description>
-    <javac srcdir="${escjava_source_dir}:${escjava_test_dir}"
-           destdir="${escjava_classes_dir}"
-           excludes="instrumenter/**,escwizard/**,houdini/**,
-                     escjava/reader/**,escjava/pa/**,
-                     escjava/test/**,CausedAnError**,junittests/**,
-                     jdktests/**,tohtml/**,nijmegen/**"
-           debug="on"
-           deprecation="off"
-           optimize="off"
-           source="1.4"
-           target="1.1"
-           failonerror="false"
-           classpathref="escjava_classpath">
-      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
-                   compiler="jikes"/>
-    </javac>
-  </target>
-
-  <target name="compile_mochalib" depends="clean_mochalib,
-                                           initialize">
-    <description>
-      Compile all Mocha source code.
-    </description>
-    <javac srcdir="${mochalib_source_dir}"
-           destdir="${mochalib_classes_dir}"
-           excludes=""
-           debug="on"
-           deprecation="off"
-           optimize="off"
-           failonerror="false">
-      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
-                   compiler="jikes"/>
-    </javac>
-  </target>
-
-  <target name="compile_calvin" depends="compile_escjava,
-                                         clean_calvin,
-                                         initialize">
-    <description>
-      @todo Compile all Calvin source code.
-      @todo kiniry 2 Jan 2002 - Calvin does not yet build correct on every
-            compilation attempt.
-    </description>
-    <javac srcdir="${calvin_source_dir}"
-           destdir="${calvin_classes_dir}"
-           excludes="escjava/pa/**,escjava/reader/**,escjava/sp/**,escjava/test/**"
-           debug="on"
-           deprecation="off"
-           optimize="off"
-           failonerror="false"
-           source="1.3"
-           target="1.1"
-           classpathref="calvin_classpath">
-      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
-                   compiler="jikes"/>
-    </javac>
-  </target>
-
-  <target name="compile_houdini" depends="compile_escjava,
-                                          clean_houdini,
-                                          initialize">
-    <description>
-      Compile all Houdini source code.
-    </description>
-    <javac srcdir="${houdini_source_dir}"
-           destdir="${houdini_classes_dir}"
-           excludes=""
-           debug="on"
-           deprecation="off"
-           optimize="off"
-           failonerror="false"
-           source="1.3"
-           target="1.1"
-           classpathref="houdini_classpath">
-      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
-                   compiler="jikes"/>
-    </javac>
-  </target>
-
-  <target name="compile_simplify" depends="clean_simplify,
-                                           initialize">
-    <description>
-      Compile all Simplify source code which is written in Modula-3.
-    </description>
-    <exec dir="${simplify_source_dir}/cgi-utils"
-          executable="m3build"/>
-    <exec dir="${simplify_source_dir}/cgi-utils"
-          executable="m3ship"/>
-    <exec dir="${simplify_source_dir}/digraph"
-          executable="m3build"/>
-    <exec dir="${simplify_source_dir}/digraph"
-          executable="m3ship"/>
-    <exec dir="${simplify_source_dir}/prover"
-          executable="m3build"/>
-    <exec dir="${simplify_source_dir}/prover"
-          executable="m3ship"/>
-    <exec dir="${simplify_source_dir}/simplify"
-          executable="m3build"/>
-    <exec dir="${simplify_source_dir}/simplify"
-          executable="m3ship"/>
-  </target>
+ 
 
   <target name="compile_optimize" depends="clean_opt,
                                            initialize">
@@ -592,69 +391,10 @@
 
   <!-- create_rcc_jar create_calvin_jar -->
 
-  <target name="create_jars" depends="create_escjava_jar,
-                                      create_mochalib_jar">
+  <target name="create_jars">
     <description>
       Generate jar files of various builds.
     </description>
-  </target>
-
-   
-
-  <target name="create_decsrc_jar">
-    <description>
-      Generate jar file of the decsrc library.
-    </description>
-    <jar destfile="${final_jars_dir}/decsrc.jar"
-         basedir="${javafe_root_dir}/decsrclib"
-         includes="decsrc/util/*.class,decsrc/util/*.spec"/>
-  </target>
-
-  <target name="create_rcc_jar" depends="compile_rcc">
-    <description>
-      Generate jar file of Rcc build results.
-    </description>
-    <jar destfile="${final_jars_dir}/rcc.jar"
-         basedir="${rcc_classes_dir}"
-         includes="rcc/**"/>
-  </target>
-
-  <target name="create_escjava_jar" depends="compile_escjava">
-    <description>
-      Generate jar file of Escjava build results.
-    </description>
-    <jar destfile="${final_jars_dir}/escjava.jar"
-         basedir="${escjava_classes_dir}"
-         includes="escjava/**"/>
-  </target>
-
-  <target name="create_mochalib_jar" depends="compile_mochalib">
-    <description>
-      Generate jar file of Mocha library interface.
-    </description>
-    <jar destfile="${final_jars_dir}/mochalib.jar"
-         basedir="${mochalib_classes_dir}"
-         includes="mocha/**/*.class"/>
-  </target>
-
-  <target name="create_calvin_jar" depends="compile_calvin">
-    <description>
-      Generate jar file of Calvin build results.
-    </description>
-    <jar destfile="${final_jars_dir}/calvin.jar"
-         update="yes"
-         basedir="${calvin_classes_dir}"
-         includes="escjava/**"/>
-  </target>
-
-  <target name="create_houdini_jar" depends="compile_houdini">
-    <description>
-      Generate jar file of Houdini build results.
-    </description>
-    <jar destfile="${final_jars_dir}/houdini.jar"
-         update="yes"
-         basedir="${houdini_classes_dir}"
-         includes="houdini/**"/>
   </target>
 
   <target name="create_annotated_jar" depends="jmlc">
@@ -842,58 +582,10 @@
     </delete>
   </target>
 
-  <target name="clean_rcc" if="clean_build_every_time">
-    <description>
-      Deletes all classfiles in the Rcc envelope.
-    </description>
-    <delete dir="${rcc_classes_dir}"/>
-  </target>
+  
+  
 
-  <target name="clean_escjava" if="clean_build_every_time">
-    <description>
-      Deletes all classfiles in the Escjava envelope.
-    </description>
-    <delete dir="${escjava_classes_dir}"/>
-    <exec dir="${escjava_source_dir}/escjava/ast" 
-          executable="make">
-      <arg value="clean"/>
-    </exec>
-    <exec dir="${escjava_source_dir}/escjava/ast" 
-          executable="make">
-      <arg value="clean"/>
-    </exec>
-  </target>
-
-  <target name="clean_mochalib" if="clean_build_every_time">
-    <description>
-      Deletes all classfiles in the Mocha library (a part of the Escjava envelope).
-    </description>
-    <delete dir="${mochalib_classes_dir}"/>
-  </target>
-
-  <target name="clean_calvin" if="clean_build_every_time">
-    <description>
-      Deletes all classfiles in the Calvin envelope.
-    </description>
-    <delete dir="${calvin_classes_dir}"/>
-  </target>
-
-  <target name="clean_houdini" if="clean_build_every_time">
-    <description>
-      Deletes all classfiles in the Houdini envelope.
-    </description>
-    <delete dir="${houdini_classes_dir}"/>
-  </target>
-
-  <target name="clean_simplify" if="clean_build_every_time">
-    <description>
-      Deletes all build results from the Simplify envelope.
-    </description>
-    <delete dir="${simplify_source_dir}/cgi-utils/LINUXLIBC6"/>
-    <delete dir="${simplify_source_dir}/digraph/LINUXLIBC6"/>
-    <delete dir="${simplify_source_dir}/prover/LINUXLIBC6"/>
-    <delete dir="${simplify_source_dir}/simplify/LINUXLIBC6"/>
-  </target>
+ 
 
   <target name="clean_opt" if="clean_build_every_time">
     <description>

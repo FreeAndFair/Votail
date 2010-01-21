@@ -7,12 +7,6 @@ REFWARN = 'Rerun to get cross-references'
 LATEXMAX = 6
 FIGSCALE = 0.5
 
-# Use Java 1.4 with JMLDOC
-
-JAVA4_HOME ?= /System/Library/Frameworks/JavaVM.framework/Versions/1.4
-JAVA4_PATH ?= $(JAVA4_HOME)/bin
-java4 ?=$(JAVA4_PATH)/java
-
 # CLASSPATH components
 
 CORECP	= src:unittest
@@ -302,8 +296,7 @@ jmldoc:		jmldoc.stamp
 
 jmldoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/overview.html
 	mkdir -p $(jmldocdir); \
-	export JAVA_HOME=$(JAVA4_HOME)
-	export CLASSPATH=$(JAVA4_PATH):$(BASE_CLASSPATH);\
+	export CLASSPATH=$(BASE_CLASSPATH);\
 	$(jmldoc) -d $(jmldocdir) $(jmldocflags) \
 	-sourcepath .:$(srcpath):$(jdksrcpath) \
 	-overview $(basedocdir)/overview.html \
