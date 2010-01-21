@@ -6,17 +6,11 @@
   <packaging>jar</packaging>
   <version>0.0.0</version>
   <name>Votail</name>
-  <url>http://mobius.ucd.ie</url>
+  <url>http://www.itu.dk/research</url>
   <organization>
     <name>Voting</name>
     <url>http://mobius.ucd.ie/</url>
   </organization>
-  <repositories>
-    <repository>
-      <id>Voting</id>
-      <url>http://omega.ucd.ie:8080/artifactory/repo/</url>
-    </repository>
-  </repositories>
   
   <properties>
     <organization.logo>https://mobius.ucd.ie/repos/websites/VotingToolsWiki/Images/mobius_transparent.png</organization.logo>
@@ -54,28 +48,11 @@
   </issueManagement>
   <developers>
     <developer>
-      <id>dmz</id>
-      <name>Dan Zimmerman</name>
-      <email>dmz@acm.org</email>
-      <roles>
-        <role>developer</role>
-      </roles>
-    </developer>
-    <developer>
       <id>dcochran</id>
       <name>Dermot Cochran</name>
-      <email>Dermot.Cochran@ucd.ie</email>
+      <email>dero@itu.dk</email>
       <roles>
         <role>developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>kiniry</id>
-      <name>Joe Kiniry</name>
-      <email>kiniry@ucd.ie</email>
-      <roles>
-        <role>developer</role>
-        <role>architect</role>
       </roles>
     </developer>
   </developers>
@@ -108,22 +85,7 @@
     <connection>scm:svn:svn+ssh://trac.ucd.ie/Volumes/Data/subversion/svn_trac/software/evoting/Votail</connection>
     <developerConnection>scm:svn:https://trac.ucd.ie/repos/evoting/software/Votail</developerConnection>
     <tag>HEAD</tag>
-    <url>https://trac.ucd.ie/browser/src/escjava/trunk/ESCTools</url>
   </scm>
-  <ciManagement>
-    <system>Hudson</system>
-    <url>http://omega.ucd.ie:8080</url>
-    <notifiers>
-      <notifier>
-        <type>mail</type>
-        <sendOnError>true</sendOnError>
-        <sendOnFailure>true</sendOnFailure>
-        <sendOnSuccess>false</sendOnSuccess>
-        <sendOnWarning>false</sendOnWarning>
-        <configuration><address>dcochran@kind.ucd.ie</address></configuration>
-      </notifier>
-    </notifiers>
-  </ciManagement>
   <reporting>
     <plugins>
       <plugin>
