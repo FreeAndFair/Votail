@@ -72,9 +72,9 @@ public class AbstractBallotCounting_JML_Test
 
         //@ also
         //@ requires result != null;
-        public void run(junit.framework.TestResult result) {
-            this.result = result;
-            super.run(result);
+        public void run(junit.framework.TestResult result1) {
+            this.result = result1;
+            super.run(result1);
         }
 
         /* Run a single test and decide whether the test was
@@ -2790,7 +2790,7 @@ public class AbstractBallotCounting_JML_Test
         if (iter == null) {
             junit.framework.Assert.fail(call + " returned null");
         }
-        if (iter.atEnd()) {
+        else if (iter.atEnd()) {
             junit.framework.Assert.fail(call + " returned an empty iterator");
         }
     }
@@ -2804,7 +2804,7 @@ public class AbstractBallotCounting_JML_Test
         } else if (c == '\t') {
             return "TAB";
         } else if (Character.isISOControl(c)) {
-            int i = (int)c;
+            int i = c;
             return "\\u"
                     + Character.forDigit((i/2048)%16,16)
                     + Character.forDigit((i/256)%16,16)
