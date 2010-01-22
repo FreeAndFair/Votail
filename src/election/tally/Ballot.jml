@@ -1,0 +1,68 @@
+package election.tally;
+
+/**
+ * The Ballot class represents a ballot paper in an Irish election,
+ * which uses the Proportional Representation Single Transferable Vote
+ * (PRSTV) system.
+ * 
+ * @author Dermot Cochran
+ * @copyright 2005-2009
+ * @reviewer Joe Kiniry
+ * 
+ * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of 
+ * Environment and Local Government, Count Requirements and Commentary on Count 
+ * Rules, sections 3-14</a>
+ */
+
+public class Ballot {
+	
+  /** 
+   * Candidate ID value to use for nontransferable ballot papers.
+   * 
+   * @design A special candidate ID value is used to indicate
+   *   non-transferable votes i.e., when the list of preferences has
+   *   been exhausted and none of the continuing candidates are in the
+   *   preference list, then the ballot is deemed to be nontransferable.
+   *   
+   * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of 
+   * Environment and Local Government, Count Requirements and Commentary on Count 
+   * Rules, section 7, pages 23-27</a> 
+   */
+  public static final int NONTRANSFERABLE;
+
+  /** Preference list of candidate IDs */
+  protected /*@ spec_public non_null @*/ int[] preferenceList;
+  
+  /** Total number of valid preferences on the ballot paper */
+  //@ public invariant 0 <= numberOfPreferences;
+  // @design numberOfPreferences == 0 means an empty ballot.
+  protected /*@ spec_public @*/ int numberOfPreferences;
+  
+  /** Position within preference list */
+  //@ public initially positionInList == 0;
+  //@ public invariant 0 <= positionInList;
+  //@ public invariant positionInList <= numberOfPreferences;
+  //@ public constraint \old(positionInList) <= positionInList;
+  protected /*@ spec_public @*/ int positionInList;
+
+  /**
+   * Default constructor
+   */
+  /*@ ensures numberOfPreferences == preferenceList.length;
+    @ ensures positionInList == 0;
+    @*/
+  public Ballot(final /*@ non_null @*/ int[] preferences);
+
+  /**
+   * Gets remaining number of preferences.
+   * 
+   * @return The number of preferences remaining
+   */
+  /*@
+    @ public normal_behavior
+    @   requires positionInList <= numberOfPreferences;
+    @   ensures \result == numberOfPreferences - positionInList;
+    @*/
+  public /*@ pure @*/ int remainingPreferences();
+  
+}

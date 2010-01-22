@@ -25,7 +25,7 @@
 
 package election.tally;
 
-//@ refine "Ballot.java-refined";
+//@ refine "Ballot.jml";
 
 /* <BON>
  * class_chart BALLOT

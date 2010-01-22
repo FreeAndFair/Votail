@@ -1,6 +1,6 @@
 package election.tally;
 
-//@ refine "AbstractBallotCounting.java-refined";
+//@ refine "AbstractBallotCounting.jml";
 
 /**
  * Ballot counting algorithm for elections to Oireachtas Eireann - the National
