@@ -1,10 +1,8 @@
 package ie.lero.evoting.test.data;
 
-// December 2009
-// Dermot Cochran and Joseph R. Kiniry
-// Lero Graduate School of Software Engineering, Ireland
-// CASL, University College Dublin, Ireland
-// IT University of Copenhagen, Denmark
+// (c) Copyright 2009, LGSSE and University College Dublin, Ireland
+// (c) Copyright 2010, IT University of Copenhagen, Denmark
+// (c) Copyright 2009-2010 Dermot Cochran and Joseph R. Kiniry
 
 import election.tally.AbstractBallotCounting;
 import election.tally.AbstractCountStatus;
