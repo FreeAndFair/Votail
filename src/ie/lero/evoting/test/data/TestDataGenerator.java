@@ -258,8 +258,7 @@ public class TestDataGenerator {
   }
 
   public static long[] getLongArray() {
-    final long[] longs = new long[0];
-    return longs;
+    return new long[0];
   }
 
   //@ requires 0 <= n;
@@ -280,13 +279,6 @@ public class TestDataGenerator {
       decision.setCandidate(Candidate.getUniqueID());
       decision.setCountNumber(n);
       decision.setDecisionType(DecisionStatus.EXCLUDE);
-      return decision;
-    }
-    else if (n == 3) {
-      Decision decision = new Decision();
-      decision.setCandidate(Candidate.getUniqueID());
-      decision.setCountNumber(n);
-      decision.setDecisionType(DecisionStatus.NO_DECISION);
       return decision;
     }
     throw new java.util.NoSuchElementException();
