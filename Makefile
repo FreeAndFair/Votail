@@ -333,7 +333,7 @@ clean_jmlc:
 	rm -rf $(jmlc_path) jmlc.stamp
 
 clean_jmlcjunit:
-	rm -rf $(jmlc_jmlunit_path) jmlc_jmlunit.stamp
+	rm -rf $(jmlc_jmlunit_path)/*_JML_Test.java jmlc_jmlunit.stamp
 
 clean_javadoc:
 	rm -rf $(javadocdir)/*.html \
