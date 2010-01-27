@@ -1025,7 +1025,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ assignable ballot.positionInList;
     @ ensures ballot.getCandidateID() == Ballot.NONTRANSFERABLE
     @   || (isContinuingCandidateID (ballot.getCandidateID()) 
-    @   && \old(ballot.getCandidateID()) != ballot.getCandidateID());
+    @   && \old(ballot).getCandidateID() != ballot.getCandidateID());
     @*/
   public void transferBallot(final /*@ non_null @*/ Ballot ballot) {
 
