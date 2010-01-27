@@ -195,6 +195,7 @@ jmlunit.stamp:	$(javafiles)
 		--sourcepath $(specpath):$(srcpath):$(testpath) \
 		--package --source 1.4 \
 		--testLevel=2 $(srcpath)/election/tally && \
+	cp unittest/election/tally*_JML_TestData.java $(jmlunit_path)
 	touch jmlunit.stamp
 
 jmlunit_classes:	jmlunit jmlunit_classes.stamp
