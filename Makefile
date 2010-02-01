@@ -120,7 +120,7 @@ copyright = "Votail<br />&copy; 2006-9 University College Dublin, Ireland <br />
 
 default: classes
 
-all:	build source_docs test escjava distr
+all:	build test
 
 build:	classes jml jmlc jmlunit_classes
 
