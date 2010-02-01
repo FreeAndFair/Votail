@@ -309,12 +309,7 @@ public class AbstractBallotCounting_JML_Test
             overallTestSuite$.addTest
                 (new org.jmlspecs.jmlunit.strategies.ConstructorFailed(ex));
         }
-        try {
-            this.addTestSuiteFor$TestMakeDecision(overallTestSuite$);
-        } catch (java.lang.Throwable ex) {
-            overallTestSuite$.addTest
-                (new org.jmlspecs.jmlunit.strategies.ConstructorFailed(ex));
-        }
+        
         try {
             this.addTestSuiteFor$TestRedistributeBallots(overallTestSuite$);
         } catch (java.lang.Throwable ex) {
@@ -2391,88 +2386,6 @@ public class AbstractBallotCounting_JML_Test
             java.lang.String msg = "\n\tMethod 'eliminateCandidate' applied to";
             msg += "\n\tReceiver: " + this.receiver$;
             msg += "\n\tArgument loser: " + this.loser;
-            return msg;
-        }
-    }
-
-    /** Add tests for the makeDecision method
-     * to the overall test suite. */
-    private void addTestSuiteFor$TestMakeDecision
-        (junit.framework.TestSuite overallTestSuite$)
-    {
-        junit.framework.TestSuite methodTests$
-            = this.emptyTestSuiteFor("makeDecision");
-        try {
-            org.jmlspecs.jmlunit.strategies.IndefiniteIterator
-                receivers$iter
-                = new org.jmlspecs.jmlunit.strategies.NonNullIteratorDecorator
-                    (this.velection_tally_AbstractBallotCountingIter("makeDecision", 2));
-            this.check_has_data
-                (receivers$iter,
-                 "new NonNullIteratorDecorator(this.velection_tally_AbstractBallotCountingIter(\"makeDecision\", 2))");
-            while (!receivers$iter.atEnd()) {
-                org.jmlspecs.jmlunit.strategies.ByteIterator
-                    vbyte$1$iter
-                    = this.vbyteIter("makeDecision", 1);
-                this.check_has_data
-                    (vbyte$1$iter,
-                     "this.vbyteIter(\"makeDecision\", 1)");
-                while (!vbyte$1$iter.atEnd()) {
-                    org.jmlspecs.jmlunit.strategies.IntIterator
-                        vint$2$iter
-                        = this.vintIter("makeDecision", 0);
-                    this.check_has_data
-                        (vint$2$iter,
-                         "this.vintIter(\"makeDecision\", 0)");
-                    while (!vint$2$iter.atEnd()) {
-                        final election.tally.AbstractBallotCounting receiver$
-                            = (election.tally.AbstractBallotCounting) receivers$iter.get();
-                        final byte decisionType
-                            = vbyte$1$iter.getByte();
-                        final int candidateID
-                            = vint$2$iter.getInt();
-                        methodTests$.addTest
-                            (new TestMakeDecision(receiver$, decisionType, candidateID));
-                        vint$2$iter.advance();
-                    }
-                    vbyte$1$iter.advance();
-                }
-                receivers$iter.advance();
-            }
-        } catch (org.jmlspecs.jmlunit.strategies.TestSuiteFullException e$) {
-            // methodTests$ doesn't want more tests
-        }
-        overallTestSuite$.addTest(methodTests$);
-    }
-
-    /** Test for the makeDecision method. */
-    protected static class TestMakeDecision extends OneTest {
-        /** The receiver */
-        private election.tally.AbstractBallotCounting receiver$;
-        /** Argument decisionType */
-        private byte decisionType;
-        /** Argument candidateID */
-        private int candidateID;
-
-        /** Initialize this instance. */
-        public TestMakeDecision(election.tally.AbstractBallotCounting receiver$, byte decisionType, int candidateID) {
-            super("makeDecision"+ ":" + decisionType+ "," +candidateID);
-            this.receiver$ = receiver$;
-            this.decisionType = decisionType;
-            this.candidateID = candidateID;
-        }
-
-        protected void doCall() throws java.lang.Throwable {
-            receiver$.makeDecision(decisionType, candidateID);
-        }
-
-        protected java.lang.String failMessage
-            (org.jmlspecs.jmlrac.runtime.JMLAssertionError e$)
-        {
-            java.lang.String msg = "\n\tMethod 'makeDecision' applied to";
-            msg += "\n\tReceiver: " + this.receiver$;
-            msg += "\n\tArgument decisionType: " + this.decisionType;
-            msg += "\n\tArgument candidateID: " + this.candidateID;
             return msg;
         }
     }

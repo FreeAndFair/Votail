@@ -44,11 +44,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
   public static final int                         NONE_FOUND_YET = -1;
 
-  /** List of decisions made */
-  protected transient/*@ spec_public @*/ Decision[]  decisions 
-    = new Decision[Decision.MAX_DECISIONS];
-  //@ protected represents decisionsMade <- decisions;
-
   /** List of candidates for election */
   protected transient/*@ spec_public @*/ Candidate[] candidates = new Candidate[0];
   //@ protected represents candidateList <- candidates;
@@ -96,12 +91,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @           numberOfSeats - numberOfCandidatesElected;
     @*/
 
-  /** Number of decisions taken. */
-  //@ public invariant decisionsTaken <= Decision.MAX_DECISIONS;
-  protected transient/*@ spec_public @*/int         decisionsTaken;
-
-  //@ represents numberOfDecisions <- decisionsTaken;
-
   /**
    * Default Constructor.
    */
@@ -109,8 +98,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   public normal_behavior
     @     assignable state, countNumber, numberElected, numberEliminated,
     @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
-    @       totalVotes, numberOfCandidatesEliminated, decisions, decisionsTaken,
-    @       totalNumberOfVotes;
+    @       totalVotes, numberOfCandidatesEliminated, totalNumberOfVotes;
     @     ensures state == ElectionStatus.EMPTY;
     @     ensures countNumber == 0;
     @     ensures numberElected == 0;
@@ -121,10 +109,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     countNumberValue = 0;
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
-    decisionsTaken = 0;
-    for (int d=0; d < decisions.length; d++) {
-      decisions[d] = new Decision();
-    }
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
   }
@@ -938,7 +922,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires countNumber < CountConfiguration.MAXCOUNT;
     @ requires \nonnullelements (ballotsToCount);
     @ requires \nonnullelements (candidateList);
-    @ assignable candidateList, decisions[*], decisionsTaken;
+    @ assignable candidateList;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
     @ assignable candidateList[loser].state, ballotsToCount, ballots;
@@ -954,46 +938,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     candidates[loser].declareEliminated();
     // TODO 2009.10.14 ESC warnings
     redistributeBallots(candidateID); //@ nowarn;
-    makeDecision(DecisionStatus.EXCLUDE, candidateID); //@ nowarn;
     numberOfCandidatesEliminated++;
-  } //@ nowarn;
-
-  /**
-   * Make a decision either to elect or exclude a candidate.
-   * 
-   * @param decisionType The type of decision made
-   * @param candidateID The identity of the candidate about which the decision was made
-   */
-  /*@ requires (\exists int i; 0 <= i && i < totalCandidates;
-    @   candidateList[i].getCandidateID() == candidateID);
-    @ requires (decisionType == DecisionStatus.EXCLUDE) ||
-    @   (decisionType == DecisionStatus.DEEM_ELECTED);
-    @ requires state == COUNTING;
-    @ requires 0 <= countNumberValue;
-    @ requires candidateID != Candidate.NO_CANDIDATE;
-    @ requires candidateID != Ballot.NONTRANSFERABLE;
-    @ requires 0 < candidateID;
-    @ assignable decisions[*], decisionsTaken, decisions[decisionsTaken].candidateID;
-    @ assignable decisions[decisionsTaken].atCountNumber;
-    @ assignable decisions[decisionsTaken].decisionTaken;
-    @ ensures \old(numberOfDecisions) <= numberOfDecisions;
-    @*/
-  protected void makeDecision(final byte decisionType, final int candidateID) {
-
-    final Decision decision = new Decision();
-    decision.setDecisionType(decisionType);
-    decision.setCountNumber(countNumberValue);
-    //@ assert countNumberValue == decision.getCountNumber();
-    decision.setCandidate(candidateID);
-    if (decisionsTaken < decisions.length) {
-      decisions[decisionsTaken].copy(decision);
-      decisionsTaken++;
-    }
-    //@ assert 0 <= numberOfDecisions;
-    //@ assert numberOfDecisions <= decisionsMade.length;
-    //@ assert 0 <= totalVotes;
-    //@ assert depositSavingThreshold <= totalVotes;
-    // TODO 2009.10.14 ESC object invariant warning
   } //@ nowarn;
 
   /**
@@ -1062,18 +1007,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   //@ requires state == ElectionStatus.COUNTING;
   //@ requires 0 < candidateList[winner].getCandidateID();
-  //@ assignable candidates, decisions, decisionsTaken, numberOfCandidatesElected;
+  //@ assignable candidates, numberOfCandidatesElected;
   //@ assignable totalRemainingSeats;
   //@ assignable candidates[winner], candidates[winner].state;
   //@ ensures isElected (candidateList[winner]);
-  //@ ensures 1 + \old(numberElected) == numberElected;
-  //@ ensures \old(getNumberContinuing()) == 1 + getNumberContinuing();
-  //@ ensures \old(remainingSeats) == 1 + remainingSeats;
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;
     candidates[winner].declareElected();
-    // TODO 2009.10.14 ESC warning
-    makeDecision(DecisionStatus.DEEM_ELECTED, candidates[winner].getCandidateID()); //@ nowarn;
     numberOfCandidatesElected++;
     totalRemainingSeats--;
     // TODO 2009.10.14 ESC precondition

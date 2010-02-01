@@ -13,8 +13,6 @@ import election.tally.Candidate;
 import election.tally.CandidateStatus;
 import election.tally.Constituency;
 import election.tally.CountConfiguration;
-import election.tally.Decision;
-import election.tally.DecisionStatus;
 import election.tally.ElectionStatus;
 
 public class TestDataGenerator {
@@ -49,9 +47,6 @@ public class TestDataGenerator {
   // TODO construct out-of-range values
   public static byte[] getByteArray() {
     final byte[] bytes = {
-      DecisionStatus.DEEM_ELECTED,
-      DecisionStatus.EXCLUDE,
-      DecisionStatus.NO_DECISION,
       ElectionStatus.COUNTING,
       ElectionStatus.EMPTY,
       ElectionStatus.FINISHED,
@@ -251,37 +246,13 @@ public class TestDataGenerator {
       Candidate.MAX_CANDIDATES,
       Candidate.NO_CANDIDATE,
       CountConfiguration.MAXCOUNT,
-      CountConfiguration.MAXVOTES,
-      Decision.MAX_DECISIONS
-    };
+      CountConfiguration.MAXVOTES
+      };
     return integers;
   }
 
   public static long[] getLongArray() {
     return new long[0];
-  }
-
-  //@ requires 0 <= n;
-  public static Decision getDecision(int n) {
-    if (decision_count == 0 || n == 0) {
-      decision_count++;
-      return new Decision();
-    }
-    else if (n == 1) {
-      Decision decision = new Decision();
-      decision.setCandidate(Candidate.getUniqueID());
-      decision.setCountNumber(n);
-      decision.setDecisionType(DecisionStatus.DEEM_ELECTED);
-      return decision;
-    }
-    else if (n == 2) {
-      Decision decision = new Decision();
-      decision.setCandidate(Candidate.getUniqueID());
-      decision.setCountNumber(n);
-      decision.setDecisionType(DecisionStatus.EXCLUDE);
-      return decision;
-    }
-    throw new java.util.NoSuchElementException();
   }
 
   /**

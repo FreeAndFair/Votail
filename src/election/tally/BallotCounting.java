@@ -251,7 +251,7 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @		assignable savingThreshold, ballots, ballotsToCount;
 	  @		assignable numberOfCandidatesElected;
 	  @		assignable numberOfCandidatesEliminated;
-	  @		assignable decisions, decisionsTaken, status, countStatus;
+	  @		assignable status, countStatus;
 	  @		assignable remainingSeats, totalRemainingSeats;
 	  @   ensures state == ElectionStatus.FINISHED;
 	  @*/
@@ -295,8 +295,8 @@ public class BallotCounting extends AbstractBallotCounting {
 	} //@ nowarn;
 
 
-	/*@ assignable candidateList, ballotsToCount, candidates, decisions,
-	  @   decisionsTaken, numberOfCandidatesElected, totalRemainingSeats;
+	/*@ assignable candidateList, ballotsToCount, candidates,
+	  @   numberOfCandidatesElected, totalRemainingSeats;
 	  @*/
   protected void electCandidatesWithSurplus() {
     while (getTotalSumOfSurpluses() > 0
@@ -328,7 +328,7 @@ public class BallotCounting extends AbstractBallotCounting {
 
 	/*@ requires \nonnullelements (candidateList);
 	  @ assignable countStatus, countNumberValue, candidates, candidateList;
-	  @ assignable decisionsTaken, numberOfCandidatesEliminated, ballots,
+	  @ assignable numberOfCandidatesEliminated, ballots,
 	  @   ballotsToCount;
 	  @*/
   protected void excludeLowestCandidates() {
@@ -358,7 +358,7 @@ public class BallotCounting extends AbstractBallotCounting {
 
 	/*@ assignable candidateList[*], countNumber, countNumberValue;
 	  @ assignable numberOfCandidatesElected, totalRemainingSeats;
-	  @ assignable candidates, decisions, decisionsTaken;
+	  @ assignable candidates;
 	  @*/
 
   protected void fillLastSeats() {
