@@ -16,9 +16,9 @@ import election.tally.CountConfiguration;
 import election.tally.ElectionStatus;
 
 public class TestDataGenerator {
+
+  private static final int MEMORY_LIMIT = 100;
   
-  private static boolean testOutOfRangeValues = true;
- 
   private static int abstractBallotCounting_count = 0;
   private static int abstractCountStatus_count = 0;
   private static int ballot_count = 0;
@@ -26,12 +26,11 @@ public class TestDataGenerator {
   private static int ballotCounting_count = 0;
   private static int candidate_count = 0;
   private static int constituency_count = 0;
-  private static int decision_count = 0;
 
   /**
-   * AbstractBallotCounting is a top level class; it is extended by 
-   * BallotCouting but is neither used as a field nor a formal parameter in
-   * any other class.
+   * AbstractBallotCounting is a top level class; it is extended by
+   * BallotCouting but is neither used as a field nor a formal parameter in any
+   * other class.
    */
   //@ requires 0 <= n;
   public static AbstractBallotCounting getAbstractBallotCounting(int n) {
@@ -46,33 +45,32 @@ public class TestDataGenerator {
   // TODO construct a set of unique values
   // TODO construct out-of-range values
   public static byte[] getByteArray() {
-    final byte[] bytes = {
-      ElectionStatus.COUNTING,
-      ElectionStatus.EMPTY,
-      ElectionStatus.FINISHED,
-      ElectionStatus.LOADING,
-      ElectionStatus.PRECOUNT,
-      ElectionStatus.PRELOAD,
-      ElectionStatus.SETTING_UP,
-      AbstractCountStatus.ALL_SEATS_FILLED,
-      AbstractCountStatus.CANDIDATE_ELECTED,
-      AbstractCountStatus.CANDIDATE_EXCLUDED,
-      AbstractCountStatus.CANDIDATES_HAVE_QUOTA,
-      AbstractCountStatus.END_OF_COUNT,
-      AbstractCountStatus.LAST_SEAT_BEING_FILLED,
-      AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS,
-      AbstractCountStatus.NO_SEATS_FILLED_YET,
-      AbstractCountStatus.NO_SURPLUS_AVAILABLE,
-      AbstractCountStatus.ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT,
-      AbstractCountStatus.ONE_OR_MORE_SEATS_REMAINING,
-      AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING,
-      AbstractCountStatus.READY_TO_COUNT,
-      AbstractCountStatus.READY_TO_MOVE_BALLOTS,
-      AbstractCountStatus.SURPLUS_AVAILABLE,
-      CandidateStatus.CONTINUING,
-      CandidateStatus.ELECTED,
-      CandidateStatus.ELIMINATED
-      };
+    final byte[] bytes =
+                         {
+                          ElectionStatus.COUNTING,
+                          ElectionStatus.EMPTY,
+                          ElectionStatus.FINISHED,
+                          ElectionStatus.LOADING,
+                          ElectionStatus.PRECOUNT,
+                          ElectionStatus.PRELOAD,
+                          ElectionStatus.SETTING_UP,
+                          AbstractCountStatus.ALL_SEATS_FILLED,
+                          AbstractCountStatus.CANDIDATE_ELECTED,
+                          AbstractCountStatus.CANDIDATE_EXCLUDED,
+                          AbstractCountStatus.CANDIDATES_HAVE_QUOTA,
+                          AbstractCountStatus.END_OF_COUNT,
+                          AbstractCountStatus.LAST_SEAT_BEING_FILLED,
+                          AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS,
+                          AbstractCountStatus.NO_SEATS_FILLED_YET,
+                          AbstractCountStatus.NO_SURPLUS_AVAILABLE,
+                          AbstractCountStatus.ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT,
+                          AbstractCountStatus.ONE_OR_MORE_SEATS_REMAINING,
+                          AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING,
+                          AbstractCountStatus.READY_TO_COUNT,
+                          AbstractCountStatus.READY_TO_MOVE_BALLOTS,
+                          AbstractCountStatus.SURPLUS_AVAILABLE,
+                          CandidateStatus.CONTINUING, CandidateStatus.ELECTED,
+                          CandidateStatus.ELIMINATED };
     return bytes;
   }
 
@@ -157,97 +155,87 @@ public class TestDataGenerator {
   }
 
   //@ requires 0 <= n;
-  public static BallotBox getBallotBox(int n) {
-    if (ballotBox_count == 0 || n == 0) {
+  public static BallotBox getBallotBox (int n) {
+    if (ballotBox_count < MEMORY_LIMIT) {
       ballotBox_count++;
-      final BallotBox emptyBallotBox = new BallotBox();
-      return emptyBallotBox;
-    } else if (n == 1) {
-      final BallotBox oneBallotInBox = new BallotBox();
-      Candidate firstCandidate = new Candidate();
-      int[] list = new int[1];
-      list[0] = firstCandidate.getCandidateID();
-      oneBallotInBox.accept(list);
-      return oneBallotInBox;
-    } else if (n == 2) {
-      final BallotBox twoBallotsInBox = new BallotBox();
-      Candidate firstCandidate = new Candidate();
-      Candidate secondCandidate = new Candidate();
-      int[] list = new int[2];
-      list[0] = firstCandidate.getCandidateID();
-      list[1] = secondCandidate.getCandidateID();
-      twoBallotsInBox.accept(list);
-      list[0] = secondCandidate.getCandidateID();
-      list[1] = firstCandidate.getCandidateID();
-      twoBallotsInBox.accept(list);
-      return twoBallotsInBox;
-    }
-    // Two way ties
-    else if (n == 3) {
-      BallotBox ballotBox = new BallotBox();
-      Candidate candidate1 = new Candidate();
-      Candidate candidate2 = new Candidate();
-      Candidate candidate3 = new Candidate();
-      int[] list = new int[3];
-      
-      // First ballot
-      list[0] = candidate1.getCandidateID();
-      list[1] = candidate2.getCandidateID();
-      list[2] = candidate3.getCandidateID();
-      ballotBox.accept(list);
-      
-      // Second ballot
-      list[0] = candidate3.getCandidateID();
-      list[1] = candidate2.getCandidateID();
-      list[2] = candidate1.getCandidateID();
-      ballotBox.accept(list);
-      return ballotBox;
-    }
-    // Three way ties
-    else if (n == 4) {
-      BallotBox ballotBox = new BallotBox();
-      Candidate candidate1 = new Candidate();
-      Candidate candidate2 = new Candidate();
-      Candidate candidate3 = new Candidate();
-      Candidate candidate4 = new Candidate();
-      Candidate candidate5 = new Candidate();
-      int[] list = new int[4];
-      
-      // First ballot
-      list[0] = candidate1.getCandidateID();
-      list[1] = candidate2.getCandidateID();
-      list[2] = candidate3.getCandidateID();
-      ballotBox.accept(list);
-      
-      // Second ballot
-      list[0] = candidate2.getCandidateID();
-      list[1] = candidate3.getCandidateID();
-      list[2] = candidate4.getCandidateID();
-      list[3] = candidate5.getCandidateID();
-      ballotBox.accept(list);
-      
-      // Last ballot
-      list[0] = candidate3.getCandidateID();
-      list[1] = candidate4.getCandidateID();
-      list[2] = candidate5.getCandidateID();
-      ballotBox.accept(list);
-      
-      return ballotBox;
-    }
+      if (n == 0) {
+        final BallotBox emptyBallotBox = new BallotBox();
+        return emptyBallotBox;
+      } else if (n == 1) {
+        final BallotBox oneBallotInBox = new BallotBox();
+        Candidate firstCandidate = new Candidate();
+        int[] list = new int[1];
+        list[0] = firstCandidate.getCandidateID();
+        oneBallotInBox.accept(list);
+        return oneBallotInBox;
+      } else if (n == 2) {
+        final BallotBox twoBallotsInBox = new BallotBox();
+        Candidate firstCandidate = new Candidate();
+        Candidate secondCandidate = new Candidate();
+        int[] list = new int[2];
+        list[0] = firstCandidate.getCandidateID();
+        list[1] = secondCandidate.getCandidateID();
+        twoBallotsInBox.accept(list);
+        list[0] = secondCandidate.getCandidateID();
+        list[1] = firstCandidate.getCandidateID();
+        twoBallotsInBox.accept(list);
+        return twoBallotsInBox;
+      }
+      // Two way ties
+      else if (n == 3) {
+        BallotBox ballotBox = new BallotBox();
+        Candidate candidate1 = new Candidate();
+        Candidate candidate2 = new Candidate();
+        Candidate candidate3 = new Candidate();
+        int[] list = new int[3];
 
-      throw new java.util.NoSuchElementException();
+        // First ballot
+        list[0] = candidate1.getCandidateID();
+        list[1] = candidate2.getCandidateID();
+         ballotBox.accept(list);
+
+        // Second ballot
+        list[0] = candidate3.getCandidateID();
+        list[1] = candidate2.getCandidateID();
+         ballotBox.accept(list);
+        return ballotBox;
+      }
+      // Three way ties
+      else if (n == 4) {
+        BallotBox ballotBox = new BallotBox();
+        Candidate candidate1 = new Candidate();
+        Candidate candidate2 = new Candidate();
+        Candidate candidate3 = new Candidate();
+        int[] list = new int[4];
+
+        // First ballot
+        list[0] = candidate1.getCandidateID();
+        list[1] = candidate2.getCandidateID();
+        list[2] = candidate3.getCandidateID();
+        ballotBox.accept(list);
+
+        // Second ballot
+        list[0] = candidate2.getCandidateID();
+        list[1] = candidate3.getCandidateID();
+        ballotBox.accept(list);
+
+        // Last ballot
+        list[0] = candidate3.getCandidateID();
+        ballotBox.accept(list);
+
+        return ballotBox;
+      }
+    }
+    throw new java.util.NoSuchElementException();
   }
 
   public static int[] getIntArray() {
-    final int[] integers = {
-      AbstractBallotCounting.NONE_FOUND_YET,
-      Ballot.MAX_BALLOTS,
-      Ballot.NONTRANSFERABLE,
-      Candidate.MAX_CANDIDATES,
-      Candidate.NO_CANDIDATE,
-      CountConfiguration.MAXCOUNT,
-      CountConfiguration.MAXVOTES
-      };
+    final int[] integers =
+                           { AbstractBallotCounting.NONE_FOUND_YET,
+                            Ballot.MAX_BALLOTS, Ballot.NONTRANSFERABLE,
+                            Candidate.MAX_CANDIDATES, Candidate.NO_CANDIDATE,
+                            CountConfiguration.MAXCOUNT,
+                            CountConfiguration.MAXVOTES };
     return integers;
   }
 
@@ -256,8 +244,8 @@ public class TestDataGenerator {
   }
 
   /**
-   * BallotCounting is the top level object in the system; it is neither
-   * a field nor a formal parameter for any other object.
+   * BallotCounting is the top level object in the system; it is neither a field
+   * nor a formal parameter for any other object.
    * 
    * @param n
    * @return

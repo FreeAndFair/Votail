@@ -253,7 +253,6 @@ jml-junit-tests:	classes jmlunit_classes
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.Ballot_JML_Test
-	
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\

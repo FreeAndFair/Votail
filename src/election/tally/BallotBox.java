@@ -33,8 +33,6 @@ public class BallotBox {
  * List of valid ballot papers, already shuffled and mixed by the data loader
  * or returning officer.
  */
-  //@ public invariant \nonnullelements (ballots);
-  // TODO JML warning: array nullity is invariant for assignment
   protected /*@ non_null spec_public @*/ Ballot[] ballots = new Ballot [Ballot.MAX_BALLOTS];
 
     /**
@@ -71,15 +69,10 @@ public class BallotBox {
 	/**
 	 * Create an empty ballot box.
 	 */
- 	//@ assignable ballots, index, numberOfBallots;
+ 	//@ assignable index, numberOfBallots;
 	public /*@ pure @*/ BallotBox(){
 		index = 0;
 		numberOfBallots = 0;
-		final int[] preferences = new int[0];
-		for (int b=0; b < ballots.length; b++) {
-		  // TODO 2009.10.15 ESC assignable warning
-		  ballots[b] = new Ballot(preferences); //@ nowarn;
-		}
 	}
 
 	/**
@@ -91,13 +84,10 @@ public class BallotBox {
 	 */
 	/*@ requires numberOfBallots < ballots.length;
 	  @ requires numberOfBallots < Ballot.MAX_BALLOTS;
-	  @ requires ballots[numberOfBallots].positionInList == 0;
 	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
 	  @*/
 	public void accept (final /*@ non_null @*/ int[] preferences) {
-	  //@ assert ballots[numberOfBallots] != null;
-	  // TODO 2009.10.15 ESC type mismatch warning
-		ballots[numberOfBallots++] = new Ballot(preferences); //@ nowarn;
+		ballots[numberOfBallots++] = new Ballot(preferences);
 	} 
 
 	/**
