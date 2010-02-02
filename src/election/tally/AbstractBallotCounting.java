@@ -912,17 +912,17 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param loser
    *        The candidate to be excluded
    */
-  /*@ requires loser < candidates.length;
-    @ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
-    @ requires hasQuota (candidateList[loser]) == false;
+  /*@ requires 0 <= loser && loser < candidates.length;
     @ requires remainingSeats < getNumberContinuing();
     @ requires (state == COUNTING);
-    @ requires 0 <= loser && loser < totalCandidates;
+    @ requires loser < totalCandidates;
     @ requires loser == findLowestCandidate();
     @ requires candidateList[loser].getCandidateID() != Ballot.NONTRANSFERABLE;
     @ requires countNumber < CountConfiguration.MAXCOUNT;
     @ requires \nonnullelements (ballotsToCount);
     @ requires \nonnullelements (candidateList);
+    @ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
+    @ requires hasQuota (candidateList[loser]) == false;
     @ assignable candidateList;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
