@@ -70,13 +70,6 @@ public static final int MAX_CANDIDATES = 20;
 //@ public invariant lastCountNumber <= CountConfiguration.MAXCOUNT;
 	protected transient /*@ spec_public @*/ int lastCountNumber;
 
-/** The count number at which the last set of votes were added */
-//@ public invariant 0 <= lastSetCount;
-//@ public initially lastSetCount == 0;	
-//@ public constraint \old(lastSetCount) <= lastSetCount;
-//@ public invariant lastSetCount <= lastCountNumber;
-	protected transient /*@ spec_public @*/ int lastSetCount;
-
 public static final int NO_CANDIDATE = 0;
 
 	/**
@@ -154,7 +147,6 @@ private static int nextCandidateID = 1;
  */	
 	/*@ ensures state == CONTINUING;
 	  @ ensures lastCountNumber == 0;
-	  @ ensures lastSetCount == 0;
 	  @*/
   public Candidate(){
 	  super();
@@ -165,7 +157,6 @@ private static int nextCandidateID = 1;
       votesRemoved[i] = 0;
     }
     lastCountNumber = 0;
-    lastSetCount = 0;
   }
 
 public static int getUniqueID() {
@@ -187,15 +178,13 @@ public static int getUniqueID() {
   @   requires 0 <= count;
   @   requires count < votesAdded.length;
   @   requires 0 <= numberOfVotes;
-  @   assignable lastCountNumber, votesAdded[count], lastSetCount;
-  @   ensures votesAdded[count] == \old(votesAdded[count]) + numberOfVotes;
+  @   assignable lastCountNumber, votesAdded[count];
+  @   ensures numberOfVotes <= votesAdded[count];
   @   ensures lastCountNumber == count;
-  @   ensures lastSetCount == count;
   @*/
   public void addVote(final int numberOfVotes, final int count){
        votesAdded[count] += numberOfVotes;
        lastCountNumber = count;
-       lastSetCount = count;
   }
 
 /**
@@ -215,8 +204,7 @@ public static int getUniqueID() {
   @   requires 0 <= numberOfVotes;
   @   requires numberOfVotes <= getTotalAtCount(count);
   @   assignable lastCountNumber, votesRemoved[count];
-  @   ensures \old (votesRemoved[count]) + numberOfVotes
-  @     == votesRemoved[count];
+  @   ensures numberOfVotes <= votesRemoved[count];
   @   ensures lastCountNumber == count;
   @*/
   public void removeVote (final int numberOfVotes, final int count){
