@@ -912,7 +912,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param loser
    *        The candidate to be excluded
    */
-  /*@ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
+  /*@ requires loser < candidates.length;
+    @ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
     @ requires hasQuota (candidateList[loser]) == false;
     @ requires remainingSeats < getNumberContinuing();
     @ requires (state == COUNTING);
@@ -933,13 +934,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   ballotsToCount[b].getCandidateID() != candidateList[loser].getCandidateID());
     @*/
   public void eliminateCandidate(final int loser) {
-    final int candidateID = candidates[loser].getCandidateID();
-
     candidates[loser].declareEliminated();
-    // TODO 2009.10.14 ESC warnings
-    redistributeBallots(candidateID); //@ nowarn;
+    redistributeBallots(candidates[loser].getCandidateID());
     numberOfCandidatesEliminated++;
-  } //@ nowarn;
+  }
 
   /**
    * Redistribute the transferable ballots of an excluded candidate.
