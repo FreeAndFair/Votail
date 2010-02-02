@@ -61,9 +61,9 @@ jmldocdir =	$(basedocdir)/jmldocs
 
 main_memory_use =	-ms256M -mx256M
 rac_memory_use =	-ms256M -mx320M
-test_memory_use	=	-ms256M -mx320M
+test_memory_use	=	-ms256M -mx3200M
 
-copyright = "Votail<br />&copy; 2006-9 University College Dublin, Ireland <br />All Rights Reserved"
+copyright = "Votail<br />&copy; 2006-10 Dermot Cochran <br />All Rights Reserved"
 
 # implicit rules for paper documentation generation
 
@@ -250,13 +250,10 @@ main-jmlrac: jmlc
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.Ballot_JML_Test
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotBox_JML_Test
+	
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
@@ -268,11 +265,11 @@ jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.CountConfiguration_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	java junit.textui.TestRunner $(test_memory_use) election.tally.Decision_JML_Test
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	java junit.textui.TestRunner $(test_memory_use) election.tally.DecisionStatus_JML_Test
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.ElectionStatus_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotBox_JML_Test
 
 # generating source-based documentation
 
