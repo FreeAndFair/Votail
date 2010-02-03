@@ -17,29 +17,9 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>mobius</groupId>
-      <artifactId>javafe</artifactId>
-      <version>2.0.5b</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tools</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.6.5</version>
-    </dependency>
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache</groupId>
-      <artifactId>xmlrpc</artifactId>
-      <version>1.2-b1-modified</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache</groupId>
-      <artifactId>bcel</artifactId>
-      <version>5.2</version>
     </dependency>
   </dependencies>
   <issueManagement>
