@@ -194,19 +194,9 @@
       Prepare directory tree for build.
     </description>
     <tstamp/>
-    <mkdir dir="${escjava_classes_dir}"/>
-    <mkdir dir="${mochalib_classes_dir}"/>
-    <mkdir dir="${rcc_classes_dir}"/>
-    <mkdir dir="${houdini_classes_dir}"/>
-    <mkdir dir="${calvin_classes_dir}"/>
     <mkdir dir="${opt_dir}"/>
     <mkdir dir="${jmlc_dir}"/>
     <mkdir dir="${javadoc_dir}"/>
-    <mkdir dir="${escjava_docs_dir}"/>
-    <mkdir dir="${rcc_docs_dir}"/>
-    <mkdir dir="${houdini_docs_dir}"/>
-    <mkdir dir="${calvin_docs_dir}"/>
-    <mkdir dir="${xref_doc_dir}"/>
   </target>
 
   <!-- Compile all source to binaries. -->
@@ -215,7 +205,6 @@
 
   <target name="binaries" depends="initialize,
                                    compile,
-                                   tags,
                                    create_jars">
     <description>
       Compile all source code and build jars.
@@ -272,29 +261,6 @@
       <fileset dir="." includes="*.html"/>
       <mapper type="glob" from="*.html" to="*.txt"/>
     </apply>
-  </target>
-
-  <!-- Tags files for various IDEs. -->
-  <!-- We use Exuberant Ctags 5.5 -->
-  <!-- See http://ctags.sourceforge.net for more information. -->
-
-  <target name="tags">
-    <description>
-      Build vi and Emacs tags tables for code base.
-    </description>
-    <exec dir="." 
-          executable="/usr/local/bin/ctags">
-      <arg line="-e -R"/>
-    </exec>
-    <exec dir="." 
-          executable="/usr/local/bin/ctags">
-      <arg line="-R"/>
-    </exec>
-  </target>
-
-  <target name="version">
-    <exec dir="."
-          executable="version.sh"/>
   </target>
 
   <!-- JML targets. -->
