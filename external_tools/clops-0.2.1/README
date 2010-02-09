@@ -1,0 +1,49 @@
+clops Version 0.2
+Read Me File 
+
+
+
+
+Running tests
+-------------
+
+The idea behind tests is that we can write sample inputs for a given clops spec
+file, indicating whether they should be deemed valid or not. These are turned
+into unit tests against the generated parser.
+
+There is an ant target test-unit that currently does the following:
+-Reads the dsl file (test/tests)
+-Generates the code for all the mentioned clops spec files
+-Generates a unit test for every provided valid/invalid input
+-Runs the unit tests
+
+Here's an example of the format of the dsl:
+file: dsl/svn.clo
+name: SVN
+valid: { update }
+invalid: { sadfadsd }
+valid: { diff -r 3456 }
+...
+file: dsl/gzip.clo
+name: Gzip
+...
+
+Each valid/invalid line results in a unit test. You can see the few actual
+tests written so far in "test/tests".
+
+One special feature of the input string is the ability to provide
+existing/non-existing files or directories. For this the tokens
+${existing-file}, ${existing-dir} and ${non-existant-file} will be
+substituted with appropriate paths to ensure file existence checks etc run
+correctly.
+
+The process can be streamlined and improved to facilitate the testing of
+individual clops specifications more efficiently. This method of unit testing
+can be very useful when trying to specify tools with existing complex command
+line interfaces.
+
+We'd encourage those who are responsible
+for any of our existing .clo(ps) files to write some tests in the
+file "test/tests", as this will be useful for regression testing and testing
+future changes like the infinite lookahead parser.
+

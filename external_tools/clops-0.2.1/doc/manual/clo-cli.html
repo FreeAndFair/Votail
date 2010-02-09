@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <!-- link type="text/css" rel="stylesheet" href="style.css" -->
+  <title>CLODSL (ie.ucd.clops.dsl.generatedinterface)</title>
+  <style type="text/css">
+    body { margin:40px; color: black; background: white; }
+    td{padding-right:10px;}
+    .id {width:100px; color:blue;}
+    .aliases {font-family:Courier; font-size:14px; background-color:lightgrey;}
+    #validity-explanation{width: 300px;
+           color:red;}
+    #validity-cond{
+       background-color:lightgrey; 
+       overflow:auto; 
+       font-size:14px; 
+       font-family:Courier; 
+    }
+    #usage-str{
+       align: center;
+       background-color:lightgrey; 
+       overflow:auto; 
+       font-size:16px; 
+       font-family:Courier; 
+    }
+    #options{}
+    #index{float:right; 
+           border:solid 1px;
+           border-color: blue;
+           padding-right:1em;
+           }
+    #contentpart {
+        /*position:absolute;
+        top: 80px;
+        left:90px;
+        right:90px; */
+        text-align: left;
+        padding:3em;
+        font-size:90%;
+        
+    }
+  </style>
+</head>
+
+<body>
+<div id="contentpart">
+<h1>CLODSL</h1>
+
+<div id="index">
+<p>
+<ul>
+<li><a href="#description">Description</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#options">Options</a>:<br/>
+    <ul>
+          <li><a href="#opt-all_args">all_args options</a></li>
+        </ul>
+</li>
+<li><a href="#rules">Rules</a>:
+    <ul>
+	 	  <li><a href="#rules-validity">Validity rules</a></li>
+		</ul>
+</li>
+</ul>
+</p>
+</div>
+
+
+<h2><a name="description">Description</a></h2>
+<h2><a name="usage">Usage</a></h2>
+<span id="usage-str">all_args* input all_args*</span>
+
+<div id="options">
+<h2><a name="options">Options</a></h2>
+
+<p>
+<h3><a name="opt-all_args">all_args options</a></h3>
+<table>
+ <tr>
+ <td><div class="id">output</div></td>
+ <td><div class="aliases">
+                 -o
+      
+                  &lt;file&gt;
+              <br/>
+            --output
+      
+                  &lt;file&gt;
+              <br/>
+          </div></td>
+ <td><span class="description">Output directory for generated files.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">output_package</div></td>
+ <td><div class="aliases">
+                 -p
+      
+                  &lt;string&gt;
+              <br/>
+            --package
+      
+                  &lt;string&gt;
+              <br/>
+          </div></td>
+ <td><span class="description">Output package. If left empty the default package is used.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">option_factory</div></td>
+ <td><div class="aliases">
+                 -of
+      
+                  &lt;string&gt;
+              <br/>
+            --option-factory
+      
+                  &lt;string&gt;
+              <br/>
+          </div></td>
+ <td><span class="description">Use this option factory instead of the default. Must be a fully qualified class name.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">gen_test</div></td>
+ <td><div class="aliases">
+                 -t
+      
+              <br/>
+            --test
+      
+              <br/>
+          </div></td>
+ <td><span class="description">Generate a Main class with a main method for rapid testing/debugging.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">gen_docs</div></td>
+ <td><div class="aliases">
+                 -d
+      
+                  &lt;file&gt;
+              <br/>
+            --docs
+      
+                  &lt;file&gt;
+              <br/>
+          </div></td>
+ <td><span class="description">Generate documentation and write it to the given output file.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">gen_docs_builtin</div></td>
+ <td><div class="aliases">
+                 -b
+      
+                  &lt;string-enum&gt;
+              <br/>
+            --built-in
+      
+                  &lt;string-enum&gt;
+              <br/>
+          </div></td>
+ <td><span class="description">Use a built-in template for documentation generation.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">gen_docs_custom</div></td>
+ <td><div class="aliases">
+                 -c
+      
+                  &lt;file&gt;
+              <br/>
+            --custom
+      
+                  &lt;file&gt;
+              <br/>
+          </div></td>
+ <td><span class="description">Use a custom template for documentation generation.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">verbose</div></td>
+ <td><div class="aliases">
+                 -v
+      
+              <br/>
+            --verbose
+      
+              <br/>
+          </div></td>
+ <td><span class="description">Print debugging messages.</span></td>
+ </tr>
+   <tr>
+ <td><div class="id">transitiveFlyRules</div></td>
+ <td><div class="aliases">
+                 -tfr
+      
+              <br/>
+            --transitive-fly-rules
+      
+              <br/>
+          </div></td>
+ <td><span class="description">Fly rules will applied transitively.</span></td>
+ </tr>
+  </table>
+</div>
+
+
+<h2><a name="rules">Rules</a></h2>
+ 
+  <h3><a name="rules-validity">Validity rules</a></h3>
+  The following section contains validity rules, rules that generate an error in
+  case the given test is verified.
+  <table>
+  <tr><td><b>Rule:</b></td>
+	  <td></td>
+	  <td><b>Exact check:</b></td></tr>
+
+  
+      <tr>
+    <td><div id="validity-explanation">output not set</div></td>
+    <td>
+          </td>
+    <td><div id="validity-cond">!((ie.ucd.clops.runtime.options.FileOption)optionStore.getOptionByIdentifier("output")).hasValue()</div>
+        </td>
+	</tr>
+      <tr>
+    <td><div id="validity-explanation">Only one type of documentation template may be used.</div></td>
+    <td>
+          </td>
+    <td><div id="validity-cond">Mutually exclusive options: gen_docs_builtin and gen_docs_custom</div>
+        </td>
+	</tr>
+      <tr>
+    <td><div id="validity-explanation">You must specify the documentation type to generate.</div></td>
+    <td>
+          </td>
+    <td><div id="validity-cond">gen_docs gen_docs_builtin || gen_docs_custom</div>
+        </td>
+	</tr>
+      <tr>
+    <td><div id="validity-explanation">--built-in cannot be used without --docs</div></td>
+    <td>
+          </td>
+    <td><div id="validity-cond">gen_docs_builtin gen_docs</div>
+        </td>
+	</tr>
+      <tr>
+    <td><div id="validity-explanation">--custom cannot be used without --docs</div></td>
+    <td>
+          </td>
+    <td><div id="validity-cond">gen_docs_custom gen_docs</div>
+        </td>
+	</tr>
+    </table>
+
+
+</div>
+</body>
+</html>

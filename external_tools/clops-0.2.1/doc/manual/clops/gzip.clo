@@ -1,0 +1,78 @@
+/*
+
+DSL for the gzip program
+
+TODO: verbose is a counter, needs to default to 0
+
+Interesting issues:
+
+* -# parameter is in fact ten other parameters: -1, -2, ...; -1, -2, ..., -9, --fast, --best modifies the same option, which has to be virtual
+* verbose is a counter, increased by -v and reset by -q
+* --test and --list forces decompression and stdout
+* "-" is an argument, meaning standard input
+
+*/
+
+NAME::
+ Gzip
+
+
+ARGS::
+
+	ascii:{"-a","--ascii"}
+	stdout:{"-c","--stdout","--to-stdout"}
+	decomporess:{"-d","--decompress","--uncompress"}
+	force:{"-f","--force"}
+	help:{"-h","--help"}
+	list:{"-l","--list"}
+	license:{"-L","--license"}
+	noname:{"-n","--no-name"}
+	name:{"-N","--name"}
+	quiet:{"-q","--quiet"}
+	recursive:{"-r","--recursive"}
+	rsyncable:{"--rsyncable"}
+	test:{"-t","--test"}
+	verbose:{"-v","--verbose"}:{counted-boolean}:[countmax="3",warnonexceedingmax]
+	version:{"-V","--version"}
+	compressionlevel:{"-"}:{int}:[suffixregexp="([1-9])\\00",maxvalue="9",minvalue="1",default="6"]
+	compressionlevelbest:{"--best"}
+	compressionlevelfast:{"--fast"}
+	
+	suffix:{"-S","--suffix"}:{string}
+
+FORMAT::
+
+	option* suffix?;
+
+WHERE::
+
+	option:
+		ascii OR stdout OR decomporess OR force OR help OR
+		list OR license OR noname OR name OR quiet OR recursive
+		OR rsyncable OR test OR verbose OR version OR
+		compressionlevel OR compressionlevelbest OR
+		compressionlevelfast;
+
+FLY::
+	// Compression level aliases
+	compressionlevelbest -> compressionlevel:={9}, compressionlevelfast:={false};
+	compressionlevelfast -> compressionlevel:={1}, compressionlevelbest:={false};
+	
+	// List forces decompress and stdout
+	list -> decompress:={true};
+	list -> stdout:={true};
+
+	// Test forces decompress and stdout
+	test -> decompress:={true};
+	test -> stdout:={true};
+
+	// Quiet and verbose are reversed
+	quiet -> verbose:={0};
+	verbose -> quiet:={false};
+
+OVERRIDES::
+	// Default compression level is 6
+	{$(compressionlevel?)} -> compressionlevel:={6};
+
+VALIDITY::
+

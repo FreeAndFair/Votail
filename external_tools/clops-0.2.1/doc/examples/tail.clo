@@ -1,0 +1,65 @@
+/*
+
+DSL for the tail program
+
+Interesting issues:
+* -, -n, --lines: there is no way how to express that there is optional = after --lines
+--follow has optional parameter which is one of name and descriptor FIXME
+-# where # is a number is equal to -n # FIXME
+-n allows to type "+" at the beginning which changes the behavior FIXME
+
+*/
+
+NAME::
+	Tail
+
+ARGS::
+
+	retry:{"--retry"}
+		: "keep trying to open a file even if it is inaccessible"
+	bytes:{"-c","--bytes"}:{int}
+		: "output the last N bytes"
+	follow:{"-f","--follow"}
+		: "output appended data as the file grows"
+	Follow:{"-F"}
+		: "same as --follow=name --retry"
+	lines:{"-","-n\0?","--lines="}:{int}:[suffixregexp="([0-9]+)\0",minvalue="0",default="10"]
+		: "output the last N lines, instead of the last 10;"
+	max_unchanged_stats:{"--max-unchanged-stats"}:{int}
+		: "with  --follow=name,  reopen  a  FILE which has not changed size after N (default 5) iterations to see if it has been unlinked or renamed (this is the usual case of rotated log files)"
+	pid:{"--pid"}:{int}:[minvalue="0",maxvalue="65535"]
+		: "with -f, terminate after process ID, PID dies"
+	quiet:{"-q","--quiet","--silent"}
+		: "never output headers giving file names"
+	sleep:{"-s","--sleep-interval"}:{float}
+		: "with -f, sleep for approximately S seconds (default 1.0) between iterations."
+	verbose:{"-v","--verbose"}
+		: "always output headers giving file names"
+	help:{"--help"}
+		: "display this help and exit"
+	version:{"--version"}
+		: "output version information and exit"
+	header_mode:{}:{enum}:[choices="multiple_files,always,never",default="multiple_files"]
+	follow_x:{}:{enum}:[choices="nofollow,name,descriptor",default="nofollow"]
+	files:{}:{file-list}:[between="", allowMultiple="false"]
+	dashfiles:{}:{file-list}:[between="", allowMultiple="false", allowDash="true"]
+	dashdash:{"--"}
+
+FORMAT::
+	(option | files)* (dashdash dashfiles*)?;
+
+WHERE::
+
+	option:
+		retry OR bytes OR follow OR Follow OR lines OR
+		max_unchanged_stats OR pid OR quiet OR sleep OR 
+		verbose OR help OR version;
+
+FLY::
+
+	follow -> follow_x:={"descriptor"};
+	Follow -> follow_x:={"name"};
+	Follow -> retry:={true};
+	verbose -> header_mode:={"always"};
+	quiet -> header_mode:={"never"};
+

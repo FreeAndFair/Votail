@@ -1,0 +1,21 @@
+NAME::
+  Wc
+
+ARGS::
+  Bytes: {"-c", "--bytes"}              // option name, followed by aliases
+  Chars: {"-m", "--chars"}
+  Words: {"-w", "--words"}
+  Lines: {"-l", "--lines"}
+  LineLength: {"-L", "--max-line-length"}
+  FilesFrom: {"--files0-from"}: {file}  // "file" is the option type
+  Help: {"--help"}                      /* the default type is "boolean" */
+  Ver: {"--version"}
+  Files: {}: {file-list}: [between="", allowMultiple="false"]
+
+FORMAT::
+  (Option | Files)*;  // this is a regular expression
+
+WHERE::
+  Option:   // shorthand to make the FORMAT easier to read
+    Bytes OR Chars OR Words OR Lines OR LineLength OR
+    FilesFrom OR Help OR Ver;

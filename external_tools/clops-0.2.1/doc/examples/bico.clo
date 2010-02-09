@@ -1,0 +1,39 @@
+NAME::
+  Bico
+
+ARGS::
+  Help: {"-h", "--help"}
+  		: "Show the help message."
+  
+  Dir: {}:{file}:[between="", mustExist="true", mustBeDir="true"]
+  		: "Specify directory in which Bico does its job (there must 
+  		   be only one directory, and this argument is mandatory"
+  		   
+  Clazz: {}:{string-list}:[between="" argumentshape="[a-zA-Z.]+"]
+        :" generates also the file for this class, bico must be able 
+           to find it in its class path "
+           
+  Output:{"-o"}:{file}
+  		: "The output directory." 
+  Map:{"-m", "--map"}:[default="false"]
+  		: "To have the map implementation."
+  List:{"-l", "--list"}:[default="false"]
+  		: "To have the list implementation." 
+  Lib:{"-lib"}  
+  		: "Enables the java.lang library generation. 
+ 		   It implies the generation of most of the JRE."
+  ClassPath:{"-cp"}:{string}
+  		: "The base working class path."
+  		
+
+FORMAT::
+
+  Help  | (Dir (Option | Clazz)*);  
+ 
+
+WHERE::
+
+  Option:
+	Map OR List OR Output OR ClassPath OR Lib;
+	
+	

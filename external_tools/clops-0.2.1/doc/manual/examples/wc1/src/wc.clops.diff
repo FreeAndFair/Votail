@@ -1,0 +1,6 @@
+ARGS::
+  DashFiles: {}: {file-list}: [between="", allowMultiple="false", allowDash="true"]
+  DashDash: {"--"}
+
+FORMAT::
+  (Option | Files)* (DashDash DashFiles*)?;

@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <style type="text/css">@import url('clops.css');</style>
+  <style type="text/css">@import url('prettify.css');</style>
+  <script type="text/javascript" src="prettify.js"></script>
+  <title>CLOPS - Related projects</title>
+</head>
+<body>
+<h1>CLOPS - Related projects</h1>
+<!--
+argument separation - double minus as in Unix
+-->
+<table id="related-work">
+<tr>
+	<th class="clear">Project/Feature</th>
+	<th><a href="http://clops.sf.net/">CLOPS</a></th>
+	<th><a href="http://jewelcli.sourceforge.net/">JewelCLI</a></th>
+	<th><a href="http://commons.apache.org/cli/">Commons CLI</a></th>
+	<th><a href="http://args4j.dev.java.net/">Args4j</a></th>
+	<th><a href="http://code.google.com/p/parse-cmd/">Parse-cmd</a></th>
+	<th><a href="http://jcommando.sourceforge.net/">JCommando</a></th>
+	<th><a href="http://www.martiansoftware.com/jsap/">JSAP</a></th>
+	<th>getopt</th>
+</tr>
+<tr>
+	<th>Version</th>
+	<td>0.1</td>
+	<td>0.54</td>
+	<td>1.1</td>
+	<td>2.0.1</td>
+	<td>-</td>
+	<td>1.01</td>
+	<td>2.1</td>
+	<td></td>
+</tr>
+<tr>
+	<th>Type of specification</th>
+	<td>Separate file<br>DSL</td>
+	<td>Source code<br>Annotation of getter methods</td>
+	<td>Source code<br>Builder pattern</td>
+	<td>Source code<br>Annotation of class fields</td>
+	<td>Source code<br>Builder pattern</td>
+	<td>Separate file, DSL/XML</td>
+	<td>Source code<br>Builder pattern</td>
+	<td>Source code<br>Table</td>
+</tr>
+<tr>
+	<th>License</th>
+	<td><a href="http://www.opensource.org/licenses/mit-license.php">MIT</a></td>
+	<td><a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache, Version 2.0</a></td>
+	<td><a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache, Version 2.0</a></td>
+	<td><a href="http://www.opensource.org/licenses/mit-license.php">MIT</a></td>
+	<td><a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache, Version 2.0</a></td>
+	<td><a href="http://www.opensource.org/licenses/zlib-license.php">zlib/libpng</a></td>
+	<td><a href="http://www.fsf.org/licensing/licenses/#LGPL">LGPL</a></td>
+	<td><a href="http://www.gnu.org/copyleft/gpl.html">GNU</a></td>
+</tr>
+<tr>
+	<th>Variants of option names</th>
+	<td class="high">Regexp</td>
+	<td class="high">List</td>
+	<td class="mid">Short/long</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="mid">Short/long</td>
+	<td class="mid">Short/long</td>
+	<td class="mid">Short/long</td>
+</tr>
+<tr>
+	<th>Alternatives to hyphen</th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="mid">No<sup>3</sup></td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+</tr>
+<tr>
+	<th>Option format<br>(<code>"-m&nbsp;X","-m=X","-mX"</code>)</th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+</tr>
+<tr>
+	<th>Dynamic option names<br>(<code>-1,-2,..,-9</code>)</th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+</tr>
+<tr>
+	<th>Options with missing parameters</th>
+	<td class="mid">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="mid">Yes</td>
+</tr>
+<tr>
+	<th>Required parameters</th>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+</tr>
+<tr>
+	<th>Default value of options</th>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+</tr>
+<tr>
+	<th>Types of parameters (Boolean, Integer, etc.)</th>
+	<td class="high">Basic and specific types</td>
+	<td class="high">Java primitive types, Class, generic List</td>
+	<td class="low">String</td>
+	<td class="high">Basic and specific types</td>
+	<td class="low">String</td>
+	<td class="mid">Basic types</td>
+	<td class="high">Java primitive types, Lists</td>
+	<td class="low">char*</td>
+</tr>
+<tr>
+	<th>Parameter validation (type-based, limits, regular expression)</th>
+	<td class="high">Type, attributes, regexp</td>
+	<td class="mid">Type, regexp</td>
+	<td class="low">None<sup>*</sup></td>
+	<td class="mid">Type</td>
+	<td class="mid">Regexp</td>
+	<td class="mid">Type, Range checking</td>
+	<td class="mid">Type</td>
+	<td class="low">None</td>
+</tr>
+<tr>
+	<th>Command line format, ordering of parameters</th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No<sup>2</sup></td>
+	<td class="low">No</td>
+	<td class="low">No<sup>2</sup></td>
+	<td class="low">No</td>
+	<td class="low">No<sup>2</sup></td>
+</tr>
+<tr>
+	<th>Multiple use of one option</th>
+	<td class="high">Yes</td>
+	<td class="low">Last one</td>
+	<td class="low">First one</td>
+	<td class="low">Last one</td>
+	<td class="low">Last one</td>
+	<td class="low">Last one</td>
+	<td class="low">First one</td>
+	<td class="mid">Yes<sup>2</sup></td>
+</tr>
+<tr>
+	<th>Help extraction</th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+</tr>
+<tr>
+	<th>Fly rules</th>
+	<td class="high">Rules</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="high">Call-back<sup>4</sup></td>
+	<td class="low">No</td>
+	<td class="high">Call-back<sup>4</sup></td>
+	<td class="low">No</td>
+	<td class="mid">Call-back<sup>4</sup></td>
+</tr>
+<tr>
+	<th>Relation among parameters</th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="mid">Yes <sup>1</sup></td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+</tr>
+<tr>
+	<th>Option and argument separation (Unix <code>--</code>)</th>
+	<td class="high">Yes, arbitrary</td>
+	<td class="low">No</td>
+	<td class="mid">Yes, <code>--</code></td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="mid">Yes, <code>--</code></td>
+</tr>
+<tr>
+	<th>Option concatenation<br>aka <code>tar</code></th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="mid">Somehow<sup>5</sup></td>
+</tr>
+<tr>
+	<th>Incremental options</th>
+	<td class="high">Yes</td>
+	<td class="low">No</td>
+	<td class="low">No</td>
+	<td class="mid">No<sup>2</sup></td>
+	<td class="low">No</td>
+	<td class="mid">No<sup>2</sup></td>
+	<td class="low">No</td>
+	<td class="mid">No<sup>2</sup></td>
+</tr>
+</table>
+
+<p><sup>1</sup> Boolean and/or/xor/not structure in a context of a command only.
+<p><sup>2</sup> Can be/must be implemented by call-backs.
+<p><sup>3</sup> With exception of the command.
+<p><sup>4</sup> Sequential processing of options allows to implement fly rules in source code.
+<p><sup>5</sup> With exception of leading hyphen which is required.
+
+</body>
+</html>

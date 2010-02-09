@@ -1,0 +1,312 @@
+#macro(enumBool $enum $enumVals $boolOpt)
+   $enum {true} -> $boolOpt := {#foreach($enumVal in $enumVals)#if($velocityCount!=1) || #end$($enum).equals($enumVal)#end};
+#foreach ($enumVal in $enumVals)
+   #if ($velocityCount==1)$boolOpt {$($boolOpt)}  -> $enum := {$enumVal};#end
+
+#end
+
+#end
+
+// Relying on transtivie fly rules, needs to be processed with the -tfr option.
+NAME:: 
+       ls
+
+ARGS::
+
+     all:{"-a", "--all"}
+       :"do not ignore entries starting with ."
+
+     almost_all:{"-A", "--almost-all"}
+       :"do not list implied . and .."
+
+     author:{"--author"}   
+       :"with -l, print the author of each file"
+
+     octal_escapes:{"-b", "--escape"}
+       :"print octal escapes for nongraphic characters"
+
+     block_size:{"--block-size"}:{string-regexp}
+       :[regexp="(\\d*((kB)|(K)|(MB)|M|G|T|P|E|Z|Y)?)"]
+       :"use blocks of the given size, which may be (or may be an integer optionally followed by) 
+       one of following: kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y."
+
+     ignore_backups:{"-B", "--ignore-backups"}
+       :"do not list implied entries ending with ~"
+
+     ctime:{"-c"}:[allowarg="false"]
+       :"with -lt: sort by, and show, ctime (time of last modification of
+        file status information) with -l: show ctime and  sort  by  name
+        otherwise: sort by ctime"
+
+     columns:{"-C"}:[allowarg="false"]
+        :"list entries by columns"
+ 
+     color:{"--color"}:{enum}
+        :[defaultvalue="always"
+          between="="
+          choices="never,always,auto," 
+          default="never" ]:
+     "If not specified no color is used, i.e. --color=none.  Using
+       the --color option without the optional WHEN argument is
+       equivalent to using --color=always.  With --color=auto, color
+       codes are output only if standard output is connected to a
+       terminal (tty). The environment variable LS_COLORS can
+       influence the colors, and can be set easily by the dircolors
+       command."
+
+     directory:{"-d", "--directory"}
+        :"list directory entries instead of contents,
+          and do not  dereference symbolic links"
+
+     dired:{"-D", "--dired"}
+        :"generate output designed for Emacs' dired mode"
+
+     not_sort:{"-f"}
+        :"do not sort, enable -aU, disable -lst"
+
+     classify:{"-F", "--classify"}:[allowarg="false"]
+        :"append indicator (one of */=>@|) to entries"
+
+     file_type:{"--file-type"}:[allowarg="false"]
+        :"like {classify}, except do not append *"
+
+     format:{"--format"}:{enum}:
+              [choices="across,commas,horizontal,long,single-column,verbose,vertical"]:
+              "The listing format which can be one of across (-x), commas (-m), horizontal (-x), long (-l), single-column (-1), verbose (-l), vertical (-C)"
+
+     full_time:{"--full-time"}
+        :"like -l --time-style=full-iso"
+
+     list_group:{"-g"}
+        :"like {long}, but do not list owner"
+
+     no_group:{"-G", "--no-group"}
+        :"like {long}, but do not list group"
+
+     human_readable:{"-h", "--human-readable"}
+        :"with {long}, print sizes in human readable format (e.g., 1K 234M 2G)"
+
+     human_readable_decimal:{"--si"}
+        :"like {human_readable} but use powers of 1000 not 1024"
+
+     dereference-command-line:{"-H", "--dereference-command-line"}
+         :"follow symbolic links listed on the command line"
+
+     dereference-command-line-symlink-to-dir:{"--dereference-command-line-symlink-to-dir"}
+         :"follow  each  command line symbolic link that points to a directory"
+
+     hide:{"--hide"}:{string}
+         :"do not list implied entries matching shell  pattern  (overridden
+              by -a or -A)"
+
+     indicator_style:{"--indicator-style"}:{enum}
+         :[choices="none,slash,file-type,classify" default="none"]
+         :"append indicator with style WORD to entry names, with the values
+              none  (default),  slash  (-p), file-type (--file-type), classify (-F)"
+
+      inode:{"-i", "--inode"}
+         :"with {long}, print the index number of each file"
+
+      ignores:{"-I", "--ignore"}:{string}
+              :"do not list implied entries matching shell pattern"
+
+      oneK_block:{"-k"}:[allowarg="false"]:"like --block-size=1K"
+
+      long:{"-l"}:[allowarg="false"]:"use a long listing format"
+
+      dereference:{"-L", "--dereference"}
+          :"when showing file information for a symbolic link, show information  
+            for  the file the link references rather than for the link itself"
+
+      commas:{"-m"}:[allowarg="false"]:"fill width with a comma separated list of entries"
+
+      numeric_uid_gid:{"-n", "--numeric-uid-gid"}
+           :"like {long}, but list numeric user and group IDs"
+
+      literal:{"-N", "--literal"}
+          :"print raw entry names (don't treat e.g. control characters  specially)"
+
+      long_nogroups:{"-o"}:"like {long}, but do not list group information"
+
+       slash:{"-p"}:[allowarg="false"]
+           :"append / indicator to directories"
+
+       hide_control_chars:{"-q", "--hide-control-chars"}
+           :"print ? instead of non graphic characters"
+
+       show_control_chars:{"--show-control-chars"}
+           :"show  non  graphic  characters  as-is (default unless program is
+              'ls' and output is a terminal)"
+
+       quote_name:{"-Q", "--quote-name"}
+           :"enclose entry names in double quotes"
+
+       quoting_style
+           :{"--quoting-style"}
+           :{enum}
+           :[choices="literal,locale,shell,shell-always,c,escape"]
+           :"use quoting style WORD for entry names"
+
+
+       reverse:{"-r", "--reverse"}:"reverse order while sorting"
+
+       recursive:{"-R", "--recursive"}:"list subdirectories recursively"
+
+       size:{"-s", "--size"}:"with {long}, print size of each file, in blocks"
+
+       sortby_size:{"-S"}:[allowarg="false"]:"sort by file size"
+
+       sort:{"--sort"}
+           :{enum}
+           :[choices="extension,none,size,time,version,status,time,atime,access,use"]
+           :"extension  -X, none -U, size -S, time -t, version -v, status -c, time -t, atime -u, access -u, use -u"
+
+       time:{"--time"}:{enum}
+           :[choices="atime,access,use,ctime,status"]
+           :"with -l, show time as WORD instead of modification time:  atime,
+              access,  use, ctime or status; use specified time 
+              as sort key if {sort}=time"
+
+       time_style:{"--time-style"}:{string-regexp}
+           :[regexp="((full-iso)|(long-iso)|(iso)|(locale)|(\\+.+))"]
+           :"with -l, show times using style"             
+// TODO
+/*              STYLE: full-iso, long-iso,  iso,
+              locale,  +FORMAT.   FORMAT is interpreted like ‘date’; if FORMAT
+              is FORMAT1<newline>FORMAT2, FORMAT1 applies to non-recent  files
+              and FORMAT2 to recent files; if STYLE is prefixed with ‘posix-’,
+              STYLE takes effect only outside the POSIX locale */
+
+       sortby_modificationtime:{"-t"}:[allowarg="false"]:"sort by modification time"
+
+       tabsize:{"-T", "--tabsize"}:{int}:[minvalue="0" default="8"]
+          :"assume given tab stops"
+
+       access_time:{"-u"}:[allowarg="false"]:
+            "with -lt: sort by, and show, access time with  -l: show access
+             time and sort by name otherwise: sort by access time"
+
+       unordered:{"-U"}:[allowarg="false"]:"do not sort; list entries in directory order"
+
+       sortby_version:{"-v"}:[allowarg="false"]:"sort by version"
+
+       width:{"-w", "--width"}:{int}:[minvalue="0"]
+         :"assume screen width instead of current value"
+
+       horizontal:{"-x"}:[allowarg="false"]:"list entries by lines instead of by columns"
+
+       sortby_entryextension:{"-X"}:"sort alphabetically by entry extension"
+
+       one:{"-1"}:[allowarg="false"]:"list one file per line"
+
+/*       SELINUX options:
+
+       {"--lcontext"}
+              Display  security  context.    Enable -l. Lines will probably be
+              too wide for most displays.
+
+       {"-Z", "--context"}
+              Display security context so it fits on most displays.   Displays
+              only mode, user, group, security context and file name.
+
+       {"--scontext"}
+              Display only security context and file name.
+*/
+
+       help:{"--help"}:"display this help and exit"
+
+       version:{"--version"}:"output version information and exit"
+
+       Files: {}: {file-list}: [between="", allowMultiple="false"]
+       DashFiles: {}: {file-list}: [between="", allowMultiple="false", allowDash="true"]
+       DashDash: {"--"}
+
+FORMAT::
+
+  (allOpts | Files)* (DashDash DashFiles*)?;
+
+WHERE::
+ allOpts: 
+  all OR
+  almost_all OR
+  author OR
+  octal_escapes OR
+  block_size OR
+  ignore_backups OR
+  ctime OR
+  columns OR
+  color OR
+  directory OR
+  dired OR
+  not_sort OR
+  classify OR
+  file_type OR
+  format OR
+  full_time OR
+  list_group OR
+  no_group OR
+  human_readable OR
+  human_readable_decimal OR
+  dereference_command_line OR
+  dereference_command_line_symlink_to_dir OR
+  hide OR
+  indicator_style OR
+  inode OR
+  ignores OR
+  oneK_block OR
+  long OR
+  dereference OR
+  commas OR
+  numeric_uid_gid OR
+  literal OR
+  long_nogroups OR
+  slash OR
+  hide_control_chars OR
+  show_control_chars OR
+  quote_name OR
+  quoting_style OR
+  reverse OR
+  recursive OR
+  size OR
+  sortby_size OR
+  sort OR
+  time OR
+  time_style OR
+  sortby_modificationtime OR
+  tabsize OR
+  access_time OR
+  unordered OR
+  sortby_version OR
+  width OR
+  horizontal OR
+  sortby_entryextension OR
+  one OR
+  help OR
+  version ;
+
+
+FLY::
+   full_time {$(full_time?)} -> long := {true}, time_style := {"full-iso"};
+   long { $(time_style?) && $(long) && $(time_style).equals("full-iso") } -> full_time := {true};
+   time_style { $(long?) && $(long) && $(time_style).equals("full-iso") } -> full_time := {true};
+
+#enumBool('format' ['"across"', '"horizontal"' ] 'horizontal')
+#enumBool('format' ['"commas"'] 'commas')
+#enumBool('format' ['"single-column"'] 'one')
+#enumBool('format' ['"verbose"','"long"'] 'long')
+#enumBool('format' ['"vertical"'] 'columns')
+
+#enumBool('indicator_style' ['"slash"'] 'slash')
+#enumBool('indicator_style' ['"file-type"'] 'file_type')
+#enumBool('indicator_style' ['"classify"'] 'classify')
+
+#enumBool('block_size' ['"1024"'] 'oneK_block')
+
+#enumBool('sort' ['"extension"']  'sortby_entryextension')
+#enumBool('sort' ['"none"']  'unordered')
+#enumBool('sort' ['"size"']  'sortby_size')
+#enumBool('sort' ['"time"']  'sortby_modificationtime')
+#enumBool('sort' ['"version"']  'sortby_version')
+#enumBool('sort' ['"status"']  'ctime')
+#enumBool('sort' ['"atime"', '"access"', '"use"']  'access_time')
+

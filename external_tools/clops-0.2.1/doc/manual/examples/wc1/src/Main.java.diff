@@ -1,0 +1,1 @@
+    for (File f : opt.getDashFiles()) checkFile(f);

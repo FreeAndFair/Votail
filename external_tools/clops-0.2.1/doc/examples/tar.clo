@@ -1,0 +1,43 @@
+NAME::
+  Tar
+
+ARGS::
+  Create: {"-c"}:
+    "create a new archive"
+  Extract: {"-x","--extract","--get"}:
+    "extract files from an archive"
+  BzipTwo: {"-j","--bzip2"}:
+    "filter archive thru bzip2"
+  Gzip: {"-z","--gzip","--gunzip","--ungzip"}:
+    "filter archive thru gzip"
+  Archive: {"-f","--file"}: {file}:
+    "use the given file"
+  File: {}: {file-list}: [between="", allowMultiple="false"]:
+    "files to archive"
+
+  ShortCreate: {"c"}: [suffixregexp=""]
+  ShortExtract: {"x"}: [suffixregexp=""]
+  ShortBzipTwo: {"j"}: [suffixregexp=""]
+  ShortGzip: {"z"}: [suffixregexp=""]
+  ShortArchive: {"f"}: [suffixregexp=""]
+  ShortArchiveValue: {}: {file}: [between="\0"]
+
+FORMAT::
+  (ShortOption* ShortArchive ShortOption* ShortArchiveValue Long*
+| (ShortOption* Long* Archive Long*));
+
+WHERE::
+  Long: Create | Extract | BzipTwo | Gzip | File;
+  ShortOption: ShortCreate | ShortExtract | ShortBzipTwo | ShortGzip;
+
+FLY::
+  ShortArchiveValue -> Archive := {$(ShortArchiveValue)};
+  ShortCreate -> Create := {true};
+  ShortExtract -> Extract := {true};
+  ShortGzip -> Gzip := {true};
+  ShortBzipTwo -> BzipTwo := {true};
+
+VALIDITY::
+  {$(Create?) && $(Extract?)}: "You can't create and extract at the same time";
+  {$(Gzip?) && $(BzipTwo?)}: "You can't use gzip and bzip2 at the same time";
+  {!$(Create?) && !$(Extract?)}: "Should I create an archive or extract from one?";

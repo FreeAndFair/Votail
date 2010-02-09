@@ -1,0 +1,10 @@
+NAME::
+  LogicSync
+
+ARGS::
+  Files: {}:{file-list}:[between=""]
+  Generate: {"-g"}:{file-list}
+
+FORMAT::
+  Files* Files;
+	

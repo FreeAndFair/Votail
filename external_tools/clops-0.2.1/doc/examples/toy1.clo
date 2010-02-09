@@ -1,0 +1,10 @@
+NAME:: toy1
+
+ARGS::
+   input:{"-i"}:{file}:[mustexist, canbedir="false"]:"The input file."
+   output:{"-o"}:{file}:[canbedir="false"]:"The output file."
+   quiet:{"-q"}:{boolean}:"Turn the quiet mode on."
+
+FORMAT::
+      quiet? input output?;
+

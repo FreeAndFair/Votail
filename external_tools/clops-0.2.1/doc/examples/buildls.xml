@@ -1,0 +1,21 @@
+<project name="Build_ls" default="main" basedir=".">
+
+  <path id="classpath">
+     <fileset dir="../lib" includes="*.jar"/>
+  </path>
+
+  <taskdef name="texen" classpathref="classpath" classname="org.apache.texen.ant.TexenTask"/>
+
+  <target name="main">
+    <echo message="Generating ls.clo"/>
+
+    <texen
+      controlTemplate="ls.clo.vm"
+      outputDirectory="."
+      templatePath="."
+      outputFile="ls.clo"
+    />
+
+  </target>
+
+</project>

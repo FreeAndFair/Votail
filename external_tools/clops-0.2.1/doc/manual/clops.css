@@ -1,0 +1,110 @@
+/* tags, then classes; sorted alphabetically */
+
+blockquote {
+  font-style: italic;
+  font-size: small;
+}
+
+body {
+  font-family: Verdana, Helvetica, sans-serif;
+  font-size: normal;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+code {
+  font-family: courier, monospace;
+}
+
+h1 {
+  font-size: x-large;
+  font-weight: bold;
+  padding-top: 5px;
+}
+
+h2 {
+  font-size: large;
+  font-weight: bold;
+}
+
+pre {
+  font-family: courier, monospace;
+  font-size: large;
+  padding-left: 1cm;
+}
+
+table {
+  width: 100%;
+}
+
+/* TODO: pick a unifying style for tables; there's no reason
+ * to limit the below to the related-work table */
+table#related-work {
+  border: 1px solid gray;
+  font-size: small;
+}
+
+table#related-work td {
+  border: 1px solid gray;
+}
+
+table#related-work th {
+  background-color: #88f;
+}
+
+table#related-work th.clear {
+  background-color: white;
+}
+
+table#related-work .low {
+  background-color: #f88;
+}
+
+table#related-work .mid {
+  background-color: #ff8;
+}
+
+table#related-work .high {
+  background-color: #8f8;
+}
+
+tt {
+  font-family: courier, monospace;
+}
+
+.cmdline {
+  background-color: #eeeeee;
+}
+
+.gotcha {
+  margin-left: 3cm;
+  margin-right: 3cm;
+  font-size: small;
+  background-color: #ffeeee;
+}
+
+.question {
+  padding-top: 10px;
+  font-size: large;
+  font-style: italic;
+}
+
+.quote-author {
+  text-align: right;
+  font-size: small;
+  padding-bottom: 5px;
+}
+
+.title {
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+.todo {
+	background-color: yellow;
+	border: 4px dotted black;
+	font-weight: bold;
+}
+
+

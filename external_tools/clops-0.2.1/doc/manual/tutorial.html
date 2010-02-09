@@ -1,0 +1,493 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <style type="text/css">@import url('clops.css');</style>
+  <style type="text/css">@import url('prettify.css');</style>
+  <script type="text/javascript" src="prettify.js"></script>
+  <title>CLOPS tutorial</title>
+</head>
+<body onload="prettyPrint()">
+
+<div class="title">CLOPS tutorial</div>
+
+<p>This tutorial first illustrates the basic usage scenario
+and then presents a few advanced features. However, it barely
+scratches the surface of what can be done with CLOPS.</p>
+
+<h1>Basic usage</h1>
+
+<p>Typically, CLOPS is called by the build system to generate
+files before the actual compilation. Before seeing how to
+integrate with ANT let's first use it from the command line to
+get a better feeling of what goes on under-the-hood. In this
+section you will be guided step-by-step to recreate the example
+that comes in the CLOPS distribution in the <tt>sample/wc</tt>
+directory. So, if you feel stuck at any point, you may look in
+that directory for help. Or, if you feel brave enough, you may
+analyze yourself that example and skip this section. </p>
+
+<h2>A first example</h2>
+
+<p>The <tt>wc</tt> tool computes statistics of a text, such as
+the word count. Take a (short) look at its man page:</p>
+
+<pre class="cmdline">man wc</pre>
+
+<p>Create a fresh directory. All the commands in this tutorial
+are written under the assumption that the current directory is
+this fresh directory. Create a subdirectory <tt>lib</tt> and
+copy in it the file <tt>clops-runtime.jar</tt> from the CLOPS
+distribution. This file is needed to compile your code and to run
+your application. Then create another subdirectory <tt>src</tt>
+and in it create a file <tt>wc.clo</tt> with the content: </p>
+
+<pre class="prettyprint">
+NAME::
+  Wc
+
+ARGS::
+  Bytes: {"-c", "--bytes"} // option name, followed by aliases
+  Chars: {"-m", "--chars"}
+  Words: {"-w", "--words"}
+  Lines: {"-l", "--lines"}
+  LineLength: {"-L", "--max-line-length"}
+  FilesFrom: {"--files0-from"}: {file}  // "file" is the option type
+  Help: {"--help"}         /* the default type is "boolean" */
+  Ver: {"--version"}
+  Files: {}: {file-list}: [between="", allowMultiple="false"]
+
+FORMAT::
+  (Option | Files)*;  // this is a regular expression
+
+WHERE::
+  Option:   // shorthand to make the FORMAT easier to read
+    Bytes | Chars | Words | Lines | LineLength |
+    FilesFrom | Help | Ver;
+</pre>
+
+<table class="gotcha">
+<tr><td><img src="attention.png" alt="!"/></td><td>
+The <i>properties</i> <tt>between</tt> and <tt>allowMultiple</tt>
+will be explained in the <a href="#dashdash">Dealing with --</a> section.
+</td></tr></table>
+
+<p>Create a subdirectory <tt>generated</tt> under <tt>src</tt>.
+Generate the parser with:</p>
+
+<pre class="cmdline">
+java -jar CLOPSPATH/lib/clops.jar\
+  src/wc.clo -o src/generated -p generated\
+  -d cli.html -b html
+</pre>
+
+<p>(If CLOPSPATH is added to your PATH and you are on Linux then
+you can simply say <tt style="cmdline">clops</tt> to run the
+tool.) You should see three files in <tt>src/generated</tt>,
+each containing a class. (The option <tt>-p</tt> is followed by
+a package name.) You should also see the file <tt>cli.html</tt>
+that gives an easy to read description of your tool's command
+line interface. Next, we'll place <tt>Main.java</tt> under
+<tt>src</tt>.</p>
+
+<pre class="prettyprint">
+import java.io.File;
+import generated.WcParser;
+import generated.WcOptionsInterface;
+
+public class Main {
+  public static void main(String[] args) throws Exception {
+    WcParser parser = new WcParser();
+    if (!parser.parse(args)) {
+      System.out.println("Usage: java Main [OPTIONS] file...");
+      System.exit(1);
+    }
+    WcOptionsInterface opt = parser.getOptionStore();
+    if (opt.isWordsSet()) 
+      System.out.println("I should print a word count.");
+    if (opt.isBytesSet()) 
+      System.out.println("I should print a byte count.");
+    for (File f : opt.getFiles()) checkFile(f);
+  }
+
+  public static void checkFile(File f) {
+    System.out.print("The file " + f.getPath());
+    if (f.exists())
+      System.out.println(" exists.");
+    else
+      System.out.println(" does not exist.");
+  }
+}
+</pre>
+
+<p>Create a subdirectory <tt>classes</tt>. To compile, say:</p>
+
+<pre class="cmdline">
+javac -cp lib/clops-runtime.jar\
+  -sourcepath src -d classes src/Main.java src/generated/*
+</pre>
+
+<table class="gotcha">
+<tr><td><img src="attention.png" alt="!"/></td><td>
+Errors during compilation might be caused by an incorrect
+<tt>.clo</tt> file, because CLOPS only detects obvious mistakes.
+More subtle ones are detected down the road by the Java compiler.
+</td></tr></table>
+
+<p>You can now run your program with:</p>
+
+<pre class="cmdline">
+java -cp classes:lib/clops-runtime.jar Main ARGUMENTS
+</pre>
+
+<p>Try to replace <tt>ARGUMENTS</tt> with various values and see
+what happens. In particular, try <tt>&quot;--files0-from=.&quot;</tt>,
+<tt>&quot;--files0-from&nbsp;.&quot;</tt>, and only
+<tt>&quot;--files0-from&quot;</tt>.</p>
+
+<p>Congratulations: You have now finished the first part of the
+tutorial and you saw how to use CLOPS instead of a hand-written
+parser.</p>
+
+<h2>Integrating with ANT</h2>
+
+<p>The commands in the previous section are a little long but
+hopefully you use a good build system that can handle the dirty
+details for you. In this section you'll see how ANT can help.
+Create the <tt>build.xml</tt> file:</p>
+
+<pre class="prettyprint">
+&lt;project name="Wc" default="compile" basedir="."&gt;
+  &lt;!-- to be filled later --&gt;
+&lt;/project&gt;
+</pre>
+
+<p>The <tt>compile</tt> target looks as usual, except that it
+depends on a code generation phase and that <tt>javac</tt> needs
+to have the file <tt>clops-runtime.jar</tt> in the classpath.</p>
+
+<pre class="prettyprint">
+  &lt;target name="compile" 
+          description="compiles Java files" 
+          depends="clops-generate"&gt;
+    &lt;mkdir dir="classes"/&gt;
+    &lt;javac destdir="classes" 
+           srcdir="src" 
+           classpath="lib/clops-runtime.jar"/&gt;
+  &lt;/target&gt;
+</pre>
+
+<p>The code generation phase is simply an invocation of CLOPS.
+You may need to change the path for <code>clops.jar</code> to fit your
+clops installation.</p>
+
+<pre class="prettyprint">
+  &lt;target name="clops-generate" 
+          description="use CLOPS to generate files"&gt;
+    &lt;mkdir dir="src/generated"/&gt;
+    &lt;java fork="yes" dir="." jar="../../lib/clops.jar"&gt;
+      &lt;arg value="src/wc.clo"/&gt;
+      &lt;arg value="-o=src/generated"/&gt;
+      &lt;arg value="-p=generated"/&gt;
+    &lt;/java&gt;
+  &lt;/target&gt;
+</pre>
+
+<p>Finally, when packaging your application for a release you
+must include the <tt>clops-runtime.jar</tt> as a dependency. </p>
+
+<pre class="prettyprint">
+  &lt;target name="dist" 
+          description="build a distribution" 
+          depends="compile"&gt;
+    &lt;mkdir dir="dist"/&gt;
+    &lt;jar destfile="dist/wc.jar" basedir="classes"&gt;
+      &lt;manifest&gt;
+        &lt;attribute name="Main-Class" value="Main"/&gt;
+        &lt;attribute name="Class-Path" value="clops-runtime.jar"/&gt;
+      &lt;/manifest&gt;
+    &lt;/jar&gt;
+    &lt;copy file="lib/clops-runtime.jar" todir="dist"/&gt;
+  &lt;/target&gt;
+</pre>
+
+<p>You are now ready to use CLOPS. But if you feel that you need
+more flexibility and power then read on.</p>
+
+<h1>Advanced features</h1>
+
+<p>This section illustrates a few advanced features of CLOPS by
+showing how you can deal with tricky command line conventions.
+</p>
+
+<h2><a name="dashdash"/>Dealing with <tt>--</tt></h2>
+
+<p>The <tt>wc</tt> command line implementation above is
+<i>almost</i> OK. One problem is that it doesn't allow the user
+to examine a file whose name is &quot;<tt>-w</tt>&quot; (or any
+other name that conflicts with an option). The usual convention
+to handle such situations is to use a special option (<tt>--</tt>)
+and treat all that follows as being an operand (not an option).
+We can handle this by changing <tt>wc.clo</tt> a little.</p>
+
+<pre class="prettyprint">
+ARGS::
+  DashFiles: {}: {file-list}: 
+    [between="", allowMultiple="false", allowDash="true"]
+  DashDash: {"--"}
+
+FORMAT::
+  (Option | Files)* (DashDash DashFiles*)?;
+</pre>
+
+<p>Also, add the following line at the end of your <tt>main</tt>
+method:</p>
+
+<pre class="prettyprint">
+    for (File f : opt.getDashFiles()) checkFile(f);
+</pre>
+
+<p>Recompile and run.</p>
+
+<pre class="cmdline">
+ant dist
+java -jar dist/wc.jar ARGUMENTS
+</pre>
+
+<p>As before, spend some time trying different <tt>ARGUMENTS</tt>.</p>
+
+<p>Each option type, like <tt>file-list</tt>, has a number of
+properties that customize its behavior, like <tt>between</tt>,
+<tt>allowMultiple</tt>, and <tt>allowDash</tt>. The
+default behavior for <tt>file-list</tt> is to recognize
+command lines like <code class="cmdline">-f nameA,nameB</code> and like
+<code class="cmdline">-f=nameA,nameB</code>. If the set of aliases
+is left empty then it will recognize command lines
+like <code class="cmdline">=nameA,nameB</code> or <code class="cmdline">&quot;&quot;
+nameA,nameB</code>. In other words, it still expects <tt>=</tt>
+or an argument delimiter between the empty prefix and the file
+names. If we want command lines like <code class="cmdline">nameA,nameB</code> to
+be recognized then we must say <tt>between=&quot;&quot;</tt>.
+The second property, <tt>allowMultiple</tt>, defaults to
+<tt>true</tt> and means that a comma&nbsp;(<tt>,</tt>) can be
+used to separate multiple file names. But <tt>wc</tt> considers
+the command line <code class="cmdline">x,y</code> as being one file name, not
+two, so we set <tt>allowMultiple</tt> to <tt>false</tt> to get
+this behavior. Finally, because it is by far the most common
+behavior, the default is not to allow file names that begin with
+a dash.</p>
+
+<p>The other secret ingredient in getting the same behavior
+as <tt>wc</tt> is the <i>format</i>. It says that a <tt>--</tt>
+might appear (<tt>?</tt>) followed by any number (<tt>*</tt>)
+of file names that may start with a dash.
+</p>
+
+<p>If you wonder if the zoo of properties is big enough to handle
+all your needs then the answer is that underneath there is an even
+more general mechanism, and most properties are just syntactic
+sugar to make your life easier.</p>
+
+<h2>GZIP's -0, -1, ..., -9</h2>
+
+<p>GZIP can be told what compression level to use by saying
+-0, -1, ..., or -9. From the program we'd like to be able to
+simply ask <tt>clopsParser.getCompressionLevel()</tt>. How can
+this be achieved? To understand the answer it helps if you
+know a little more about how CLOPS works. Each option has a <a
+href="http://java.sun.com/javase/6/docs/api/java/util/regex/Pattern.html">
+regular expression</a> that is built by default from
+aliases and from the option type. This regular expression is used
+to split the command line into meaningful bits. Let's say we
+declared the following option: </p>
+
+<pre class="prettyprint">
+  Foo: {"-f", "--foo"}: {int} 
+</pre>
+
+<p>Then, its default regular expression is</p>
+
+<pre class="prettyprint">
+  "((?:-f)|(?:--foo))(?:[=\0]([0-9]+))?\0"
+</pre>
+
+<p>Here <tt>\0</tt> matches the end of one command line argument
+and <tt>(?:X)</tt> is just the Java convention of grouping
+without numbering the group. In general, any option type that
+expects one argument has a default regular expression that
+consists of a prefix and a suffix. The prefix (in this case
+<tt>((?:-f)|(?:--foo))</tt>) is an alternation between aliases.
+The suffix is made out of the &quot;between&quot; part and
+the &quot;argument shape&quot; part. The &quot;between&quot;
+part is by default <tt>[=\0]</tt> and may be changed using
+the <tt>between</tt> property; the &quot;argument shape&quot;
+part defaults to something dependent on the option type
+(<tt>([0-9]+)</tt> for the option type <tt>int</tt>) and
+can be changed using the <tt>argumentShape</tt> property.
+The whole suffix part can be changed at once using the
+<tt>suffixregexp</tt> property. Notice that if you don't provide
+any alias and yet override the suffix you effectively specify the
+whole regular expression yourself.
+</p>
+
+<p>The groups in the regular expression are important. Group 1
+usually captures the prefix and is used in error messages; group
+2 captures the string that is then parsed to build the value of
+the option.</p>
+
+<p>We can now describe the solution.</p>
+
+<pre class="prettyprint">
+  CompressionLevel: {"-"}: {int}: [suffixregexp="([0-9])\0"]
+</pre>
+
+<p>That's all.</p>
+
+<p><i>Exercise:</i> How would you handle TAIL? (You can
+say <tt>tail -50 foo</tt> to display the last 50 lines of
+<tt>foo</tt>.)</p>
+
+
+<h2>TAR's Old Style Options</h2>
+
+<p>The special character <tt>\0</tt> in the regular expressions
+above might look weird. But it is powerful. It allows you to have
+options that do not necessarily correspond to what your shell
+considers to be one argument. In particular, it allows you to
+handle old style options such as those supported by TAR.</p>
+
+<p>To decompress a file one typically says</p>
+
+<pre class="cmdline">
+tar xzf foo.tar.gz
+</pre>
+
+<p>and to compress</p>
+
+<pre class="cmdline">
+tar cjvf foo.tar.bz2 foo/
+</pre>
+
+<p>The option <tt>x</tt> stands for eXtract, option <tt>c</tt>
+for Create, option <tt>z</tt> for gZip, option <tt>j</tt> for
+bzip2, option <tt>v</tt> for Verbose, and option <tt>f</tt> says
+that the file name follows.</p>
+
+<p>But it is also possible to say</p>
+
+<pre class="cmdline">
+tar -c -z -f foo.tar.gz foo/
+</pre>
+
+<p>or even</p>
+
+<pre class="cmdline">
+tar fcz foo.tgz foo/
+</pre>
+
+<p>Let's see how this can be handled with CLOPS. We begin
+with the easy bits.</p>
+
+<pre class="prettyprint">
+NAME::
+  Tar
+
+ARGS::
+  Create: {"-c"}:
+    "create a new archive"
+  Extract: {"-x","--extract","--get"}:
+    "extract files from an archive"
+  BzipTwo: {"-j","--bzip2"}:
+    "filter archive thru bzip2"
+  Gzip: {"-z","--gzip","--gunzip","--ungzip"}:
+    "filter archive thru gzip"
+  Archive: {"-f","--file"}: {file}:
+    "use the given file"
+  File: {}: {file-list}: [between="", allowMultiple="false"]:
+    "files to archive"
+</pre>
+
+<p>To recognize the old-style options we introduce dummy options.</p>
+
+<pre class="prettyprint">
+  ShortCreate: {"c"}: [suffixregexp=""]
+  ShortExtract: {"x"}: [suffixregexp=""]
+  ShortBzipTwo: {"j"}: [suffixregexp=""]
+  ShortGzip: {"z"}: [suffixregexp=""]
+  ShortArchive: {"f"}: [suffixregexp=""]
+  ShortArchiveValue: {}: {file}: [between="\0"]
+</pre>
+
+<p>These are &quot;dummy&quot; in the sense that we don't plan to
+ever ask about their value in our implementation of TAR. Instead,
+we tell CLOPS to set the corresponding long versions on the
+fly.</p>
+
+<pre class="prettyprint">
+FLY::
+  ShortArchiveValue -> Archive := {$(ShortArchiveValue)};
+  ShortCreate -> Create := {true};
+  ShortExtract -> Extract := {true};
+  ShortGzip -> Gzip := {true};
+  ShortBzipTwo -> BzipTwo := {true};
+</pre>
+
+<p>The mysterious regular expressions used by the old-style options
+can be understood only after you see the format.</p>
+
+<pre class="prettyprint">
+FORMAT::
+  (ShortOption* ShortArchive ShortOption* ShortArchiveValue 
+      (LongOption | File)*
+| (ShortOption* LongOption* Archive (LongOption | File)*));
+
+WHERE::
+  LongOption: 
+    Create | Extract | BzipTwo | Gzip;
+  ShortOption: 
+    ShortCreate | ShortExtract | ShortBzipTwo | ShortGzip;
+</pre>
+
+<p>By setting the <tt>suffixregexp</tt> to the empty string
+we make sure that a separator after the option string is not
+required, as is usual.</p>
+
+<p>Finally, we can instruct CLOPS to issue error messages if
+certain conditions hold.</p>
+
+<pre class="prettyprint">
+VALIDITY::
+  {$(Create?) &amp;&amp; $(Extract?)}: 
+    "You can't create and extract at the same time";
+  {$(Gzip?) &amp;&amp; $(BzipTwo?)}: 
+    "You can't use gzip and bzip2 at the same time";
+  {!$(Create?) &amp;&amp; !$(Extract?)}: 
+    "Should I create an archive or extract from one?";
+</pre>
+
+<p>With relatively little effort we obtained a parser for the
+insanely complicated conventions of TAR!</p>
+
+<p><i>Exercise:</i> Find the remaining differences between TAR
+and the parser generated from the description above. </p>
+
+<h2>Custom options</h2>
+
+<p class="todo">TODO. Show how to implement an ENUM for
+excluding booleans.</p>
+
+<hr/>
+<p>
+  <a href="http://sourceforge.net/projects/clops">
+    <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=257014&amp;type=13" width="120" height="30" alt="Get CLOPS at SourceForge.net. Fast, secure and Free Open Source software downloads" />
+    </a>
+  <a href="http://validator.w3.org/check?uri=referer"><img
+     src="http://www.w3.org/Icons/valid-xhtml10-blue"
+     alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
+</p>
+</body>
+</html>
+<!--
+vim: spell
+-->
