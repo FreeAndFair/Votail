@@ -1,0 +1,989 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=iso-8859-1" />
+
+<title>BON Documentation: VOTAIL</title>
+
+<script type="text/javascript">
+<!--
+
+var items = ['system_chart:VOTAIL','class_chart:BALLOT','class_chart:BALLOT_COUNTING','class_chart:CONSTITUENCY','class_chart:BALLOT_BOX','class_chart:CANDIDATE','cluster_chart:COUNTING_PROCESS','event_chart:1','scenario_chart:1','class_dictionary:1'];
+var topOptions = [ 'System Chart', 'system_chart', 'Class Dictionaries', 'class_dictionary', 'Cluster Charts', 'cluster_chart', 'Class Charts', 'class_chart', 'Event Charts', 'event_chart', 'Scenario Charts', 'scenario_chart' ];
+var subOptions = [];
+subOptions['system_chart'] = [ 'VOTAIL', 'system_chart:VOTAIL' ];
+subOptions['cluster_chart'] = [ 'COUNTING_PROCESS','cluster_chart:COUNTING_PROCESS' ];
+subOptions['class_chart'] = [ 'BALLOT','class_chart:BALLOT','BALLOT_BOX','class_chart:BALLOT_BOX','BALLOT_COUNTING','class_chart:BALLOT_COUNTING','CANDIDATE','class_chart:CANDIDATE','CONSTITUENCY','class_chart:CONSTITUENCY' ];
+subOptions['event_chart'] = [ 'Event Chart 1','event_chart:1' ];
+subOptions['scenario_chart'] = [ 'Scenario Chart 1','scenario_chart:1' ];
+subOptions['class_dictionary'] = [ 'Class Dictionary 1','class_dictionary:1' ];
+
+
+var showAll = false;
+var sysTitle = 'system_title';
+var topMenu = 'top-menu';
+var subMenu = 'sub-menu';
+
+function setElText(id,text) {
+  var elem = document.getElementById(id);
+  if (elem) {
+    elem.innerHTML = text;
+  }
+}
+
+function toggleShowAll() {
+  showAll = !showAll;
+  if (showAll) {
+    displayAll();
+    setElText('showlink', 'Show One');
+  } else {
+    hideAll();
+    setElText('showlink', 'Show All');
+  }
+  showSelected();
+  return false;
+}
+
+function select(id) {
+  if (showAll) {
+//    setHash(id);
+    return true;
+  } else {
+    showOnly(id);
+    return true;
+  }
+}
+
+function showOnly(id) {
+  var elem = document.getElementById(id);
+  if (elem) {
+    hideAll();
+    showElem(id);
+  }
+}
+
+function hideAll() {
+  for (var i=0; i<items.length; i++) {
+    hideElem(items[i]);
+  }
+}
+
+function displayAll() {
+  for (var i=0; i<items.length; i++) {
+    showElem(items[i]);
+  }
+}
+
+function showElem(id) {
+  var elem = document.getElementById(id);
+  if (elem) {
+    show(elem);
+  }
+}
+
+function hideElem(id) {
+  var elem = document.getElementById(id);
+  if (elem) {
+    hide(elem);
+  }
+}
+
+function hide(elem) {
+  addClass(elem,'hidden');
+}
+
+function show(elem) {
+  removeClass(elem,'hidden');
+}
+
+function addClass(elem,cName) {
+  if (!elem.className) {
+    elem.className = cName;
+  } else if (elem.className.indexOf(cName) == -1) {
+    elem.className += ' ' + cName;
+  }
+}
+
+function removeClass(elem,cName) {
+  if (elem.className) {
+    var toReplace = elem.className.match(' ' + cName);
+    elem.className = elem.className.replace(toReplace, '');
+  }
+}
+
+function setBack(id) {
+//Not yet...
+}
+
+function initialPopulate() {
+  var topSelect = document.getElementById(topMenu);
+  if (topSelect) {
+    topSelect.options.length = 0;
+    for (var i=0; i < topOptions.length; i+=2) {
+      topSelect.options[i/2] = new Option(topOptions[i],topOptions[i+1]);
+    }
+  }
+  if (window.location.hash) {
+    hashSelect(window.location.hash.substr(1));    
+  } else {
+    populate();
+    showSelected();
+  }
+  lastHash = window.location.hash;
+  //Trigger checkHash
+  setInterval(checkHash,100);
+}
+
+function hashSelect(hash) {
+  var parts = hash.split(':');
+  if (parts.length == 2) {
+    linkSelect(parts[0],hash);
+  } else {
+    populate();
+  }
+}
+
+var lastHash = '';
+
+function checkHash() {
+
+  if (window.location.hash) {
+    if (window.location.hash != lastHash) {
+      hashSelect(window.location.hash.substr(1));
+      lastHash = window.location.hash;
+    }
+  }
+}
+
+function setHash(hash) {
+  lastHash = '#' + hash;
+  window.location.hash = hash;
+}
+
+function populate() {
+
+  var subSelect = document.getElementById(subMenu);
+  var topSelect = document.getElementById(topMenu);
+
+  if (subSelect && topSelect) {
+    var selected = topSelect.options[topSelect.selectedIndex].value;
+    if (selected) {
+      var chosenSubOptions = subOptions[selected];
+      subSelect.options.length = 0;
+      for (var i=0; i < chosenSubOptions.length; i+=2) {
+        subSelect.options[i/2] = new Option(chosenSubOptions[i],chosenSubOptions[i+1]);
+      }
+    }
+  }
+}
+
+function showSelected() {
+  var subSelect = document.getElementById(subMenu);
+  if (subSelect) {
+    var selected = subSelect.options[subSelect.selectedIndex].value;
+    if (selected) {
+      select(selected);
+      setHash(selected);
+    }
+  }
+}
+
+function linkSelect(top, sub) {
+  var topSelect = document.getElementById(topMenu);
+  if (topSelect) {
+    for (var i=0; i < topSelect.options.length; i++) {
+      if (topSelect.options[i].value == top) {
+        topSelect.selectedIndex = i;
+        break;
+      }
+    }
+  }  
+  populate();
+  var subSelect = document.getElementById(subMenu);
+  if (subSelect) {
+    for (var i=0; i < subSelect.options.length; i++) {
+      if (subSelect.options[i].value == sub) {
+        subSelect.selectedIndex = i;
+        showSelected();
+        return false;
+      }
+    }
+    showSelected();
+  }
+  return true;
+}
+
+
+//-->
+</script>
+
+<style type="text/css">
+
+.hidden {
+  position:absolute;
+  left:0px;
+  top:-500px;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+
+body {
+  font-family: Optima, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Helvetica, Arial, sans-serif;
+}
+
+.list-entry {
+  margin-left: 5px;
+}
+
+a {
+  text-decoration: none;
+  color: blue;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  text-decoration: none;
+}
+
+#main {
+  padding-bottom: 100px;
+}
+
+#footer {
+  z-index: 1;
+  position: fixed; 
+  bottom: 0px;
+  right: 0px; 
+  width: 100%;
+  border-top: 2px solid #000000;
+  background-color: #cccccc;
+}
+
+#left-footer {
+  margin-top: 5px;
+  margin-bottom: 0px;
+  font-weight: bold;
+}
+
+#left-footer select {
+  margin-right: 10px;
+  font-size: 1.1em;
+}
+
+#showlink {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 1.1em;
+  min-width: 125px;
+}
+
+#top-menu {
+  min-width: 160px;
+}
+
+#sub-menu {
+  min-width: 220px;
+}
+
+#right-footer {
+  margin: 5px 5px 0px 0px;
+  padding: 0;
+  text-align: right;
+}
+
+#footer a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+dl {
+  margin: 0 0 0 10px;
+}
+
+dd {
+  margin-left: 20px;
+} 
+
+.scenario_entry dt {
+  font-weight: bold;
+}
+
+.indexing dt, .explanation dt {
+  font-variant: small-caps;
+  letter-spacing: 1px;
+}
+
+.top-level {
+  width: 98%;
+  margin: auto;
+}
+
+.outer {
+  width: 100%;
+  background-color: #a2a2a2;
+  border: 2px solid #000000;
+  margin-bottom: 30px;
+}
+
+.type, .name, .part {
+  border: 4px groove #c0c0c0;
+  padding: 5px 0px 5px 0px;
+  text-align: center;
+}
+
+.explanation, .indexing {
+  padding: 5px 5px 5px 10px;
+  background-color: #ffffff;
+  vertical-align: top;
+  border: 4px groove #c0c0c0;
+  padding: 5px 0px 5px 0px;
+}
+
+.name {
+  background-color: #f3f0f0;
+  font-size: 1.1em;
+}
+
+.part {
+  background-color: #cccccc;
+}
+
+.type, .part {
+  width: 25%;
+}
+
+.type {
+  background-color: #bcbcbc;
+}
+
+.name, .indexing, .explanation {
+  width: 50%;
+}
+
+.top, .middle, .bottom {
+  width: 100%;
+}
+
+.bottom table {
+  border: 4px groove #c0c0c0;
+  width: 100%;
+}
+
+.bottom tr {
+  width: 100%;
+}
+
+.bottom td, .bottom th {
+  border: 1px inset #c0c0c0;
+  vertical-align: top;
+  padding: 8px 20px 8px 20px;
+}
+
+.spaced-lines {
+  line-height: 1.5em;
+}
+
+.white {
+  background-color: #ffffff;
+}
+
+.light-grey {
+  background-color: #f3f0f0;
+}
+
+.grey {
+  background-color: #cccccc;
+}
+</style>
+
+</head>
+<body onload="initialPopulate();">
+
+<div id="main">
+
+<div class="top-level" id="class_chart:BALLOT">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">CLASS</th>
+      <td class="name" colspan="2">BALLOT</td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Type Of Object</dt>
+          <dd>&#8220;A valid set of preferences such as an ordered list of candidates&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="light-grey">Queries</th>
+            <td class="white spaced-lines">&#8220;How many preferences are shown on this ballot?&#8221;<br/>&#8220;Who is the first preference for?&#8221;<br/>&#8220;Who is the next preference for?&#8221;<br/>&#8220;Who is the highest preference continuing candidate on this ballot?&#8221;<br/>&#8220;Which elected or continuing candidate benefits from this ballot?&#8221;</td>
+          </tr>
+          <tr>
+            <th class="light-grey">Commands</th>
+            <td class="white spaced-lines">&#8220;Allocate this ballot to the next preference candidate&#8221;</td>
+          </tr>
+          <tr>
+            <th class="light-grey">Constraints</th>
+            <td class="white spaced-lines">&#8220;The sequence of preferences is unbroken e.g. no candidate is listed twice&#8221;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="top-level" id="class_chart:BALLOT_BOX">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">CLASS</th>
+      <td class="name" colspan="2">BALLOT_BOX</td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Type Of Object</dt>
+          <dd>&#8220;The set of all ballot papers with at least one valid preference&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="light-grey">Queries</th>
+            <td class="white spaced-lines">&#8220;How many valid ballot papers?&#8221;<br/>&#8220;How many first preference votes for each candidate?&#8221;<br/>&#8220;How many different piles of ballots?&#8221;</td>
+          </tr>
+          <tr>
+            <th class="light-grey">Commands</th>
+            <td class="white spaced-lines"></td>
+          </tr>
+          <tr>
+            <th class="light-grey">Constraints</th>
+            <td class="white spaced-lines">&#8220;Every ballot paper has at least one preference&#8221;<br/>&#8220;The total number of first preference votes is equal to the number of ballots&#8221;<br/>&#8220;The sum of the number of ballots in each pile is equal to the number of ballots&#8221;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="top-level" id="class_chart:BALLOT_COUNTING">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">CLASS</th>
+      <td class="name" colspan="2">BALLOT_COUNTING</td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Type Of Object</dt>
+          <dd>&#8220;Count algorithm for tallying of the votes in Dail and Seanad elections&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="light-grey">Queries</th>
+            <td class="white spaced-lines">&#8220;How many continuing candidates?&#8221;<br/>&#8220;How many remaining seats?&#8221;</td>
+          </tr>
+          <tr>
+            <th class="light-grey">Commands</th>
+            <td class="white spaced-lines">&#8220;Calculate quota&#8221;<br/>&#8220;Find highest continuing candidate with quota&#8221;<br/>&#8220;Calculate surplus&#8221;<br/>&#8220;Calculate transfer factor&#8221;<br/>&#8220;Calculate non-fractional transfers&#8221;<br/>&#8220;Calculate fractional differences&#8221;<br/>&#8220;Calculate adjustments&#8221;<br/>&#8220;Calculate transfers&#8221;<br/>&#8220;Move ballots&#8221;<br/>&#8220;Select lowest continuing candidates for exclusion&#8221;<br/>&#8220;Declare remaining candidates elected&#8221;<br/>&#8220;Close the count&#8221;</td>
+          </tr>
+          <tr>
+            <th class="light-grey">Constraints</th>
+            <td class="white spaced-lines"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="top-level" id="class_chart:CANDIDATE">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">CLASS</th>
+      <td class="name" colspan="2">CANDIDATE</td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Type Of Object</dt>
+          <dd>&#8220;A person eligible and nominated for election&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="light-grey">Queries</th>
+            <td class="white spaced-lines">&#8220;How many first preferences?&#8221;<br/>&#8220;How many second preferences?&#8221;<br/>&#8220;How many votes in each round?&#8221;</td>
+          </tr>
+          <tr>
+            <th class="light-grey">Commands</th>
+            <td class="white spaced-lines"></td>
+          </tr>
+          <tr>
+            <th class="light-grey">Constraints</th>
+            <td class="white spaced-lines"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="top-level" id="class_chart:CONSTITUENCY">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">CLASS</th>
+      <td class="name" colspan="2">CONSTITUENCY</td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Type Of Object</dt>
+          <dd>&#8220;The overall parameters of the election&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="light-grey">Queries</th>
+            <td class="white spaced-lines">&#8220;How many candidates in this election?&#8221;<br/>&#8220;How many seats are in this constituency?&#8221;<br/>&#8220;How many seats are being filled in this election?&#8221;</td>
+          </tr>
+          <tr>
+            <th class="light-grey">Commands</th>
+            <td class="white spaced-lines"></td>
+          </tr>
+          <tr>
+            <th class="light-grey">Constraints</th>
+            <td class="white spaced-lines">&#8220;At least one seat is bing filled&#8221;<br/>&#8220;The number of seats being filled is not more than the number of seats in this constituency&#8221;<br/>&#8220;The number of seats being filled is less than the number of candidates&#8221;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div><div class="top-level" id="cluster_chart:COUNTING_PROCESS">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">CLUSTER</th>
+      <td class="name" colspan="2">COUNTING_PROCESS</td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Purpose</dt>
+          <dd>&#8220;The counting of electronic ballots&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+          <dd>
+            author: &#8220;Dermot Cochran&#8221;;
+          </dd>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+<table>
+          <tr>
+            <th class="grey">Class</th>
+            <th class="grey">Description</th>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:BALLOT" onclick="return linkSelect('class_chart','class_chart:BALLOT');">BALLOT</a></td>
+            <td class="white">&#8220;List of some or all candidates in order of preference&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:BALLOT_BOX" onclick="return linkSelect('class_chart','class_chart:BALLOT_BOX');">BALLOT_BOX</a></td>
+            <td class="white">&#8220;The set of all valid ballots&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></td>
+            <td class="white">&#8220;The algorithm used to count the ballots&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:CANDIDATE" onclick="return linkSelect('class_chart','class_chart:CANDIDATE');">CANDIDATE</a></td>
+            <td class="white">&#8220;A person eligible and nominated for election&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:CONSTITUENCY" onclick="return linkSelect('class_chart','class_chart:CONSTITUENCY');">CONSTITUENCY</a></td>
+            <td class="white">&#8220;The overall parameters of the election&#8221;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div><div class="top-level" id="event_chart:1">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">EVENT</th>
+      <td class="name" colspan="2"><a href="#system_chart:VOTAIL" onclick="return linkSelect('system_chart','system_chart:VOTAIL');">VOTAIL</a></td>
+      <td class="part"><strong>Part:</strong> 2/2</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Comment</dt>
+          <dd></dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="grey">Internal (outgoing)</th>
+            <th class="grey">Involved object types</th>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;A: The quota is calculated&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_BOX" onclick="return linkSelect('class_chart','class_chart:BALLOT_BOX');">BALLOT_BOX</a></span>, <span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;B: The highest continuing candidate is found&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;C: The surplus, from an elected candidate, is calculated&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;D: The number of votes for transfer (from surplus) are calculated&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;H: Transfers, from an excluded candidate, are calculated&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;J: The lowest continuing candidate is selected for exclusion&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;K: The number of continuing candidates is recalculated&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span>, <span class="list-entry"><a href="#class_chart:CANDIDATE" onclick="return linkSelect('class_chart','class_chart:CANDIDATE');">CANDIDATE</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;L: The selected ballots are moved to the next continuing preference candidate&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT" onclick="return linkSelect('class_chart','class_chart:BALLOT');">BALLOT</a></span>, <span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;M: The number of remaining seats is checked&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;N: The remaining candidates are deemed elected&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span>, <span class="list-entry"><a href="#class_chart:CANDIDATE" onclick="return linkSelect('class_chart','class_chart:CANDIDATE');">CANDIDATE</a></span></td>
+          </tr>
+          <tr>
+            <td class="light-grey">&#8220;P: The counting is closed and final result declared&#8221;</td>
+            <td class="white spaced-lines"><span class="list-entry"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></span></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div><div class="top-level" id="scenario_chart:1">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">SCENARIOS</th>
+      <td class="name" colspan="2"><a href="#system_chart:VOTAIL" onclick="return linkSelect('system_chart','system_chart:VOTAIL');">VOTAIL</a></td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Comment</dt>
+          <dd>&#8220;Scenarios for ballot counting&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>01: READY_TO_START</dt>
+                <dd>&#8220;Ballots, candidate and election data have been loaded&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>02: NO_SEATS_FILLED_YET</dt>
+                <dd>&#8220;No candidates have been elected so far&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>03: CANDIDATE_REACHES_QUOTA</dt>
+                <dd>&#8220;One or more candidates achieve the minimum quota of votes&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>04: CANDIDATE_ELECTED</dt>
+                <dd>&#8220;The highest continuing candidate with quota is deemed to be elected&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>05: NO_SURPLUS_AVAILABLE</dt>
+                <dd>&#8220;There is no surplus available for distribution&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>06: SURPLUS_AVAILABLE</dt>
+                <dd>&#8220;There is at least one surplus availble for distribution&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>10: READY_TO_MOVE_BALLOTS</dt>
+                <dd>&#8220;The number of ballots for transfer to each candidate has been determined&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>11: LOWEST_CANDIDATE_EXCLUDED</dt>
+                <dd>&#8220;Exclude one or more of the lowest continuing candidates&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>12: READY_FOR_NEXT_ROUND</dt>
+                <dd>&#8220;Ballots have been transfered form one candidate to one or more others&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>13: FILLING_OF_LAST_SEAT</dt>
+                <dd>&#8220;There is one remaining seat and at least two continuing candidates, or the number of continuing candidates is just one more than the number of remaining seats&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>14: MORE_CANDIDATES_THAN_SEATS</dt>
+                <dd>&#8220;There are more continuing candidates than remaining seats&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>15: SEATS_REMAINING</dt>
+                <dd>&#8220;There is at least one vacancy yet to be filled&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>16: ALL_SEATS_FILLED</dt>
+                <dd>&#8220;The number of continuing candidates equals the number of seats remaining&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr>
+            <td class="white">
+              <dl class="scenario_entry">
+                <dt>18: CONTINUING_CANDIDATES_EQUAL_REMAINING_SEATS</dt>
+                <dd>&#8220;The number of continuing candidates equals the number of remaining seats; all continuing candidates are deemed elected&#8221;</dd>
+              </dl>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div><div class="top-level" id="system_chart:VOTAIL">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">SYSTEM</th>
+      <td class="name" colspan="2">VOTAIL</td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Purpose</dt>
+          <dd>&#8220;A verified verifiable open source system for remote electronic/computer mediated voting&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="grey">Cluster</th>
+            <th class="grey">Description</th>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></td>
+            <td class="white">&#8220;The counting of ballots by proportional representation with single transferable vote&#8221;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div><div class="top-level" id="class_dictionary:1">
+  <table class="outer">
+    <tr class="top">
+      <th class="type">CLASS DICTIONARY</th>
+      <td class="name" colspan="2"><a href="#system_chart:VOTAIL" onclick="return linkSelect('system_chart','system_chart:VOTAIL');">VOTAIL</a></td>
+      <td class="part"><strong>Part:</strong> 1/1</td>
+    </tr>
+    <tr class="middle">
+      <td class="explanation" colspan="2">
+        <dl>
+          <dt>Comment</dt>
+          <dd>&#8220;BONc automatically generated class dictionary.&#8221;</dd>
+        </dl>
+      </td>
+      <td class="indexing" colspan="2">
+        <dl>
+          <dt>Indexing</dt>
+        </dl>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="4" class="bottom">
+        <table>
+          <tr>
+            <th class="grey">Class</th>
+            <th class="grey">Cluster</th>
+            <th class="grey">Description</th>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:BALLOT" onclick="return linkSelect('class_chart','class_chart:BALLOT');">BALLOT</a></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
+            <td class="white">&#8220;A valid set of preferences such as an ordered list of candidates&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:BALLOT_BOX" onclick="return linkSelect('class_chart','class_chart:BALLOT_BOX');">BALLOT_BOX</a></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
+            <td class="white">&#8220;The set of all ballot papers with at least one valid preference&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
+            <td class="white">&#8220;Count algorithm for tallying of the votes in Dail and Seanad elections&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:CANDIDATE" onclick="return linkSelect('class_chart','class_chart:CANDIDATE');">CANDIDATE</a></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
+            <td class="white">&#8220;A person eligible and nominated for election&#8221;</td>
+          </tr>
+          <tr>
+            <td class="light-grey"><a href="#class_chart:CONSTITUENCY" onclick="return linkSelect('class_chart','class_chart:CONSTITUENCY');">CONSTITUENCY</a></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
+            <td class="white">&#8220;The overall parameters of the election&#8221;</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</div>
+<div id="footer">
+  <p id="left-footer">
+    <button id="showlink" onclick="return toggleShowAll();">Show all</button>
+    Chart type:
+    <select id="top-menu" onchange="populate(); showSelected();"><option>processing...</option></select>
+    Chart:
+    <select id="sub-menu" onchange="showSelected();"><option>processing...</option></select>
+  </p>
+  <p id="right-footer">
+    Generated by <a href="http://kind.ucd.ie/products/opensource/BONc">BONc</a> (version: bonc-0.1.5) <a href="http://validator.w3.org/check?uri=referer">XHTML</a> output, Tue Feb 16 14:46:19 CET 2010.
+  </p>
+</div>
+
+</div> <!-- End main -->
+
+</body>
+</html>

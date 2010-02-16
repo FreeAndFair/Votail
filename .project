@@ -50,6 +50,11 @@
 				</dictionary>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>ie.ucd.bon.beetlz.plugin.beetlzbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
@@ -63,5 +68,6 @@
 		<nature>net.sourceforge.metrics.nature</nature>
 		<nature>mobius.escjava2.ui.autocheckEscjavaNature</nature>
 		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
+		<nature>ie.ucd.bon.beetlz.plugin.beetlznature</nature>
 	</natures>
 </projectDescription>

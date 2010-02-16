@@ -17,7 +17,8 @@ import election.tally.ElectionStatus;
 
 public class TestDataGenerator {
 
-  private static final int MEMORY_LIMIT = 100;
+  // Maximum number of ballot boxes that can be held in memory
+  private static final int MEMORY_LIMIT = 1000000000;
   
   private static int abstractBallotCounting_count = 0;
   private static int abstractCountStatus_count = 0;

@@ -32,7 +32,7 @@ part
 event
   "A: The quota is calculated"
 involves
-  BALLOT_BOX, BALLOT_COUNTING, ELECTION
+  BALLOT_BOX, BALLOT_COUNTING
 event
   "B: The highest continuing candidate is found"
 involves
