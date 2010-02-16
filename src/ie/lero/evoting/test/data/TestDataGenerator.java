@@ -249,7 +249,7 @@ public class TestDataGenerator {
    * nor a formal parameter for any other object.
    * 
    * @param n
-   * @return
+   * @return A Ballot Counting object
    */
   //@ requires 0 <= n;
   public static BallotCounting getBallotCounting(int n) {

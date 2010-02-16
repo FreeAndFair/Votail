@@ -18,8 +18,7 @@ public class Candidate extends CandidateStatus {
 /**
  * Maximum expected number of candidates in any one constituency.
  * 
- * @see <a href="http://en.wikipedia.org/wiki/List_of_political_parties_in_the_Republic_of_Ireland">
- * List of political parties in Ireland</a>	
+ * @see <a href="http://en.wikipedia.org/wiki/List_of_political_parties_in_the_Republic_of_Ireland">List of political parties in Ireland</a>	
  * 
  * The average number of candidates could be much less.
  */

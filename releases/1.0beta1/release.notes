@@ -1,10 +1,12 @@
-Release Notes: Votail PRSTV
+This is the first beta release of Votail.
 
-Alpha release
-date:
-revision: 0.1 (first release)
+Testing and verification at date of release:
 
-Changes since last alpha release: none
+Identified ten common scenarios and wrote unit tests, with 97% code coverage
+Runtime assertion coverage for ten handwritten tests
+Generated unit tests from all JML specifications
+Static analysis with PMD, FindBugs and ESC/Java2
 
-Subversion tag: 
-Subversion URL: https://trac.ucd.ie/repos/eVoting
+Future work:
+
+Systematic identification of all possible test cases

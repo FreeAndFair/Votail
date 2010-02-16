@@ -158,7 +158,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Determine how many surplus votes a candidate has. <BON>query
    * "How many surplus votes does this candidate have?"</BON>
    * 
-   * @design The surplus is the maximum number of votes available for transfer
+   * <p> The surplus is the maximum number of votes available for transfer
    * @param candidate
    *        The candidate record
    * @return The undistributed surplus for that candidate, or zero if the
@@ -206,9 +206,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Determine if the candidate has enough votes to save his or her deposit.
    * <BON>query "Has this candidate saved his or her deposit?"</BON>
    * 
-   * @design The deposit saving threshold is one plus one quarter of the full
+   * <p> The deposit saving threshold is one plus one quarter of the full
    *         quota
-   * @design This needs to be checked just before the candidate is eliminated to
+   * <p> This needs to be checked just before the candidate is eliminated to
    *         include all transfers received before the candidate was either
    *         elected or eliminated
    * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV commentary on
@@ -257,7 +257,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Load candidate details and number of seats.
    * 
-   * @param electionParameters
+   * @param constituency
    *        The candidate details and number of seats
    */
   /*@ also
@@ -395,7 +395,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Gets the potential number of transfers from one candidate to another.
    * 
-   * @design This method is needed to get the proportions to use when
+   * <p> This method is needed to get the proportions to use when
    *         transferring surplus votes
    * @param fromCandidate
    *        Candidate from which to check the transfers
@@ -490,7 +490,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Determine actual number of votes to transfer to this candidate
    * 
-   * @design The number of votes in a surplus transferred is in proportion to
+   * <p> The number of votes in a surplus transferred is in proportion to
    *         the number of transfers available throughout the candidate's ballot
    *         stack
    * @param fromCandidate
@@ -544,7 +544,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Determine the rounded value of a fractional transfer.
    * 
-   * @design This depends on the shortfall and the relative size of the other
+   * <p> This depends on the shortfall and the relative size of the other
    *         fractional transfers.
    * @param fromCandidate
    *        Elected candidate from which to distribute surplus
@@ -599,7 +599,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /**
    * Simulate random selection between two candidates.
    * 
-   * @design This needs to be random but consistent, so that same result is
+   * <p> This needs to be random but consistent, so that same result is
    *         always given for the same pair of candidates.
    * @param firstCandidate
    *        The first of the candidates to be selected from
@@ -622,7 +622,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Determine the individuals remainder after integer division by the transfer
    * factor for surpluses.
    * 
-   * @design This can all be done with integer arithmetic; no need to use
+   * <p> This can all be done with integer arithmetic; no need to use
    *         floating point numbers, which could introduce rounding errors.
    * @param fromCandidate
    *        Elected candidate from which to count to transfers
@@ -651,7 +651,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Determine if one continuing candidate is higher than another, for the
    * purpose of resolving remainders of transfer quotients.
    * 
-   * @design This is determined by finding the earliest round of counting in
+   * <p> This is determined by finding the earliest round of counting in
    *         which these candidates had unequal votes. If both candidates are
    *         equal at all counts then random numbers are used to draw lots.
    * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">Department of
@@ -698,7 +698,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Determine the number of continuing candidates with a higher remainder in
    * their transfer quotient, or deemed to have a higher remainder.
    * 
-   * @design There must be a strict ordering of candidates for the purpose of
+   * <p> There must be a strict ordering of candidates for the purpose of
    *         allocating the transfer shortfall. If two or more candidates have
    *         equal remainders then use the number of transfers they are about to
    *         receive and if the number of transfers are equal then look at the

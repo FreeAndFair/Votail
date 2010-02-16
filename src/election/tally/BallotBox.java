@@ -80,7 +80,7 @@ public class BallotBox {
 	 * <p>
 	 * The ballot ID number is regenerated.
 	 * <p>
-	 * @param ballot The ballot paper
+	 * @param preferences The list of candidate preferences
 	 */
 	/*@ requires numberOfBallots < ballots.length;
 	  @ requires numberOfBallots < Ballot.MAX_BALLOTS;
