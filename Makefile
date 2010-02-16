@@ -120,7 +120,7 @@ copyright = "Votail<br />&copy; 2006-10 Dermot Cochran <br />All Rights Reserved
 
 default: classes
 
-all:	build test
+all:	build test bonc
 
 build:	classes jml jmlc jmlunit_classes
 
@@ -353,3 +353,7 @@ clean_distr:
 
 clean_src_distr:
 	rm -rf src_distr.stamp
+	
+bonc:
+	external_tools/bonc/bonc -i --print=HTML -po=doc/bonc.html design/*
+	
