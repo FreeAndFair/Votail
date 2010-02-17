@@ -1,0 +1,12 @@
+This is the first beta release of Votail.
+
+Testing and verification at date of release:
+
+Identified ten common scenarios and wrote unit tests, with 97% code coverage
+Runtime assertion coverage for ten handwritten tests
+Generated unit tests from all JML specifications
+Static analysis with PMD, FindBugs and ESC/Java2
+
+Future work:
+
+Systematic identification of all possible test cases
