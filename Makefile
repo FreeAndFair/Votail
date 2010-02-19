@@ -359,5 +359,5 @@ bonc:
 	
 release: clean
 	mkdir -p release
-	tar cvf release/Votail0.0.1b --exclude .svn src design diagrams doc requirements license.txt read.me release.notes
-	
+	tar cvf release/Votail0.0.1b.tar --exclude .svn src design diagrams doc requirements license.txt read.me release.notes
+	gzip release/Votail0.0.1b.tar
