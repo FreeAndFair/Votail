@@ -1,0 +1,19 @@
+Votail version 0.0.1 beta
+Release Date: 19.02.2010
+Authors: Dermot Cochran and Joseph R. Kiniry, IT University of Copenhagen
+License: MIT open source license: 
+  http://www.opensource.org/licenses/mit-license.php
+  
+Known Issues:
+  (1) The are some unresolved warnings from ESCJava2 which have been marked as 
+      TODO items in the Java code.
+  (2) The BON and JML specifications have not been checked for consistency.
+  (3) The JML documentation was not generated automatically.
+  (4) Unit tests have only been run on the Mac OS X platform, 
+      other platforms have not been tested.
+      
+Building:
+  (1) Use subversion to get the code:
+      svn co https://trac.ucd.ie/repos/software/evoting/V%C3%B3t%C3%A1il/
+  (2) Use make to build and test the software:
+      make test
