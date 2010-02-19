@@ -357,3 +357,7 @@ clean_src_distr:
 bonc:
 	external_tools/bonc/bonc -i --print=HTML -po=doc/bonc.html design/*
 	
+release: clean
+	mkdir -p release
+	tar cvf release/Votail0.0.1b --exclude .svn src design diagrams doc requirements license.txt read.me release.notes
+	
