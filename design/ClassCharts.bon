@@ -67,17 +67,13 @@ explanation
   "Count algorithm for tallying of the votes in Dail and Seanad elections"
 query
   "How many continuing candidates?",
-  "How many remaining seats?"
+  "How many remaining seats?",
+  "What is the quota?",
+  "Who is/are highest continuing candidate(s) with a surplus?",
+  "What is the surplus?",
+  "What is the transfer factor?"
 command
-  "Calculate quota",
-  "Find highest continuing candidate with quota",
-  "Calculate surplus",
-  "Calculate transfer factor",
-  "Calculate non-fractional transfers",
-  "Calculate fractional differences",
-  "Calculate adjustments",
-  "Calculate transfers",
-  "Move ballots",
+  "Distribute the surplus ballots",
   "Select lowest continuing candidates for exclusion",
   "Declare remaining candidates elected",
   "Close the count" 
