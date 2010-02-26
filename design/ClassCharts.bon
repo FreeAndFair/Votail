@@ -64,7 +64,7 @@ end
 
 class_chart BALLOT_COUNTING
 explanation
-  "Count algorithm for tallying of the votes in Dail and Seanad elections"
+  "Count algorithm for tallying of the votes in Dail elections"
 query
   "How many continuing candidates?",
   "How many remaining seats?",
