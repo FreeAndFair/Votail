@@ -8,7 +8,7 @@ public class CountConfiguration {
    * maximum of five seats per national constituency, so the maximum possible
    * number of ballots is 150,000.
    */
-  public static final int MAXVOTES = 10000;
+  public static final int MAXVOTES = election.tally.Ballot.MAX_BALLOTS;
   /**
    * Maximum possible number of counts
    * 

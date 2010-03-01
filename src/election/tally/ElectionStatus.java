@@ -8,7 +8,7 @@ package election.tally;
  * outer tier of the state machine is: 
  * <p>
  * EMPTY --> SETTING_UP --> PRELOAD --> LOADING --> PRECOUNT --> 
- * COUNTING --> FINISHED --> REPORT 
+ * COUNTING --> FINISHED
  * <p>
  * The inner state machine models the status of the count.
  */
