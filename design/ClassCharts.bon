@@ -37,7 +37,7 @@
 class_chart BALLOT
 explanation
   "A valid set of preferences such as an ordered list of candidates"
-query
+querys
   "How many preferences are shown on this ballot?",
   "Who is the first preference for?",
   "Who is the next preference for?",
