@@ -1,12 +1,12 @@
 /**
  * 
  */
-package ie.lero.evoting.scenario;
+package ie.votail.scenario;
 
+import ie.votail.tally.BallotBox;
+import ie.votail.tally.BallotCounting;
+import ie.votail.tally.Constituency;
 import junit.framework.TestCase;
-import election.tally.BallotBox;
-import election.tally.BallotCounting;
-import election.tally.Constituency;
 
 
 /**

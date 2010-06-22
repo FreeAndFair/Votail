@@ -1,19 +1,19 @@
-package ie.lero.evoting.test.data;
+package ie.votail.test;
 
 // (c) Copyright 2009, LGSSE and University College Dublin, Ireland
 // (c) Copyright 2010, IT University of Copenhagen, Denmark
 // (c) Copyright 2009-2010 Dermot Cochran and Joseph R. Kiniry
 
-import election.tally.AbstractBallotCounting;
-import election.tally.AbstractCountStatus;
-import election.tally.Ballot;
-import election.tally.BallotBox;
-import election.tally.BallotCounting;
-import election.tally.Candidate;
-import election.tally.CandidateStatus;
-import election.tally.Constituency;
-import election.tally.CountConfiguration;
-import election.tally.ElectionStatus;
+import ie.votail.tally.AbstractBallotCounting;
+import ie.votail.tally.AbstractCountStatus;
+import ie.votail.tally.Ballot;
+import ie.votail.tally.BallotBox;
+import ie.votail.tally.BallotCounting;
+import ie.votail.tally.Candidate;
+import ie.votail.tally.CandidateStatus;
+import ie.votail.tally.Constituency;
+import ie.votail.tally.CountConfiguration;
+import ie.votail.tally.ElectionStatus;
 
 public class TestDataGenerator {
 

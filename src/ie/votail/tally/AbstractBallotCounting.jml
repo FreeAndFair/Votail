@@ -146,8 +146,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public model int remainingSeats; 
   //@ public invariant 0 <= remainingSeats;
   //@ public invariant remainingSeats <= seats;
-  //@ public invariant (state <= PRECOUNT) ==> remainingSeats == seats;
-  /*@ public invariant (state == FINISHED) ==> remainingSeats == 0;
+  /*@ public invariant (state <= PRECOUNT) ==> remainingSeats == seats;
+    @ public invariant (state == FINISHED) ==> remainingSeats == 0;
     @ public invariant (state == COUNTING) ==> 
     @   remainingSeats == (seats - numberElected);
     @*/

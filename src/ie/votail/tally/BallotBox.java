@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-package election.tally;
+package ie.votail.tally;
 
 /** Data transfer structure for set of all valid ballots */
 public class BallotBox {

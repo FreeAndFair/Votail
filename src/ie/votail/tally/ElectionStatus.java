@@ -1,4 +1,4 @@
-package election.tally;
+package ie.votail.tally;
 
 /**  
  * Abstract State Machine for Election Algorithm.

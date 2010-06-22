@@ -22,7 +22,7 @@
 -- THE SOFTWARE.
 --
 
-cluster_chart COUNTING_PROCESS
+cluster_chart TALLY
 indexing
   author: "Dermot Cochran"
 explanation 

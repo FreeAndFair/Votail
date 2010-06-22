@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package election.tally;
+package ie.votail.tally;
 
 //@ refine "Ballot.jml";
 

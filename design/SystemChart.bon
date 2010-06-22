@@ -1,7 +1,7 @@
 --
 -- VOTAIL
 --
--- Copyright (c) 2009 Dermot Cochran
+-- Copyright (c) 2009-2010 Dermot Cochran, IT University of Copenhagen
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,10 @@
 
 system_chart VOTAIL
 explanation
-  "A verified verifiable open source system for remote electronic/computer mediated voting"
-cluster COUNTING_PROCESS description "The counting of ballots by proportional representation with single transferable vote"
+  "A verified verifiable open source system for Irish PR-STV voting"
+cluster DATA description "The loading and processing of ballot box data"
+cluster SCENARIO description "The testing of election scenarios"
+cluster TALLY description "The counting of ballots by proportional representation with single transferable vote (PR-STV)"
+cluster TEST description "The generation of sample ballot boxes for testing"
 end
  

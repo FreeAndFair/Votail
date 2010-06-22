@@ -1,4 +1,4 @@
-package election.tally;
+package ie.votail.tally;
 
 /** 
  * The Candidate object records the number of votes received during

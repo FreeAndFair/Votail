@@ -1,4 +1,4 @@
-package election.tally;
+package ie.votail.tally;
 
 /*
  * Copyright (c) 2005-2009 Dermot Cochran

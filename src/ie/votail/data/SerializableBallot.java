@@ -1,23 +1,15 @@
-/**
- * 
- */
-package election.serialization;
+package ie.votail.data;
+
+import ie.votail.tally.Ballot;
 
 import java.io.IOException;
 import java.io.Serializable;
 
-import election.tally.BallotBox;
 
-/**
- * @author dero
- * @version 0.0.2
- */
-public class SerializableBallotBox extends BallotBox implements Serializable {
+public class SerializableBallot extends Ballot implements Serializable {
 
-  /**
-   * 
-   */
-  public SerializableBallotBox() {
+  public SerializableBallot(int[] preferences) {
+    super(preferences);
     // TODO Auto-generated constructor stub
   }
 
