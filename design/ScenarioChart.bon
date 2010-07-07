@@ -50,7 +50,7 @@ description
 scenario
   "06: SURPLUS_AVAILABLE"
 description
-  "There is at least one surplus available for distribution"
+  "There is at least one surplus availble for distribution"
 scenario
   "10: READY_TO_MOVE_BALLOTS"
 description

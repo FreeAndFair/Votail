@@ -47,7 +47,7 @@ command
    "Allocate this ballot to the next preference candidate"
 constraint
   "The sequence of preferences is unbroken e.g. no candidate is listed twice",
-end
+ end
 
 class_chart BALLOT_BOX
 explanation 
