@@ -1,4 +1,4 @@
- package election.tally;
+ package ie.votail.tally;
 
 /**
  * This is a Java Modeling Language (JML) design specification of the ballot 
@@ -54,7 +54,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @*/
 	
   /** List of contents of each ballot paper that will be counted. */
-  //@ public model non_null election.tally.Ballot[] ballotsToCount;
+  //@ public model non_null ie.votail.tally.Ballot[] ballotsToCount;
 	
   /** Total number of candidates for election */
   /*@ public model int totalCandidates;
@@ -167,7 +167,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ ensures \result == 
     @   (countBallotsFor(candidate.getCandidateID()) >= getQuota());
     @*/
-  public /*@ pure @*/ boolean hasQuota (election.tally.Candidate candidate);
+  public /*@ pure @*/ boolean hasQuota (ie.votail.tally.Candidate candidate);
 
 	
   /** 
@@ -206,7 +206,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures (\result == true) <==> 
     @     (candidate.getStatus() == Candidate.ELECTED || hasQuota(candidate));
     @*/
-  public /*@ pure @*/ boolean isElected (election.tally.Candidate candidate);
+  public /*@ pure @*/ boolean isElected (ie.votail.tally.Candidate candidate);
 	
 	
   /** 
@@ -219,7 +219,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return The undistributed surplus for that candidate, or zero if the 
    * candidate has less than a quota of votes
    */
-  public /*@ pure @*/ int getSurplus (election.tally.Candidate candidate);
+  public /*@ pure @*/ int getSurplus (ie.votail.tally.Candidate candidate);
 	
   /** 
    * Determines if a candidate has saved his or her deposit.
@@ -436,7 +436,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ requires state == COUNTING;
     @ requires isElected (fromCandidate); 
-    @ requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
+    @ requires toCandidate.getStatus() == ie.votail.tally.Candidate.CONTINUING;
     @ requires getSurplus(fromCandidate) < 
     @   getTotalTransferableVotes(fromCandidate);
     @ ensures (getOrder (fromCandidate, toCandidate) <=
@@ -482,7 +482,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 		  
  /*@ ensures \result == (\num_of int i; i <= 0 && i < totalCandidates &&
    @   candidateList[i].getCandidateID() != toCandidate.getCandidateID() &&
-   @   candidateList[i].getStatus() == election.tally.Candidate.CONTINUING;
+   @   candidateList[i].getStatus() == ie.votail.tally.Candidate.CONTINUING;
    @   (getTransferRemainder(fromCandidate, candidateList[i]) > 
    @      getTransferRemainder(fromCandidate, toCandidate)) ||
    @   ((getTransferRemainder(fromCandidate, candidateList[i]) == 
@@ -501,7 +501,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    @	for (int i=0; i < totalCandidates; i++) {
    @        if (candidateList[i].getCandidateID() != 
    @           toCandidate.getCandidateID() &&
-   @   candidateList[i].getStatus() == election.tally.Candidate.CONTINUING &&
+   @   candidateList[i].getStatus() == ie.votail.tally.Candidate.CONTINUING &&
    @   ((getTransferRemainder(fromCandidate, candidateList[i]) > 
    @      getTransferRemainder(fromCandidate, toCandidate)) ||
    @   ((getTransferRemainder(fromCandidate, candidateList[i]) == 
@@ -611,7 +611,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ requires state == COUNTING;
     @ requires isElected (fromCandidate); 
-    @ requires toCandidate.getStatus() == election.tally.Candidate.CONTINUING;
+    @ requires toCandidate.getStatus() == ie.votail.tally.Candidate.CONTINUING;
     @ requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
     @ requires 0 <= getTransferShortfall (fromCandidate);
     @ ensures \result ==

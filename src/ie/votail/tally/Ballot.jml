@@ -1,4 +1,4 @@
-package election.tally;
+package ie.votail.tally;
 
 /**
  * The Ballot class represents a ballot paper in an Irish election,

@@ -715,7 +715,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     requires state == COUNTING;
     @     requires isElected (fromCandidate);
     @     requires toCandidate.getStatus() == 
-    @       election.tally.Candidate.CONTINUING;
+    @       ie.votail.tally.Candidate.CONTINUING;
     @     requires getSurplus(fromCandidate) < 
     @       getTotalTransferableVotes(fromCandidate);
     @     requires 0 <= getTransferShortfall (fromCandidate);

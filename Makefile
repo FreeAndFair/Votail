@@ -47,8 +47,8 @@ ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(
 UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
-javapat	=	$(srcpath)/election/tally/*.java
-javafiles =	$(wildcard $(srcpath)/election/tally/*.java)
+javapat	=	$(srcpath)/ie/votail/tally/*.java
+javafiles =	$(wildcard $(srcpath)/ie/votail/tally/*.java)
 jmlunitpat =	$(jmlunit_path)/election/tally/*.java
 jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
@@ -194,7 +194,7 @@ jmlunit.stamp:	$(javafiles)
 	$(jmlunit) --destination $(jmlunit_path) \
 		--sourcepath $(specpath):$(srcpath):$(testpath) \
 		--package --source 1.4 \
-		--testLevel=2 $(srcpath)/election/tally && \
+		--testLevel=2 $(srcpath)/ie/votail/tally && \
 	touch jmlunit.stamp
 
 jmlunit_classes:	jmlunit jmlunit_classes.stamp
@@ -224,12 +224,12 @@ escjava2.stamp:	$(javafiles)
 escjava2-current:
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	$(escjava) -bootclasspath $(BOOTCP) \
-		election/tally/*.java
+		ie/votail/tally/*.java
 
 escjava2-core:
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	$(escjava) -bootclasspath $(BOOTCP) \
-		election/tally/*.java
+		ie/votail/tally/*.java
 
 checkstyle.stamp:
 	export CLASSPATH=$(CHECKSTYLE_CLASSPATH); \
@@ -242,11 +242,11 @@ checkstyle:	checkstyle.stamp
 
 main: classes
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
-	java $(main_memory_use) election.tally.*
+	java $(main_memory_use) ie.votail.tally.*
 
 main-jmlrac: jmlc
 	export CLASSPATH=$(JMLC_CLASSPATH):$(testpath);\
-	jmlrac $(rac_memory_use) election.tally.*
+	jmlrac $(rac_memory_use) ie.votail.tally.*
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
@@ -276,7 +276,7 @@ source_docs:	javadoc jmldoc
 
 javadoc:	javadoc.stamp
 
-javadoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/overview.html
+javadoc.stamp:	$(javafiles) $(srcpath)/ie/votail/tally/package.html $(basedocdir)/overview.html
 	mkdir -p $(javadocdir); \
 	export CLASSPATH=$(BASE_CLASSPATH);\
 	$(javadoc) -d $(javadocdir) $(javadocflags) \
@@ -285,12 +285,12 @@ javadoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)
 	-doctitle "Votail" \
 	-header $(copyright) \
 	-footer $(copyright) \
-	-subpackages election.tally; \
+	-subpackages ie.votail.tally; \
 	touch javadoc.stamp
 
 jmldoc:		jmldoc.stamp
 
-jmldoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/overview.html
+jmldoc.stamp:	$(javafiles) $(srcpath)/ie/votail/tally/package.html $(basedocdir)/overview.html
 	mkdir -p $(jmldocdir); \
 	export CLASSPATH=$(BASE_CLASSPATH);\
 	$(jmldoc) -d $(jmldocdir) $(jmldocflags) \
@@ -299,7 +299,7 @@ jmldoc.stamp:	$(javafiles) $(srcpath)/election/tally/package.html $(basedocdir)/
 	-doctitle "Votail" \
 	-header $(copyright) \
 	-footer $(copyright) \
-	election.tally;
+	ie/votail.tally;
 	touch jmldoc.stamp
 
 usermanual:	usermanual.stamp
