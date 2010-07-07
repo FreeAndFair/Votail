@@ -1,4 +1,4 @@
-package ie.votail.tally;
+package election.tally;
 
 //@ refine "AbstractBallotCounting.jml";
 
