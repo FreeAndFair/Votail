@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="/usr/local/JML/bin/jmljunitruntime.jar"/>
 	<classpathentry kind="lib" path="/usr/local/JML/bin/jmlruntime.jar"/>
 	<classpathentry kind="lib" path="/usr/local/JML/bin/jmlmodels.jar"/>
+	<classpathentry kind="lib" path="external_libraries/alloy4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
