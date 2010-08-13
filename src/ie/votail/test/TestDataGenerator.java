@@ -226,6 +226,9 @@ public class TestDataGenerator {
 
         return ballotBox;
       }
+      else if (4 < n && n < 9000) { // Use the Alloy model to generate ballots
+        return BallotBoxGenerator.getBallotBox(n);
+      }
     }
     throw new java.util.NoSuchElementException();
   }
