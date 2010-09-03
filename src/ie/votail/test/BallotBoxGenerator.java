@@ -3,6 +3,8 @@ package ie.votail.test;
 import ie.votail.tally.BallotBox;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Map;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
@@ -14,19 +16,44 @@ public class BallotBoxGenerator {
     A4Reporter a4Reporter = new A4Reporter();  
   // Generation of ballot boxes for each possible outcome
     
+    String prefix;
+    String suffix;
+    
     public void loadModel(Map<String, String> loaded, String filename) throws Err {
       edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseEverything_fromFile(a4Reporter, loaded, filename);
     }
     
-    public static BallotBox getBallotBox (int n) {
+    public BallotBox getBallotBox (int n) throws IOException {
+      // Read nth ballot box - resolve n into index of candidate outcomes (0 = sore loser, ..., 9 = winner);
+      // If not found then generate all ballot boxes
+      
+      String filename = prefix + n + suffix;
+      ObjectInputStream out = null;
+      BallotBox ballotBox = null;
+      try {
+        ballotBox = read(out);
+      } catch (ClassNotFoundException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+      return ballotBox;
+    }
+
+    public void createBallotBoxes() throws IOException {
+      
+      // For each candidate outcome, for up to five candidates
+      
       // Load predicate for this scenario
       
       
       BallotBox ballotBox = new BallotBox();
       
       
-      // Save generated ballot box
-      return ballotBox;
+      ObjectOutputStream file = null;
+      // Save generated ballot box with the expected result in the first line
+      write (file, ballotBox);
+      return;
     }
     
     BallotBoxGenerator() {
@@ -47,4 +74,10 @@ public class BallotBoxGenerator {
      public void write(java.io.ObjectOutputStream out, BallotBox box) throws IOException {
       }
     
+     /**
+      * Table of Outcomes:
+      *   0 = Sore Loser
+      *   
+      *   9 = Winner
+      */
 }
