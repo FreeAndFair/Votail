@@ -2,6 +2,7 @@ package ie.votail.test;
 
 import ie.votail.tally.BallotBox;
 
+import java.io.IOException;
 import java.util.Map;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
@@ -37,4 +38,13 @@ public class BallotBoxGenerator {
         e.printStackTrace();
       }
     }
+
+    public BallotBox read(java.io.ObjectInputStream in) throws IOException,
+          ClassNotFoundException {
+            return null;
+      }
+
+     public void write(java.io.ObjectOutputStream out, BallotBox box) throws IOException {
+      }
+    
 }
