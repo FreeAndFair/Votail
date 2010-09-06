@@ -1,6 +1,4 @@
-package ie.votail.test;
-
-import ie.votail.tally.BallotBox;
+package ie.lero.evoting.test.data;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,6 +7,7 @@ import java.util.Map;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
+import election.tally.BallotBox;
 
 public class BallotBoxGenerator {
   // Import Alloy model of voting and ballot boxes
