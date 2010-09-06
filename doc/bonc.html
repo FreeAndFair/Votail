@@ -8,11 +8,11 @@
 <script type="text/javascript">
 <!--
 
-var items = ['system_chart:VOTAIL','class_chart:BALLOT','class_chart:BALLOT_COUNTING','class_chart:CONSTITUENCY','class_chart:BALLOT_BOX','class_chart:CANDIDATE','cluster_chart:TALLY','event_chart:1','scenario_chart:1','class_dictionary:1'];
+var items = ['system_chart:VOTAIL','class_chart:BALLOT','class_chart:BALLOT_COUNTING','class_chart:CONSTITUENCY','class_chart:BALLOT_BOX','class_chart:CANDIDATE','cluster_chart:COUNTING_PROCESS','event_chart:1','scenario_chart:1','class_dictionary:1'];
 var topOptions = [ 'System Chart', 'system_chart', 'Class Dictionaries', 'class_dictionary', 'Cluster Charts', 'cluster_chart', 'Class Charts', 'class_chart', 'Event Charts', 'event_chart', 'Scenario Charts', 'scenario_chart' ];
 var subOptions = [];
 subOptions['system_chart'] = [ 'VOTAIL', 'system_chart:VOTAIL' ];
-subOptions['cluster_chart'] = [ 'TALLY','cluster_chart:TALLY' ];
+subOptions['cluster_chart'] = [ 'COUNTING_PROCESS','cluster_chart:COUNTING_PROCESS' ];
 subOptions['class_chart'] = [ 'BALLOT','class_chart:BALLOT','BALLOT_BOX','class_chart:BALLOT_BOX','BALLOT_COUNTING','class_chart:BALLOT_COUNTING','CANDIDATE','class_chart:CANDIDATE','CONSTITUENCY','class_chart:CONSTITUENCY' ];
 subOptions['event_chart'] = [ 'Event Chart 1','event_chart:1' ];
 subOptions['scenario_chart'] = [ 'Scenario Chart 1','scenario_chart:1' ];
@@ -609,11 +609,11 @@ dd {
       </td>
     </tr>
   </table>
-</div><div class="top-level" id="cluster_chart:TALLY">
+</div><div class="top-level" id="cluster_chart:COUNTING_PROCESS">
   <table class="outer">
     <tr class="top">
       <th class="type">CLUSTER</th>
-      <td class="name" colspan="2">TALLY</td>
+      <td class="name" colspan="2">COUNTING_PROCESS</td>
       <td class="part"><strong>Part:</strong> 1/1</td>
     </tr>
     <tr class="middle">
@@ -805,7 +805,7 @@ dd {
             <td class="white">
               <dl class="scenario_entry">
                 <dt>06: SURPLUS_AVAILABLE</dt>
-                <dd>&#8220;There is at least one surplus available for distribution&#8221;</dd>
+                <dd>&#8220;There is at least one surplus availble for distribution&#8221;</dd>
               </dl>
             </td>
           </tr>
@@ -888,7 +888,7 @@ dd {
       <td class="explanation" colspan="2">
         <dl>
           <dt>Purpose</dt>
-          <dd>&#8220;A verified verifiable open source system for Irish PR-STV voting&#8221;</dd>
+          <dd>&#8220;A verified verifiable open source system for remote electronic/computer mediated voting&#8221;</dd>
         </dl>
       </td>
       <td class="indexing" colspan="2">
@@ -905,20 +905,8 @@ dd {
             <th class="grey">Description</th>
           </tr>
           <tr>
-            <td class="light-grey"><a href="#cluster_chart:DATA" onclick="return linkSelect('cluster_chart','cluster_chart:DATA');">DATA</a></td>
-            <td class="white">&#8220;The loading and processing of ballot box data&#8221;</td>
-          </tr>
-          <tr>
-            <td class="light-grey"><a href="#cluster_chart:SCENARIO" onclick="return linkSelect('cluster_chart','cluster_chart:SCENARIO');">SCENARIO</a></td>
-            <td class="white">&#8220;The testing of election scenarios&#8221;</td>
-          </tr>
-          <tr>
-            <td class="light-grey"><a href="#cluster_chart:TALLY" onclick="return linkSelect('cluster_chart','cluster_chart:TALLY');">TALLY</a></td>
-            <td class="white">&#8220;The counting of ballots by proportional representation with single transferable vote (PR-STV)&#8221;</td>
-          </tr>
-          <tr>
-            <td class="light-grey"><a href="#cluster_chart:TEST" onclick="return linkSelect('cluster_chart','cluster_chart:TEST');">TEST</a></td>
-            <td class="white">&#8220;The generation of sample ballot boxes for testing&#8221;</td>
+            <td class="light-grey"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></td>
+            <td class="white">&#8220;The counting of ballots by proportional representation with single transferable vote&#8221;</td>
           </tr>
         </table>
       </td>
@@ -954,27 +942,27 @@ dd {
           </tr>
           <tr>
             <td class="light-grey"><a href="#class_chart:BALLOT" onclick="return linkSelect('class_chart','class_chart:BALLOT');">BALLOT</a></td>
-            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:TALLY" onclick="return linkSelect('cluster_chart','cluster_chart:TALLY');">TALLY</a></span></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
             <td class="white">&#8220;A valid set of preferences such as an ordered list of candidates&#8221;</td>
           </tr>
           <tr>
             <td class="light-grey"><a href="#class_chart:BALLOT_BOX" onclick="return linkSelect('class_chart','class_chart:BALLOT_BOX');">BALLOT_BOX</a></td>
-            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:TALLY" onclick="return linkSelect('cluster_chart','cluster_chart:TALLY');">TALLY</a></span></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
             <td class="white">&#8220;The set of all ballot papers with at least one valid preference&#8221;</td>
           </tr>
           <tr>
             <td class="light-grey"><a href="#class_chart:BALLOT_COUNTING" onclick="return linkSelect('class_chart','class_chart:BALLOT_COUNTING');">BALLOT_COUNTING</a></td>
-            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:TALLY" onclick="return linkSelect('cluster_chart','cluster_chart:TALLY');">TALLY</a></span></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
             <td class="white">&#8220;Count algorithm for tallying of the votes in Dail elections&#8221;</td>
           </tr>
           <tr>
             <td class="light-grey"><a href="#class_chart:CANDIDATE" onclick="return linkSelect('class_chart','class_chart:CANDIDATE');">CANDIDATE</a></td>
-            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:TALLY" onclick="return linkSelect('cluster_chart','cluster_chart:TALLY');">TALLY</a></span></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
             <td class="white">&#8220;A person eligible and nominated for election&#8221;</td>
           </tr>
           <tr>
             <td class="light-grey"><a href="#class_chart:CONSTITUENCY" onclick="return linkSelect('class_chart','class_chart:CONSTITUENCY');">CONSTITUENCY</a></td>
-            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:TALLY" onclick="return linkSelect('cluster_chart','cluster_chart:TALLY');">TALLY</a></span></td>
+            <td class="light-grey"><span class="list-entry"><a href="#cluster_chart:COUNTING_PROCESS" onclick="return linkSelect('cluster_chart','cluster_chart:COUNTING_PROCESS');">COUNTING_PROCESS</a></span></td>
             <td class="white">&#8220;The overall parameters of the election&#8221;</td>
           </tr>
         </table>
@@ -991,7 +979,7 @@ dd {
     <select id="sub-menu" onchange="showSelected();"><option>processing...</option></select>
   </p>
   <p id="right-footer">
-    Generated by <a href="http://kind.ucd.ie/products/opensource/BONc">BONc</a> (version: bonc-0.1.5) <a href="http://validator.w3.org/check?uri=referer">XHTML</a> output, Wed Jul 07 14:38:51 CEST 2010.
+    Generated by <a href="http://kind.ucd.ie/products/opensource/BONc">BONc</a> (version: bonc-0.1.5) <a href="http://validator.w3.org/check?uri=referer">XHTML</a> output, Mon Sep 06 10:23:39 CEST 2010.
   </p>
 </div>
 
