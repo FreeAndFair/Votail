@@ -5,8 +5,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
+import com.sun.org.apache.bcel.internal.classfile.InnerClass;
+
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 
 public class BallotBoxGenerator {
@@ -26,7 +29,7 @@ public class BallotBoxGenerator {
       // Read nth ballot box - resolve n into index of candidate outcomes (0 = sore loser, ..., 9 = winner);
       // If not found then generate all ballot boxes
       
-      String filename = prefix + n + suffix;
+      String filename = getFileName(n);
       ObjectInputStream out = null;
       BallotBox ballotBox = null;
       try {
@@ -39,18 +42,35 @@ public class BallotBoxGenerator {
       return ballotBox;
     }
 
-    public void createBallotBoxes() throws IOException {
+    private String getFileName(int n) {
+      return prefix + n + suffix;
+    }
+
+    /**
+     * 
+     * @param seed
+     * @throws IOException
+     */
+    public void createBallotBox(int seed, int numberOfCandidates, int numberOfWinners) throws IOException {
       
-      // For each candidate outcome, for up to five candidates
       
-      // Load predicate for this scenario
+      Scenario scenario = new Scenario(numberOfCandidates);
+      scenario.generate(seed, numberOfWinners);
+      
+      // Create Alloy Predicate
+      
+      // Run Alloy Predicate
+      
+      // Extract results
+      
+      // Save to file
       
       
       BallotBox ballotBox = new BallotBox();
       
       
       ObjectOutputStream file = null;
-      // Save generated ballot box with the expected result in the first line
+      // Save generated ballot box with the expected result (scenario) in the first line
       write (file, ballotBox);
       return;
     }
@@ -65,9 +85,29 @@ public class BallotBoxGenerator {
       }
     }
 
-    public BallotBox read(java.io.ObjectInputStream in) throws IOException,
-          ClassNotFoundException {
-            return null;
+    /**
+     * Ballot box format is:
+     * 
+     * <number of ballots>
+     * <number of preferences> <preferences>
+     * 
+     * 
+     * @param in
+     * @return
+     * @throws IOException
+     */
+    public BallotBox read(java.io.ObjectInputStream in) throws IOException {
+          BallotBox box = new BallotBox();
+          int numberOfBallots = in.readInt();
+          for (int l=0; l<numberOfBallots; l++) {
+            int numberOfPreferences = in.readInt();
+            int[] preferences = new int[numberOfPreferences];
+            for (int p=0; p<numberOfPreferences; p++) {
+              preferences[p] = in.readInt();
+            }
+            box.accept(preferences);
+          }
+          return box;
       }
 
      public void write(java.io.ObjectOutputStream out, BallotBox box) throws IOException {
@@ -78,5 +118,12 @@ public class BallotBoxGenerator {
       *   0 = Sore Loser
       *   
       *   9 = Winner
+      *   
+      *   #see Outcome class
       */
+     
+     // Generate the complete set of ballot box test data
+     public static void Main() {
+       
+     }
 }
