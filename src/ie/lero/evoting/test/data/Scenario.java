@@ -1,37 +1,16 @@
 package ie.lero.evoting.test.data;
 
+import election.tally.Candidate;
+
 public class Scenario {
+  Candidate[] winners;
+  Candidate[] losers;
   Outcome[] outcomes;
   private int length;
 
   public Scenario (int numberOfCandidates) {
     outcomes = new Outcome[numberOfCandidates];
     length = numberOfCandidates;
-  }
-  
-  /**
-   * Use a seed number to generate a sequence of outcomes
-   * 
-   * @param seed The generator for the sequence
-   */
-  public void generate (int seed, int winners) {
-    int base = seed;
-    for (int i=0; i<winners; i++) {
-      outcomes[i] = winner(base);
-      base /= Outcome.Radix;
-    }
-    for (int i=winners; i<length; i++) {
-      outcomes[i] = loser(base); 
-      base /= Outcome.Radix;
-    }
-  }
-
-  private Outcome loser(int base) {
-    return new Outcome (base, Outcome.SORE_LOSER, Outcome.TIED_LOSER);
-  }
-
-  private Outcome winner(int base) {
-    return new Outcome(base, Outcome.TIED_WINNER, Outcome.WINNER);
   }
   
   public int getLength() {
