@@ -33,3 +33,6 @@ class BALLOT_COUNTING description "The algorithm used to count the ballots"
 class CANDIDATE description "A person eligible and nominated for election"
 class CONSTITUENCY description "The overall parameters of the election"
 end
+
+cluster_chart TESTING
+end

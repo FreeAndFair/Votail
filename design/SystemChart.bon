@@ -26,5 +26,6 @@ system_chart VOTAIL
 explanation
   "A verified verifiable open source system for remote electronic/computer mediated voting"
 cluster COUNTING_PROCESS description "The counting of ballots by proportional representation with single transferable vote"
+cluster TESTING description "The generation of test data for scenarios and outcomes"
 end
  
