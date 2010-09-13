@@ -1,5 +1,7 @@
 package ie.lero.evoting.test.data;
 
+import ie.votail.model.Scenario;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -18,26 +20,17 @@ public class BallotBoxGenerator {
     A4Reporter a4Reporter = new A4Reporter();  
   // Generation of ballot boxes for each possible outcome
     
-    String prefix;
-    String suffix;
-    
     public void loadModel(Map<String, String> loaded, String filename) throws Err {
       edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseEverything_fromFile(a4Reporter, loaded, filename);
     }
     
-    public BallotBox getBallotBox (int n) throws IOException {
+    public BallotBox generateBallotBox (Scenario scenario) throws IOException {
       // Read nth ballot box - resolve n into index of candidate outcomes (0 = sore loser, ..., 9 = winner);
       // If not found then generate all ballot boxes
       
       String filename = getFileName(n);
       ObjectInputStream out = null;
       BallotBox ballotBox = null;
-      try {
-        ballotBox = read(out);
-      } catch (ClassNotFoundException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
       
       return ballotBox;
     }
@@ -46,34 +39,6 @@ public class BallotBoxGenerator {
       return prefix + n + suffix;
     }
 
-    /**
-     * 
-     * @param seed
-     * @throws IOException
-     */
-    public void createBallotBox(int seed, int numberOfCandidates, int numberOfWinners) throws IOException {
-      
-      
-      Scenario scenario = new Scenario(numberOfCandidates);
-      scenario.generate(seed, numberOfWinners);
-      
-      // Create Alloy Predicate
-      
-      // Run Alloy Predicate
-      
-      // Extract results
-      
-      // Save to file
-      
-      
-      BallotBox ballotBox = new BallotBox();
-      
-      
-      ObjectOutputStream file = null;
-      // Save generated ballot box with the expected result (scenario) in the first line
-      write (file, ballotBox);
-      return;
-    }
     
     BallotBoxGenerator() {
       try {

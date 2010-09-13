@@ -215,4 +215,29 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
 	return candidateID == preferenceList[0];
 }
  
+  /**
+   * Write the full anonymized ballot to a log file
+   */
+  public /*@ pure @*/ String toString() {
+    StringBuffer stringBuffer = new StringBuffer("(");
+    for (int i=0; i< numberOfPreferences; i++) {
+      stringBuffer.append(preferenceList[i] + " ");
+    }
+    stringBuffer.append(")");
+    return stringBuffer.toString();
+  }
+  
+  /**
+   * Get the effective portion of the ballot containing only those preferences
+   * actually used, this is helpful to prevent vote signing in lower preferences
+   * and to reduce the size of data needed for verification of the election.
+   */
+  public /*@ pure @*/ Ballot trim() {
+    int[] trimmedPreferences = new int [positionInList+1];
+    for (int i=0; i<=positionInList; i++) {
+      trimmedPreferences[i] = preferenceList[i];
+    }
+    Ballot ballot = new Ballot(trimmedPreferences);
+    return ballot;
+  }
 }

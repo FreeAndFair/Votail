@@ -1,4 +1,4 @@
-package ie.lero.evoting.test.data;
+package ie.votail.model;
 
 import election.tally.BallotBox;
 import election.tally.Candidate;
@@ -44,32 +44,50 @@ public class Scenario {
   }
   
   /**
+   * Calculate the maximum number of votes needed for election under PR-STV
    * 
-   * @param box
-   * @param numberOfSeats
+   * @param box The Ballot Box
+   * @param numberOfSeats The number of seats in a full constituency election
    */
   /*@
    * requires method = Method.STV;
    * requires 0 < numberOfSeats;
    */
   public void setQuota (BallotBox box, int numberOfSeats) {
-    
+    quota = 1 + (box.size() / (1 + numberOfSeats));
   }
   
   /**
+   * Calculate the minimum number of votes needed to retain funding
    * 
-   * @param box
-   * @param percentage
+   * @param box The Ballot Box
+   * @param percentage The number of hundredths of the total vote
    */
   /*@
    * requires 0 <= percentage;
    */
   public void setThreshold (BallotBox box, int percentage) {
-    
+    threshold = percentage * box.size() / 100;
   }
   
   public String toString() {
-    return "Outcomes: " + outcomes.toString();
+    return "Outcomes " + outcomes.toString() + " method " + method.toString();
     
+  }
+  
+  public int getQuota() {
+   return quota; 
+  }
+  
+  public int getThreshold() {
+    return threshold;
+  }
+  
+  public Candidate[] getWinners() {
+    return winners;
+  }
+  
+  public Candidate[] getLosers() {
+    return losers;
   }
 }

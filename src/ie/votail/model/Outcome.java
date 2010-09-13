@@ -1,4 +1,4 @@
-package ie.lero.evoting.test.data;
+package ie.votail.model;
 
 public enum Outcome {
   SORE_LOSER,
