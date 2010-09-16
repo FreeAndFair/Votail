@@ -111,4 +111,13 @@ public class BallotBox {
     public Ballot getNextBallot() {
       return ballots[index++];
     }
+    
+    /**
+     * 
+     */
+    public String toString() {
+      StringBuffer stringBuffer = new StringBuffer();
+      
+      return stringBuffer.toString();
+    }
 }

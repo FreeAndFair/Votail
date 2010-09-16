@@ -35,10 +35,6 @@ public class BallotBoxGenerator {
       return ballotBox;
     }
 
-    private String getFileName(int n) {
-      return prefix + n + suffix;
-    }
-
     
     BallotBoxGenerator() {
       try {

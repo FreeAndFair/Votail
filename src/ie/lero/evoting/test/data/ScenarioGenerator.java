@@ -4,7 +4,17 @@ import ie.votail.model.Scenario;
 
 public class ScenarioGenerator {
   
-  public static final int MAXIMUM = 9000;
-  Scenario scenarios;
+  Scenario[] scenarios;
+  
+  public ScenarioGenerator(int winners, int losers) {
+    // Winner Events
+    
+    
+    // Loser Events
+  }
+  
+  public Scenario getScenario (int n) {
+    return scenarios[n];
+  }
 
 }
