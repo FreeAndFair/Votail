@@ -226,7 +226,7 @@ fact lowestElimination {
 		#c.votes + #c.transfers <= #d.votes + #d.transfers
 }
 
--- 8 Basic Lemmas
+-- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
 }
@@ -272,7 +272,7 @@ assert validSurplus {
 }
 check validSurplus for 16 but 6 int
 
--- 4 Advanced Lemmas
+-- Advanced Lemmas
 // No lost votes during counting
 assert accounting {
 	all b: Ballot | one c: Candidate | b in c.votes and c in b.assignees
@@ -284,14 +284,6 @@ assert immutability {
 	all c: Candidate | c.votes + c.transfers in BallotBox.ballots and c.surplus in BallotBox.ballots
 }
 check immutability for 16 but 6 int
-
-// Election result is always correct
-assert correctness {
-}
-
-// All unique paths in algorithm have at least one scenario
-assert completeness {
-}
 
 -- 18 Different Scenarios
 pred TwoCandidatePlurality { 
