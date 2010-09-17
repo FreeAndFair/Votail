@@ -1,93 +1,68 @@
 package ie.votail.model;
 
-import election.tally.BallotBox;
-import election.tally.Candidate;
+/**
+ * A model election scenario is a set of possible outcomes for each candidate. 
+ * Each branch in the counting algorithm is associated with at least one
+ * such scenario. So, testing all scenarios should achieve full path coverage
+ * of the counting system.
+ */
+
 
 public class Scenario {
-  private Candidate[] winners;
-  private Candidate[] losers;
-  private Outcome[] outcomes;  
-  private Method method; // Voting scheme
-  //@ public invariant 0 <= threshold;
-  private /*@ spec_public @*/ int threshold;
-  private /*@ spec_public @*/ int quota;
+  private Outcome[] outcomes;
+  private int numberOfOutcomes;
 
   /**
+   * Create a new model scenario
    * 
    * @param numberOfWinners
    * @param numberOfCandidates
    */
   /*@
-   * requires numberOfWinners < numberOfCandidates;
-   * requires 0 < numbersOfWinners;
+   * requires 1 < numberOfCandidates;
    */
-  public Scenario (Method methodToUse,int numberOfWinners, int numberOfCandidates) {
-    int numberOfLosers = numberOfCandidates - numberOfWinners;
+  public Scenario (int numberOfCandidates) {
     outcomes = new Outcome[numberOfCandidates];
-    winners = new Candidate[numberOfWinners];
-    losers = new Candidate[numberOfLosers];
-    this.method = methodToUse;
   }
  
   
-  /** Get the outcome for any integer index, wrapping around if needed
+  /** Get the outcome for any integer index
    * 
    * @param index The index
    * @return The candidate outcome
    */
   /*@
    * requires 0 <= index;
-   * requires index < outcomes.length;
+   * requires index < numberOfOutcomes;
   */
   public Outcome getOutcome (int index) {
     return outcomes[index];
   }
   
   /**
-   * Calculate the maximum number of votes needed for election under PR-STV
-   * 
-   * @param box The Ballot Box
-   * @param numberOfSeats The number of seats in a full constituency election
+   * Textual representation of a model election scenario.
    */
-  /*@
-   * requires method = Method.STV;
-   * requires 0 < numberOfSeats;
-   */
-  public void setQuota (BallotBox box, int numberOfSeats) {
-    quota = 1 + (box.size() / (1 + numberOfSeats));
-  }
-  
-  /**
-   * Calculate the minimum number of votes needed to retain funding
-   * 
-   * @param box The Ballot Box
-   * @param percentage The number of hundredths of the total vote
-   */
-  /*@
-   * requires 0 <= percentage;
-   */
-  public void setThreshold (BallotBox box, int percentage) {
-    threshold = percentage * box.size() / 100;
-  }
-  
   public String toString() {
-    return "Outcomes " + outcomes.toString() + " method " + method.toString();
-    
+    StringBuffer stringBuffer = new StringBuffer ("scenario (");
+    for (int i=0; i<numberOfOutcomes; i++) {
+      if (0 < i) {
+        stringBuffer.append(", ");
+      }
+      stringBuffer.append(outcomes[i].toString());
+    }
+    stringBuffer.append(")");
+    return stringBuffer.toString();
   }
-  
-  public int getQuota() {
-   return quota; 
-  }
-  
-  public int getThreshold() {
-    return threshold;
-  }
-  
-  public Candidate[] getWinners() {
-    return winners;
-  }
-  
-  public Candidate[] getLosers() {
-    return losers;
+   
+  /**
+   * Add a candidate outcome to this scenario.
+   * 
+   * @param outcome The candidate outcome to be added to this scenario
+   */
+  /*@
+   * requires numberOfOutcomes < Outcomes.length;
+   */
+  public void addOutcome(Outcome outcome) {
+    outcomes[numberOfOutcomes++] = outcome;    
   }
 }

@@ -1,7 +1,7 @@
 --
 -- VOTAIL
 -- 
--- Copyright (c) 2009 Dermot Cochran
+-- Copyright (c) 2009-2010 Dermot Cochran
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -99,4 +99,11 @@ constraint
   "At least one seat is bing filled",
   "The number of seats being filled is not more than the number of seats in this constituency",
   "The number of seats being filled is less than the number of candidates"
+end
+
+class_chart SCENARIO
+explanation
+  "A set of candidate outcomes"
+command
+  "Add a candidate outcome to this scenario"
 end
