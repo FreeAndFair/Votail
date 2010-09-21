@@ -1,15 +1,18 @@
 package ie.lero.evoting.test.data;
 
+import ie.votail.model.Method;
 import ie.votail.model.Outcome;
 import ie.votail.model.Scenario;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class ScenarioGenerator {
 
   ArrayList<Scenario> scenarios;
   int numberOfCandidates;
   int index;
+  Logger scenarioLogger;
 
   /**
    * @param winners
@@ -23,6 +26,8 @@ public class ScenarioGenerator {
    */
   public ScenarioGenerator(int winners, int losers) {
 
+    scenarioLogger = Logger.getLogger("scenarios.log");
+    
     numberOfCandidates = winners + losers;
     index = 0;
 
@@ -47,7 +52,10 @@ public class ScenarioGenerator {
 
         // Sore Loser (below threshold)
 
-        scenarios.add(new Scenario(outcomes));
+        scenarios.add(new Scenario(outcomes,Method.STV));
+        
+        // Log the current set of outcomes
+        scenarioLogger.info(outcomes.toString());
       }
     }
   }

@@ -11,6 +11,7 @@ package ie.votail.model;
 public class Scenario {
   private Outcome[] outcomes;
   private int numberOfOutcomes;
+  private Method method;
 
   /**
    * Create a new model scenario
@@ -21,7 +22,8 @@ public class Scenario {
   /*@
    * requires 1 < numberOfCandidates;
    */
-  public Scenario (int numberOfCandidates) {
+  public Scenario (int numberOfCandidates, Method method) {
+    this.method = method;
     outcomes = new Outcome[numberOfCandidates];
   }
  
@@ -30,7 +32,8 @@ public class Scenario {
    * 
    * @param outcomes
    */
-  public Scenario(/*@ non_null @*/ Outcome[] outcomes) {
+  public Scenario(/*@ non_null @*/ Outcome[] outcomes, Method method) {
+    this.method = method;
     System.arraycopy(outcomes, 0, this.outcomes, 0, outcomes.length);
   }
 
