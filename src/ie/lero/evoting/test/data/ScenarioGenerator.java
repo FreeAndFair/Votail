@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class ScenarioGenerator {
 
-  Scenario[] scenarios;
+  ArrayList<Scenario> scenarios;
   int numberOfCandidates;
   int index;
 
@@ -24,17 +24,18 @@ public class ScenarioGenerator {
   public ScenarioGenerator(int winners, int losers) {
 
     numberOfCandidates = winners + losers;
-    scenarios = new Scenario[winners + losers];
     index = 0;
 
-    scenarios[index] = new Scenario(winners + losers);
-    scenarios[index].addOutcome(Outcome.WINNER);
+    Outcome[] outcomes = new Outcome[numberOfCandidates];
+    
+    outcomes[0] = Outcome.WINNER;
 
     // for intermediate rounds of counting
     for (int round = 1; round < winners; round++) {
 
       for (Outcome outcome: clearWinners()) {
-        scenarios[index].addOutcome(outcome);
+        
+        outcomes[round] = outcome;
 
         // Last Winner or Winner by tie breaker
 
@@ -46,6 +47,7 @@ public class ScenarioGenerator {
 
         // Sore Loser (below threshold)
 
+        scenarios.add(new Scenario(outcomes));
       }
     }
   }

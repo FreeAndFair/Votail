@@ -25,7 +25,16 @@ public class Scenario {
     outcomes = new Outcome[numberOfCandidates];
   }
  
-  
+  /**
+   * Create a new scenario which contains these outcomes 
+   * 
+   * @param outcomes
+   */
+  public Scenario(/*@ non_null @*/ Outcome[] outcomes) {
+    System.arraycopy(outcomes, 0, this.outcomes, 0, outcomes.length);
+  }
+
+
   /** Get the outcome for any integer index
    * 
    * @param index The index
