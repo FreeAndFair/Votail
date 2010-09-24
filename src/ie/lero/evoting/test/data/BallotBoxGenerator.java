@@ -10,6 +10,7 @@ import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
+import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompModule;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
@@ -53,12 +54,17 @@ public class BallotBoxGenerator {
       }
       
       // Extract ballot box from results
-      BallotBox ballotBox = new BallotBox();
+      BallotBox ballotBox = null;
       
       // Run the predicate
       A4Solution solution = null;
       // If unsatisfiable then increase the scope and rerun until out of memory
-      if (!solution.satisfiable()) {
+      if (solution.satisfiable()) {
+        Iterable<ExprVar> iterable = solution.getAllAtoms();
+        ballotBox = new BallotBox();
+        // Iterate through generated ballots and add to ballot box
+      } 
+      else {
         ballotBox = generateBallotBox(scenario,scope+1);
       }
       
