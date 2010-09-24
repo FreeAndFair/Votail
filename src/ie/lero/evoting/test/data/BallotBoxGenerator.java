@@ -17,13 +17,8 @@ import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
 import election.tally.BallotBox;
 
 public class BallotBoxGenerator {
-  private static final int MAX_SEQ = 10;
 
-  // Import Alloy model of voting and ballot boxes
-  
-  private static final int SCOPE = 10;
-
-  private static final int BITWIDTH = 6;
+  private static final int BIT_WIDTH = 0;
 
   protected Logger logger;
   
@@ -31,8 +26,6 @@ public class BallotBoxGenerator {
   private int numberOfCandidates;  
   // Generation of ballot boxes for each possible outcome
   private Map<String, String> loaded;
-
-  private int scope,bitWidth,maxSequenceLength;
     
     public void loadModel(Map<String, String> loaded, String filename) throws Err {
       edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseEverything_fromFile(a4Reporter, loaded, filename);
@@ -44,18 +37,19 @@ public class BallotBoxGenerator {
      * @param scenario The scenario which will be tested by this ballot box
      * @return The Ballot Box (or null if generation fails)
      */
-    public BallotBox generateBallotBox (/*@ non_null @*/ Scenario scenario) {
+    public BallotBox generateBallotBox (/*@ non_null @*/ Scenario scenario, int scope) {
 
       Expr predicate = null;
       Module voting = null;
       try {
         predicate = CompUtil.parseOneExpression_fromString(voting, scenario.toPredicate());
-        Command command = new Command(false,scope,bitWidth ,maxSequenceLength,predicate);
+        Command command = new Command(false,scope,scope/2,scope,predicate);
         
         CompModule model = CompUtil.parseEverything_fromFile(a4Reporter, loaded, "models/voting.als");
       } catch (Err e) {
         // Log failure to find scenario
-        logger.severe("Failed to find ballot box for this scenario " + scenario.toString() + " because of "+ e.getLocalizedMessage());
+        logger.severe("Failed to find ballot box for this scenario " + scenario.toString() + 
+                      " with scope " + scope + " because of "+ e.getLocalizedMessage());
       }
       
       // Extract ballot box from results
@@ -63,6 +57,10 @@ public class BallotBoxGenerator {
       
       // Run the predicate
       A4Solution solution = null;
+      // If unsatisfiable then increase the scope and rerun until out of memory
+      if (!solution.satisfiable()) {
+        ballotBox = generateBallotBox(scenario,scope+1);
+      }
       
       // Log the ballot box generation
       
@@ -72,13 +70,6 @@ public class BallotBoxGenerator {
     }
 
     BallotBoxGenerator() {
-      try {
-        loadModel(null,"models/Voting.als");
-        
-      } catch (Err e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
     }
 
     /**
