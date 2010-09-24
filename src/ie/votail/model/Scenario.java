@@ -77,4 +77,38 @@ public class Scenario {
   public void addOutcome(Outcome outcome) {
     outcomes[numberOfOutcomes++] = outcome;    
   }
+  
+  /**
+   * Create an Alloy predicate expression for this scenario, for example:
+   * <p> 
+   *   some disj c0,c1,c2,c3,c4,c5,c6,c7,c8: Candidate |
+   *     c0.outcome = Winner and 
+   *     c1.outcome = QuotaWinner and 
+   *     c2.outcome = CompromiseWinner and 
+   *     c3.outcome = Loser and
+   *     c4.outcome = EarlyLoser and 
+   *     c5.outcome = SoreLoser and
+   *     c6.outcome = TiedWinner and 
+   *     c7.outcome = TiedLoser and 
+   *     c8.outcome = TiedEarlyLoser
+   * </p>
+   * @return The Alloy predicate as a string
+   */
+  public String toPredicate() {
+    StringBuffer predicateStringBuffer = new StringBuffer("some disj ");
+    for (int i=0; i < numberOfOutcomes; i++) {
+      if (i > 0 ) {
+        predicateStringBuffer.append(", "); 
+      }
+      predicateStringBuffer.append("c" + i);
+    }
+    predicateStringBuffer.append(": Candidate | ");
+    for (int i=0; i < numberOfOutcomes; i++) {
+      if (i > 0 ) {
+        predicateStringBuffer.append(" and "); 
+      }
+      predicateStringBuffer.append("c" + i + ".outcome = " + getOutcome(i).toString());
+    }
+    return predicateStringBuffer.toString();
+  }
 }

@@ -11,26 +11,55 @@ import com.sun.org.apache.bcel.internal.classfile.InnerClass;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
+import edu.mit.csail.sdg.alloy4compiler.ast.Browsable;
+import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
+import edu.mit.csail.sdg.alloy4compiler.ast.Module;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 
 public class BallotBoxGenerator {
   // Import Alloy model of voting and ballot boxes
   
-    A4Reporter a4Reporter = new A4Reporter();  
+    A4Reporter a4Reporter = new A4Reporter();
+  private int numberOfCandidates;  
   // Generation of ballot boxes for each possible outcome
     
     public void loadModel(Map<String, String> loaded, String filename) throws Err {
       edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseEverything_fromFile(a4Reporter, loaded, filename);
     }
     
-    public BallotBox generateBallotBox (Scenario scenario) throws IOException {
+    public BallotBox generateBallotBox (Scenario scenario, Map<String, String> loaded) throws IOException {
       // Read nth ballot box - resolve n into index of candidate outcomes (0 = sore loser, ..., 9 = winner);
       // If not found then generate all ballot boxes
       
       // Create Alloy Scenario as a Predicate
+      edu.mit.csail.sdg.alloy4compiler.ast.Func predicate = null;
+      Expr newBody = null;
+      String description;
+      Browsable subnode;
+      Module voting = null;
+      try {
+        newBody =  edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseOneExpression_fromString(voting, scenario.toPredicate());
+      } catch (Err e2) {
+        // TODO Auto-generated catch block
+        e2.printStackTrace();
+      }
+      try {
+        predicate.setBody(newBody);
+      } catch (Err e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
       
       // Load Alloy Model
+      try {
+        loadModel(loaded,"models/Voting.als");
+      } catch (Err e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        // Log failure to find scenario
+        log_failure (scenario);
+      }
       
       // Extract ballot box from results
       BallotBox ballotBox = null;
@@ -38,12 +67,22 @@ public class BallotBoxGenerator {
       
       // Log the ballot box generation
       
-      log (scenario, ballotBox);
+      log_success (scenario, ballotBox);
       
       return ballotBox;
     }
 
     
+    private void log_success(Scenario scenario, BallotBox ballotBox) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    private void log_failure(Scenario scenario) {
+      // TODO Auto-generated method stub
+      
+    }
+
     private void log(Scenario scenario, BallotBox ballotBox) {
       // TODO Auto-generated method stub
       

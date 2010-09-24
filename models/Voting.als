@@ -378,9 +378,9 @@ pred TwentyCandidates {
 run TwentyCandidates for 20 but 6 int
 
 pred Outcomes {
- 	some disj a,b,c,d,e,f,g,h,i: Candidate | 
+ 	some disj a,b,c0,d,e,f,g,h,i: Candidate | 
 		(a.outcome = Winner and b.outcome = QuotaWinner and 
-		c.outcome = CompromiseWinner and d.outcome = Loser and
+		c0.outcome = CompromiseWinner and d.outcome = Loser and
 		e.outcome = EarlyLoser and f.outcome = SoreLoser and
 		g.outcome = TiedWinner and h.outcome = TiedLoser and i.outcome = TiedEarlyLoser)
 }
