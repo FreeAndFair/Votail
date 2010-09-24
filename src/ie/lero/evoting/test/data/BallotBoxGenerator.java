@@ -3,89 +3,72 @@ package ie.lero.evoting.test.data;
 import ie.votail.model.Scenario;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Map;
-
-import com.sun.org.apache.bcel.internal.classfile.InnerClass;
+import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
-import edu.mit.csail.sdg.alloy4compiler.ast.Browsable;
+import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
-import election.tally.Ballot;
+import edu.mit.csail.sdg.alloy4compiler.parser.CompModule;
+import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
 import election.tally.BallotBox;
 
 public class BallotBoxGenerator {
+  private static final int MAX_SEQ = 10;
+
   // Import Alloy model of voting and ballot boxes
   
-    A4Reporter a4Reporter = new A4Reporter();
+  private static final int SCOPE = 10;
+
+  private static final int BITWIDTH = 6;
+
+  protected Logger logger;
+  
+  private A4Reporter a4Reporter = new A4Reporter();
   private int numberOfCandidates;  
   // Generation of ballot boxes for each possible outcome
+  private Map<String, String> loaded;
+
+  private int scope,bitWidth,maxSequenceLength;
     
     public void loadModel(Map<String, String> loaded, String filename) throws Err {
       edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseEverything_fromFile(a4Reporter, loaded, filename);
     }
     
-    public BallotBox generateBallotBox (Scenario scenario, Map<String, String> loaded) throws IOException {
-      // Read nth ballot box - resolve n into index of candidate outcomes (0 = sore loser, ..., 9 = winner);
-      // If not found then generate all ballot boxes
-      
-      // Create Alloy Scenario as a Predicate
-      edu.mit.csail.sdg.alloy4compiler.ast.Func predicate = null;
-      Expr newBody = null;
-      String description;
-      Browsable subnode;
+    /**
+     * Generate a ballot box from a scenario description, using Alloy model
+     * 
+     * @param scenario The scenario which will be tested by this ballot box
+     * @return The Ballot Box (or null if generation fails)
+     */
+    public BallotBox generateBallotBox (/*@ non_null @*/ Scenario scenario) {
+
+      Expr predicate = null;
       Module voting = null;
       try {
-        newBody =  edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseOneExpression_fromString(voting, scenario.toPredicate());
-      } catch (Err e2) {
-        // TODO Auto-generated catch block
-        e2.printStackTrace();
-      }
-      try {
-        predicate.setBody(newBody);
-      } catch (Err e1) {
-        // TODO Auto-generated catch block
-        e1.printStackTrace();
-      }
-      
-      // Load Alloy Model
-      try {
-        loadModel(loaded,"models/Voting.als");
+        predicate = CompUtil.parseOneExpression_fromString(voting, scenario.toPredicate());
+        Command command = new Command(false,scope,bitWidth ,maxSequenceLength,predicate);
+        
+        CompModule model = CompUtil.parseEverything_fromFile(a4Reporter, loaded, "models/voting.als");
       } catch (Err e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
         // Log failure to find scenario
-        log_failure (scenario);
+        logger.severe("Failed to find ballot box for this scenario " + scenario.toString() + " because of "+ e.getLocalizedMessage());
       }
       
       // Extract ballot box from results
-      BallotBox ballotBox = null;
-
+      BallotBox ballotBox = new BallotBox();
+      
+      // Run the predicate
+      A4Solution solution = null;
       
       // Log the ballot box generation
       
-      log_success (scenario, ballotBox);
+      logger.info("Scenario " + scenario.toString() + " has ballot box " + ballotBox.toString());
       
       return ballotBox;
-    }
-
-    
-    private void log_success(Scenario scenario, BallotBox ballotBox) {
-      // TODO Auto-generated method stub
-      
-    }
-
-    private void log_failure(Scenario scenario) {
-      // TODO Auto-generated method stub
-      
-    }
-
-    private void log(Scenario scenario, BallotBox ballotBox) {
-      // TODO Auto-generated method stub
-      
     }
 
     BallotBoxGenerator() {
