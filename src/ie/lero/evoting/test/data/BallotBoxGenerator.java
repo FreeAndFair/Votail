@@ -28,14 +28,27 @@ public class BallotBoxGenerator {
       // Read nth ballot box - resolve n into index of candidate outcomes (0 = sore loser, ..., 9 = winner);
       // If not found then generate all ballot boxes
       
-      String filename = getFileName(n);
-      ObjectInputStream out = null;
+      // Create Alloy Scenario as a Predicate
+      
+      // Load Alloy Model
+      
+      // Extract ballot box from results
       BallotBox ballotBox = null;
+
+      
+      // Log the ballot box generation
+      
+      log (scenario, ballotBox);
       
       return ballotBox;
     }
 
     
+    private void log(Scenario scenario, BallotBox ballotBox) {
+      // TODO Auto-generated method stub
+      
+    }
+
     BallotBoxGenerator() {
       try {
         loadModel(null,"models/Voting.als");

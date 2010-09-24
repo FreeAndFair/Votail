@@ -68,7 +68,7 @@ public class ScenarioGenerator {
   }
 
   public Scenario getScenario(int n) {
-    return scenarios[n];
+    return scenarios.get(n);
   }
 
 }
