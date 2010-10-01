@@ -19,16 +19,13 @@ import election.tally.BallotBox;
 
 public class BallotBoxGenerator {
 
-  private static final int BIT_WIDTH = 0;
-
   protected Logger logger;
   
   private A4Reporter a4Reporter = new A4Reporter();
-  private int numberOfCandidates;  
   // Generation of ballot boxes for each possible outcome
   private Map<String, String> loaded;
     
-    public void loadModel(Map<String, String> loaded, String filename) throws Err {
+    public void loadModel(String filename) throws Err {
       edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseEverything_fromFile(a4Reporter, loaded, filename);
     }
     
@@ -63,6 +60,7 @@ public class BallotBoxGenerator {
         Iterable<ExprVar> iterable = solution.getAllAtoms();
         ballotBox = new BallotBox();
         // Iterate through generated ballots and add to ballot box
+        
       } 
       else {
         ballotBox = generateBallotBox(scenario,scope+1);

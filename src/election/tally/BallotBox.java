@@ -28,96 +28,107 @@ package election.tally;
 
 /** Data transfer structure for set of all valid ballots */
 public class BallotBox {
-	
-/**
- * List of valid ballot papers, already shuffled and mixed by the data loader
- * or returning officer.
- */
-  protected /*@ non_null spec_public @*/ Ballot[] ballots = new Ballot [Ballot.MAX_BALLOTS];
 
-    /**
-     * Get the number of ballots in this box.
-     * 
-     * @return the number of ballots in this ballot box
-     */	
-   /*@ public normal_behavior
-     @   ensures 0 <= \result;
-     @   ensures \result == numberOfBallots;
-     @   ensures (ballots == null) ==> \result == 0;
-     @*/
-    public /*@ pure @*/ int size(){
-        return numberOfBallots;
-    }
-	
+  /**
+   * List of valid ballot papers, already shuffled and mixed by the data loader
+   * or returning officer.
+   */
+  protected/*@ non_null spec_public @*/Ballot[] ballots =
+                                                           new Ballot[Ballot.MAX_BALLOTS];
+
+  /**
+   * Get the number of ballots in this box.
+   * 
+   * @return the number of ballots in this ballot box
+   */
+  /*@ public normal_behavior
+    @   ensures 0 <= \result;
+    @   ensures \result == numberOfBallots;
+    @   ensures (ballots == null) ==> \result == 0;
+    @*/
+  public/*@ pure @*/int size() {
+    return numberOfBallots;
+  }
+
   /**
    * The total number of ballots in this ballot box.
    */
-    /*@ public invariant 0 <= numberOfBallots;
-      @ public invariant numberOfBallots <= Ballot.MAX_BALLOTS;
-      @ public constraint \old (numberOfBallots) <= numberOfBallots;
-      @*/
-	protected /*@ spec_public @*/ int numberOfBallots;
-	
-	/**
-	 * Number of ballots copied from box
-	 */
-	//@ public initially index == 0;
-	//@ public invariant index <= size();
-	//@ public constraint \old(index) <= index;
- 	protected /*@ spec_public @*/ int index;
-	
-	/**
-	 * Create an empty ballot box.
-	 */
- 	//@ assignable index, numberOfBallots;
-	public /*@ pure @*/ BallotBox(){
-		index = 0;
-		numberOfBallots = 0;
-	}
+  /*@ public invariant 0 <= numberOfBallots;
+    @ public invariant numberOfBallots <= Ballot.MAX_BALLOTS;
+    @ public constraint \old (numberOfBallots) <= numberOfBallots;
+    @*/
+  protected/*@ spec_public @*/int numberOfBallots;
 
-	/**
-	 * Accept an anonymous ballot paper.
-	 * <p>
-	 * The ballot ID number is regenerated.
-	 * <p>
-	 * @param preferences The list of candidate preferences
-	 */
-	/*@ requires numberOfBallots < ballots.length;
-	  @ requires numberOfBallots < Ballot.MAX_BALLOTS;
-	  @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
-	  @*/
-	public void accept (final /*@ non_null @*/ int[] preferences) {
-		ballots[numberOfBallots++] = new Ballot(preferences);
-	} 
+  /**
+   * Number of ballots copied from box
+   */
+  //@ public initially index == 0;
+  //@ public invariant index <= size();
+  //@ public constraint \old(index) <= index;
+  protected/*@ spec_public @*/int index;
 
-	/**
-	 * Is there another ballot paper?
-	 * @return <code>true</code>if there is
-	 */
-	//@ ensures \result <==> index < numberOfBallots;
-	public /*@ pure @*/ boolean isNextBallot() {
-		return index < numberOfBallots;
-	}
+  /**
+   * Create an empty ballot box.
+   */
+  //@ assignable index, numberOfBallots;
+  public/*@ pure @*/BallotBox() {
+    index = 0;
+    numberOfBallots = 0;
+  }
 
-	/**
-	 * Get the next ballot paper
-	 * @return The ballot paper
-	 */
-	//@ requires 0 <= index;
-	//@ requires isNextBallot();
-	//@ requires index + 1 < ballots.length;
-	//@ assignable index;
-	//@ ensures \result == ballots[\old(index)];
-    public Ballot getNextBallot() {
-      return ballots[index++];
+  /**
+   * Accept an anonymous ballot paper.
+   * <p>
+   * The ballot ID number is regenerated.
+   * <p>
+   * 
+   * @param preferences
+   *        The list of candidate preferences
+   */
+  /*@ requires numberOfBallots < ballots.length;
+    @ requires numberOfBallots < Ballot.MAX_BALLOTS;
+    @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
+    @*/
+  public void accept(final/*@ non_null @*/int[] preferences) {
+    ballots[numberOfBallots++] = new Ballot(preferences);
+  }
+
+  /**
+   * Is there another ballot paper?
+   * 
+   * @return <code>true</code>if there is
+   */
+  //@ ensures \result <==> index < numberOfBallots;
+  public/*@ pure @*/boolean isNextBallot() {
+    return index < numberOfBallots;
+  }
+
+  /**
+   * Get the next ballot paper
+   * 
+   * @return The ballot paper
+   */
+  //@ requires 0 <= index;
+  //@ requires isNextBallot();
+  //@ requires index + 1 < ballots.length;
+  //@ assignable index;
+  //@ ensures \result == ballots[\old(index)];
+  public Ballot getNextBallot() {
+    return ballots[index++];
+  }
+
+  /**
+   * Write the minimal anonymized ballot box out as a string for logging
+   */
+  public String toString() {
+    StringBuffer stringBuffer = new StringBuffer();
+    stringBuffer.append(numberOfBallots + " ballots: ");
+    for (int i = 0; i < numberOfBallots; i++) {
+      if (0 < i)
+        stringBuffer.append(", ");
+      stringBuffer.append(ballots[i].trim().toString());
     }
-    
-    /**
-     * 
-     */
-    public String toString() {
-      StringBuffer stringBuffer = new StringBuffer();
-      
-      return stringBuffer.toString();
-    }
+    stringBuffer.append("End of ballot box");
+    return stringBuffer.toString();
+  }
 }
