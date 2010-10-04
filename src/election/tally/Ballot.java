@@ -216,7 +216,9 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
 }
  
   /**
-   * Write the full anonymized ballot to a log file
+   * Convert the ballot into a text string
+   * 
+   * @return The ballot as a string
    */
   public /*@ pure @*/ String toString() {
     StringBuffer stringBuffer = new StringBuffer("(");
@@ -225,19 +227,5 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
     }
     stringBuffer.append(")");
     return stringBuffer.toString();
-  }
-  
-  /**
-   * Get the effective portion of the ballot containing only those preferences
-   * actually used, this is helpful to prevent vote signing in lower preferences
-   * and to reduce the size of data needed for verification of the election.
-   */
-  public /*@ pure @*/ Ballot trim() {
-    int[] trimmedPreferences = new int [positionInList+1];
-    for (int i=0; i<=positionInList; i++) {
-      trimmedPreferences[i] = preferenceList[i];
-    }
-    Ballot ballot = new Ballot(trimmedPreferences);
-    return ballot;
   }
 }

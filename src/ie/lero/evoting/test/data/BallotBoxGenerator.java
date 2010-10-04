@@ -20,6 +20,7 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
+import edu.mit.csail.sdg.alloy4compiler.ast.Sig.Field;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig.PrimSig;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Options;
@@ -123,10 +124,16 @@ public class BallotBoxGenerator {
     // Iterate through the solution and add each ballot to the ballot box
     for (Sig sig : sigs) {
       
-      // Extract ballot preferences and assignees
+      // Extract ballots
       if (sig.label.equals("Ballot")) {
         
-        
+        SafeList<Field> fields = sig.getFields();
+        for (Field field : fields) {
+          // Extract preferences
+          if (field.label.equals("Preferences")) {
+            // TODO
+          }
+        }
       }
     }
     

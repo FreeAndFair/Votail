@@ -118,7 +118,9 @@ public class BallotBox {
   }
 
   /**
-   * Write the minimal anonymized ballot box out as a string for logging
+   * Convert the ballot box into a text string
+   * 
+   * @return The Ballot Box as a string
    */
   public String toString() {
     StringBuffer stringBuffer = new StringBuffer();
@@ -126,7 +128,7 @@ public class BallotBox {
     for (int i = 0; i < numberOfBallots; i++) {
       if (0 < i)
         stringBuffer.append(", ");
-      stringBuffer.append(ballots[i].trim().toString());
+      stringBuffer.append(ballots[i].toString());
     }
     stringBuffer.append("End of ballot box");
     return stringBuffer.toString();
