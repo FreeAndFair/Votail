@@ -1,120 +1,130 @@
+/**
+ * Dermot Cochran, 2010, IT University of Copenhagen
+ * 
+ * This class generates ballot boxes that fulfull a given scenario, by using
+ * the Alloy Analayser API with a pre-defined model of PR-STV voting
+ */
+
 package ie.lero.evoting.test.data;
 
 import ie.votail.model.Scenario;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
+import edu.mit.csail.sdg.alloy4.SafeList;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
-import edu.mit.csail.sdg.alloy4compiler.parser.CompModule;
+import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4Options;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
+import edu.mit.csail.sdg.alloy4viz.VizGUI;
 import election.tally.BallotBox;
 
 public class BallotBoxGenerator {
 
+  private static final int MAX_SCOPE = 0;
   protected Logger logger;
+  protected A4Reporter reporter;
+  protected Map<String, String> loaded;
+  protected A4Options options;
+  protected Module world;
   
-  private A4Reporter a4Reporter = new A4Reporter();
-  // Generation of ballot boxes for each possible outcome
-  private Map<String, String> loaded;
+  /**
+   * Start the generation of ballot boxes and load the Alloy model
+   * 
+   * @param model_filename The name of the Alloy model file
+   * @param log_filename The name of the log file
+   */
+  BallotBoxGenerator(String model_filename, String  log_filename) {
+    reporter = new A4Reporter();
+    loaded = null;
+    options = new A4Options();
+    options.solver = A4Options.SatSolver.SAT4J;
+    logger = Logger.getLogger(log_filename);
     
-    public void loadModel(String filename) throws Err {
-      edu.mit.csail.sdg.alloy4compiler.parser.CompUtil.parseEverything_fromFile(a4Reporter, loaded, filename);
+    try {
+      world = CompUtil.parseEverything_fromFile(reporter, loaded, 
+        model_filename);
+    } catch (Err e) {
+      world = null;
+      logger.severe("Unable to find model " + model_filename 
+        + "because of " + e.msg);
     }
+  }
     
-    /**
-     * Generate a ballot box from a scenario description, using Alloy model
-     * 
-     * @param scenario The scenario which will be tested by this ballot box
-     * @return The Ballot Box (or null if generation fails)
-     */
-    public BallotBox generateBallotBox (/*@ non_null @*/ Scenario scenario, int scope) {
+  /**
+   * Generate a ballot box from a scenario description, using Alloy model
+   * 
+   * @param scenario The scenario which will be tested by this ballot box
+   * @param scope The scope for model finding in Alloy Analyser
+   * 
+   * @return The Ballot Box (or null if generation fails)
+   */
+  /*@
+   * require loaded != null;
+   */
+  public BallotBox generateBallotBox (/*@ non_null @*/ Scenario scenario, 
+    int scope) {
 
-      Expr predicate = null;
-      Module voting = null;
-      try {
-        predicate = CompUtil.parseOneExpression_fromString(voting, scenario.toPredicate());
-        Command command = new Command(false,scope,scope/2,scope,predicate);
+    Expr predicate;
+    Command command;
+    A4Solution solution;
+    BallotBox ballotBox = null;
+    
+    // Find a ballot box which fulfills this scenario
+    try {
+        predicate = CompUtil.parseOneExpression_fromString(world, 
+          scenario.toPredicate());
+        command = new Command(false,scope,scope/2,scope,predicate);
+        solution = TranslateAlloyToKodkod.execute_command(reporter, 
+          world.getAllReachableSigs(), command, options);
         
-        CompModule model = CompUtil.parseEverything_fromFile(a4Reporter, loaded, "models/voting.als");
+        if (solution.satisfiable()) {
+          ballotBox = extractBallotBox (solution);
+          logger.info("Scenario " + scenario.toString() + " has ballot box " 
+            + ballotBox.toString());
+        }
+        else if (scope < MAX_SCOPE) {
+          ballotBox = generateBallotBox(scenario,scope+1);
+        }
+        else {
+          ballotBox = new BallotBox();
+          logger.severe("No ballot box found with scope " + MAX_SCOPE 
+            + "for scenario " + scenario.toString());
+        }
+        
       } catch (Err e) {
         // Log failure to find scenario
-        logger.severe("Failed to find ballot box for this scenario " + scenario.toString() + 
-                      " with scope " + scope + " because of "+ e.getLocalizedMessage());
+        logger.severe("Unable to find ballot box for this scenario " 
+          + scenario.toString() + " with scope " + scope + " because of "
+          + e.msg);
       }
-      
-      // Extract ballot box from results
-      BallotBox ballotBox = null;
-      
-      // Run the predicate
-      A4Solution solution = null;
-      // If unsatisfiable then increase the scope and rerun until out of memory
-      if (solution.satisfiable()) {
-        Iterable<ExprVar> iterable = solution.getAllAtoms();
-        ballotBox = new BallotBox();
-        // Iterate through generated ballots and add to ballot box
-        
-      } 
-      else {
-        ballotBox = generateBallotBox(scenario,scope+1);
-      }
-      
-      // Log the ballot box generation
-      
-      logger.info("Scenario " + scenario.toString() + " has ballot box " + ballotBox.toString());
-      
       return ballotBox;
     }
 
-    BallotBoxGenerator() {
-    }
-
-    /**
-     * Ballot box format is:
-     * 
-     * <number of ballots>
-     * <number of preferences> <preferences>
-     * 
-     * 
-     * @param in
-     * @return
-     * @throws IOException
-     */
-    public BallotBox read(java.io.ObjectInputStream in) throws IOException {
-          BallotBox box = new BallotBox();
-          int numberOfBallots = in.readInt();
-          for (int l=0; l<numberOfBallots; l++) {
-            int numberOfPreferences = in.readInt();
-            int[] preferences = new int[numberOfPreferences];
-            for (int p=0; p<numberOfPreferences; p++) {
-              preferences[p] = in.readInt();
-            }
-            box.accept(preferences);
-          }
-          return box;
-      }
-
-     public void write(java.io.ObjectOutputStream out, BallotBox box) throws IOException {
-      }
+  /**
+   * Extract ballots from the Alloy Analyser solution
+   * 
+   * @param solution The Alloy solution for a scenario
+   * @return The Ballot Box
+   */
+  
+  public BallotBox extractBallotBox(A4Solution solution) {
+    BallotBox ballotBox = new BallotBox();
     
-     /**
-      * Table of Outcomes:
-      *   0 = Sore Loser
-      *   
-      *   9 = Winner
-      *   
-      *   #see Outcome class
-      */
-     
-     // Generate the complete set of ballot box test data
-     public static void Main() {
-       
-     }
+    SafeList<Sig> signatures = solution.getAllReachableSigs();
+    // Iterate through the solution and add each ballot to the ballot box
+    
+    
+    return ballotBox;
+  }
+
+    
 }
