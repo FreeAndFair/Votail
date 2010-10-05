@@ -131,7 +131,16 @@ public class BallotBoxGenerator {
         for (Field field : fields) {
           // Extract preferences
           if (field.label.equals("Preferences")) {
-            // TODO
+            // TODO Get number of preferences
+            int numberOfPreferences = 0;//field.cardinality();
+            int[] preferences = new int[numberOfPreferences];
+            // TODO fill preference list by candidate ID
+            for (int i=0; i <numberOfPreferences; i++) {
+              // TODO extract candidate ID
+            }
+            // Add ballot to ballot box
+            ballotBox.accept(preferences);
+            
           }
         }
       }
