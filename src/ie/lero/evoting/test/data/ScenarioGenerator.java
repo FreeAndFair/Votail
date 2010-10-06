@@ -13,6 +13,7 @@ public class ScenarioGenerator {
   int numberOfCandidates;
   int index;
   Logger scenarioLogger;
+  private int numberOfScenarios;
 
   /**
    * @param winners
@@ -38,26 +39,46 @@ public class ScenarioGenerator {
     // for intermediate rounds of counting
     for (int round = 1; round < winners; round++) {
 
-      for (Outcome outcome: clearWinners()) {
-        
-        outcomes[round] = outcome;
-
-        // Last Winner or Winner by tie breaker
-
-        // Loser by tie breaker or Last Loser
-
-        // Other Loser Events
-
-        // Early Loser
-
-        // Sore Loser (below threshold)
-
-        scenarios.add(new Scenario(outcomes,Method.STV));
-        
-        // Log the current set of outcomes
-        scenarioLogger.info(outcomes.toString());
-      }
+      fillOutcomes(winners, outcomes, round);
     }
+  }
+
+  /**
+   * @param winners
+   * @param outcomes
+   * @param round
+   */
+  public void fillOutcomes(int winners, Outcome[] outcomes, int round) {
+    for (Outcome outcome: clearWinners()) {
+      
+      outcomes[round] = outcome;
+
+      // Last Winner or Winner by tie breaker
+      
+      for (int i = winners; i < numberOfCandidates; i++) {
+
+        outcomes[i] = addLoserOutcome();
+     
+
+      scenarios.add(new Scenario(outcomes,Method.STV));
+      numberOfScenarios++;
+      }
+      
+      // Log the current set of outcomes
+      scenarioLogger.info(outcomes.toString());
+    }
+  }
+
+  private Outcome addLoserOutcome() {
+    // TODO Auto-generated method stub
+    // Loser by tie breaker or Last Loser
+
+    // Other Loser Events
+
+    // Early Loser
+
+    // Sore Loser (below threshold)
+    return null;
   }
 
   private ArrayList<Outcome> clearWinners() {

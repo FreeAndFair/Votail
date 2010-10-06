@@ -117,10 +117,10 @@ public class BallotBoxGenerator {
    * @return The Ballot Box
    */
   
-  public BallotBox extractBallotBox(A4Solution solution) {
+  static public BallotBox extractBallotBox(A4Solution solution) {
     BallotBox ballotBox = new BallotBox();
     
-    // Gte type signatures from the solution
+    // Get type signatures from the solution
     SafeList<Sig> sigs = solution.getAllReachableSigs();
     // Iterate through the solution and add each ballot to the ballot box
     for (Sig sig : sigs) {
@@ -130,11 +130,9 @@ public class BallotBoxGenerator {
         
         SafeList<Field> fields = sig.getFields();
         for (Field field : fields) {
-          // Extract preferences
           if (field.label.equals("Preferences")) {
-            int[] preferences = extractPreferences(field);
-            // Add ballot to ballot box
-            ballotBox.accept(preferences);
+            // Extract preferences and then add to ballot box
+            ballotBox.accept(extractPreferences(field));
             
           }
         }
@@ -150,21 +148,21 @@ public class BallotBoxGenerator {
    * @param field
    * @return
    */
-  public int[] extractPreferences(Field field) {
+  static public int[] extractPreferences(Field field) {
     int numberOfPreferences = getNumberOfPreferences(field);
     int[] preferences = new int [numberOfPreferences];
     for (int i=0; i < numberOfPreferences; i++) {
       preferences[i] = getPreferences(field,i);
     }
-     return null;
+   return preferences;
   }
 
-  private int getPreferences(Field field, int i) {
+  static public int getPreferences(Field field, int i) {
     // TODO Auto-generated method stub
     return 0;
   }
 
-  private int getNumberOfPreferences(Field field) {
+  static public int getNumberOfPreferences(Field field) {
     // TODO Auto-generated method stub
     return 0;
   }
