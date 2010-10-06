@@ -120,24 +120,19 @@ public class BallotBoxGenerator {
   public BallotBox extractBallotBox(A4Solution solution) {
     BallotBox ballotBox = new BallotBox();
     
+    // Gte type signatures from the solution
     SafeList<Sig> sigs = solution.getAllReachableSigs();
     // Iterate through the solution and add each ballot to the ballot box
     for (Sig sig : sigs) {
       
       // Extract ballots
-      if (sig.label.equals("Ballot")) {
+      if (sig.label.contains("Ballot")) {
         
         SafeList<Field> fields = sig.getFields();
         for (Field field : fields) {
           // Extract preferences
           if (field.label.equals("Preferences")) {
-            // TODO Get number of preferences
-            int numberOfPreferences = 0;//field.cardinality();
-            int[] preferences = new int[numberOfPreferences];
-            // TODO fill preference list by candidate ID
-            for (int i=0; i <numberOfPreferences; i++) {
-              // TODO extract candidate ID
-            }
+            int[] preferences = extractPreferences(field);
             // Add ballot to ballot box
             ballotBox.accept(preferences);
             
@@ -147,6 +142,31 @@ public class BallotBoxGenerator {
     }
     
     return ballotBox;
+  }
+
+  /**
+   * Extract list of preferences from an Alloy field API
+   * 
+   * @param field
+   * @return
+   */
+  public int[] extractPreferences(Field field) {
+    int numberOfPreferences = getNumberOfPreferences(field);
+    int[] preferences = new int [numberOfPreferences];
+    for (int i=0; i < numberOfPreferences; i++) {
+      preferences[i] = getPreferences(field,i);
+    }
+     return null;
+  }
+
+  private int getPreferences(Field field, int i) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  private int getNumberOfPreferences(Field field) {
+    // TODO Auto-generated method stub
+    return 0;
   }
 
     
