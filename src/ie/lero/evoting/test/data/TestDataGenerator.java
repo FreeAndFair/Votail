@@ -1,8 +1,9 @@
 package ie.lero.evoting.test.data;
 
-// (c) Copyright 2009, LGSSE and University College Dublin, Ireland
+// (c) Copyright 2009, LGSSE (Lero, Science Foundation Ireland) and University College Dublin, Ireland
 // (c) Copyright 2010, IT University of Copenhagen, Denmark
 // (c) Copyright 2009-2010 Dermot Cochran and Joseph R. Kiniry
+// Dermot Cochran, 2010, IT University of Copenhagen
 
 import election.tally.AbstractBallotCounting;
 import election.tally.AbstractCountStatus;
@@ -27,6 +28,31 @@ public class TestDataGenerator {
   private static int ballotCounting_count = 0;
   private static int candidate_count = 0;
   private static int constituency_count = 0;
+  
+  ScenarioGenerator scenarioGenerator;
+  BallotBoxGenerator ballotBoxGenerator;
+
+  private int numberOfWinners;
+
+  private int numberOfCandidates;
+
+  private String log_filename;
+
+  private String model_filename;
+
+  /**
+   * 
+   */
+  public TestDataGenerator() {
+    numberOfWinners = 3;
+    numberOfCandidates = 30;
+    scenarioGenerator = new ScenarioGenerator(
+      numberOfWinners, 
+      numberOfCandidates - numberOfWinners);
+    model_filename = "models/voting.als";
+    log_filename = "BallotBox.log." + System.currentTimeMillis();
+    ballotBoxGenerator = new BallotBoxGenerator(model_filename, log_filename);
+  }
 
   /**
    * AbstractBallotCounting is a top level class; it is extended by
