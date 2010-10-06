@@ -29,30 +29,7 @@ public class TestDataGenerator {
   private static int candidate_count = 0;
   private static int constituency_count = 0;
   
-  ScenarioGenerator scenarioGenerator;
-  BallotBoxGenerator ballotBoxGenerator;
-
-  private int numberOfWinners;
-
-  private int numberOfCandidates;
-
-  private String log_filename;
-
-  private String model_filename;
-
-  /**
-   * 
-   */
-  public TestDataGenerator() {
-    numberOfWinners = 3;
-    numberOfCandidates = 30;
-    scenarioGenerator = new ScenarioGenerator(
-      numberOfWinners, 
-      numberOfCandidates - numberOfWinners);
-    model_filename = "models/voting.als";
-    log_filename = "BallotBox.log." + System.currentTimeMillis();
-    ballotBoxGenerator = new BallotBoxGenerator(model_filename, log_filename);
-  }
+  TestDataFactory data = new TestDataFactory();
 
   /**
    * AbstractBallotCounting is a top level class; it is extended by
