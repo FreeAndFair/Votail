@@ -22,7 +22,7 @@ jmlrac ?= ./external_tools/bin/jmlrac
 jmlc ?= ./external_tools/bin/jmlc
 jmldoc ?= ./external_tools/bin/jmldoc
 jmlunit ?= ./external_tools/bin/jmlunit
-version ?= 1.4
+version ?= 1.5
 
 basedocdir = doc
 srcpath = src

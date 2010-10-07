@@ -28,8 +28,6 @@ public class TestDataGenerator {
   private static int ballotCounting_count = 0;
   private static int candidate_count = 0;
   private static int constituency_count = 0;
-  
-  TestDataFactory data = new TestDataFactory();
 
   /**
    * AbstractBallotCounting is a top level class; it is extended by

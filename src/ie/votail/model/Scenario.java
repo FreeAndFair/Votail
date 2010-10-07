@@ -38,6 +38,10 @@ public class Scenario {
   }
 
 
+  public Scenario(Outcome[] combined) {
+    // TODO Auto-generated constructor stub
+  }
+
   /** Get the outcome for any integer index
    * 
    * @param index The index
@@ -110,5 +114,28 @@ public class Scenario {
       predicateStringBuffer.append("c" + i + ".outcome = " + getOutcome(i).toString());
     }
     return predicateStringBuffer.toString();
+  }
+  
+  /**
+   * Extend scenario by adding extra outcomes
+   * 
+   * @param tail
+   * @return
+   */
+  public Scenario add (Scenario tail) {
+    Outcome[] combined = new Outcome [this.numberOfOutcomes + tail.numberOfOutcomes];
+    for (int i=0; i < this.numberOfOutcomes; i++) {
+      combined[i] = this.outcomes[i];
+    }
+    for (int j=0; j < tail.numberOfOutcomes; j++) {
+      combined[j+this.numberOfOutcomes] = tail.outcomes[j];
+    }
+    
+    return new Scenario (canonicalSort(combined));
+  }
+
+  private Outcome[] canonicalSort(Outcome[] combined) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
