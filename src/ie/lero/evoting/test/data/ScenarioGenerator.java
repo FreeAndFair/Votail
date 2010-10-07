@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class ScenarioGenerator {
 
-  ArrayList<Scenario> scenarios;
+  Scenario[] scenarios;
   int numberOfCandidates;
   int index;
   Logger scenarioLogger;
@@ -42,16 +42,22 @@ public class ScenarioGenerator {
       fillOutcomes(winners, outcomes, round);
     }
   }
+  
+  // Solve the possible solutions for W winners and L losers, recursively
+  public Outcome[] solve (int winners, int losers) {
+    return null;
+    
+  }
 
   /**
+   * Use a recursive method to fill and find the outcomes
+   * 
    * @param winners
    * @param outcomes
    * @param round
    */
   public void fillOutcomes(int winners, Outcome[] outcomes, int round) {
-    for (Outcome outcome: clearWinners()) {
       
-      outcomes[round] = outcome;
 
       // Last Winner or Winner by tie breaker
       
@@ -60,14 +66,13 @@ public class ScenarioGenerator {
         outcomes[i] = addLoserOutcome();
      
 
-      scenarios.add(new Scenario(outcomes,Method.STV));
+      //scenarios.add(new Scenario(outcomes,Method.STV));
       numberOfScenarios++;
       }
       
       // Log the current set of outcomes
       scenarioLogger.info(outcomes.toString());
     }
-  }
 
   private Outcome addLoserOutcome() {
     // TODO Auto-generated method stub
@@ -81,15 +86,17 @@ public class ScenarioGenerator {
     return null;
   }
 
-  private ArrayList<Outcome> clearWinners() {
-    ArrayList<Outcome> Winners = new ArrayList<Outcome>();
-    Winners.add(Outcome.WINNER);
-    Winners.add(Outcome.QUOTA_WINNER);
-    return Winners;
-  }
-
+  /**
+   * 
+   * @param n
+   * @return
+   */
+  /*@
+   * requires 0 <= n;
+   * requires n <= scenarios.length;
+   */
   public Scenario getScenario(int n) {
-    return scenarios.get(n);
+    return scenarios[n];
   }
 
 }

@@ -159,7 +159,7 @@ classes:	classes.stamp
 classes.stamp:	$(javafiles)
 	@mkdir -p $(buildpath)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
-	$(javac) -g -d $(buildpath) -source $(version) $(javapat) && \
+	$(javac) -g -d $(buildpath) $(java_source_version) $(javapat) && \
 	touch classes.stamp
 
 jml:	jml.stamp
