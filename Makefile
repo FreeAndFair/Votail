@@ -9,9 +9,9 @@ FIGSCALE = 0.5
 
 # CLASSPATH components
 
-CORECP	= src:unittest
-SPECS = external_tools/JML/specs
 LIB = external_libraries
+CORECP	= src:unittest:$(LIB)/alloy4.jar
+SPECS = external_tools/JML/specs
 JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
 JUNITCP = $(LIB)/junit.jar
 
@@ -22,6 +22,7 @@ jmlrac ?= ./external_tools/bin/jmlrac
 jmlc ?= ./external_tools/bin/jmlc
 jmldoc ?= ./external_tools/bin/jmldoc
 jmlunit ?= ./external_tools/bin/jmlunit
+version ?= 1.6
 
 basedocdir = doc
 srcpath = src
@@ -33,7 +34,7 @@ jmlunit_path =	jmlunit_src
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
 ESCPATH ?= external_tools/ESCJava2/ESCJava2-2.0.5-04-11-08-binary
-escjava = $(ESCPATH)/Escjava/escj -source 1.4 -vclimit 2500000 -warnUnsoundIncomplete
+escjava = $(ESCPATH)/Escjava/escj -source $(version) -vclimit 2500000 -warnUnsoundIncomplete
 export ESCTOOLS_ROOT=$(ESCPATH)
 export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx
 
@@ -54,8 +55,8 @@ jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
 classfiles =	$(foreach javafile,$(javafiles),\
 		$(subst .java,.class,$(javafile)))
-javadocflags =	-version -author -private -source 1.4
-jmldocflags =	-version -author -private --source 1.4
+javadocflags =	-version -author -private -source $(version)
+jmldocflags =	-version -author -private --source $(version)
 javadocdir =	$(basedocdir)/javadocs
 jmldocdir =	$(basedocdir)/jmldocs
 
@@ -158,14 +159,14 @@ classes:	classes.stamp
 classes.stamp:	$(javafiles)
 	@mkdir -p $(buildpath)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
-	$(javac) -g -d $(buildpath) -source 1.4 $(javapat) && \
+	$(javac) -g -d $(buildpath) -source $(version) $(javapat) && \
 	touch classes.stamp
 
 jml:	jml.stamp
 
 jml.stamp:	$(javafiles)
 	export CLASSPATH=$(JMLC_CLASSPATH);\
-	$(jml) --Quiet --source 1.4 -A -a $(javapat) && \
+	$(jml) --Quiet --source $(version) -A -a $(javapat) && \
 	touch jml.stamp
 
 jmlc:	jmlc.stamp
@@ -174,7 +175,7 @@ jmlc.stamp:	$(javafiles)
 	@mkdir -p $(jmlc_path)
 	export CLASSPATH=$(JMLC_CLASSPATH);\
 	$(jmlc) --destination $(jmlc_path) \
-		--Quiet --source 1.4 -A -a $(javapat) && \
+		--Quiet --source $(version) -A -a $(javapat) && \
 	touch jmlc.stamp
 
 jmlc_jmlunit: jmlc_jmlunit.stamp
@@ -183,7 +184,7 @@ jmlc_jmlunit.stamp:	$(javafiles)
 	@mkdir -p $(jmlc_jmlunit_path)
 	export CLASSPATH=$(JUNIT_CLASSPATH);\
 	$(jmlc) --destination $(jmlc_jmlunit_path) \
-		--Quiet --source 1.4 -A -a $(javapat) && \
+		--Quiet --source $(version) -A -a $(javapat) && \
 	touch jmlc_jmlunit.stamp
 
 jmlunit:	jmlc_jmlunit jmlunit.stamp
@@ -193,7 +194,7 @@ jmlunit.stamp:	$(javafiles)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
 	$(jmlunit) --destination $(jmlunit_path) \
 		--sourcepath $(specpath):$(srcpath):$(testpath) \
-		--package --source 1.4 \
+		--package --source $(version) \
 		--testLevel=2 $(srcpath)/election/tally && \
 	touch jmlunit.stamp
 
@@ -202,7 +203,7 @@ jmlunit_classes:	jmlunit jmlunit_classes.stamp
 jmlunit_classes.stamp:	$(jmlunitfiles)
 	mkdir -p $(jmlc_jmlunit_path)
 	export CLASSPATH=$(JUNIT_CLASSPATH);\
-	javac -g -d $(jmlc_jmlunit_path) -source 1.4 $(jmlunitpat) && \
+	javac -g -d $(jmlc_jmlunit_path) -source $(version) $(jmlunitpat) && \
 	touch jmlunit_classes.stamp
 
 # targets related to checking software
