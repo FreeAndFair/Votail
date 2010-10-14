@@ -19,11 +19,9 @@ import edu.mit.csail.sdg.alloy4.SafeList;
 import edu.mit.csail.sdg.alloy4compiler.ast.Browsable;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
-import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig.Field;
-import edu.mit.csail.sdg.alloy4compiler.ast.Sig.PrimSig;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Options;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
@@ -73,7 +71,7 @@ public class BallotBoxGenerator {
   /*@
    * require loaded != null;
    */
-  public BallotBox generateBallotBox (/*@ non_null @*/ Scenario scenario, 
+  public BallotBox generateBallotBox (/*@ non_null*/ Scenario scenario, 
     int scope) {
 
     Expr predicate;
@@ -81,7 +79,7 @@ public class BallotBoxGenerator {
     A4Solution solution;
     BallotBox ballotBox = null;
     
-    // Find a ballot box which fulfills this scenario
+    // Find a ballot box which creates this scenario
     try {
         predicate = CompUtil.parseOneExpression_fromString(world, 
           scenario.toPredicate());

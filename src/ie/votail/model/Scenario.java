@@ -11,46 +11,22 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 
 
 public class Scenario {
-  private Outcome[] outcomes;
-  private int numberOfOutcomes;
-  private Method method;
-  private Expr alloyExpression;
+  private static final int MAX_OUTCOMES = 30;
 
-  /**
-   * Create a new model scenario
-   * 
-   * @param numberOfWinners
-   * @param numberOfCandidates
-   */
+  private /*@ non_null @*/ Outcome[] outcomes;
+  
   /*@
-   * requires 1 < numberOfCandidates;
+   * private invariant 0 <= numberOfOutcomes;
+   * private invariant numberOfOutcomes <= MAX_OUTCOMES;
    */
-  public Scenario (int numberOfCandidates, Method method) {
-    this.method = method;
-    outcomes = new Outcome[numberOfCandidates];
-  }
- 
+  private int numberOfOutcomes;
+
   /**
-   * Create a new scenario which contains these outcomes 
-   * 
-   * @param outcomes
+   * Create a new model scenario.
    */
-  public Scenario(/*@ non_null @*/ Outcome[] outcomes, Method method) {
-    this.method = method;
-    System.arraycopy(outcomes, 0, this.outcomes, 0, outcomes.length);
-  }
-
-
-  public Scenario(Outcome[] combined) {
-    // TODO Auto-generated constructor stub
-  }
-
-  public Scenario(Outcome winner, Outcome loser) {
-    // TODO Auto-generated constructor stub
-  }
-
-  public Scenario(Outcome winner) {
-    // TODO Auto-generated constructor stub
+  public Scenario () {
+    numberOfOutcomes = 0;
+    outcomes = new Outcome[MAX_OUTCOMES];
   }
 
   /** Get the outcome for any integer index
@@ -126,27 +102,33 @@ public class Scenario {
     }
     return predicateStringBuffer.toString();
   }
-  
+
   /**
-   * Extend scenario by adding extra outcomes
+   * Sort the candidate outcomes events from highest Winner to lowest Loser
    * 
-   * @param tail
+   * @param unsorted
    * @return
    */
-  public Scenario add (Scenario tail) {
-    Outcome[] combined = new Outcome [this.numberOfOutcomes + tail.numberOfOutcomes];
-    for (int i=0; i < this.numberOfOutcomes; i++) {
-      combined[i] = this.outcomes[i];
-    }
-    for (int j=0; j < tail.numberOfOutcomes; j++) {
-      combined[j+this.numberOfOutcomes] = tail.outcomes[j];
-    }
-    
-    return new Scenario (canonicalSort(combined));
+  /*@
+   * 
+   */
+  public Scenario canonical () {
+    Scenario sorted = new Scenario();
+    // TODO
+    return sorted;
   }
-
-  private Outcome[] canonicalSort(Outcome[] combined) {
-    // TODO Auto-generated method stub
-    return null;
+  
+  /**
+   * 
+   * @param other
+   * @return
+   */
+  /*@
+   * 
+   */
+  public boolean equivalent (/*@ non_null*/ Scenario other) {
+    return canonical().equals(other.canonical());
   }
+  
+  //TODO equality of length and outcomes
 }

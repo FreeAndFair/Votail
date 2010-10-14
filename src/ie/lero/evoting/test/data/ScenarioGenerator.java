@@ -1,6 +1,5 @@
 package ie.lero.evoting.test.data;
 
-import ie.votail.model.Outcome;
 import ie.votail.model.Scenario;
 
 import java.util.logging.Logger;
@@ -39,12 +38,6 @@ public class ScenarioGenerator {
     return null;
     // TODO use Alloy API to generate all possible scenaios
   }
-
-
-
-
-
-
 
   /**
    * 
