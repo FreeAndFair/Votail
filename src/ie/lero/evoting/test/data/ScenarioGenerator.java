@@ -11,6 +11,7 @@ public class ScenarioGenerator {
   int numberOfCandidates;
   int index;
   Logger scenarioLogger;
+  
   /**
    * @param winners
    *        The number of seats that can be won
@@ -25,21 +26,18 @@ public class ScenarioGenerator {
 
     scenarioLogger = Logger.getLogger("scenarios.log");
     numberOfCandidates = winners + losers;
-    scenarios = solve (winners, losers);
+    //scenarios = solve (winners, losers);
   }
-  
-  
 
-
-
- 
-
-  private Scenario[] solve(int winners, int losers) {
-    // TODO Auto-generated method stub- recursive solution
+  /**
+   * 
+   * @param winners
+   * @param losers
+   * @return
+   */
+  public Scenario solve(int winners, int losers) {
     return null;
-    // solve (winners-1,losers-1) ...
-    // if winners==1 solve (1,losers-1)
-    // if winners==1 && losers==1, return (winner,loser) and (tiedWinner,tiedLoser)
+    // TODO use Alloy API to generate all possible scenaios
   }
 
 

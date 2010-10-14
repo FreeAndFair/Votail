@@ -9,12 +9,14 @@ package ie.lero.evoting.test.data;
 
 import ie.votail.model.Scenario;
 
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4.SafeList;
+import edu.mit.csail.sdg.alloy4compiler.ast.Browsable;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
@@ -158,6 +160,7 @@ public class BallotBoxGenerator {
   }
 
   static public int getPreferences(Field field, int i) {
+    List<? extends Browsable> nodes = field.getSubnodes();
     // TODO Auto-generated method stub
     return 0;
   }
@@ -166,6 +169,4 @@ public class BallotBoxGenerator {
     // TODO Auto-generated method stub
     return 0;
   }
-
-    
 }

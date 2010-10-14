@@ -1,5 +1,7 @@
 package ie.votail.model;
 
+import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
+
 /**
  * A model election scenario is a set of possible outcomes for each candidate. 
  * Each branch in the counting algorithm is associated with at least one
@@ -12,6 +14,7 @@ public class Scenario {
   private Outcome[] outcomes;
   private int numberOfOutcomes;
   private Method method;
+  private Expr alloyExpression;
 
   /**
    * Create a new model scenario
@@ -39,6 +42,14 @@ public class Scenario {
 
 
   public Scenario(Outcome[] combined) {
+    // TODO Auto-generated constructor stub
+  }
+
+  public Scenario(Outcome winner, Outcome loser) {
+    // TODO Auto-generated constructor stub
+  }
+
+  public Scenario(Outcome winner) {
     // TODO Auto-generated constructor stub
   }
 
