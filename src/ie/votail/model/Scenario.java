@@ -14,22 +14,14 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 
 
 public class Scenario {
-  private static final int MAX_OUTCOMES = 30;
 
   private /*@ non_null @*/ ArrayList<Outcome> outcomes;
-  
-  /*@
-   * private invariant 0 <= numberOfOutcomes;
-   * private invariant numberOfOutcomes <= MAX_OUTCOMES;
-   */
-  private int numberOfOutcomes;
 
   /**
    * Create a new model scenario.
    */
   public Scenario () {
     outcomes = new ArrayList<Outcome>();
-    numberOfOutcomes = 0;
   }
   
   /**
@@ -57,7 +49,6 @@ public class Scenario {
    */
   public void addOutcome(/*@ non_null */ Outcome outcome) {
     outcomes.add(outcome);
-    numberOfOutcomes++;
   }
   
   /**
@@ -79,7 +70,7 @@ public class Scenario {
   public String toPredicate() {
     Iterator<Outcome> iterator = outcomes.iterator();
     StringBuffer predicateStringBuffer = new StringBuffer("some disj ");
-    for (int i=0; i < numberOfOutcomes; i++) {
+    for (int i=0; i < outcomes.size(); i++) {
       if (i > 0 ) {
         predicateStringBuffer.append(", "); 
       }
@@ -108,7 +99,15 @@ public class Scenario {
    */
   public Scenario canonical () {
     Scenario sorted = new Scenario();
-    // TODO
+    // Extract each type of outcome in canonical order
+    for (Outcome outcome : Outcome.values()) {
+      Iterator<Outcome> iterator = this.outcomes.iterator();
+      while (iterator.hasNext()) {
+        if (outcome.equals(iterator.next())) {
+          sorted.addOutcome(outcome);
+        }
+      }
+    }
     return sorted;
   }
   
@@ -134,7 +133,8 @@ public class Scenario {
    * @return
    */
   /*@
-   * 
+   * ensures 1 + this.size() == \result.size();
+   * ensures \result.contains (outcome);
    */
   public Scenario append(Outcome outcome) {
     Scenario result = this.copy();
