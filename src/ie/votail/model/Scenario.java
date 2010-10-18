@@ -1,5 +1,8 @@
 package ie.votail.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 
 /**
@@ -13,7 +16,7 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 public class Scenario {
   private static final int MAX_OUTCOMES = 30;
 
-  private /*@ non_null @*/ Outcome[] outcomes;
+  private /*@ non_null @*/ ArrayList<Outcome> outcomes;
   
   /*@
    * private invariant 0 <= numberOfOutcomes;
@@ -25,33 +28,19 @@ public class Scenario {
    * Create a new model scenario.
    */
   public Scenario () {
+    outcomes = new ArrayList<Outcome>();
     numberOfOutcomes = 0;
-    outcomes = new Outcome[MAX_OUTCOMES];
-  }
-
-  /** Get the outcome for any integer index
-   * 
-   * @param index The index
-   * @return The candidate outcome
-   */
-  /*@
-   * requires 0 <= index;
-   * requires index < numberOfOutcomes;
-  */
-  public Outcome getOutcome (int index) {
-    return outcomes[index];
   }
   
   /**
    * Textual representation of a model election scenario.
    */
   public String toString() {
+    Iterator<Outcome> iterator = outcomes.iterator();
     StringBuffer stringBuffer = new StringBuffer ("scenario (");
-    for (int i=0; i<numberOfOutcomes; i++) {
-      if (0 < i) {
-        stringBuffer.append(", ");
-      }
-      stringBuffer.append(outcomes[i].toString());
+    while (iterator.hasNext()) {
+      stringBuffer.append(" ");
+      stringBuffer.append(iterator.next().toString());
     }
     stringBuffer.append(")");
     return stringBuffer.toString();
@@ -63,10 +52,12 @@ public class Scenario {
    * @param outcome The candidate outcome to be added to this scenario
    */
   /*@
-   * requires numberOfOutcomes < Outcomes.length;
+   * ensures 1 + \old(numberOfOuctomes) == numberOfOutcomes
+   * ensures outcomes.contains(outcome);
    */
-  public void addOutcome(Outcome outcome) {
-    outcomes[numberOfOutcomes++] = outcome;    
+  public void addOutcome(/*@ non_null */ Outcome outcome) {
+    outcomes.add(outcome);
+    numberOfOutcomes++;
   }
   
   /**
@@ -86,6 +77,7 @@ public class Scenario {
    * @return The Alloy predicate as a string
    */
   public String toPredicate() {
+    Iterator<Outcome> iterator = outcomes.iterator();
     StringBuffer predicateStringBuffer = new StringBuffer("some disj ");
     for (int i=0; i < numberOfOutcomes; i++) {
       if (i > 0 ) {
@@ -94,11 +86,13 @@ public class Scenario {
       predicateStringBuffer.append("c" + i);
     }
     predicateStringBuffer.append(": Candidate | ");
-    for (int i=0; i < numberOfOutcomes; i++) {
+    int i=0;
+    while (iterator.hasNext()) {
       if (i > 0 ) {
         predicateStringBuffer.append(" and "); 
       }
-      predicateStringBuffer.append("c" + i + ".outcome = " + getOutcome(i).toString());
+      predicateStringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
+      i++;
     }
     return predicateStringBuffer.toString();
   }
@@ -119,16 +113,65 @@ public class Scenario {
   }
   
   /**
+   * Compare two scenarios for the same multiset of outcomes
    * 
-   * @param other
+   * @param other The other scenario
+   * @return Two scenarios are equivalent of they contain the same quantity of
+   * each kind of outcome
+   */
+  /*@
+   * 
+   */
+  public boolean equivalentTo (/*@ non_null*/ Scenario other) {
+    return canonical().equals(other.canonical());
+  }
+
+  /**
+   * Create a scenario with one extra outcome
+   * 
+   * 
+   * @param outcome
    * @return
    */
   /*@
    * 
    */
-  public boolean equivalent (/*@ non_null*/ Scenario other) {
-    return canonical().equals(other.canonical());
+  public Scenario append(Outcome outcome) {
+    Scenario result = this.copy();
+    result.addOutcome(outcome);
+    return result;
   }
-  
-  //TODO equality of length and outcomes
+
+  /**
+   * Create a scenario with an equivalent set of outcomes
+   * 
+   * @return An equivalent scenario
+   */
+  /*@
+   * ensures Result.equivalentTo(this);
+   */
+  private Scenario copy() {
+    Scenario clone = new Scenario();
+    Iterator<Outcome> iterator = this.outcomes.iterator();
+    while (iterator.hasNext()) {
+      clone.addOutcome(iterator.next());
+    }
+    return clone;
+  }
+
+  /**
+   * 
+   * 
+   * @return True if any tied outcomes exist
+   */
+  public boolean isTied() {
+    Iterator<Outcome> iterator = this.outcomes.iterator();
+    while (iterator.hasNext()) {
+      Outcome outcome = iterator.next();
+      if (outcome.isTied()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
