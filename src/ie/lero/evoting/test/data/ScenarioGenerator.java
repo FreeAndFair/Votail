@@ -93,4 +93,13 @@ public class ScenarioGenerator {
     }
     return distinctScenarios;
   }
+  
+  public void generate (int numberOfOutcomes) {
+    // TODO
+  }
+  
+  public Scenario getScenario (int index) {
+    return null; // TODO
+  }
 }
+

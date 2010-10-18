@@ -119,24 +119,24 @@ public class Scenario {
    * each kind of outcome
    */
   /*@
-   * 
+   * ensures \result <==> this.canonical().equals(other.canonical());
    */
-  public boolean equivalentTo (/*@ non_null*/ Scenario other) {
-    return canonical().equals(other.canonical());
+  public /*@ pure*/ boolean equivalentTo (/*@ non_null*/ Scenario other) {
+    return this.canonical().equals(other.canonical());
   }
 
   /**
-   * Create a scenario with one extra outcome
+   * Append an outcome to this scenario.
    * 
-   * 
-   * @param outcome
-   * @return
+   * @param outcome The outcome to be appened
+   * @return The scenario with the outcome appended
    */
   /*@
    * ensures 1 + this.size() == \result.size();
    * ensures \result.contains (outcome);
+   * ensures \result.equivalentTo (this.addOutcome(outcome));
    */
-  public Scenario append(Outcome outcome) {
+  public /*@ pure*/ Scenario append(/*@ non_null*/ Outcome outcome) {
     Scenario result = this.copy();
     result.addOutcome(outcome);
     return result;
@@ -150,7 +150,8 @@ public class Scenario {
   /*@
    * ensures Result.equivalentTo(this);
    */
-  private Scenario copy() {
+  private /*@ pure*/ 
+  Scenario copy() {
     Scenario clone = new Scenario();
     Iterator<Outcome> iterator = this.outcomes.iterator();
     while (iterator.hasNext()) {
@@ -160,7 +161,7 @@ public class Scenario {
   }
 
   /**
-   * 
+   * Check if this scenario involves a tie between equal candidates
    * 
    * @return True if any tied outcomes exist
    */
