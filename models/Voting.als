@@ -228,10 +228,16 @@ fact lowestElimination {
 
 // All ties involve equality between at least one winner and at least one loser on either original votes or
 // on transfers plus original votes
-fact equalityOfTies {
-   all w: Candidate | some l: Candidate | w.outcome = Winner and 
+fact equalityOfTiedWinner {
+   all w: Candidate | some l: Candidate | w.outcome = TiedWinner and 
 	 	(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies
 		(#l.votes = #w.votes) or (#l.votes + #l.transfers = #w.votes + #w.transfers)
+}
+
+fact equalityOfTiedLosers {
+  all s: Candidate | some w: Candidate | w.outcome = TiedWinner and 
+       (s.outcome = SoreLoser or s.outcome = TiedLoser or s.outcome = TiedEarlyLoser) implies
+       (#s.votes = #w.votes) or (#s.votes + #s.transfers = #w.votes + #w.transfers)
 }
 
 -- Basic Lemmas
@@ -293,7 +299,14 @@ assert immutability {
 }
 check immutability for 16 but 6 int
 
--- 18 Different Scenarios
+// Cannot have tie breaker with both tied sore loser and non-sore loser
+assert tiedWinnerLoserTiedSoreLoser {
+	no disj c,w,l: Candidate | c.outcome = TiedSoreLoser and
+	   w.outcome = TiedWinner and (l.outcome = Loser or l.outcome = TiedLoser)
+}
+check tiedWinnerLoserTiedSoreLoser for 6 int
+
+-- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
 	Election.seats = 1
@@ -412,19 +425,3 @@ pred AnyScenarioWithTiedSoreLoser {
 	some c: Candidate | c.outcome = TiedSoreLoser
 }
 run AnyScenarioWithTiedSoreLoser for 6 int
-
-pred TiedWinnerLoserTiedSoreLoser {
-	one c: Candidate | c.outcome = TiedSoreLoser
-	one w: Candidate | w.outcome = TiedWinner
-    one l: Candidate | l.outcome = Loser
-	#Election.candidates = 3
-}
-run TiedWinnerLoserTiedSoreLoser for 6 int
-
-pred TiedWinnerTiedLoserTiedSoreLoser {
-	one c: Candidate | c.outcome = TiedSoreLoser
-    one w: Candidate | w.outcome = TiedWinner
-    one l: Candidate | l.outcome = TiedLoser
-	#Election.candidates = 3
-}
-run TiedWinnerTiedLoserTiedSoreLoser for 6 int

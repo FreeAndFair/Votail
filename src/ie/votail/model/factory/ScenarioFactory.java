@@ -24,9 +24,10 @@ public class ScenarioFactory {
    */
   /*@
    * requires 1 < numberOfOutcomes;
-   * ensures (numberOfOutcomes == 2) ==> (\result.size() == 4);
-   * ensures (numberOfOutcomes == 3) ==> (26 <= \result.size());
+   * ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
+   * ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
    * ensures (numberOfOutcomes == 4) ==> (200 <= \result.size());
+   * ensures (numberOfOutcomes == 10) ==> (2304 <= \result.size());
    * ensures (numberOfOutcomes == 30) ==> (8900 <= \result.size());
    */
   public ArrayList<Scenario> find(int numberOfOutcomes) {
