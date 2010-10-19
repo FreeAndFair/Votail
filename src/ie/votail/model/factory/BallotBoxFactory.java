@@ -5,7 +5,7 @@
  * the Alloy Analayser API with a pre-defined model of PR-STV voting
  */
 
-package ie.lero.evoting.test.data;
+package ie.votail.model.factory;
 
 import ie.votail.model.Scenario;
 
@@ -28,7 +28,7 @@ import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
 import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 import election.tally.BallotBox;
 
-public class BallotBoxGenerator {
+public class BallotBoxFactory {
 
   private static final int MAX_SCOPE = 0;
   protected Logger logger;
@@ -43,7 +43,7 @@ public class BallotBoxGenerator {
    * @param model_filename The name of the Alloy model file
    * @param log_filename The name of the log file
    */
-  BallotBoxGenerator(String model_filename, String  log_filename) {
+  BallotBoxFactory(String model_filename, String  log_filename) {
     reporter = new A4Reporter();
     loaded = null;
     options = new A4Options();

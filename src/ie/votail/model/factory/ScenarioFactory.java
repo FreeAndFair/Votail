@@ -1,4 +1,4 @@
-package ie.lero.evoting.test.data;
+package ie.votail.model.factory;
 
 import ie.votail.model.Outcome;
 import ie.votail.model.Scenario;
@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
-public class ScenarioGenerator {
+public class ScenarioFactory {
 
   public static final String SCENARIOS_LOG = "scenarios.log";
   Logger scenarioLogger;
   
-  public ScenarioGenerator() {
-    scenarioLogger = Logger.getLogger(ScenarioGenerator.SCENARIOS_LOG);
+  public ScenarioFactory() {
+    scenarioLogger = Logger.getLogger(ScenarioFactory.SCENARIOS_LOG);
   }
 
   /**
