@@ -1,9 +1,11 @@
+/**
+ * Dermot Cochran, 2010, IT University of Copenhagen
+ */
+
 package ie.votail.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 
 /**
  * A model election scenario is a set of possible outcomes for each candidate. 
@@ -12,10 +14,9 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
  * of the counting system.
  */
 
-
 public class Scenario {
 
-  private /*@ non_null @*/ ArrayList<Outcome> outcomes;
+  private /*@ non_null*/ ArrayList<Outcome> outcomes;
 
   /**
    * Create a new model scenario.
@@ -27,7 +28,7 @@ public class Scenario {
   /**
    * Textual representation of a model election scenario.
    */
-  public String toString() {
+  public /*@ pure*/ String toString() {
     Iterator<Outcome> iterator = outcomes.iterator();
     StringBuffer stringBuffer = new StringBuffer ("scenario (");
     while (iterator.hasNext()) {
@@ -44,7 +45,7 @@ public class Scenario {
    * @param outcome The candidate outcome to be added to this scenario
    */
   /*@
-   * ensures 1 + \old(numberOfOuctomes) == numberOfOutcomes
+   * ensures 1 + \old(numberOfOutcomes) == numberOfOutcomes;
    * ensures outcomes.contains(outcome);
    */
   public void addOutcome(/*@ non_null */ Outcome outcome) {
@@ -52,22 +53,26 @@ public class Scenario {
   }
   
   /**
-   * Create an Alloy predicate expression for this scenario, for example:
+   * Create an <a href="http://alloy.mit.edu">Alloy</a> predicate expression 
+   * for this scenario, for example:
    * <p> 
    *   some disj c0,c1,c2,c3,c4,c5,c6,c7,c8: Candidate |
-   *     c0.outcome = Winner and 
-   *     c1.outcome = QuotaWinner and 
-   *     c2.outcome = CompromiseWinner and 
-   *     c3.outcome = Loser and
-   *     c4.outcome = EarlyLoser and 
-   *     c5.outcome = SoreLoser and
-   *     c6.outcome = TiedWinner and 
-   *     c7.outcome = TiedLoser and 
-   *     c8.outcome = TiedEarlyLoser
+   *     <li>c0.outcome = Winner and</li>
+   *     <li>c1.outcome = QuotaWinner and</li>
+   *     <li>c2.outcome = CompromiseWinner and</li>
+   *     <li>c3.outcome = Loser and</li>
+   *     <li>c4.outcome = EarlyLoser and</li>
+   *     <li>c5.outcome = SoreLoser and</li>
+   *     <li>c6.outcome = TiedWinner and</li>
+   *     <li>c7.outcome = TiedLoser and</li>
+   *     <li>c8.outcome = TiedEarlyLoser</li>
    * </p>
-   * @return The Alloy predicate as a string
+   * @return The <code>Alloy</code> predicate as a string
    */
-  public String toPredicate() {
+  /*@
+   * requires 0 < outcomes.size();
+   */
+  public /*@ pure*/ String toPredicate() {
     Iterator<Outcome> iterator = outcomes.iterator();
     StringBuffer predicateStringBuffer = new StringBuffer("some disj ");
     for (int i=0; i < outcomes.size(); i++) {
@@ -89,13 +94,12 @@ public class Scenario {
   }
 
   /**
-   * Sort the candidate outcomes events from highest Winner to lowest Loser
-   * 
-   * @param unsorted
-   * @return
+   * Sort the candidate outcomes events into a canonical order
+   *
+   * @return The equivalent scenario with the candidate outcomes in canonical order
    */
   /*@
-   * 
+   * ensures this.outcomes.size() == \result.outcomes.size();
    */
   public Scenario canonical () {
     Scenario sorted = new Scenario();
@@ -170,6 +174,23 @@ public class Scenario {
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
       if (outcome.isTied()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Check if this scenario involves a tie between a sore loser and another
+   * equal candidate
+   * 
+   * @return True if any tied outcomes exist
+   */
+  public boolean hasTiedSoreLoser() {
+    Iterator<Outcome> iterator = this.outcomes.iterator();
+    while (iterator.hasNext()) {
+      Outcome outcome = iterator.next();
+      if (outcome == Outcome.TIED_SORE_LOSER) {
         return true;
       }
     }

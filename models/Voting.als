@@ -226,6 +226,14 @@ fact lowestElimination {
 		#c.votes + #c.transfers <= #d.votes + #d.transfers
 }
 
+// All ties involve equality between at least one winner and at least one loser on either original votes or
+// on transfers plus original votes
+fact equalityOfTies {
+   all w: Candidate | some l: Candidate | w.outcome = Winner and 
+	 	(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies
+		(#l.votes = #w.votes) or (#l.votes + #l.transfers = #w.votes + #w.transfers)
+}
+
 -- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
@@ -396,6 +404,7 @@ run FifteenDifferentBallots for 15 but 6 int
 pred ScenarioLWW {
 	some a: Candidate | a.outcome = Loser
 	some disj b,c: Candidate | b.outcome = Winner and c.outcome = Winner
+    #Election.candidates = 3
 }
 run ScenarioLWW for 6 int
 
@@ -403,3 +412,19 @@ pred AnyScenarioWithTiedSoreLoser {
 	some c: Candidate | c.outcome = TiedSoreLoser
 }
 run AnyScenarioWithTiedSoreLoser for 6 int
+
+pred TiedWinnerLoserTiedSoreLoser {
+	one c: Candidate | c.outcome = TiedSoreLoser
+	one w: Candidate | w.outcome = TiedWinner
+    one l: Candidate | l.outcome = Loser
+	#Election.candidates = 3
+}
+run TiedWinnerLoserTiedSoreLoser for 6 int
+
+pred TiedWinnerTiedLoserTiedSoreLoser {
+	one c: Candidate | c.outcome = TiedSoreLoser
+    one w: Candidate | w.outcome = TiedWinner
+    one l: Candidate | l.outcome = TiedLoser
+	#Election.candidates = 3
+}
+run TiedWinnerTiedLoserTiedSoreLoser for 6 int

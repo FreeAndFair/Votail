@@ -116,7 +116,6 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>ie.ucd.bon.plugin.boncnature</nature>
 		<nature>mobius.escjava2.plugin.autocheckEscjavaNature</nature>
-		<nature>ch.ethz.inf.pm.jml.plugin.CheckerNature</nature>
 		<nature>AutoGrader.nature</nature>
 		<nature>net.sourceforge.pmd.eclipse.plugin.pmdNature</nature>
 		<nature>edu.umd.cs.findbugs.plugin.eclipse.findbugsNature</nature>

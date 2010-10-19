@@ -17,13 +17,17 @@ public class ScenarioFactory {
   }
 
   /**
-   * Find all election scenarios
+   * Find all election scenarios for a gievn number of outcomes
    * 
-   * @param numberOfOutcomes
-   * @return
+   * @param numberOfOutcomes The number of candidate outcomes
+   * @return All election scenarios with this number of outcomes
    */
   /*@
-   * require 1 < numberOfOuctomes;
+   * requires 1 < numberOfOutcomes;
+   * ensures (numberOfOutcomes == 2) ==> (\result.size() == 4);
+   * ensures (numberOfOutcomes == 3) ==> (26 <= \result.size());
+   * ensures (numberOfOutcomes == 4) ==> (200 <= \result.size());
+   * ensures (numberOfOutcomes == 30) ==> (8900 <= \result.size());
    */
   public ArrayList<Scenario> find(int numberOfOutcomes) {
     ArrayList<Scenario> scenarios = new ArrayList<Scenario>();
@@ -54,7 +58,7 @@ public class ScenarioFactory {
       scenarios.add(unusualScenario);
     }
     else {
-      // Extend the base scenario for one less outcome
+      // Extend the base scenario by adding one additional candidate outcome
       ArrayList<Scenario> baseScenarios = find (numberOfOutcomes-1);
       Iterator<Scenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
@@ -65,12 +69,18 @@ public class ScenarioFactory {
         scenarios.add(baseScenario.append(Outcome.LOSER));
         scenarios.add(baseScenario.append(Outcome.EARLY_LOSER));
         scenarios.add(baseScenario.append(Outcome.SORE_LOSER));
-        // Additional ties are only possible when base scenario has ties
+        // Additional ties are only possible when base scenario has tie breaks
         if (baseScenario.isTied()) {
           scenarios.add(baseScenario.append(Outcome.TIED_WINNER));
-          scenarios.add(baseScenario.append(Outcome.TIED_LOSER));
-          scenarios.add(baseScenario.append(Outcome.TIED_EARLY_LOSER));
-          scenarios.add(baseScenario.append(Outcome.TIED_WINNER));
+          // Cannot have a tie-breaker involving both a sore and non-sore loser
+          if (baseScenario.hasTiedSoreLoser()) {
+            scenarios.add(baseScenario.append(Outcome.TIED_SORE_LOSER));
+          }
+          else {
+            // Difference between loser and early loser is order of elimination
+            scenarios.add(baseScenario.append(Outcome.TIED_LOSER));
+            scenarios.add(baseScenario.append(Outcome.TIED_EARLY_LOSER));
+          }
         }
       }
     }
