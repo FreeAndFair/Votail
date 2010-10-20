@@ -10,14 +10,14 @@ import java.util.logging.Logger;
 public class ScenarioFactory {
 
   public static final String SCENARIOS_LOG = "scenarios.log";
-  Logger scenarioLogger;
+  private Logger scenarioLogger;
   
   public ScenarioFactory() {
     scenarioLogger = Logger.getLogger(ScenarioFactory.SCENARIOS_LOG);
   }
 
   /**
-   * Find all election scenarios for a gievn number of outcomes
+   * Find all election scenarios for a given number of outcomes
    * 
    * @param numberOfOutcomes The number of candidate outcomes
    * @return All election scenarios with this number of outcomes

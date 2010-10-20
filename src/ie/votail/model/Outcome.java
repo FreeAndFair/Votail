@@ -13,9 +13,13 @@ public enum Outcome {
   WINNER;
 
   /**
-   * Does this outcome require a tie?
+   * Does this outcome require a tie-breaker?
    * 
    * @return <code>True>/code> if it does
+   */
+  /*@
+   * ensures \result <==> (this == TIED_SORE_LOSER || this == TIED_WINNER ||
+   *  this == TIED_LOSER || this == TIED_EARLY_LOSER) 
    */
   public /*@ pure */ boolean isTied() {
     return this == TIED_SORE_LOSER || this == TIED_WINNER ||

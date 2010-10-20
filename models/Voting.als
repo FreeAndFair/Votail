@@ -240,6 +240,13 @@ fact equalityOfTiedLosers {
        (#s.votes = #w.votes) or (#s.votes + #s.transfers = #w.votes + #w.transfers)
 }
 
+// When there is a tied sore loser then there are no non-sore losers
+fact typeOfTiedLoser {
+   no disj a,b: Candidate | a.outcome = TiedSoreLoser and 
+        (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or 
+         b.outcome=Loser or b.outcome=EarlyLoser)
+}
+
 -- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
