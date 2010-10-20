@@ -1,0 +1,76 @@
+
+static_diagram STATIC_DIAGRAM
+component
+  cluster TALLY_CLUSTER
+  component
+
+    class BALLOT_BOX interfaced
+    indexing
+      about: "Data transfer structure for set of all valid ballots    ";    
+    feature
+      make
+        ensure
+          delta {index, numberOfBallots};
+          old(numberOfBallots) <= numberOfBallots;
+          old(index) <= index;
+        end
+      ballots: SEQUENCE[BALLOT]
+        ensure
+          Result /= Void;
+        end
+      index: INTEGER
+        ensure
+          Result /= Void;
+        end
+      isNextBallot: BOOLEAN
+        ensure
+          Result /= Void;
+          index < numberOfBallots <-> Result;
+        end
+      numberOfBallots: INTEGER
+        ensure
+          Result /= Void;
+        end
+      size: INTEGER
+        ensure
+          Result /= Void;
+          0 <= Result;
+          Result = numberOfBallots;
+          (ballots = Void) ==> Result = 0;
+        end
+      accept
+        -> preferences: SEQUENCE[INTEGER]
+        require
+          preferences /= Void;
+          numberOfBallots < ballots.count;
+          numberOfBallots < Ballot.MAX_BALLOTS;
+        ensure
+          old(numberOfBallots) + 1 = numberOfBallots;
+          old(numberOfBallots) <= numberOfBallots;
+          old(index) <= index;
+        end
+      getNextBallot: BALLOT
+        require
+          0 <= index;
+          isNextBallot;
+          index + 1 < ballots.count;
+        ensure
+          delta index;
+          Result /= Void;
+          Result = ballots.item(old([index]));
+        end
+      toString: STRING
+        ensure
+          Result /= Void;
+        end
+    invariant
+      0 <= numberOfBallots;
+      numberOfBallots <= Ballot.MAX_BALLOTS;
+      index = 0;
+      index <= size;
+    end --class BALLOT_BOX
+    
+    
+  end --cluster TALLY_CLUSTER
+
+end --static diagram

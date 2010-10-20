@@ -1,3 +1,7 @@
+/**
+ * Dermot Cochran, 2010, IT University of Copenhagen
+ */
+
 package ie.votail.model;
 
 public enum Outcome {

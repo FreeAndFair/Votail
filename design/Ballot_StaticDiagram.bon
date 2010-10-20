@@ -1,0 +1,108 @@
+
+static_diagram STATIC_DIAGRAM
+component
+  cluster TALLY_CLUSTER
+  component
+
+    class BALLOT
+    indexing
+      about: "The ordered set of preferences from a ballot paper in an Irish election,     \    
+        \ which uses the Proportional Representation Single Transfer Vote.     \    
+        \ (PRSTV) system.     \    
+        \      \    
+        \ Department of Environment and Local Government,     \    
+        \ Count Requirements and Commentary on Count Rules,     \    
+        \ section 3-14</a>     \    
+        \      \    
+        \ Dermot Cochran</a>    ";    
+      author: "<a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">";
+      misc: "@see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">";
+    feature
+      make
+        -> preferences: SEQUENCE[INTEGER]
+        require
+          preferences /= Void;
+        ensure
+          delta {numberOfPreferences, positionInList, preferenceList, preferenceList};
+        end
+      getCandidateID: INTEGER
+        ensure
+          Result /= Void;
+          Result = getPreference(positionInList);
+        end
+      getNextPreference: INTEGER
+        -> offset: INTEGER
+        require
+          offset /= Void;
+          0 <= positionInList + offset;
+        ensure
+          Result /= Void;
+          (Result = NONTRANSFERABLE) or (Result = getPreference(positionInList + offset));
+        end
+      isAssignedTo: BOOLEAN
+        -> candidateIDToCheck: INTEGER
+        require
+          candidateIDToCheck /= Void;
+        ensure
+          Result /= Void;
+          (getCandidateID = candidateIDToCheck) <-> (Result = true);
+        end
+      isFirstPreference: BOOLEAN
+        -> candidateID: INTEGER
+        require
+          candidateID /= Void;
+        ensure
+          Result /= Void;
+        end
+      MAX_BALLOTS: INTEGER
+        ensure
+          Result = 150000;
+        end
+      NONTRANSFERABLE: INTEGER
+        ensure
+          Result = 0;
+        end
+      numberOfPreferences: INTEGER
+        ensure
+          Result /= Void;
+        end
+      positionInList: INTEGER
+        ensure
+          Result /= Void;
+        end
+      preferenceList: SEQUENCE[INTEGER]
+        ensure
+          Result /= Void;
+        end
+      remainingPreferences: INTEGER
+        require
+          positionInList <= numberOfPreferences;
+        ensure
+          Result /= Void;
+          Result = numberOfPreferences - positionInList;
+        end
+      toString: STRING
+        ensure
+          Result /= Void;
+        end
+      transfer
+        ensure
+          delta positionInList;
+        end
+    feature{BALLOT}
+      getPreference: INTEGER
+        -> index: INTEGER
+        require
+          index /= Void;
+          0 <= index;
+        ensure
+          Result /= Void;
+          (index < numberOfPreferences and index < preferenceList.count) ==> preferenceList.item(index) = Result;
+          (numberOfPreferences <= index or preferenceList.count <= index) ==> Result = Ballot.NONTRANSFERABLE;
+        end
+    end --class BALLOT
+    
+    
+  end --cluster TALLY_CLUSTER
+
+end --static diagram

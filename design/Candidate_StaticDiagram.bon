@@ -1,0 +1,367 @@
+
+static_diagram STATIC_DIAGRAM
+component
+  cluster TALLY_CLUSTER
+  component
+
+    class COUNT_CONFIGURATION interfaced
+    feature
+      MAXCOUNT: INTEGER
+        ensure
+          Result = 50;
+        end
+      MAXVOTES: INTEGER
+        ensure
+          Result = 150000;
+        end
+    end --class COUNT_CONFIGURATION
+    
+    
+    class CANDIDATE_STATUS interfaced
+    feature
+      CONTINUING: INTEGER
+        ensure
+          Result = 0;
+        end
+      ELECTED: INTEGER
+        ensure
+          Result = 1;
+        end
+      ELIMINATED: INTEGER
+        ensure
+          Result = 2;
+        end
+    end --class CANDIDATE_STATUS
+    
+    
+    effective class ELECTION_STATUS interfaced
+    indexing
+      about: "     \    
+        \ Abstract State Machine for Election Algorithm.     \    
+        \ <p>     \    
+        \ The election count algorithm is modeled as a two tier state machine with     \    
+        \ state values and transitions between those states. The normal path for the     \    
+        \ outer tier of the state machine is:     \    
+        \ <p>     \    
+        \ EMPTY --> SETTING_UP --> PRELOAD --> LOADING --> PRECOUNT -->     \    
+        \ COUNTING --> FINISHED     \    
+        \ <p>     \    
+        \ The inner state machine models the status of the count.    ";    
+    inherit
+      COUNT_CONFIGURATION
+    feature
+      COUNTING: INTEGER
+        ensure
+          Result = 5;
+        end
+      EMPTY: INTEGER
+        ensure
+          Result = 0;
+        end
+      FINISHED: INTEGER
+        ensure
+          Result = 6;
+        end
+      LOADING: INTEGER
+        ensure
+          Result = 3;
+        end
+      PRECOUNT: INTEGER
+        ensure
+          Result = 4;
+        end
+      PRELOAD: INTEGER
+        ensure
+          Result = 2;
+        end
+      SETTING_UP: INTEGER
+        ensure
+          Result = 1;
+        end
+      state: INTEGER
+        ensure
+          Result /= Void;
+        end
+      status: INTEGER
+        ensure
+          Result /= Void;
+        end
+    invariant
+      state = EMPTY;
+      (state >= EMPTY) or (state <= FINISHED);
+      EMPTY < SETTING_UP;
+      SETTING_UP < PRELOAD;
+      PRELOAD < LOADING;
+      LOADING < PRECOUNT;
+      PRECOUNT < COUNTING;
+      COUNTING < FINISHED;
+      -- //@ public represents state = status; ;
+    end --class ELECTION_STATUS
+    
+    
+    class CONSTITUENCY
+    indexing
+      about: "Size of constituency and list of candidates for election..     \    
+        \      \    
+        \ Dermot Cochran</a>    ";    
+      author: "<a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">";
+    feature
+      candidateDataInUse: BOOLEAN
+        ensure
+          Result /= Void;
+        end
+      candidateList: SEQUENCE[CANDIDATE]
+        ensure
+          Result /= Void;
+        end
+      getCandidate: CANDIDATE
+        -> index: INTEGER
+        require
+          index /= Void;
+          0 <= index;
+          index < numberOfCandidates;
+          -- \nonnullelements(candidateList);
+        ensure
+          Result /= Void;
+          candidateList.item(index) = Result;
+        end
+      numberOfCandidates: INTEGER
+        ensure
+          Result /= Void;
+        end
+      numberOfSeatsInThisElection: INTEGER
+        ensure
+          Result /= Void;
+        end
+      totalNumberOfSeats: INTEGER
+        ensure
+          Result /= Void;
+        end
+      setNumberOfCandidates
+        -> number: INTEGER
+        require
+          number /= Void;
+          2 <= number;
+          number <= Candidate.MAX_CANDIDATES;
+          candidateDataInUse = false;
+        ensure
+          number = numberOfCandidates;
+          number <= candidateList.count;
+        end
+      setNumberOfSeats
+        -> totalNumberOfSeats: INTEGER
+        -> numberOfSeatsInThisElection: INTEGER
+        require
+          totalNumberOfSeats /= Void;
+          numberOfSeatsInThisElection /= Void;
+          numberOfSeatsInThisElection <= totalNumberOfSeats;
+          0 <= numberOfSeatsInThisElection;
+        end
+    feature{NONE}
+      makeListOfCandidates
+    invariant
+      0 <= numberOfCandidates;
+      numberOfCandidates <= Candidate.MAX_CANDIDATES;
+      0 <= numberOfSeatsInThisElection;
+      numberOfSeatsInThisElection <= totalNumberOfSeats;
+      0 <= totalNumberOfSeats;
+      -- \nonnullelements(candidateList);
+    end --class CONSTITUENCY
+    
+    
+    effective class CANDIDATE
+    indexing
+      about: "     \    
+        \ The Candidate object records the number of votes received during     \    
+        \ each round of counting. Votes can only be added to the candidate's     \    
+        \ stack while the candidate has a status of <code>CONTINUING</code>.     \    
+        \      \    
+        \ Department of Environment and Local Government,     \    
+        \ Count Requirements and Commentary on Count Rules,     \    
+        \ section 3-14</a>     \    
+        \     ";    
+      author: "Dermot Cochran";
+      misc: "@see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">";
+    inherit
+      CANDIDATE_STATUS
+    feature
+      make
+        ensure
+          state = CONTINUING;
+          lastCountNumber = 0;
+          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
+          old(lastCountNumber) <= lastCountNumber;
+          old(nextCandidateID) <= nextCandidateID;
+        end
+      candidateID: INTEGER
+        ensure
+          Result /= Void;
+        end
+      getOriginalVote: INTEGER
+        require
+          lastCountNumber < votesAdded.count;
+        ensure
+          Result /= Void;
+        end
+      getStatus: INTEGER
+        ensure
+          Result /= Void;
+          Result = state;
+        end
+      getTotalAtCount: INTEGER
+        -> count: INTEGER
+        require
+          count /= Void;
+          0 <= count;
+          count < CountConfiguration.MAXCOUNT;
+          votesAdded.count = CountConfiguration.MAXCOUNT;
+          votesRemoved.count = CountConfiguration.MAXCOUNT;
+        ensure
+          Result /= Void;
+        end
+      isAfter: BOOLEAN
+        -> other: CANDIDATE
+        require
+          other /= Void;
+        ensure
+          Result /= Void;
+          (this.candidateID > other.candidateID) <-> (Result = true);
+        end
+      isElected: BOOLEAN
+        ensure
+          Result /= Void;
+        end
+      lastCountNumber: INTEGER
+        ensure
+          Result /= Void;
+        end
+      MAX_CANDIDATES: INTEGER
+        ensure
+          Result = 20;
+        end
+      NO_CANDIDATE: INTEGER
+        ensure
+          Result = 0;
+        end
+      sameAs: BOOLEAN
+        -> other: CANDIDATE
+        require
+          other /= Void;
+        ensure
+          Result /= Void;
+          ((other /= Void) and (other.candidateID = candidateID)) <-> Result;
+        end
+      state: INTEGER
+        ensure
+          Result /= Void;
+        end
+      votesAdded: SEQUENCE[INTEGER]
+        ensure
+          Result /= Void;
+        end
+      votesRemoved: SEQUENCE[INTEGER]
+        ensure
+          Result /= Void;
+        end
+      addVote
+        -> numberOfVotes: INTEGER
+        -> count: INTEGER
+        require
+          numberOfVotes /= Void;
+          count /= Void;
+          state = CONTINUING;
+          lastCountNumber <= count;
+          0 <= count;
+          count < votesAdded.count;
+          0 <= numberOfVotes;
+        ensure
+          delta {lastCountNumber, votesAdded};
+          numberOfVotes <= votesAdded.item(count);
+          lastCountNumber = count;
+          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
+          old(lastCountNumber) <= lastCountNumber;
+          old(nextCandidateID) <= nextCandidateID;
+        end
+      declareElected
+        require
+          state = CONTINUING;
+        ensure
+          delta state;
+          state = ELECTED;
+          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
+          old(lastCountNumber) <= lastCountNumber;
+          old(nextCandidateID) <= nextCandidateID;
+        end
+      declareEliminated
+        require
+          state = CONTINUING;
+        ensure
+          delta this.state;
+          state = ELIMINATED;
+          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
+          old(lastCountNumber) <= lastCountNumber;
+          old(nextCandidateID) <= nextCandidateID;
+        end
+      removeVote
+        -> numberOfVotes: INTEGER
+        -> count: INTEGER
+        require
+          numberOfVotes /= Void;
+          count /= Void;
+          state = ELIMINATED or state = ELECTED;
+          lastCountNumber <= count;
+          0 <= count;
+          count < votesRemoved.count;
+          0 <= numberOfVotes;
+          numberOfVotes <= getTotalAtCount(count);
+        ensure
+          delta {lastCountNumber, votesRemoved};
+          numberOfVotes <= votesRemoved.item(count);
+          lastCountNumber = count;
+          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
+          old(lastCountNumber) <= lastCountNumber;
+          old(nextCandidateID) <= nextCandidateID;
+        end
+      getUniqueID: INTEGER
+        ensure
+          Result /= Void;
+        end
+    feature{CANDIDATE}
+      getVoteAtCount: INTEGER
+        -> count: INTEGER
+        require
+          count /= Void;
+          0 <= count;
+          count < CountConfiguration.MAXCOUNT;
+          votesAdded.count = CountConfiguration.MAXCOUNT;
+          votesRemoved.count = CountConfiguration.MAXCOUNT;
+        ensure
+          Result /= Void;
+          Result = votesAdded.item(count) - votesRemoved.item(count);
+        end
+    feature{NONE}
+      nextCandidateID: INTEGER
+        ensure
+          Result /= Void;
+        end
+    invariant
+      0 <= candidateID;
+      votesAdded.count = CountConfiguration.MAXCOUNT;
+      votesRemoved.count = CountConfiguration.MAXCOUNT;
+      votesAdded /= votesRemoved;
+      votesRemoved /= votesAdded;
+      state = ELECTED or state = ELIMINATED or state = CONTINUING;
+      state = CONTINUING;
+      0 <= lastCountNumber;
+      lastCountNumber = 0;
+      lastCountNumber <= CountConfiguration.MAXCOUNT;
+      -- (\forall int i; 0 < i && i < votesAdded.length; 0 <= votesAdded[i]);
+      -- (\forall int i; 0 < i && i < votesAdded.length; votesAdded[i] == 0);
+      -- (\forall int i; 0 < i && i < votesRemoved.length; 0 <= votesRemoved[i]);
+      -- (\forall int i; 0 < i && i < votesRemoved.length; votesRemoved[i] == 0);
+    end --class CANDIDATE
+    
+    
+  end --cluster TALLY_CLUSTER
+
+end --static diagram

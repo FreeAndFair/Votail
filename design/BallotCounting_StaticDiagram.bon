@@ -1,0 +1,211 @@
+
+static_diagram STATIC_DIAGRAM
+component
+  cluster TALLY_CLUSTER
+  component
+
+    effective class BALLOT_COUNTING
+    indexing
+      about: "Ballot counting for elections to Dail Eireann - the lower house of the Irish     \    
+        \ Parliament.     \    
+        \      \    
+        \      \    
+        \ Permission is hereby granted, free of charge, to any person obtaining a copy     \    
+        \ of this software and associated documentation files (the "Software"), to deal     \    
+        \ in the Software without restriction, including without limitation the rights     \    
+        \ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     \    
+        \ copies of the Software, and to permit persons to whom the Software is     \    
+        \ furnished to do so, subject to the following conditions:     \    
+        \      \    
+        \ The above copyright notice and this permission notice shall be included in     \    
+        \ all copies or substantial portions of the Software.     \    
+        \      \    
+        \ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     \    
+        \ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,     \    
+        \ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     \    
+        \ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER     \    
+        \ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,     \    
+        \ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     \    
+        \ THE SOFTWARE.     \    
+        \      \    
+        \      \    
+        \ This work was supported, in part, by Science Foundation Ireland     \    
+        \ grant 03/CE2/I303_1 to Lero - the Irish Software Engineering     \    
+        \ Research Centre (www.lero.ie) and, in part, by the European Project Mobius     \    
+        \ IST 15909 within the IST 6th Framework. This software reflects only the     \    
+        \ authors' views and the European Community is not liable for any use that     \    
+        \ may be made of the information contained therein.     \    
+        \      \    
+        \ Formal Verification and Risk Analysis for Remote Voting Systems</a>    ";    
+      author: "Dermot Cochran";
+      misc: "@see <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">";
+    inherit
+      ABSTRACT_BALLOT_COUNTING
+    feature
+      make
+      countStatus: COUNT_STATUS
+        ensure
+          Result /= Void;
+        end
+      getContinuingCandidates: INTEGER
+        ensure
+          Result /= Void;
+          getNumberContinuing = Result;
+        end
+      getDepositSavingThreshold: INTEGER
+        ensure
+          Result /= Void;
+        end
+      getRemainingSeats: INTEGER
+        ensure
+          Result /= Void;
+          totalRemainingSeats = Result;
+        end
+      count
+        require
+          state = PRECOUNT or state = COUNTING;
+          -- \nonnullelements(candidateList);
+        ensure
+          delta {countNumberValue, ballotsToCount, candidateList, candidates, candidates, totalRemainingSeats, countStatus, savingThreshold, ballots, ballotsToCount, numberOfCandidatesElected, numberOfCandidatesEliminated, status, countStatus, remainingSeats, totalRemainingSeats};
+          state = ElectionStatus.FINISHED;
+        end
+      distributeSurplus
+        -> winner: INTEGER
+        require
+          winner /= Void;
+          state = COUNTING;
+          countStatus.getState = AbstractCountStatus.SURPLUS_AVAILABLE;
+          isElected(candidateList.item(winner));
+          0 <= winner;
+          winner < candidateList.count;
+          -- \nonnullelements(candidateList);
+        end
+      incrementCountNumber
+        ensure
+          delta countNumberValue;
+          old(countNumberValue) + 1 = countNumberValue;
+        end
+      startCounting
+        require
+          state = PRECOUNT;
+        ensure
+          delta {state, countStatus, countNumberValue, totalRemainingSeats, savingThreshold, numberOfCandidatesElected, numberOfCandidatesEliminated};
+          state = COUNTING;
+        end
+      transferVotes
+        -> numberOfVotes: INTEGER
+        -> fromCandidate: CANDIDATE
+        -> toCandidate: CANDIDATE
+        require
+          numberOfVotes /= Void;
+          fromCandidate /= Void;
+          toCandidate /= Void;
+          state = COUNTING;
+          countStatus.getState = AbstractCountStatus.READY_TO_MOVE_BALLOTS;
+        end
+      updateCountStatus
+        -> countingStatus: INTEGER
+        require
+          countingStatus /= Void;
+          state = COUNTING;
+          countStatus /= Void;
+        ensure
+          delta countStatus.substate;
+        end
+    feature{BALLOT_COUNTING}
+      electCandidatesWithSurplus
+        ensure
+          delta {candidateList, ballotsToCount, candidates, numberOfCandidatesElected, totalRemainingSeats};
+        end
+      excludeLowestCandidates
+        require
+          -- \nonnullelements(candidateList);
+        ensure
+          delta {countStatus, countNumberValue, candidates, candidateList, numberOfCandidatesEliminated, ballots, ballotsToCount};
+        end
+      fillLastSeats
+        ensure
+          delta {candidateList, countNumber, countNumberValue, numberOfCandidatesElected, totalRemainingSeats, candidates};
+        end
+      moveSurplusBallots
+        -> index: INTEGER
+        -> winner: INTEGER
+        require
+          index /= Void;
+          winner /= Void;
+          0 <= index;
+          index < candidateList.count;
+          0 <= winner;
+          winner < candidateList.count;
+          -- \nonnullelements(candidateList);
+        end
+      removeNonTransferableBallots
+        -> totalTransferableVotes: INTEGER
+        -> winner: INTEGER
+        -> surplus: INTEGER
+        require
+          totalTransferableVotes /= Void;
+          winner /= Void;
+          surplus /= Void;
+          0 <= winner;
+          winner < candidateList.count;
+          -- \nonnullelements(candidateList);
+          -- \nonnullelements(ballotsToCount);
+        end
+      calculateNumberOfTransfers: INTEGER
+        -> index: INTEGER
+        -> winner: INTEGER
+        require
+          index /= Void;
+          winner /= Void;
+          0 <= index;
+          index < candidateList.count;
+          0 <= winner;
+          winner < candidateList.count;
+          -- \nonnullelements(candidateList);
+        ensure
+          Result /= Void;
+        end
+    end --class BALLOT_COUNTING
+    
+    BALLOT_COUNTING client:{ COUNT_STATUS
+    
+    effective class COUNT_STATUS interfaced
+    indexing
+      about: "Inner class for state machine    ";    
+    inherit
+      ABSTRACT_COUNT_STATUS
+    feature
+      make
+      getState: INTEGER
+        ensure
+          Result /= Void;
+          Result = substate;
+        end
+      isPossibleState: BOOLEAN
+        -> value: INTEGER
+        require
+          value /= Void;
+        ensure
+          Result /= Void;
+        end
+      substate: INTEGER
+        ensure
+          Result /= Void;
+        end
+      changeState
+        -> newState: INTEGER
+        require
+          newState /= Void;
+        ensure
+          delta substate;
+          newState = getState;
+        end
+    invariant
+      substate = READY_TO_COUNT;
+    end --class COUNT_STATUS
+    
+    
+  end --cluster TALLY_CLUSTER
+
+end --static diagram
