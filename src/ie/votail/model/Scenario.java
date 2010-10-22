@@ -15,6 +15,40 @@ import java.util.Iterator;
  */
 
 public class Scenario {
+  
+  // Invariants for Scenarios based on Axioms in the Alloy model
+  
+  public static final boolean AXIOM_validTieBreaker = true;
+  /*@
+   * public invariant AXIOM_validTieBreaker ==>
+   *   (\forall Outcome tl; outcomes.contains(tl) &&
+   *   (tl == Outcomes.TiedLoser || tl == outcomes.TiedEarlyLoser || 
+   *   tl == outcomes.tiedSoreLoser);
+   *   (\exists Outcome tw; outcomes.contains(tw) && tw == Outcomes.TIED_WINNER));
+   */
+  
+  public static final boolean AXIOM_tieBreaker = true;
+  /*@ 
+   * public invariant AXIOM_tieBreaker ==> 
+   *   (\forall Outcome tw; outcomes.contains(tw) && tw == Outcomes.TIED_WINNER;
+   *   (\exists Outcome tl; outcomes.contains(tl) &&
+   *   (tl == Outcomes.TiedLoser || tl == outcomes.TiedEarlyLoser || 
+   *   tl == outcomes.tiedSoreLoser)));
+   */
+  
+  public static final boolean AXIOM_typeOfTiedLoser = true;
+  /*@
+   * public invariant AXIOM_typeOfTiedLoser ==>
+   *  (\forall Outcome a, b; outcomes.contains (a) && outcomes.contains (b);
+   *  (a == Outcome.TiedSoreLoser) ==> 
+   *    (b != Outcome.TiedLoser && b != Outcome.TiedEarlyLoser && 
+   *     b != Outcome.Loser && b != Outcome.EarlyLoser));
+   */
+  
+  // There is at least one winner and one loser in each valid scenario
+  /*@
+   * public invariant 1 < outcomes.size();
+   */
 
   private /*@ non_null*/ ArrayList<Outcome> outcomes;
 
@@ -152,10 +186,9 @@ public class Scenario {
    * @return An equivalent scenario
    */
   /*@
-   * ensures Result.equivalentTo(this);
+   * ensures \result.equals(this);
    */
-  private /*@ pure*/ 
-  Scenario copy() {
+  private /*@ pure*/ Scenario copy() {
     Scenario clone = new Scenario();
     Iterator<Outcome> iterator = this.outcomes.iterator();
     while (iterator.hasNext()) {
@@ -169,7 +202,7 @@ public class Scenario {
    * 
    * @return True if any tied outcomes exist
    */
-  public boolean isTied() {
+  public /*@ pure*/ boolean isTied() {
     Iterator<Outcome> iterator = this.outcomes.iterator();
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
@@ -184,9 +217,12 @@ public class Scenario {
    * Check if this scenario involves a tie between a sore loser and another
    * equal candidate
    * 
-   * @return True if any tied outcomes exist
+   * @return True if there are any tied sore losers in this scenario
    */
-  public boolean hasTiedSoreLoser() {
+  /*@
+   * ensures \result ==> isTied();
+   */
+  public /*@ pure*/ boolean hasTiedSoreLoser() {
     Iterator<Outcome> iterator = this.outcomes.iterator();
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
@@ -195,5 +231,29 @@ public class Scenario {
       }
     }
     return false;
+  }
+  
+  /**
+   * Count the number of winners in this scenario
+   * 
+   * @return The number of winners
+   */
+  /*@
+   * ensures 0 < \result;
+   * ensures \result < this.outcomes.size();
+   */
+  public int numberOfWinners() {
+   int count = 0;
+   Iterator<Outcome> iterator = this.outcomes.iterator();
+   while (iterator.hasNext()) {
+     Outcome outcome = iterator.next();
+     if (outcome == Outcome.COMPROMISE_WINNER || 
+         outcome == Outcome.TIED_WINNER ||
+         outcome == Outcome.QUOTA_WINNER ||
+         outcome == Outcome.WINNER) {
+       count++;
+     }
+   }
+   return count; 
   }
 }

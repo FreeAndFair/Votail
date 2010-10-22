@@ -360,7 +360,6 @@ public class BallotCounting extends AbstractBallotCounting {
 	  @ assignable numberOfCandidatesElected, totalRemainingSeats;
 	  @ assignable candidates;
 	  @*/
-
   protected void fillLastSeats() {
     // TODO 2009.10.14 ESC assignable warning
     countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED);	//@ nowarn;

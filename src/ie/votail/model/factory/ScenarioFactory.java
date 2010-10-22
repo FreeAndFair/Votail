@@ -34,7 +34,7 @@ public class ScenarioFactory {
     ArrayList<Scenario> scenarios = new ArrayList<Scenario>();
     if (numberOfOutcomes == 2) {
       
-      // Winner gets majority of votes, losers reaches threshold
+      // Winner gets majority of votes, loser reaches threshold
       Scenario commonScenario = new Scenario();
       commonScenario.addOutcome(Outcome.WINNER);
       commonScenario.addOutcome(Outcome.LOSER);

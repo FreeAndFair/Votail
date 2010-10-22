@@ -449,8 +449,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return Internal ID of next continuing candidate or
    *         <code>NONTRANSFERABLE</code>
    */
-  protected/*@ pure spec_public @*/int getNextContinuingPreference(
-                                                                    final/*@ non_null @*/Ballot ballot) {
+  protected/*@ pure spec_public*/int getNextContinuingPreference(
+    final/*@ non_null*/Ballot ballot) {
 
     for (int i = 1; i <= ballot.remainingPreferences(); i++) {
       final int nextPreference = ballot.getNextPreference(i);

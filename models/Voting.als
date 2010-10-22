@@ -93,7 +93,7 @@ one sig Election {
  	all c: Candidate | c in candidates
 }
 
--- Independent Axioms
+-- Independent (or Fundamental) Axioms
 fact integrity {
   all c: Candidate | all b: Ballot | b in c.votes implies c in b.assignees
 }
@@ -161,7 +161,7 @@ fact losers {
 		c.outcome = TiedLoser or c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser)
 }
 
--- Non-Independent Axioms
+-- Non-Independent Axioms for Ballot Integrity
 fact transfers {
 	all c: Candidate | 0 < #c.transfers implies Election.method = STV
 }
@@ -184,11 +184,6 @@ fact sizeOfSurplus {
 		#c.surplus = #c.votes + #c.transfers - Scenario.quota
 }
 
-fact tieBreaker {
-	all w: Candidate | some l: Candidate | w.outcome = TiedWinner implies 
-		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser)
-}
-
 fact transferToNextPreference {
 	all b: Ballot | all disj donor,receiver: Candidate |
 		(donor + receiver in b.assignees and
@@ -200,10 +195,6 @@ fact transferToNextPreference {
 fact pluralityWinner {
 	all disj a, b: Candidate | (Election.method = Plurality and Election.seats = 1) and
 		a.outcome = Winner implies #b.votes <= #a.votes
-}
-
-fact validTieBreaker {
-	all l: Candidate | some w: Candidate | l.outcome = TiedLoser implies w.outcome = TiedWinner
 }
 
 fact transferToNextContinuingCandidate {
@@ -240,11 +231,23 @@ fact equalityOfTiedLosers {
        (#s.votes = #w.votes) or (#s.votes + #s.transfers = #w.votes + #w.transfers)
 }
 
+-- Scenario Validity Axioms
 // When there is a tied sore loser then there are no non-sore losers
 fact typeOfTiedLoser {
    no disj a,b: Candidate | a.outcome = TiedSoreLoser and 
         (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or 
          b.outcome=Loser or b.outcome=EarlyLoser)
+}
+
+fact tieBreaker {
+	all w: Candidate | some l: Candidate | w.outcome = TiedWinner implies 
+		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser)
+}
+
+fact validTieBreaker {
+	all l: Candidate | some w: Candidate | 
+    (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies 
+    w.outcome = TiedWinner
 }
 
 -- Basic Lemmas
