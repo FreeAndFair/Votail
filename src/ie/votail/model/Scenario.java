@@ -45,11 +45,9 @@ public class Scenario {
    *     b != Outcome.Loser && b != Outcome.EarlyLoser));
    */
   
-  // There is at least one winner and one loser in each valid scenario
   /*@
    * public invariant 1 < outcomes.size();
    */
-
   private /*@ non_null*/ ArrayList<Outcome> outcomes;
 
   /**
@@ -234,7 +232,10 @@ public class Scenario {
   }
   
   /**
-   * Count the number of winners in this scenario
+   * Count the number of winners in this scenario.
+   * <p>
+   * There is at least one winner and one loser in each valid scenario
+   * </p>
    * 
    * @return The number of winners
    */
@@ -255,5 +256,51 @@ public class Scenario {
      }
    }
    return count; 
+  }
+  
+  /**
+   * Using the formulae in the ICSE 2011 paper calculate the maximum number
+   * of distinct scenarios when the number of winners and losers is known,
+   * adjusted by restricting invalid combinations of tied outcomes
+   * 
+   * @param winners The number of winners
+   * @param losers The number of losers
+   * @return The number of distinct scenarios
+   */
+  /*@
+   * requires 0 < winners;
+   * requires 0 < losers;
+   * ensures 4 <= \result;
+   */
+  public static int numberOfScenarios (int winners, int losers) {
+    if (winners == 1) {
+      if (losers == 1) {
+        return 4;
+      }
+      // Although there are six kinds of loser outcome, a Tied Sore Loser can
+      // only be combined with an existing Tied Sore Loser
+      return 5 * numberOfScenarios (winners, losers-1);
+    }
+    return 4 * numberOfScenarios (winners-1, losers);
+  }
+  
+  /**
+   * Estimate the number of distinct scenarios when the number of candidates is
+   * known.
+   * 
+   * @param numberOfOutcomes The number of candidate outcomes
+   * @return The total number of distinct outcomes
+   */
+  /*@
+   * requires 1 < numberOfOutcomes
+   * ensures 4 <= \result
+   */
+  public static int totalNumberOfScenarios (int numberOfOutcomes) {
+    int result = 0;
+    for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; 
+      numberOfWinners++) {
+        result += numberOfScenarios (numberOfWinners, numberOfOutcomes - numberOfWinners);
+    }
+    return result;
   }
 }
