@@ -1,21 +1,18 @@
+/**
+ * Find all PR-STV scenarios that match a fixed number of candidate outcomes.
+ * 
+ * @author Dermot Cochran, 2010, IT University of Copenhagen
+ */
+
 package ie.votail.model.factory;
 
 import ie.votail.model.Outcome;
 import ie.votail.model.Scenario;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Logger;
 
 public class ScenarioFactory {
-
-  public static final String SCENARIOS_LOG = "scenarios.log";
-  private Logger scenarioLogger;
   
-  public ScenarioFactory() {
-    scenarioLogger = Logger.getLogger(ScenarioFactory.SCENARIOS_LOG);
-  }
-
   /**
    * Find all election scenarios for a given number of outcomes
    * 
@@ -26,11 +23,8 @@ public class ScenarioFactory {
    * requires 1 < numberOfOutcomes;
    * ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
    * ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
-   * ensures (numberOfOutcomes == 4) ==> (200 <= \result.size());
-   * ensures (numberOfOutcomes == 10) ==> (2304 <= \result.size());
-   * ensures (numberOfOutcomes == 30) ==> (8900 <= \result.size());
    */
-  public ScenarioList find(int numberOfOutcomes) {
+  public static /*@ pure */ ScenarioList find(int numberOfOutcomes) {
     ScenarioList scenarios = new ScenarioList();
     if (numberOfOutcomes == 2) {
       
@@ -85,24 +79,7 @@ public class ScenarioFactory {
         }
       }
     }
-    return unique(scenarios);
-  }
-
-  /**
-   * Apply canonical sorting and remove duplicate scenarios
-   * @param scenarios
-   * @return Distinct scenarios
-   */
-  private ScenarioList unique(ScenarioList scenarios) {
-    ScenarioList distinctScenarios = new ScenarioList();
-    Iterator<Scenario> iterator = scenarios.iterator();
-    while (iterator.hasNext()) {
-      Scenario scenario = iterator.next().canonical();
-      if (!distinctScenarios.contains(scenario)) {
-        distinctScenarios.add(scenario);
-      }
-    }
-    return distinctScenarios;
+    return scenarios;
   }
 }
 

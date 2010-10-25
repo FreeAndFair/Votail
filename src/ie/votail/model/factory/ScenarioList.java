@@ -1,6 +1,7 @@
 /**
  * Double list of Scenarios, containing partitions based on the numbers of
- * winners in each scenario, as well as the base list
+ * winners in each scenario, as well as the full list of all scenarios, for
+ * a given number of outcomes.
  * 
  * @author Dermot Cochran, 2010, IT University of Copenhagen
  */
@@ -27,12 +28,11 @@ public class ScenarioList extends ArrayList<Scenario> {
    * empty partitions.
    */
   /*@
-   * ensures this.numberInBucket == 0;
    * ensures this.partitions.length == MAX_PARTITIONS;
    * ensures this.bucket.size() == 0;
    * ensures this.size() == 0;
-   * ensures this.numbersOfScenarios.length == MAX_PARTITIONS;
    */
+  @SuppressWarnings("unchecked")
   public ScenarioList() {
     this.partitions = new ArrayList[MAX_PARTITIONS];
     for (int i=0; i<MAX_PARTITIONS; i++) {
@@ -46,9 +46,11 @@ public class ScenarioList extends ArrayList<Scenario> {
    * to the master list
    * 
    * @param scenario The scenario to be added
+   * @return <code>true</code> if this scenario is not already in list
    */
   @Override
   public boolean add(/*@ non_null*/ Scenario scenario) {
+    // Sort the scenario into canonical order before adding it
     Scenario canonical = scenario.canonical();
     
     // Also, add to sublist according to number of winners
@@ -61,7 +63,10 @@ public class ScenarioList extends ArrayList<Scenario> {
     else if (!bucket.contains(canonical)){
       bucket.add(canonical);
     }
-    return super.add(canonical);
+    if (!super.contains(canonical)) {
+      return super.add(canonical);
+    }
+    return false;
   }
   
   /**
