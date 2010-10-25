@@ -30,8 +30,8 @@ public class ScenarioFactory {
    * ensures (numberOfOutcomes == 10) ==> (2304 <= \result.size());
    * ensures (numberOfOutcomes == 30) ==> (8900 <= \result.size());
    */
-  public ArrayList<Scenario> find(int numberOfOutcomes) {
-    ArrayList<Scenario> scenarios = new ArrayList<Scenario>();
+  public ScenarioList find(int numberOfOutcomes) {
+    ScenarioList scenarios = new ScenarioList();
     if (numberOfOutcomes == 2) {
       
       // Winner gets majority of votes, loser reaches threshold
@@ -60,7 +60,7 @@ public class ScenarioFactory {
     }
     else {
       // Extend the base scenario by adding one additional candidate outcome
-      ArrayList<Scenario> baseScenarios = find (numberOfOutcomes-1);
+      ScenarioList baseScenarios = find (numberOfOutcomes-1);
       Iterator<Scenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
         Scenario baseScenario = iterator.next();
@@ -93,8 +93,8 @@ public class ScenarioFactory {
    * @param scenarios
    * @return Distinct scenarios
    */
-  private ArrayList<Scenario> unique(ArrayList<Scenario> scenarios) {
-    ArrayList<Scenario> distinctScenarios = new ArrayList<Scenario>();
+  private ScenarioList unique(ScenarioList scenarios) {
+    ScenarioList distinctScenarios = new ScenarioList();
     Iterator<Scenario> iterator = scenarios.iterator();
     while (iterator.hasNext()) {
       Scenario scenario = iterator.next().canonical();
