@@ -24,7 +24,7 @@ public class ScenarioFactory {
    * ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
    * ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
    */
-  public static /*@ pure */ ScenarioList find(int numberOfOutcomes) {
+  public /*@ pure */ ScenarioList find(int numberOfOutcomes) {
     ScenarioList scenarios = new ScenarioList();
     if (numberOfOutcomes == 2) {
       
