@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class ScenarioList extends ArrayList<Scenario> {
   
   // Maximum number of winners to keep track of
-  public static int MAX_PARTITIONS = 100;
+  public static int MAX_PARTITIONS = 6;
   
   // Sublists of scenarios for each fixed number of winners
   protected ArrayList<Scenario>[] partitions;
@@ -33,6 +33,7 @@ public class ScenarioList extends ArrayList<Scenario> {
    * ensures this.size() == 0;
    */
   @SuppressWarnings("unchecked")
+  
   public ScenarioList() {
     this.partitions = new ArrayList[MAX_PARTITIONS];
     for (int i=0; i<MAX_PARTITIONS; i++) {
@@ -55,7 +56,7 @@ public class ScenarioList extends ArrayList<Scenario> {
     
     // Also, add to sublist according to number of winners
     int partitionNumber = scenario.numberOfWinners()-1;
-    if (partitionNumber <= MAX_PARTITIONS) {
+    if (partitionNumber < MAX_PARTITIONS) {
       if (!partitions[partitionNumber].contains(canonical)) {
         partitions[partitionNumber].add(canonical);
       }
