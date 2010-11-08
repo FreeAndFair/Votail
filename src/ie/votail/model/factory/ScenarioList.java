@@ -55,7 +55,7 @@ public class ScenarioList extends ArrayList<Scenario> {
     Scenario canonical = scenario.canonical();
     
     // Also, add to sublist according to number of winners
-    int partitionNumber = scenario.numberOfWinners()-1;
+    int partitionNumber = scenario.numberOfWinners();
     if (partitionNumber < MAX_PARTITIONS) {
       if (!partitions[partitionNumber].contains(canonical)) {
         partitions[partitionNumber].add(canonical);
@@ -84,7 +84,7 @@ public class ScenarioList extends ArrayList<Scenario> {
    */
   public /*@ pure*/ int getNumberOfScenarios (int numberOfWinners) {
     if (numberOfWinners <= MAX_PARTITIONS) {
-      return partitions[numberOfWinners-1].size();
+      return partitions[numberOfWinners].size();
     }
     return bucket.size();
   }
