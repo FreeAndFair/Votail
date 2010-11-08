@@ -124,6 +124,5 @@
 		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
 		<nature>ie.ucd.bon.beetlz.plugin.beetlznature</nature>
 		<nature>com.stateofflow.eclipse.metrics.MetricsNature</nature>
-		<nature>fr.univartois.cril.alloyplugin.AlloyProjectNature</nature>
 	</natures>
 </projectDescription>
