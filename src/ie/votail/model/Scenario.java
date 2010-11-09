@@ -158,7 +158,17 @@ public class Scenario {
    * ensures \result <==> this.canonical().equals(other.canonical());
    */
   public /*@ pure*/ boolean equivalentTo (/*@ non_null*/ Scenario other) {
-    return this.canonical().equals(other.canonical());
+    if (this.outcomes.size() != other.outcomes.size()) {
+      return false;
+    }
+    Iterator<Outcome> it1 = this.canonical().outcomes.iterator();
+    Iterator<Outcome> it2 = other.canonical().outcomes.iterator();
+    while (it1.hasNext() && it2.hasNext()) {
+      if (!it1.next().equals(it2.next())) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**

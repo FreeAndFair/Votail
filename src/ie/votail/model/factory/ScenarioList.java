@@ -11,6 +11,7 @@ package ie.votail.model.factory;
 import ie.votail.model.Scenario;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ScenarioList extends ArrayList<Scenario> {
   
@@ -43,11 +44,30 @@ public class ScenarioList extends ArrayList<Scenario> {
   }
 
   /**
+   * Discover whether a scenario is in the <code>ScenarioList</code>.
+   * 
+   * @param scenario The scenario to look for
+   * @return <code>true</code> if the scenario is in the list
+   */
+  public boolean hasScenario(/*@ non_null*/ Scenario scenario) {
+    Iterator<Scenario> it = this.iterator();
+    while (it.hasNext()) {
+      if (it.next().equivalentTo(scenario)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Add scenario to one of the partitions or to the bucket as well as adding
    * to the master list
    * 
    * @param scenario The scenario to be added
    * @return <code>true</code> if this scenario is not already in list
+   */
+  /*@
+   * ensures this.hasScenario(scenario);
    */
   @Override
   public boolean add(/*@ non_null*/ Scenario scenario) {

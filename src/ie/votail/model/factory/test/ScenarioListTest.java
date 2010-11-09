@@ -15,7 +15,7 @@ public class ScenarioListTest {
     Scenario scenario= new Scenario();
     scenarioList.add(scenario);
     scenarioList.add(scenario.canonical());
-    assertTrue (scenarioList.contains(scenario.canonical()));
+    assertTrue (scenarioList.hasScenario(scenario));
     assertTrue (scenario.equivalentTo(scenario.canonical()));
   }
 

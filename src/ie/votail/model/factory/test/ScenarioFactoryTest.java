@@ -48,6 +48,6 @@ public class ScenarioFactoryTest extends TestCase {
     final int numberOfOutcomes = ScenarioList.MAX_PARTITIONS + 1;
     ScenarioList candidateScenarios = scenarioFactory.find(numberOfOutcomes);
     assertEquals (107369,candidateScenarios.size());
-    assertEquals (0, candidateScenarios.getNumberOfScenarios(numberOfOutcomes));
+    assertEquals (2534, candidateScenarios.getNumberOfScenarios(numberOfOutcomes));
   }
 }
