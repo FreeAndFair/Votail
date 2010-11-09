@@ -15,6 +15,8 @@ public class ScenarioListTest {
     Scenario scenario= new Scenario();
     scenarioList.add(scenario);
     scenarioList.add(scenario.canonical());
+    boolean addDuplicate = scenarioList.add(scenario);
+    assertFalse (addDuplicate);
     assertTrue (scenarioList.hasScenario(scenario));
     assertTrue (scenario.equivalentTo(scenario.canonical()));
   }
@@ -26,6 +28,13 @@ public class ScenarioListTest {
     scenario.addOutcome(Outcome.COMPROMISE_WINNER);
     scenarioList.add(scenario);
     assertEquals (1, scenarioList.getNumberOfScenarios(1));
+  }
+  
+  @Test
+  public void testHasScenario() {
+    ScenarioList scenarioList = new ScenarioList();
+    Scenario scenario= new Scenario();
+    assertFalse (scenarioList.hasScenario(scenario));
   }
 
 }

@@ -71,23 +71,22 @@ public class ScenarioList extends ArrayList<Scenario> {
    */
   @Override
   public boolean add(/*@ non_null*/ Scenario scenario) {
+    if (this.hasScenario(scenario)) {
+      return false;
+    }
+    
     // Sort the scenario into canonical order before adding it
     Scenario canonical = scenario.canonical();
     
     // Also, add to sublist according to number of winners
     int partitionNumber = scenario.numberOfWinners();
     if (partitionNumber < MAX_PARTITIONS) {
-      if (!partitions[partitionNumber].contains(canonical)) {
         partitions[partitionNumber].add(canonical);
-      }
     }
-    else if (!bucket.contains(canonical)){
+    else{
       bucket.add(canonical);
     }
-    if (!super.contains(canonical)) {
-      return super.add(canonical);
-    }
-    return false;
+    return super.add(canonical);
   }
   
   /**
