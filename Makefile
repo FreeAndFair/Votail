@@ -1,5 +1,5 @@
 
-RELEASE = v0.0.0
+RELEASE = v0.0.1
 BASE	= proposal
 BIBTEXOPT = 
 BIBWARN = 'LaTeX Warning: Citation'

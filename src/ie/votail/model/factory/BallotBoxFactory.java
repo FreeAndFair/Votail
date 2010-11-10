@@ -29,21 +29,23 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 import election.tally.BallotBox;
 
 public class BallotBoxFactory {
-
-  private static final int MAX_SCOPE = 0;
+  
+  public static final int MAX_SCOPE = 10;
+  
+  protected Module world;
   protected Logger logger;
   protected A4Reporter reporter;
   protected Map<String, String> loaded;
   protected A4Options options;
-  protected Module world;
-  
+
   /**
    * Start the generation of ballot boxes and load the Alloy model
    * 
    * @param model_filename The name of the Alloy model file
    * @param log_filename The name of the log file
    */
-  BallotBoxFactory(String model_filename, String  log_filename) {
+  public BallotBoxFactory(String model_filename, String  log_filename) {
+    
     reporter = new A4Reporter();
     loaded = null;
     options = new A4Options();
@@ -56,7 +58,7 @@ public class BallotBoxFactory {
     } catch (Err e) {
       world = null;
       logger.severe("Unable to find model " + model_filename 
-        + "because of " + e.msg);
+        + " because of " + e.msg);
     }
   }
     
@@ -71,8 +73,8 @@ public class BallotBoxFactory {
   /*@
    * require loaded != null;
    */
-  public BallotBox generateBallotBox (/*@ non_null*/ Scenario scenario, 
-    int scope) {
+  public /*@ non_null*/ BallotBox generateBallotBox (/*@ non_null*/ Scenario scenario, 
+    int scope, int bitwidth) {
 
     Expr predicate;
     Command command;
@@ -83,17 +85,17 @@ public class BallotBoxFactory {
     try {
         predicate = CompUtil.parseOneExpression_fromString(world, 
           scenario.toPredicate());
-        command = new Command(false,scope,scope/2,scope,predicate);
+        command = new Command(false,scope,bitwidth,scope,predicate);
         solution = TranslateAlloyToKodkod.execute_command(reporter, 
           world.getAllReachableSigs(), command, options);
         
         if (solution.satisfiable()) {
           ballotBox = extractBallotBox (solution);
-          logger.info("Scenario " + scenario.toString() + " has ballot box " 
+          logger.info("Scenario " + scenario.toString() + " has ballot box: " 
             + ballotBox.toString());
         }
         else if (scope < MAX_SCOPE) {
-          ballotBox = generateBallotBox(scenario,scope+1);
+          ballotBox = generateBallotBox(scenario,scope+1, bitwidth);
         }
         else {
           ballotBox = new BallotBox();
@@ -104,8 +106,8 @@ public class BallotBoxFactory {
       } catch (Err e) {
         // Log failure to find scenario
         logger.severe("Unable to find ballot box for this scenario " 
-          + scenario.toString() + " with scope " + scope + " because of "
-          + e.msg);
+          + scenario.toString() + " with scope " + scope + " and bitwidth "+
+          bitwidth + " because " + e.msg);
       }
       return ballotBox;
     }
@@ -130,7 +132,7 @@ public class BallotBoxFactory {
         
         SafeList<Field> fields = sig.getFields();
         for (Field field : fields) {
-          if (field.label.equals("Preferences")) {
+          if (field.label.contains("preferences")) {
             // Extract preferences and then add to ballot box
             ballotBox.accept(extractPreferences(field));
             
