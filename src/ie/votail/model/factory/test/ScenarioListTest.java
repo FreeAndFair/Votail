@@ -25,7 +25,7 @@ public class ScenarioListTest {
   public void testGetNumberOfScenarios() {
     ScenarioList scenarioList = new ScenarioList();
     Scenario scenario= new Scenario();
-    scenario.addOutcome(Outcome.COMPROMISE_WINNER);
+    scenario.addOutcome(Outcome.Winner);
     scenarioList.add(scenario);
     assertEquals (1, scenarioList.getNumberOfScenarios(1));
   }

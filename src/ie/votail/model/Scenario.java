@@ -62,9 +62,12 @@ public class Scenario {
    */
   public /*@ pure*/ String toString() {
     Iterator<Outcome> iterator = outcomes.iterator();
-    StringBuffer stringBuffer = new StringBuffer ("scenario (");
+    StringBuffer stringBuffer = new StringBuffer ("Scenario: (");
+    if (iterator.hasNext()) {
+      stringBuffer.append(iterator.next().toString());
+    }
     while (iterator.hasNext()) {
-      stringBuffer.append(" ");
+      stringBuffer.append(",");
       stringBuffer.append(iterator.next().toString());
     }
     stringBuffer.append(")");
@@ -109,7 +112,7 @@ public class Scenario {
     StringBuffer predicateStringBuffer = new StringBuffer("some disj ");
     for (int i=0; i < outcomes.size(); i++) {
       if (i > 0 ) {
-        predicateStringBuffer.append(", "); 
+        predicateStringBuffer.append(","); 
       }
       predicateStringBuffer.append("c" + i);
     }
@@ -234,7 +237,7 @@ public class Scenario {
     Iterator<Outcome> iterator = this.outcomes.iterator();
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
-      if (outcome == Outcome.TIED_SORE_LOSER) {
+      if (outcome == Outcome.TiedSoreLoser) {
         return true;
       }
     }
@@ -258,10 +261,10 @@ public class Scenario {
    Iterator<Outcome> iterator = this.outcomes.iterator();
    while (iterator.hasNext()) {
      Outcome outcome = iterator.next();
-     if (outcome == Outcome.COMPROMISE_WINNER || 
-         outcome == Outcome.TIED_WINNER ||
-         outcome == Outcome.QUOTA_WINNER ||
-         outcome == Outcome.WINNER) {
+     if (outcome == Outcome.CompromiseWinner || 
+         outcome == Outcome.TiedWinner ||
+         outcome == Outcome.QuotaWinner ||
+         outcome == Outcome.Winner) {
        count++;
      }
    }

@@ -4,17 +4,18 @@
 
 package ie.votail.model;
 
+// The names of each outcome must be exactly the same as those in Voting.als
 public enum Outcome {
-  SORE_LOSER,
-  TIED_SORE_LOSER,
-  EARLY_LOSER,
-  TIED_EARLY_LOSER,
-  LOSER,
-  TIED_LOSER,
-  TIED_WINNER,
-  COMPROMISE_WINNER,
-  QUOTA_WINNER,
-  WINNER;
+  SoreLoser,
+  TiedSoreLoser,
+  EarlyLoser,
+  TiedEarlyLoser,
+  Loser,
+  TiedLoser,
+  TiedWinner,
+  CompromiseWinner,
+  QuotaWinner,
+  Winner;
 
   /**
    * Does this outcome require a tie-breaker?
@@ -26,7 +27,7 @@ public enum Outcome {
    *  this == TIED_LOSER || this == TIED_EARLY_LOSER) 
    */
   public /*@ pure */ boolean isTied() {
-    return this == TIED_SORE_LOSER || this == TIED_WINNER ||
-      this == TIED_LOSER || this == TIED_EARLY_LOSER;
+    return this == TiedSoreLoser || this == TiedWinner ||
+      this == TiedLoser || this == TiedEarlyLoser;
   }
 }
