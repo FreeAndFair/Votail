@@ -9,6 +9,7 @@ package ie.votail.model.factory;
 
 import ie.votail.model.Scenario;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -128,13 +129,13 @@ public class BallotBoxFactory {
     for (Sig sig : sigs) {
       
       // Extract ballots
-      if (sig.label.contains("Ballot")) {
+      if (sig.label.contains("this/Ballot")) {
         
         SafeList<Field> fields = sig.getFields();
         for (Field field : fields) {
           if (field.label.contains("preferences")) {
             // Extract preferences and then add to ballot box
-            ballotBox.accept(extractPreferences(field));
+            ballotBox.accept(extractField(field,"seq this/Candidate"));
             
           }
         }
@@ -150,23 +151,18 @@ public class BallotBoxFactory {
    * @param field
    * @return
    */
-  static public int[] extractPreferences(Field field) {
-    int numberOfPreferences = getNumberOfPreferences(field);
-    int[] preferences = new int [numberOfPreferences];
-    for (int i=0; i < numberOfPreferences; i++) {
-      preferences[i] = getPreferences(field,i);
+  static public int[] extractField(Field field, String label) {
+    int numberOfSubFields = field.sig.getFields().size();
+    int[] preferences = new int [numberOfSubFields];
+    Iterator<Field> it = field.sig.getFields().iterator();
+    for (int i=0; i < numberOfSubFields; i++) {
+      if (it.hasNext()) {
+        Field subField = it.next();
+        if (subField.label.contains(label)) {
+          // TODO
+        }
+      }
     }
    return preferences;
-  }
-
-  static public int getPreferences(Field field, int i) {
-    List<? extends Browsable> nodes = field.getSubnodes();
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
-  static public int getNumberOfPreferences(Field field) {
-    // TODO Auto-generated method stub
-    return 0;
   }
 }
