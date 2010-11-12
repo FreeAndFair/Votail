@@ -20,5 +20,6 @@ public class BallotBoxFactoryTest extends TestCase {
       = new BallotBoxFactory("models/voting.als","testdata/test.log");
     BallotBox ballotBox = ballotBoxFactory.generateBallotBox(scenario, 10, 5);
     assertFalse (ballotBox == null);
+    assertEquals (3, ballotBox.size());
   }
 }
