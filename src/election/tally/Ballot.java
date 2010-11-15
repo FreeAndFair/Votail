@@ -62,6 +62,8 @@ package election.tally;
 
 
 public class Ballot {
+  private static final char WHITE_SPACE = ' ';
+
   /**
    * Maximum possible number of ballots based on maximum population size for
    * a five seat constituency i.e. at most 30,000 people per elected representative.
@@ -223,7 +225,10 @@ public /*@ pure @*/ boolean isFirstPreference(final int candidateID) {
   public /*@ pure @*/ String toString() {
     StringBuffer stringBuffer = new StringBuffer("(");
     for (int i=0; i< numberOfPreferences; i++) {
-      stringBuffer.append(preferenceList[i] + " ");
+      if (0 < i) {
+        stringBuffer.append(Ballot.WHITE_SPACE);
+      }
+      stringBuffer.append(preferenceList[i]);
     }
     stringBuffer.append(")");
     return stringBuffer.toString();

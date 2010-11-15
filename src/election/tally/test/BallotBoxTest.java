@@ -13,6 +13,6 @@ public class BallotBoxTest {
     box.accept(preferences);
     Assert.assertEquals(box.toString(),"(1 2 3)");
     box.accept(preferences);
-    Assert.assertEquals(box.toString(),"(1 2 3) (1 2 3)");
+    Assert.assertEquals(box.toString(),"(1 2 3)(1 2 3)");
   }
 }

@@ -10,7 +10,7 @@ public class BallotTest {
   public void testBallot_toString() {
     int [] preferences = {1,2,3};
     Ballot ballot = new Ballot(preferences);
-    Assert.assertEquals(ballot.toString(),"1 2 3");
+    Assert.assertEquals(ballot.toString(),"(1 2 3)");
     
   }
 

@@ -124,13 +124,9 @@ public class BallotBox {
    */
   public String toString() {
     StringBuffer stringBuffer = new StringBuffer();
-    stringBuffer.append(numberOfBallots + " ballots: ");
     for (int i = 0; i < numberOfBallots; i++) {
-      if (0 < i)
-        stringBuffer.append(", ");
       stringBuffer.append(ballots[i].toString());
     }
-    stringBuffer.append("End of ballot box");
     return stringBuffer.toString();
   }
 }
