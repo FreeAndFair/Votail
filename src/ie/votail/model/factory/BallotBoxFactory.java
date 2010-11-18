@@ -21,6 +21,8 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Browsable;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.ExprConstant;
+import edu.mit.csail.sdg.alloy4compiler.ast.ExprUnary;
+import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig.Field;
@@ -28,6 +30,8 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Sig.PrimSig;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Options;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
 import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 import edu.mit.csail.sdg.alloy4whole.Helper;
 import election.tally.BallotBox;
@@ -83,8 +87,7 @@ public class BallotBoxFactory {
    * require loaded != null;
    */
   public/*@ non_null*/BallotBox generateBallotBox(
-                                                   /*@ non_null*/Scenario scenario,
-                                                   int scope, int bitwidth) {
+  /*@ non_null*/Scenario scenario, int scope, int bitwidth) {
 
     Expr predicate;
     Command command;
@@ -137,48 +140,36 @@ public class BallotBoxFactory {
 
   static public BallotBox extractBallotBox(A4Solution solution) throws Err {
 
-    BallotBox ballotBox = new BallotBox();
 
-    // Get type signatures from the solution
-    SafeList<Sig> sigs = solution.getAllReachableSigs();
+    BallotBox ballotBox = new BallotBox();
+    
+    Iterable<ExprVar> atoms = solution.getAllAtoms();
+
     // Iterate through the solution and add each ballot to the ballot box
-    for (Sig sig: sigs) {
+    for (ExprVar atom : atoms) {
 
       // Extract ballots
-      if (sig.label.contains("this/Ballot")) {
-
-        SafeList<Field> fields = sig.getFields();
-        for (Field field: fields) {
-
-          if (field.label.contains("preferences")) {
-            // Extract preferences and then add to ballot box
-            int[] preferences = new int[Candidate.MAX_CANDIDATES];
-            int index = 0;
-
-            for (Sig otherSignature: sigs) {
-
-              // Extract ballots
-              if (otherSignature.label.contains("this/Candidate")) {
-
-                SafeList<Field> otherFields = otherSignature.getFields();
-                for (Field otherField: otherFields) {
-                  if (otherField.label.equalsIgnoreCase("identifier")) {
-
-                    ExprConstant exprConstant =
-                      (ExprConstant) otherField.decl().expr;
-                    preferences[index++] = exprConstant.num;
-                  }
-                }
-              }
-            }
-            ballotBox.accept(preferences);
-
+      if (atom.label.contains("Ballot") && !atom.label.contains("BallotBox")) {
+        
+        Object ballot = solution.eval(atom);
+        // Extract preferences and then add to ballot box
+        int[] preferences = new int[Candidate.MAX_CANDIDATES];
+        int index = 0;
+        
+        if (ballot instanceof A4TupleSet) {
+          A4TupleSet tupleSet = (A4TupleSet) ballot;
+          for (A4Tuple tuple : tupleSet) {
+            // TODO
           }
-
+          
         }
+        
+        
+        // TODO extract ballot data
+        
+        ballotBox.accept(preferences);
       }
     }
-
     return ballotBox;
   }
 }

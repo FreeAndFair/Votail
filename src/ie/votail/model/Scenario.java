@@ -62,7 +62,7 @@ public class Scenario {
    */
   public /*@ pure*/ String toString() {
     Iterator<Outcome> iterator = outcomes.iterator();
-    StringBuffer stringBuffer = new StringBuffer ("Scenario: (");
+    StringBuffer stringBuffer = new StringBuffer ("(");
     if (iterator.hasNext()) {
       stringBuffer.append(iterator.next().toString());
     }

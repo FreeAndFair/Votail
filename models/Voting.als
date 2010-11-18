@@ -8,7 +8,6 @@ open util/integer
 
 -- A person standing for election
 sig Candidate {
-    identifier: Int,               -- Unique anonymous identifier
   	votes: 		set Ballot, 	-- First preference ballots assigned to this candidate
 	transfers: set Ballot, 	-- Ballots received by transfer from another candidate
 	surplus: 	set Ballot, 	-- Ballots given to another candidate (on election or elimination)
@@ -95,10 +94,6 @@ one sig Election {
 }
 
 -- Independent (or Fundamental) Axioms
-fact uniqueID {
-  no disj a,b: Candidate | a.identifier = b.identifier
-}
-
 fact integrity {
   all c: Candidate | all b: Ballot | b in c.votes implies c in b.assignees
 }
@@ -440,3 +435,9 @@ pred AnyScenarioWithTiedSoreLoser {
 	some c: Candidate | c.outcome = TiedSoreLoser
 }
 run AnyScenarioWithTiedSoreLoser for 6 int
+
+-- Utility functions
+
+fun length [b : Ballot] : Int {
+  #b.preferences
+}
