@@ -8,6 +8,7 @@
 package ie.votail.model.factory;
 
 import ie.votail.model.Scenario;
+import ie.votail.model.VoteTable;
 
 import java.util.Iterator;
 import java.util.List;
@@ -142,25 +143,23 @@ public class BallotBoxFactory {
 
     BallotBox ballotBox = new BallotBox();
     
+    ie.votail.model.VoteTable voteTable = new VoteTable();
+    
     Iterable<ExprVar> atoms = solution.getAllAtoms();
 
     // Iterate through the solution and add each ballot to the ballot box
     for (ExprVar atom : atoms) {
 
       // Extract ballots
-      if (atom.label.contains("this/Ballot<:preferences")) {
+      if (atom.label.contains("Vote")) {
         
-        // Write XML to a string and then parse?
+        int ballotID = 0;
+        int candidateID = 0;
+        int ranking = 0;
         
-        // Extract preferences and then add to ballot box
-        int[] preferences = new int[Candidate.MAX_CANDIDATES];
-        int index = 0;
-        
-        // TODO extract ballot data
-        
-        ballotBox.accept(preferences);
+        voteTable.add(ballotID,candidateID,ranking);
       }
     }
-    return ballotBox;
+    return voteTable.makeBallotBox();
   }
 }
