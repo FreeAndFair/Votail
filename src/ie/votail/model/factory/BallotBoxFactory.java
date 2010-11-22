@@ -8,6 +8,7 @@
 package ie.votail.model.factory;
 
 import ie.votail.model.Scenario;
+import ie.votail.model.Vote;
 import ie.votail.model.VoteTable;
 
 import java.util.Iterator;
@@ -153,11 +154,9 @@ public class BallotBoxFactory {
       // Extract ballots
       if (atom.label.contains("Vote")) {
         
-        int ballotID = 0;
-        int candidateID = 0;
-        int ranking = 0;
+        ie.votail.model.Vote vote = new Vote();
         
-        voteTable.add(ballotID,candidateID,ranking);
+        voteTable.add(vote);
       }
     }
     return voteTable.makeBallotBox();
