@@ -140,7 +140,6 @@ public class BallotBoxFactory {
 
   static public BallotBox extractBallotBox(A4Solution solution) throws Err {
 
-
     BallotBox ballotBox = new BallotBox();
     
     Iterable<ExprVar> atoms = solution.getAllAtoms();
@@ -149,21 +148,13 @@ public class BallotBoxFactory {
     for (ExprVar atom : atoms) {
 
       // Extract ballots
-      if (atom.label.contains("Ballot") && !atom.label.contains("BallotBox")) {
+      if (atom.label.contains("this/Ballot<:preferences")) {
         
-        Object ballot = solution.eval(atom);
+        // Write XML to a string and then parse?
+        
         // Extract preferences and then add to ballot box
         int[] preferences = new int[Candidate.MAX_CANDIDATES];
         int index = 0;
-        
-        if (ballot instanceof A4TupleSet) {
-          A4TupleSet tupleSet = (A4TupleSet) ballot;
-          for (A4Tuple tuple : tupleSet) {
-            // TODO
-          }
-          
-        }
-        
         
         // TODO extract ballot data
         

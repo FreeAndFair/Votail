@@ -8,6 +8,7 @@ open util/integer
 
 -- A person standing for election
 sig Candidate {
+    identifier: Int,               -- Unique identifier for this candidate
   	votes: 		set Ballot, 	-- First preference ballots assigned to this candidate
 	transfers: set Ballot, 	-- Ballots received by transfer from another candidate
 	surplus: 	set Ballot, 	-- Ballots given to another candidate (on election or elimination)
@@ -17,19 +18,37 @@ sig Candidate {
 	all b: Ballot | b in votes + transfers => this in b.assignees
 	surplus in votes + transfers
 	Election.method = Plurality implies #surplus = 0 and #transfers = 0
+    0 < identifier
 }
 
 -- A digital or paper artifact which accurately records the intentions of the voter
 sig Ballot {
-  assignees: 		set Candidate, -- Candidates to which this ballot has been assigned
-  preferences: 	seq Candidate
+  identifier:		Int,					-- Unique identifier for this ballot
+  assignees: 		set Candidate,  -- Candidates to which this ballot has been assigned
+  preferences: 	seq Candidate,
+  top:				Int,  					-- Unique identifier of first preference candidate
+  length:			Int  					-- Number of preferences expressed on ballot
 } {
 	assignees in preferences.elems
-    0 < #preferences
     not preferences.hasDups
 	preferences.elems in Election.candidates
 	preferences.first in assignees
-	Election.method = Plurality implies #preferences = 1
+	Election.method = Plurality implies length = 1
+	top = preferences.first.identifier
+    length = #preferences
+    0 < length
+}
+
+-- Table of Votes used for encoding of results
+sig Vote {
+	ballot:	Int,			-- Ballot identifier
+    candidate: Int,		-- Candidate identifier
+    ranking: Int			-- Ranking of candidate on ballot paper
+} {
+	0 < ranking
+    some b: Ballot | b.identifier = ballot
+    some c: Candidate | c.identifier = candidate
+    ranking <= #Election.candidates
 }
 
 -- An election result
@@ -94,6 +113,19 @@ one sig Election {
 }
 
 -- Independent (or Fundamental) Axioms
+
+fact uniqueCandidateID {
+  no disj a,b: Candidate | a.identifier = b.identifier
+}
+
+fact uniqueBallotID {
+  no disj a,b: Ballot | a.identifier = b.identifier
+}
+
+fact nonDuplicationOfVotes {
+  no disj a,b: Vote | a.ballot = b.ballot and a.candidate = b.candidate
+}
+
 fact integrity {
   all c: Candidate | all b: Ballot | b in c.votes implies c in b.assignees
 }
@@ -229,6 +261,18 @@ fact equalityOfTiedLosers {
   all s: Candidate | some w: Candidate | w.outcome = TiedWinner and 
        (s.outcome = SoreLoser or s.outcome = TiedLoser or s.outcome = TiedEarlyLoser) implies
        (#s.votes = #w.votes) or (#s.votes + #s.transfers = #w.votes + #w.transfers)
+}
+
+// Ranking of votes on ballots
+fact firstPreference {
+	all v: Vote | some b: Ballot | v.ballot = b.identifier and
+		v.ranking = 1 implies b.top = v.candidate
+}
+
+fact rankingOfVotes {
+   	all v: Vote | some b: Ballot | some c: Candidate | 
+		v.ballot = b.identifier and v.candidate = c.identifier implies
+	    c in b.preferences.elems and v.ranking = b.preferences.idxOf[c]
 }
 
 -- Scenario Validity Axioms
