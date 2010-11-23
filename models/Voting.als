@@ -1,6 +1,6 @@
--- Dermot Cochran, 2010, IT University of Copenhagen
+-- (c) Dermot Cochran, 2010, IT University of Copenhagen
 -- http://www.kindsoftware.com
--- See ICSE 2011 paper 'Exploring the Universe of Ballot Boxes'
+-- http://www.itu.dk
 
 module Voting
 
@@ -26,6 +26,7 @@ sig Ballot {
   identifier:		Int,					-- Unique identifier for this ballot
   assignees: 		set Candidate,  -- Candidates to which this ballot has been assigned
   preferences: 	seq Candidate,
+  votes:				seq Vote,			-- Fragments of the vote
   top:				Int,  					-- Unique identifier of first preference candidate
   length:			Int  					-- Number of preferences expressed on ballot
 } {
@@ -37,16 +38,23 @@ sig Ballot {
 	top = preferences.first.identifier
     length = #preferences
     0 < length
+    0 < identifier
+    some v: Vote | v.ballot = identifier and v.candidate = top and v.ranking = 1
+    all v: Vote | v in votes.elems implies v.ballot = identifier
+    votes.first.candidate = preferences.first.identifier
+    votes.last.candidate = preferences.last.identifier
+    votes.first.ranking = 1
+    votes.last.ranking = length
 }
 
--- Table of Votes used for encoding of results
+-- Table of fragments of Votes used for encoding of results
 sig Vote {
 	ballot:	Int,			-- Ballot identifier
     candidate: Int,		-- Candidate identifier
     ranking: Int			-- Ranking of candidate on ballot paper
 } {
 	0 < ranking
-    some b: Ballot | b.identifier = ballot
+    some b: Ballot | b.identifier = ballot and this in b.votes.elems and ranking <= b.length
     some c: Candidate | c.identifier = candidate
     ranking <= #Election.candidates
 }

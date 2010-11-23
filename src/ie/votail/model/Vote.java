@@ -17,12 +17,20 @@ public class Vote {
   public void setCandidateID(int candidateID) {
     this.candidateID = candidateID;
   }
+  
+  /*@
+   * ensures 0 < \result;
+   */
   public int getRanking() {
     return ranking;
   }
+  
+  /*@
+   * requires 0 < ranking;
+   */
   public void setRanking(int ranking) {
     this.ranking = ranking;
   }
 
-  //@ invariant 0 < ranking;
+  
 }

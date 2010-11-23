@@ -6,7 +6,17 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
+			<name>fr.univartois.cril.alloyplugin.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>ie.ucd.bon.plugin.boncbuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -31,23 +41,8 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
+			<name>ch.ethz.inf.pm.jml.plugin.CheckerBuilder</name>
 			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/ie.ucd.bon.plugin.boncbuilder.launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/ch.ethz.inf.pm.jml.plugin.CheckerBuilder.launch</value>
-				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
@@ -97,16 +92,6 @@
 				<dictionary>
 					<key>LaunchConfigHandle</key>
 					<value>&lt;project&gt;/.externalToolBuilders/ie.ucd.bon.beetlz.plugin.beetlzbuilder.launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/fr.univartois.cril.alloyplugin.builder.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
