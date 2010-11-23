@@ -356,7 +356,7 @@ clean_src_distr:
 	rm -rf src_distr.stamp
 	
 bonc:
-	external_tools/bonc/bonc -i --print=HTML -po=doc/bonc.html design/*
+	external_tools/bonc/bonc -i --print=HTML -po=doc/bonc.html design/*.bon
 	
 release: clean
 	mkdir -p release
