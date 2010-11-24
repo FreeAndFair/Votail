@@ -1,6 +1,6 @@
--- (c) Dermot Cochran, 2010, IT University of Copenhagen
--- http://www.kindsoftware.com
--- http://www.itu.dk
+-- (c) 2010, Dermot Cochran, IT University of Copenhagen
+-- http://www.kindsoftware.com/about/people/dc
+-- http://www.itu.dk/people/dero
 
 module Voting
 
@@ -40,11 +40,12 @@ sig Ballot {
     0 < length
     0 < identifier
     some v: Vote | v.ballot = identifier and v.candidate = top and v.ranking = 1
-    all v: Vote | v in votes.elems implies v.ballot = identifier
+    all v: Vote | Election.method = STV and v in votes.elems implies v.ballot = identifier
     votes.first.candidate = preferences.first.identifier
     votes.last.candidate = preferences.last.identifier
     votes.first.ranking = 1
     votes.last.ranking = length
+    #votes = #preferences
 }
 
 -- Table of fragments of Votes used for encoding of results
@@ -278,7 +279,7 @@ fact firstPreference {
 }
 
 fact rankingOfVotes {
-   	all v: Vote | some b: Ballot | some c: Candidate | 
+   	all v: Vote | some b: Ballot | some c: Candidate | Election.method = STV and
 		v.ballot = b.identifier and v.candidate = c.identifier implies
 	    c in b.preferences.elems and v.ranking = b.preferences.idxOf[c]
 }
@@ -368,6 +369,11 @@ assert tiedWinnerLoserTiedSoreLoser {
 }
 check tiedWinnerLoserTiedSoreLoser for 6 int
 
+// Non repeating ranking in ballots
+assert wellFormedRanking {
+}
+check wellFormedRanking for 6
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
@@ -437,10 +443,10 @@ pred OneWinnerNineLosers {
 }
 run OneWinnerNineLosers for 16 but 6 int
 
-pred TwentyFiveBallots {
-	#BallotBox.ballots = 25
+pred TwentyBallots {
+	#BallotBox.ballots = 20
 }
-run TwentyFiveBallots for 25 but 6 int
+run TwentyBallots for 20 but 6 int
 
 pred ThreeWayTie {
 	some disj a,b,c: Candidate | a.outcome = TiedWinner and b.outcome = TiedLoser and
@@ -469,12 +475,15 @@ pred Outcomes {
 }
 run Outcomes for 10 but 6 int
 
-pred FifteenDifferentBallots {
-	#BallotBox.ballots = 15
+pred TenDifferentBallots {
+	#BallotBox.ballots = 10
 	no disj a,b: Ballot | a.preferences.first = b.preferences.first and #a.preferences = #b.preferences and
 		a.preferences.last = b.preferences.last and #a.assignees = #b.assignees
 }
-run FifteenDifferentBallots for 15 but 6 int
+run TenDifferentBallots for 10
+
+
+ but 6 int
 
 pred ScenarioLWW {
 	some a: Candidate | a.outcome = Loser
@@ -488,8 +497,7 @@ pred AnyScenarioWithTiedSoreLoser {
 }
 run AnyScenarioWithTiedSoreLoser for 6 int
 
--- Utility functions
-
-fun length [b : Ballot] : Int {
-  #b.preferences
+pred LongBallot {
+	some b: Ballot | b.length = 20
 }
+run LongBallot for 20 int
