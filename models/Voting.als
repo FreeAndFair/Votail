@@ -26,7 +26,6 @@ sig Ballot {
   identifier:		Int,					-- Unique identifier for this ballot
   assignees: 		set Candidate,  -- Candidates to which this ballot has been assigned
   preferences: 	seq Candidate,
-  votes:				seq Vote,			-- Fragments of the vote
   top:				Int,  					-- Unique identifier of first preference candidate
   length:			Int  					-- Number of preferences expressed on ballot
 } {
@@ -40,12 +39,6 @@ sig Ballot {
     0 < length
     0 < identifier
     some v: Vote | v.ballot = identifier and v.candidate = top and v.ranking = 1
-    all v: Vote | Election.method = STV and v in votes.elems implies v.ballot = identifier
-    votes.first.candidate = preferences.first.identifier
-    votes.last.candidate = preferences.last.identifier
-    votes.first.ranking = 1
-    votes.last.ranking = length
-    #votes = #preferences
 }
 
 -- Table of fragments of Votes used for encoding of results
@@ -54,10 +47,9 @@ sig Vote {
     candidate: Int,		-- Candidate identifier
     ranking: Int			-- Ranking of candidate on ballot paper
 } {
-	0 < ranking
-    some b: Ballot | b.identifier = ballot and this in b.votes.elems and ranking <= b.length
+	0 < ranking and ranking <= #Election.candidates
+    some b: Ballot | b.identifier = ballot and ranking <= b.length
     some c: Candidate | c.identifier = candidate
-    ranking <= #Election.candidates
 }
 
 -- An election result
@@ -369,10 +361,12 @@ assert tiedWinnerLoserTiedSoreLoser {
 }
 check tiedWinnerLoserTiedSoreLoser for 6 int
 
-// Non repeating ranking in ballots
+// Well formed ranking of candidates in ballots
 assert wellFormedRanking {
+	no disj v,w: Vote | v.ballot = w.ballot and Election.method = STV 
+		implies v.candidate = w.candidate
 }
-check wellFormedRanking for 6
+check wellFormedRanking for 6 but 6 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -443,11 +437,6 @@ pred OneWinnerNineLosers {
 }
 run OneWinnerNineLosers for 16 but 6 int
 
-pred TwentyBallots {
-	#BallotBox.ballots = 20
-}
-run TwentyBallots for 20 but 6 int
-
 pred ThreeWayTie {
 	some disj a,b,c: Candidate | a.outcome = TiedWinner and b.outcome = TiedLoser and
 		c.outcome = TiedLoser
@@ -480,10 +469,7 @@ pred TenDifferentBallots {
 	no disj a,b: Ballot | a.preferences.first = b.preferences.first and #a.preferences = #b.preferences and
 		a.preferences.last = b.preferences.last and #a.assignees = #b.assignees
 }
-run TenDifferentBallots for 10
-
-
- but 6 int
+run TenDifferentBallots for 10 but 6 int
 
 pred ScenarioLWW {
 	some a: Candidate | a.outcome = Loser
