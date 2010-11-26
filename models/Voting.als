@@ -25,20 +25,16 @@ sig Candidate {
 sig Ballot {
   identifier:		Int,					-- Unique identifier for this ballot
   assignees: 		set Candidate,  -- Candidates to which this ballot has been assigned
-  preferences: 	seq Candidate,
-  top:				Int,  					-- Unique identifier of first preference candidate
-  length:			Int  					-- Number of preferences expressed on ballot
+  preferences: 	seq Candidate
 } {
 	assignees in preferences.elems
     not preferences.hasDups
 	preferences.elems in Election.candidates
 	preferences.first in assignees
-	Election.method = Plurality implies length = 1
-	top = preferences.first.identifier
-    length = #preferences
-    0 < length
+	Election.method = Plurality implies #preferences = 1
+    0 < #preferences
     0 < identifier
-    some v: Vote | v.ballot = identifier and v.candidate = top and v.ranking = 1
+    some v: Vote | v.ballot = identifier and v.candidate = preferences.first.identifier and v.ranking = 1
 }
 
 -- Table of fragments of Votes used for encoding of results
@@ -48,7 +44,7 @@ sig Vote {
     ranking: Int			-- Ranking of candidate on ballot paper
 } {
 	0 < ranking and ranking <= #Election.candidates
-    some b: Ballot | b.identifier = ballot and ranking <= b.length
+    some b: Ballot | b.identifier = ballot and ranking <= #b.preferences
     some c: Candidate | c.identifier = candidate
 }
 
@@ -267,7 +263,7 @@ fact equalityOfTiedLosers {
 // Ranking of votes on ballots
 fact firstPreference {
 	all v: Vote | some b: Ballot | v.ballot = b.identifier and
-		v.ranking = 1 implies b.top = v.candidate
+		v.ranking = 1 implies b.preferences.first.identifier = v.candidate
 }
 
 fact rankingOfVotes {
@@ -455,6 +451,7 @@ pred TwentyCandidates {
 }
 run TwentyCandidates for 20 but 6 int
 
+
 pred Outcomes {
  	some disj a,b,c0,d,e,f,g,h,i: Candidate | 
 		(a.outcome = Winner and b.outcome = QuotaWinner and 
@@ -484,6 +481,6 @@ pred AnyScenarioWithTiedSoreLoser {
 run AnyScenarioWithTiedSoreLoser for 6 int
 
 pred LongBallot {
-	some b: Ballot | b.length = 20
+	some b: Ballot | #b.preferences = 12
 }
-run LongBallot for 20 int
+run LongBallot for 15 but 15 seq, 7 int
