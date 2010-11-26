@@ -39,9 +39,9 @@ sig Ballot {
 
 -- Table of fragments of Votes used for encoding of results
 sig Vote {
-	ballot:	Int,			-- Ballot identifier
-    candidate: Int,		-- Candidate identifier
-    ranking: Int			-- Ranking of candidate on ballot paper
+	ballot:			Int,		-- Ballot identifier
+    candidate: 	Int,		-- Candidate identifier
+    ranking: 		Int		-- Ranking of candidate on ballot paper
 } {
 	0 < ranking and ranking <= #Election.candidates
     some b: Ballot | b.identifier = ballot and ranking <= #b.preferences
@@ -50,11 +50,11 @@ sig Vote {
 
 -- An election result
 one sig Scenario {
-   	losers: 					set Candidate,
-   	winners: 				set Candidate,
-	eliminated: 			set Candidate, 		-- Candidates excluded under STV rules
-	threshold: 			Int, 						-- Minimum number of votes for a Loser or EarlyLoser
-	quota: 					Int						-- Minimum number of votes for a STV Winner or QuotaWinner
+   	losers: 				set Candidate,
+   	winners: 			set Candidate,
+	eliminated: 		set Candidate, 		-- Candidates excluded under STV rules
+	threshold: 		Int, 						-- Minimum number of votes for a Loser or EarlyLoser
+	quota: 				Int						-- Minimum number of votes for a STV Winner or QuotaWinner
 }
 {
  	winners + losers = Election.candidates
@@ -88,14 +88,6 @@ enum Event {Winner, QuotaWinner, CompromiseWinner, TiedWinner,
 	TiedLoser, Loser, TiedEarlyLoser, EarlyLoser, TiedSoreLoser, SoreLoser}
 
 enum Method {Plurality, STV}
-
--- A collection of ballots cast in an election
-one sig BallotBox {
-	ballots: set Ballot
-} {
-    0 < #ballots
-	all b: Ballot | b in ballots
-}
 
 -- An Election Constituency
 one sig Election {
@@ -142,10 +134,6 @@ fact wellFormedQuota {
 fact wellFormedThreshold {
 	#BallotBox.ballots <= Scenario.threshold.mul[20] or 
 	Election.method = STV implies Scenario.quota <= Scenario.threshold.mul[4]
-}
-
-fact noStrayBallots {
-	all b: Ballot | b in BallotBox.ballots
 }
 
 fact winnerSTV {
@@ -291,6 +279,23 @@ fact validTieBreaker {
     w.outcome = TiedWinner
 }
 
+-- Axioms for the recording of vote fragments
+fact allVotesRecorded {
+   all b: Ballot | some v: Vote | v.ballot = b.identifier and v.ranking = #b.preferences
+}
+
+// All vote fragments are recorded for each ballot
+fact lowerRankings {
+   all v: Vote | some w: Vote | 1 < v.ranking implies w.ranking + 1 = v.ranking and
+	v.ballot = w.ballot and not v.candidate = w.candidate
+}
+
+// Well formed ranking of candidates in ballots
+fact wellFormedRanking {
+	no disj v,w: Vote | v.ballot = w.ballot and Election.method = STV 
+		implies v.candidate = w.candidate or v.ranking = w.ranking
+}
+
 -- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
@@ -356,13 +361,6 @@ assert tiedWinnerLoserTiedSoreLoser {
 	   w.outcome = TiedWinner and (l.outcome = Loser or l.outcome = TiedLoser)
 }
 check tiedWinnerLoserTiedSoreLoser for 6 int
-
-// Well formed ranking of candidates in ballots
-assert wellFormedRanking {
-	no disj v,w: Vote | v.ballot = w.ballot and Election.method = STV 
-		implies v.candidate = w.candidate
-}
-check wellFormedRanking for 6 but 6 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -451,11 +449,10 @@ pred TwentyCandidates {
 }
 run TwentyCandidates for 20 but 6 int
 
-
 pred Outcomes {
- 	some disj a,b,c0,d,e,f,g,h,i: Candidate | 
+ 	some disj a,b,c,d,e,f,g,h,i: Candidate | 
 		(a.outcome = Winner and b.outcome = QuotaWinner and 
-		c0.outcome = CompromiseWinner and d.outcome = Loser and
+		c.outcome = CompromiseWinner and d.outcome = Loser and
 		e.outcome = EarlyLoser and f.outcome = SoreLoser and
 		g.outcome = TiedWinner and h.outcome = TiedLoser and i.outcome = TiedEarlyLoser)
 }
