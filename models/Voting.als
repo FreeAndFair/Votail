@@ -6,7 +6,7 @@ module Voting
 
 open util/integer
 
--- A person standing for election
+-- A individual person standing for election
 sig Candidate {
     identifier:       Int,             -- Unique identifier for this candidate
     votes: 			  set Ballot, 	-- First preference ballots assigned to this candidate
@@ -35,6 +35,8 @@ sig Ballot {
     0 < #preferences
     0 < identifier
     some v: Vote | v.ballot = identifier and v.candidate = preferences.first.identifier and v.ranking = 1
+    some v: Vote | v.ballot = identifier and v.candidate = preferences.last.identifier and v.ranking = #preferences
+    all v: Vote | v.ballot = identifier implies v.candidate = preferences.subseq[v.ranking-1,v.ranking].first.identifier
 }
 
 -- Table of fragments of Votes used for encoding of results
@@ -245,7 +247,7 @@ fact firstPreference {
 fact rankingOfVotes {
    	all v: Vote | some b: Ballot | some c: Candidate | Election.method = STV and
 		v.ballot = b.identifier and v.candidate = c.identifier implies
-	    c in b.preferences.elems and v.ranking = b.preferences.idxOf[c]
+	    c in b.preferences.elems and v.ranking = b.preferences.idxOf[c] + 1
 }
 
 -- Scenario Validity Axioms
