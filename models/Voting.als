@@ -95,7 +95,7 @@ enum Method {Plurality, STV}
 one sig Election {
   candidates: 	set Candidate,
   seats: 				Int,
-  method: 			Method
+  method: 	Method
 }
 {
  	0 < seats
@@ -452,13 +452,13 @@ run ThreeWayTie for 5 but 6 int
 
 pred FiveWayTie {
 	some disj a,b,c,d,e: Candidate | a.outcome = TiedWinner and
-	 b.outcome = TiedLoser and
+	    b.outcome = TiedLoser and
 		c.outcome = TiedLoser and d.outcome = TiedLoser and e.outcome = TiedWinner
 }
 run FiveWayTie for 7 but 6 int
 
 pred ScenarioLWW {
-	some disj a, b,c: Candidate | a in Scenario.losers and b.outcome = Winner and 
+	some disj a,b,c: Candidate | a in Scenario.losers and b.outcome = Winner and 
 		c in Scenario.winners
     #Election.candidates = 3
 }
@@ -467,4 +467,10 @@ run ScenarioLWW for 6 but 7 int
 pred LongBallot {
 	some b: Ballot | #b.preferences = 7
 }
-run LongBallot for 7 but 7 seq, 6 int
+run LongBallot for 7 but 6 int
+
+pred MultipleBallotsUnderSTV {
+	Election.method = STV
+	some a,b: Ballot | 0 < #a.preferences and 0 < #b.preferences
+}
+run MultipleBallotsUnderSTV for 10 but 6 int
