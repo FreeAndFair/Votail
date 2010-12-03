@@ -280,10 +280,10 @@ fact lowerRankings {
 	v.ballot = w.ballot and not v.candidate = w.candidate
 }
 
-// Well formed ranking of candidates in ballots
+// No duplicate ranking of candidates in same ballot
 fact wellFormedRanking {
-	no disj v,w: Vote | v.ballot = w.ballot and Election.method = STV 
-		implies v.candidate = w.candidate or v.ranking = w.ranking
+	no disj v,w: Vote | v.ballot = w.ballot and
+		(v.candidate = w.candidate or v.ranking = w.ranking)
 }
 
 // Compromise winner must have more votes than any tied winners
@@ -471,6 +471,7 @@ run LongBallot for 7 but 6 int
 
 pred MultipleBallotsUnderSTV {
 	Election.method = STV
-	some a,b: Ballot | 0 < #a.preferences and 0 < #b.preferences
+	some disj a,b,c,d: Ballot | 0 < #a.preferences and 0 < #b.preferences 
+	and 0 < #c.preferences and 0 < #d.preferences
 }
 run MultipleBallotsUnderSTV for 10 but 6 int
