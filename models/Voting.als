@@ -35,8 +35,10 @@ sig Ballot {
     0 < #preferences
     0 < identifier
     some v: Vote | v.ballot = identifier and v.candidate = preferences.first.identifier and v.ranking = 1
-    some v: Vote | v.ballot = identifier and v.candidate = preferences.last.identifier and v.ranking = #preferences
-    all v: Vote | v.ballot = identifier implies v.candidate = preferences.subseq[v.ranking-1,v.ranking].first.identifier
+    some v: Vote | v.ballot = identifier and 
+		v.candidate = preferences.last.identifier and v.ranking = #preferences
+    all v: Vote | v.ballot = identifier implies 
+		v.candidate = preferences.subseq[v.ranking-1,v.ranking].first.identifier
 }
 
 -- Table of fragments of Votes used for encoding of results
@@ -462,7 +464,7 @@ pred ScenarioLWW {
 		c in Scenario.winners
     #Election.candidates = 3
 }
-run ScenarioLWW for 6 but 7 int
+run ScenarioLWW for 6
 
 pred LongBallot {
 	some b: Ballot | #b.preferences = 7
@@ -471,7 +473,7 @@ run LongBallot for 7 but 6 int
 
 pred MultipleBallotsUnderSTV {
 	Election.method = STV
-	some disj a,b,c,d: Ballot | 0 < #a.preferences and 0 < #b.preferences 
-	and 0 < #c.preferences and 0 < #d.preferences
+	some disj a,b,c,d: Ballot | 1 < #a.preferences and 1 < #b.preferences 
+	and 0 < #c.preferences and 0 < #d.preferences and a.preferences.first = b.preferences.last
 }
-run MultipleBallotsUnderSTV for 10 but 6 int
+run MultipleBallotsUnderSTV for 10

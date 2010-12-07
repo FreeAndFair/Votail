@@ -1,22 +1,7 @@
 
 static_diagram STATIC_DIAGRAM
-component
-  cluster TALLY_CLUSTER
   component
-
     class BALLOT
-    indexing
-      about: "The ordered set of preferences from a ballot paper in an Irish election,     \    
-        \ which uses the Proportional Representation Single Transfer Vote.     \    
-        \ (PRSTV) system.     \    
-        \      \    
-        \ Department of Environment and Local Government,     \    
-        \ Count Requirements and Commentary on Count Rules,     \    
-        \ section 3-14</a>     \    
-        \      \    
-        \ Dermot Cochran</a>    ";    
-      author: "<a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">";
-      misc: "@see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">";
     feature
       make
         -> preferences: SEQUENCE[INTEGER]
@@ -96,13 +81,7 @@ component
           index /= Void;
           0 <= index;
         ensure
-          Result /= Void;
-          (index < numberOfPreferences and index < preferenceList.count) ==> preferenceList.item(index) = Result;
-          (numberOfPreferences <= index or preferenceList.count <= index) ==> Result = Ballot.NONTRANSFERABLE;
+          Result /= Void
         end
     end --class BALLOT
-    
-    
-  end --cluster TALLY_CLUSTER
-
-end --static diagram
+end

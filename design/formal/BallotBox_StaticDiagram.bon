@@ -1,8 +1,7 @@
 
 static_diagram STATIC_DIAGRAM
 component
-  cluster TALLY_CLUSTER
-  component
+
 
     class BALLOT_BOX interfaced
     indexing
@@ -36,7 +35,6 @@ component
           Result /= Void;
           0 <= Result;
           Result = numberOfBallots;
-          (ballots = Void) ==> Result = 0;
         end
       accept
         -> preferences: SEQUENCE[INTEGER]
@@ -57,7 +55,6 @@ component
         ensure
           delta index;
           Result /= Void;
-          Result = ballots.item(old([index]));
         end
       toString: STRING
         ensure
@@ -71,6 +68,6 @@ component
     end --class BALLOT_BOX
     
     
-  end --cluster TALLY_CLUSTER
+
 
 end --static diagram

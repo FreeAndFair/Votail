@@ -1,5 +1,5 @@
 /**
- * Dermot Cochran, 2010, IT University of Copenhagen
+ * @author Dermot Cochran, 2010, IT University of Copenhagen
  */
 
 package ie.votail.model;
@@ -8,47 +8,76 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * A model election scenario is a set of possible outcomes for each candidate. 
- * Each branch in the counting algorithm is associated with at least one
- * such scenario. So, testing all scenarios should achieve full path coverage
- * of the counting system.
+ * A combination of possible election outcomes for each candidate.
  */
 
 public class Scenario {
-  
-  // Invariants for Scenarios based on Axioms in the Alloy model
-  
-  public static final boolean AXIOM_validTieBreaker = true;
-  /*@
-   * public invariant AXIOM_validTieBreaker ==>
-   *   (\forall Outcome tl; outcomes.contains(tl) &&
-   *   (tl == Outcomes.TiedLoser || tl == outcomes.TiedEarlyLoser || 
-   *   tl == outcomes.tiedSoreLoser);
-   *   (\exists Outcome tw; outcomes.contains(tw) && tw == Outcomes.TIED_WINNER));
+
+  // Refinement from Alloy Analyser axioms to JML invariants
+
+  /**
+   * <Alloy>
+   * fact validTieBreaker {
+   *   all l: Candidate | some w: Candidate | 
+   *   (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or 
+   *     l.outcome = TiedEarlyLoser) implies 
+   *   w.outcome = TiedWinner
+   * }
+   * </Alloy>
    */
-  
-  public static final boolean AXIOM_tieBreaker = true;
-  /*@ 
-   * public invariant AXIOM_tieBreaker ==> 
-   *   (\forall Outcome tw; outcomes.contains(tw) && tw == Outcomes.TIED_WINNER;
-   *   (\exists Outcome tl; outcomes.contains(tl) &&
-   *   (tl == Outcomes.TiedLoser || tl == outcomes.TiedEarlyLoser || 
-   *   tl == outcomes.tiedSoreLoser)));
+  /*@ public invariant AXIOM_FOR_VALID_TIE_BREAKER <==>
+        (\forall Outcome tl; outcomes.contains(tl) &&
+        (tl == Outcomes.TiedLoser || tl == outcomes.TiedEarlyLoser || 
+        tl == outcomes.tiedSoreLoser);
+        (\exists Outcome tw; outcomes.contains(tw) 
+          && tw == Outcomes.TIED_WINNER));
    */
-  
-  public static final boolean AXIOM_typeOfTiedLoser = true;
-  /*@
-   * public invariant AXIOM_typeOfTiedLoser ==>
-   *  (\forall Outcome a, b; outcomes.contains (a) && outcomes.contains (b);
-   *  (a == Outcome.TiedSoreLoser) ==> 
-   *    (b != Outcome.TiedLoser && b != Outcome.TiedEarlyLoser && 
-   *     b != Outcome.Loser && b != Outcome.EarlyLoser));
+  public static final boolean AXIOM_FOR_VALID_TIE_BREAKER = true;
+
+  /**
+   * <Alloy>
+   * fact validTieBreaker {
+   *   all l: Candidate | some w: Candidate | 
+   *   (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or 
+   *     l.outcome = TiedEarlyLoser) implies 
+   *    w.outcome = TiedWinner
+   * }
+   * </Alloy>
    */
-  
-  /*@
-   * public invariant 1 < outcomes.size();
+  /*@ public invariant AXIOM_FOR_TIE_BREAKER <==>
+        (\forall Outcome tw; outcomes.contains(tw) && 
+          tw == Outcomes.TIED_WINNER;
+        (\exists Outcome tl; outcomes.contains(tl) &&
+        (tl == Outcomes.TiedLoser || tl == outcomes.TiedEarlyLoser || 
+        tl == outcomes.tiedSoreLoser)));
    */
-  private /*@ non_null*/ ArrayList<Outcome> outcomes;
+  public static final boolean AXIOM_FOR_TIE_BREAKER = true;
+
+  
+  /**
+   * <Alloy>
+   * fact typeOfTiedLoser {
+   *   no disj a,b: Candidate | a.outcome = TiedSoreLoser and 
+   *     (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or 
+   *      b.outcome=Loser or b.outcome=EarlyLoser)
+   * }
+   * </Alloy>
+   */
+  /*@ public invariant AXIOM_FOR_TYPE_OF_TIED_LOSER <==>
+        (\forall Outcome a, b; outcomes.contains (a) && outcomes.contains (b);
+        (a == Outcome.TiedSoreLoser) ==> 
+        (b != Outcome.TiedLoser && b != Outcome.TiedEarlyLoser && 
+         b != Outcome.Loser && b != Outcome.EarlyLoser));
+   */
+  public static final boolean AXIOM_FOR_TYPE_OF_TIED_LOSER = true;
+
+  
+  /**
+   * 
+   */
+  //@ public invariant 1 < outcomes.size();
+  private /*@ non_null*/ ArrayList<Outcome> outcomes; //@ nowarn;
+  private int quota;
 
   /**
    * Create a new model scenario.
@@ -101,6 +130,7 @@ public class Scenario {
    *     <li>c6.outcome = TiedWinner and</li>
    *     <li>c7.outcome = TiedLoser and</li>
    *     <li>c8.outcome = TiedEarlyLoser</li>
+   *     Election.quota = 1
    * </p>
    * @return The <code>Alloy</code> predicate as a string
    */
@@ -109,23 +139,26 @@ public class Scenario {
    */
   public /*@ pure*/ String toPredicate() {
     Iterator<Outcome> iterator = outcomes.iterator();
-    StringBuffer predicateStringBuffer = new StringBuffer("some disj ");
+    StringBuffer stringBuffer = new StringBuffer("some disj ");
     for (int i=0; i < outcomes.size(); i++) {
       if (i > 0 ) {
-        predicateStringBuffer.append(","); 
+        stringBuffer.append(","); 
       }
-      predicateStringBuffer.append("c" + i);
+      stringBuffer.append("c" + i);
     }
-    predicateStringBuffer.append(": Candidate | ");
+    stringBuffer.append(": Candidate | ");
     int i=0;
     while (iterator.hasNext()) {
       if (i > 0 ) {
-        predicateStringBuffer.append(" and "); 
+        stringBuffer.append(" and "); 
       }
-      predicateStringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
+      stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
       i++;
     }
-    return predicateStringBuffer.toString();
+    if (0 < quota) {
+      stringBuffer.append("\n Election.quota = " + quota);
+    }
+    return stringBuffer.toString();
   }
 
   /**
@@ -315,5 +348,14 @@ public class Scenario {
         result += numberOfScenarios (numberOfWinners, numberOfOutcomes - numberOfWinners);
     }
     return result;
+  }
+
+  /**
+   * Set the quota for election
+   * 
+   * @param theQuota The quota
+   */
+  public /*@ pure*/ void setQuota(int theQuota) {
+    this.quota = theQuota;
   }
 }

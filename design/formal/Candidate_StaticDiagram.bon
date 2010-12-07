@@ -1,8 +1,6 @@
 
 static_diagram STATIC_DIAGRAM
 component
-  cluster TALLY_CLUSTER
-  component
 
     class COUNT_CONFIGURATION interfaced
     feature
@@ -100,11 +98,6 @@ component
     
     
     class CONSTITUENCY
-    indexing
-      about: "Size of constituency and list of candidates for election..     \    
-        \      \    
-        \ Dermot Cochran</a>    ";    
-      author: "<a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">";
     feature
       candidateDataInUse: BOOLEAN
         ensure
@@ -180,18 +173,14 @@ component
         \ Count Requirements and Commentary on Count Rules,     \    
         \ section 3-14</a>     \    
         \     ";    
-      author: "Dermot Cochran";
-      misc: "@see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">";
+      author: "Dermot Cochran"
     inherit
       CANDIDATE_STATUS
     feature
       make
         ensure
           state = CONTINUING;
-          lastCountNumber = 0;
-          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
-          old(lastCountNumber) <= lastCountNumber;
-          old(nextCandidateID) <= nextCandidateID;
+          lastCountNumber = 0
         end
       candidateID: INTEGER
         ensure
@@ -277,30 +266,21 @@ component
         ensure
           delta {lastCountNumber, votesAdded};
           numberOfVotes <= votesAdded.item(count);
-          lastCountNumber = count;
-          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
-          old(lastCountNumber) <= lastCountNumber;
-          old(nextCandidateID) <= nextCandidateID;
+          lastCountNumber = count
         end
       declareElected
         require
           state = CONTINUING;
         ensure
           delta state;
-          state = ELECTED;
-          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
-          old(lastCountNumber) <= lastCountNumber;
-          old(nextCandidateID) <= nextCandidateID;
+          state = ELECTED
         end
       declareEliminated
         require
           state = CONTINUING;
         ensure
           delta this.state;
-          state = ELIMINATED;
-          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
-          old(lastCountNumber) <= lastCountNumber;
-          old(nextCandidateID) <= nextCandidateID;
+          state = ELIMINATED
         end
       removeVote
         -> numberOfVotes: INTEGER
@@ -317,10 +297,7 @@ component
         ensure
           delta {lastCountNumber, votesRemoved};
           numberOfVotes <= votesRemoved.item(count);
-          lastCountNumber = count;
-          old(candidateID) /= NO_CANDIDATE ==> candidateID = old(candidateID);
-          old(lastCountNumber) <= lastCountNumber;
-          old(nextCandidateID) <= nextCandidateID;
+          lastCountNumber = count
         end
       getUniqueID: INTEGER
         ensure
@@ -360,8 +337,5 @@ component
       -- (\forall int i; 0 < i && i < votesRemoved.length; 0 <= votesRemoved[i]);
       -- (\forall int i; 0 < i && i < votesRemoved.length; votesRemoved[i] == 0);
     end --class CANDIDATE
-    
-    
-  end --cluster TALLY_CLUSTER
 
 end --static diagram

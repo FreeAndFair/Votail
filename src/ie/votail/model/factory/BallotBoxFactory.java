@@ -11,7 +11,6 @@ import ie.votail.model.Scenario;
 import ie.votail.model.Vote;
 import ie.votail.model.VoteTable;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
@@ -26,14 +25,15 @@ import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
 import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 import election.tally.BallotBox;
 
+/**
+ * 
+ */
 public class BallotBoxFactory {
 
-  public static final int MAX_SCOPE = 10;
-
+  private static final int DEFAULT_BIT_WIDTH = 4;
   protected Module world;
-  protected Logger logger;
+  private Logger logger;
   protected A4Reporter reporter;
-  protected Map<String, String> loaded;
   protected A4Options options;
 
   /**
@@ -47,15 +47,13 @@ public class BallotBoxFactory {
   public BallotBoxFactory(String model_filename, String log_filename) {
 
     reporter = new A4Reporter();
-    loaded = null;
     options = new A4Options();
     options.solver = A4Options.SatSolver.SAT4J;
     logger = Logger.getLogger(log_filename);
 
     try {
-      world =
-              CompUtil.parseEverything_fromFile(reporter, loaded,
-                                                model_filename);
+      world = CompUtil.parseEverything_fromFile(reporter, null,
+        model_filename);
     } catch (Err e) {
       world = null;
       logger.severe("Unable to find model " + model_filename + " because of "
@@ -66,17 +64,13 @@ public class BallotBoxFactory {
   /**
    * Generate a ballot box from a scenario description, using Alloy model
    * 
-   * @param scenario
-   *        The scenario which will be tested by this ballot box
-   * @param scope
-   *        The scope for model finding in Alloy Analyser
-   * @return The Ballot Box (or null if generation fails)
+   * @param scenario The scenario which will be tested by this ballot box
+   * @param scope The scope for model finding in Alloy Analyser
+   * @return The Ballot Box (empty if generation fails)
    */
-  /*@
-   * require loaded != null;
-   */
-  public/*@ non_null*/BallotBox generateBallotBox(
-  /*@ non_null*/Scenario scenario, int scope, int bitwidth) {
+  //@ requires scenario.numberOfWinners() < scope
+  public /*@ non_null*/ BallotBox generateBallotBox(
+    /*@ non_null*/ Scenario scenario, int scope) {
 
     Expr predicate;
     Command command;
@@ -85,36 +79,28 @@ public class BallotBoxFactory {
 
     // Find a ballot box which creates this scenario
     try {
-      predicate =
-                  CompUtil
-                          .parseOneExpression_fromString(world,
-                                                         scenario.toPredicate());
-      command = new Command(false, scope, bitwidth, scope, predicate);
-      solution =
-                 TranslateAlloyToKodkod
-                                       .execute_command(
-                                                        reporter,
-                                                        world
-                                                             .getAllReachableSigs(),
-                                                        command, options);
+      predicate = CompUtil.parseOneExpression_fromString(world,
+        scenario.toPredicate());
+      command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, predicate);
+      solution = TranslateAlloyToKodkod.execute_command(reporter,
+        world.getAllReachableSigs(), command, options);
 
       if (solution.satisfiable()) {
         ballotBox = extractBallotBox(solution);
+        //@ assert ballotBox != null;
         logger.info("Scenario " + scenario.toString() + " has ballot box: "
                     + ballotBox.toString());
-      } else if (scope < MAX_SCOPE) {
-        ballotBox = generateBallotBox(scenario, scope + 1, bitwidth);
       } else {
         ballotBox = new BallotBox();
-        logger.severe("No ballot box found with scope less than " + MAX_SCOPE
-                      + "for scenario " + scenario.toString());
+        logger.severe("No ballot box found with scope up to " + scope
+                      + " for scenario " + scenario.toString());
       }
 
     } catch (Err e) {
       // Log failure to find scenario
       logger.severe("Unable to find ballot box for this scenario "
                     + scenario.toString() + " with scope " + scope
-                    + " and bitwidth " + bitwidth + " because " + e.msg);
+                    + " because " + e.msg);
     }
     return ballotBox;
   }
