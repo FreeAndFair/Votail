@@ -3,7 +3,10 @@ package ie.votail.model;
 import java.util.ArrayList;
 
 import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
+import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
 
 public class VoteTable {
   
@@ -17,9 +20,13 @@ public class VoteTable {
   public VoteTable(A4Solution solution) {
     
     // Iterate through the solution and add each vote to the table
-    for (ExprVar atom : solution.getAllAtoms()) {
-      if (atom.label.contains("Vote")) {
-        this.add(new Vote(atom));
+    for (Sig sig : solution.getAllReachableSigs()) {
+      if (sig.label.contains("Vote")) {
+        A4TupleSet tupleSet = solution.eval(sig);
+        for (A4Tuple tuple : tupleSet) {
+          // Tuple should consist of ballotID, candidateID and ranking
+          this.add(new Vote(tuple));
+        }
       }
     }
   }
