@@ -308,6 +308,11 @@ fact highestWinner {
 		Scenario.quota <= #c.votes + #c.transfers
 }
 
+// At least one long ballot for STV
+fact atLeastOne {
+  some b: Ballot | Election.method = STV implies 1 < #b.preferences
+}
+
 -- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees

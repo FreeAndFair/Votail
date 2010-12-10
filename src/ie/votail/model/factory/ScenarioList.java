@@ -13,6 +13,11 @@ import ie.votail.model.Scenario;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * 
+ * @author Dermot Cochran
+ *
+ */
 public class ScenarioList extends ArrayList<Scenario> {
   
   // Maximum number of winners to keep track of

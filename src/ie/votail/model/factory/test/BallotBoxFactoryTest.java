@@ -11,16 +11,19 @@ import election.tally.BallotBox;
 
 public class BallotBoxFactoryTest extends TestCase {
 
+  private static final int EXPECTED_NUMBER_OF_BALLOTS_WL = 3;
+  private static final String MODELS_VOTING_ALS = "models/voting.als";
+
   @Test
   public void testGenerateBallotBox() {
     Scenario scenario = new Scenario();
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
-    scenario.setQuota(1);
     BallotBoxFactory ballotBoxFactory 
-      = new BallotBoxFactory("models/voting.als","testdata/test.log");
-    BallotBox ballotBox = ballotBoxFactory.generateBallotBox(scenario, 4);
+      = new BallotBoxFactory(BallotBoxFactoryTest.MODELS_VOTING_ALS);
+    BallotBox ballotBox = ballotBoxFactory.generateBallotBox(scenario, 7);
     assertFalse (ballotBox == null);
-    assertEquals (3, ballotBox.size());
+    assertEquals (BallotBoxFactoryTest.EXPECTED_NUMBER_OF_BALLOTS_WL, 
+      ballotBox.size());
   }
 }

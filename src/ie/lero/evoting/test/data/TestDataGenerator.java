@@ -35,7 +35,8 @@ public class TestDataGenerator {
    * other class.
    */
   //@ requires 0 <= n;
-  public static AbstractBallotCounting getAbstractBallotCounting(int n) {
+  public static AbstractBallotCounting getAbstractBallotCounting(int n) 
+    throws java.util.NoSuchElementException {
     if (abstractBallotCounting_count == 0 || n == 0) {
       abstractBallotCounting_count++;
       final AbstractBallotCounting ballotCounting = new BallotCounting();
@@ -82,7 +83,7 @@ public class TestDataGenerator {
       constituency_count++;
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(1, 5);
-      constituency.setNumberOfCandidates(2);
+      constituency.setNumberOfCandidates(3);
       return constituency;
     } else if (n <= 3) {
       final Constituency constituency = new Constituency();

@@ -224,7 +224,7 @@ public class Ballot {
    * 
    * @return The ballot as a string
    */
-  public/*@ pure @*/String toString() {
+  public/*@ pure non_null @*/ final String toString() {
     StringBuffer stringBuffer = new StringBuffer("(");
     for (int i = 0; i < numberOfPreferences; i++) {
       if (0 < i) {

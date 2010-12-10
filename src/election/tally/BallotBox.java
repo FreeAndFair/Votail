@@ -3,7 +3,8 @@
  * 
  * Copyright (c) 2005 Dermot Cochran and Joseph R. Kiniry
  * Copyright (c) 2006,2007 Dermot Cochran, Joseph R. Kiniry and Patrick E. Tierney
- * Copyright (c) 2008,2009 Dermot Cochran
+ * Copyright (c) 2008,2009 Dermot Cochran, University College Dublin
+ * Copyright (c) 2010,2011 Dermot Cochran, IT University of Copenhagen
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +27,8 @@
 
 package election.tally;
 
+import ie.votail.model.VoteTable;
+
 /** Data transfer structure for set of all valid ballots */
 public class BallotBox {
 
@@ -33,8 +36,8 @@ public class BallotBox {
    * List of valid ballot papers, already shuffled and mixed by the data loader
    * or returning officer.
    */
-  protected/*@ non_null spec_public @*/Ballot[] ballots =
-                                                           new Ballot[Ballot.MAX_BALLOTS];
+  protected/*@ non_null spec_public*/Ballot[] ballots =
+    new Ballot[Ballot.MAX_BALLOTS];
 
   /**
    * Get the number of ballots in this box.
@@ -76,6 +79,10 @@ public class BallotBox {
     numberOfBallots = 0;
   }
 
+  public BallotBox(VoteTable voteTable) {
+    // TODO Auto-generated constructor stub
+  }
+
   /**
    * Accept an anonymous ballot paper.
    * <p>
@@ -90,7 +97,9 @@ public class BallotBox {
     @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
     @*/
   public void accept(final/*@ non_null @*/int[] preferences) {
-    ballots[numberOfBallots++] = new Ballot(preferences);
+    final Ballot ballot = new Ballot(preferences);
+    final int next = numberOfBallots++;
+    ballots[next] = ballot;
   }
 
   /**
@@ -122,7 +131,7 @@ public class BallotBox {
    * 
    * @return The Ballot Box as a string
    */
-  public String toString() {
+  public /*@ pure non_null */ String toString() {
     StringBuffer stringBuffer = new StringBuffer();
     for (int i = 0; i < numberOfBallots; i++) {
       stringBuffer.append(ballots[i].toString());

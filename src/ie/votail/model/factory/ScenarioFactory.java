@@ -19,11 +19,10 @@ public class ScenarioFactory {
    * @param numberOfOutcomes The number of candidate outcomes
    * @return All election scenarios with this number of outcomes
    */
-  /*@
-   * requires 1 < numberOfOutcomes;
-   * ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
-   * ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
-   */
+  /*@ requires 1 < numberOfOutcomes;
+    @ ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
+    @ ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
+    @*/
   public /*@ pure */ ScenarioList find(int numberOfOutcomes) {
     ScenarioList scenarios = new ScenarioList();
     if (numberOfOutcomes == 2) {

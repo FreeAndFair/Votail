@@ -1,7 +1,10 @@
 package election.tally;
 
 /*
- * Copyright (c) 2005-2009 Dermot Cochran
+ * Votail, (c) Dermot Cochran, 2005-2011
+ * 
+ * @author Dermot Cochran, 2005-2009, University College Dublin
+ * @author Dermot Cochran, 2010-2011, IT Univeristy of Copenhagen
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,36 +35,37 @@ package election.tally;
 public class Constituency {
 
   /** Number of candidates for election in this constituency */
-  //@ public invariant 0 <= numberOfCandidates;
+  //@ public invariant 1 < numberOfCandidates;
   //@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
-	protected /*@ spec_public @*/ transient int numberOfCandidates = 0;
-	
+  protected /*@ spec_public @*/ transient int numberOfCandidates = 2;
+
   /** Number of seats to be filled in this election */
-  //@ public invariant 0 <= numberOfSeatsInThisElection;
+  //@ public invariant 0 < numberOfSeatsInThisElection;
   //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
-	protected /*@ spec_public @*/ transient int numberOfSeatsInThisElection = 0;
-	
+  protected /*@ spec_public @*/ transient int numberOfSeatsInThisElection = 1;
+
   /** Number of seats in this constituency */
-  //@ public invariant 0 <= totalNumberOfSeats;
-	protected /*@ spec_public @*/ transient int totalNumberOfSeats = 0;
-	
+  //@ public invariant 0 < totalNumberOfSeats;
+  protected /*@ spec_public @*/ transient int totalNumberOfSeats = 1;
+
   /** List of all candidates in this election */
-  //@ public invariant \nonnullelements (candidateList);
-  protected /*@ spec_public non_null @*/ Candidate[] candidateList = new Candidate[0];
+  //@ public invariant numberOfCandidates <= candidateList.length;
+  protected /*@ spec_public non_null @*/ Candidate[] candidateList 
+    = new Candidate[2];
 
   //@ public ghost boolean candidateDataInUse = false;
-  
-	/**
-	 * Get the <code>Candidate</code> object.
-	 * 
-	 * @return The candidate at that position on the initial list
-	 */
-	//@ requires \nonnullelements (candidateList);
-	//@ requires 0 <= index && index < numberOfCandidates;
-	//@ ensures candidateList[index] == \result;
-	public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
+
+  /**
+   * Get the <code>Candidate</code> object.
+   * 
+   * @return The candidate at that position on the initial list
+   */
+  //@ requires \nonnullelements (candidateList);
+  //@ requires 0 <= index && index < numberOfCandidates;
+  //@ ensures candidateList[index] == \result;
+  public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
     return candidateList[index];
-	}
+  }
 
   /**
    * Determine the number of candidates in this election.
@@ -70,16 +74,17 @@ public class Constituency {
    *   There must be at least two candidates or choices in any election.
    */
   //@ requires 2 <= number;
-	//@ requires number <= Candidate.MAX_CANDIDATES;
-	//@ requires candidateDataInUse == false;
+  //@ requires number <= Candidate.MAX_CANDIDATES;
+  //@ requires candidateDataInUse == false;
+  //@ requires number <= candidateList.length;
   //@ ensures number == numberOfCandidates;
-	//@ ensures number <= candidateList.length;
+  //@ ensures number <= candidateList.length;
   public void setNumberOfCandidates(final int number) {
       this.numberOfCandidates = number;
       makeListOfCandidates();
       //@ set candidateDataInUse = true;
   }
-  
+
   private void makeListOfCandidates() {
     if (this.candidateList.length < this.numberOfCandidates) {
       this.candidateList = new Candidate[this.numberOfCandidates];
@@ -98,7 +103,7 @@ public class Constituency {
   }
 
   //@ requires numberOfSeatsInThisElection <= totalNumberOfSeats;
-  //@ requires 0 <= numberOfSeatsInThisElection;
+  //@ requires 0 < numberOfSeatsInThisElection;
   public void setNumberOfSeats(
      final int numberOfSeatsInThisElection, final int totalNumberOfSeats) {
     this.numberOfSeatsInThisElection = numberOfSeatsInThisElection;

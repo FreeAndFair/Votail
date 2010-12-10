@@ -4,7 +4,6 @@
 
 package ie.votail.model;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -72,25 +71,20 @@ public class Scenario {
   public static final boolean AXIOM_FOR_TYPE_OF_TIED_LOSER = true;
 
   
-  /**
-   * 
-   */
-  //@ public invariant 1 < outcomes.size();
-  private /*@ non_null*/ ArrayList<Outcome> outcomes; //@ nowarn;
-  private int quota;
+  private OutcomeList listOfOutcomes;
 
   /**
    * Create a new model scenario.
    */
   public Scenario () {
-    outcomes = new ArrayList<Outcome>();
+    listOfOutcomes = new OutcomeList();
   }
   
   /**
    * Textual representation of a model election scenario.
    */
   public /*@ pure*/ String toString() {
-    Iterator<Outcome> iterator = outcomes.iterator();
+    Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
     StringBuffer stringBuffer = new StringBuffer ("(");
     if (iterator.hasNext()) {
       stringBuffer.append(iterator.next().toString());
@@ -112,8 +106,8 @@ public class Scenario {
    * ensures 1 + \old(numberOfOutcomes) == numberOfOutcomes;
    * ensures outcomes.contains(outcome);
    */
-  public void addOutcome(/*@ non_null */ Outcome outcome) {
-    outcomes.add(outcome);
+  public void addOutcome(/*@ non_null*/ final Outcome outcome) {
+    listOfOutcomes.add(outcome);
   }
   
   /**
@@ -138,9 +132,9 @@ public class Scenario {
    * requires 0 < outcomes.size();
    */
   public /*@ pure*/ String toPredicate() {
-    Iterator<Outcome> iterator = outcomes.iterator();
+    Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
     StringBuffer stringBuffer = new StringBuffer("some disj ");
-    for (int i=0; i < outcomes.size(); i++) {
+    for (int i=0; i < listOfOutcomes.getOutcomes().size(); i++) {
       if (i > 0 ) {
         stringBuffer.append(","); 
       }
@@ -155,9 +149,7 @@ public class Scenario {
       stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
       i++;
     }
-    if (0 < quota) {
-      stringBuffer.append("\n Election.quota = " + quota);
-    }
+    stringBuffer.append("\n Election.method = STV");
     return stringBuffer.toString();
   }
 
@@ -173,7 +165,7 @@ public class Scenario {
     Scenario sorted = new Scenario();
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
-      Iterator<Outcome> iterator = this.outcomes.iterator();
+      Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
       while (iterator.hasNext()) {
         if (outcome.equals(iterator.next())) {
           sorted.addOutcome(outcome);
@@ -194,11 +186,11 @@ public class Scenario {
    * ensures \result <==> this.canonical().equals(other.canonical());
    */
   public /*@ pure*/ boolean equivalentTo (/*@ non_null*/ Scenario other) {
-    if (this.outcomes.size() != other.outcomes.size()) {
+    if (this.listOfOutcomes.getOutcomes().size() != other.listOfOutcomes.getOutcomes().size()) {
       return false;
     }
-    Iterator<Outcome> it1 = this.canonical().outcomes.iterator();
-    Iterator<Outcome> it2 = other.canonical().outcomes.iterator();
+    Iterator<Outcome> it1 = this.canonical().listOfOutcomes.getOutcomes().iterator();
+    Iterator<Outcome> it2 = other.canonical().listOfOutcomes.getOutcomes().iterator();
     while (it1.hasNext() && it2.hasNext()) {
       if (!it1.next().equals(it2.next())) {
         return false;
@@ -234,7 +226,7 @@ public class Scenario {
    */
   private /*@ pure*/ Scenario copy() {
     Scenario clone = new Scenario();
-    Iterator<Outcome> iterator = this.outcomes.iterator();
+    Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());
     }
@@ -247,7 +239,7 @@ public class Scenario {
    * @return True if any tied outcomes exist
    */
   public /*@ pure*/ boolean isTied() {
-    Iterator<Outcome> iterator = this.outcomes.iterator();
+    Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
       if (outcome.isTied()) {
@@ -267,7 +259,7 @@ public class Scenario {
    * ensures \result ==> isTied();
    */
   public /*@ pure*/ boolean hasTiedSoreLoser() {
-    Iterator<Outcome> iterator = this.outcomes.iterator();
+    Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
       if (outcome == Outcome.TiedSoreLoser) {
@@ -291,7 +283,7 @@ public class Scenario {
    */
   public int numberOfWinners() {
    int count = 0;
-   Iterator<Outcome> iterator = this.outcomes.iterator();
+   Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
    while (iterator.hasNext()) {
      Outcome outcome = iterator.next();
      if (outcome == Outcome.CompromiseWinner || 
@@ -345,17 +337,18 @@ public class Scenario {
     int result = 0;
     for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; 
       numberOfWinners++) {
-        result += numberOfScenarios (numberOfWinners, numberOfOutcomes - numberOfWinners);
+        result += numberOfScenarios (numberOfWinners, 
+                                     numberOfOutcomes - numberOfWinners);
     }
     return result;
   }
 
   /**
-   * Set the quota for election
    * 
-   * @param theQuota The quota
+   * @param string
+   * @return
    */
-  public /*@ pure*/ void setQuota(int theQuota) {
-    this.quota = theQuota;
+  public String toFilename(String string) {
+    return toString() + string;
   }
 }
