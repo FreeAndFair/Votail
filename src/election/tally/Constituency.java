@@ -35,23 +35,22 @@ package election.tally;
 public class Constituency {
 
   /** Number of candidates for election in this constituency */
-  //@ public invariant 1 < numberOfCandidates;
+  //@ public invariant 0 <= numberOfCandidates;
   //@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
-  protected /*@ spec_public @*/ transient int numberOfCandidates = 2;
-
+	protected /*@ spec_public @*/ transient int numberOfCandidates = 0;
+	
   /** Number of seats to be filled in this election */
-  //@ public invariant 0 < numberOfSeatsInThisElection;
+  //@ public invariant 0 <= numberOfSeatsInThisElection;
   //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
-  protected /*@ spec_public @*/ transient int numberOfSeatsInThisElection = 1;
-
+	protected /*@ spec_public @*/ transient int numberOfSeatsInThisElection = 0;
+	
   /** Number of seats in this constituency */
   //@ public invariant 0 < totalNumberOfSeats;
   protected /*@ spec_public @*/ transient int totalNumberOfSeats = 1;
 
   /** List of all candidates in this election */
-  //@ public invariant numberOfCandidates <= candidateList.length;
-  protected /*@ spec_public non_null @*/ Candidate[] candidateList 
-    = new Candidate[2];
+  //@ public invariant \nonnullelements (candidateList);
+  protected /*@ spec_public non_null @*/ Candidate[] candidateList = new Candidate[0];
 
   //@ public ghost boolean candidateDataInUse = false;
 
@@ -74,11 +73,10 @@ public class Constituency {
    *   There must be at least two candidates or choices in any election.
    */
   //@ requires 2 <= number;
-  //@ requires number <= Candidate.MAX_CANDIDATES;
-  //@ requires candidateDataInUse == false;
-  //@ requires number <= candidateList.length;
+	//@ requires number <= Candidate.MAX_CANDIDATES;
+	//@ requires candidateDataInUse == false;
   //@ ensures number == numberOfCandidates;
-  //@ ensures number <= candidateList.length;
+	//@ ensures number <= candidateList.length;
   public void setNumberOfCandidates(final int number) {
       this.numberOfCandidates = number;
       makeListOfCandidates();
@@ -103,7 +101,7 @@ public class Constituency {
   }
 
   //@ requires numberOfSeatsInThisElection <= totalNumberOfSeats;
-  //@ requires 0 < numberOfSeatsInThisElection;
+  //@ requires 0 <= numberOfSeatsInThisElection;
   public void setNumberOfSeats(
      final int numberOfSeatsInThisElection, final int totalNumberOfSeats) {
     this.numberOfSeatsInThisElection = numberOfSeatsInThisElection;

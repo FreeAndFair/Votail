@@ -1,13 +1,14 @@
 package ie.votail.model;
 
-import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
 
 public class Vote {
-  int ballotID;
-  int candidateID;
-  int ranking;
+  protected /*@ spec_public*/ int ballotID;
+  protected /*@ spec_public*/ int candidateID;
+  
+  /** Relative preference for candidate; 1=first, 2=second, ... */
+  //@ public invariant 0 < ranking;
+  protected /*@ spec_public*/ int ranking;
   
   /**
    * Convert an Alloy Tuple into a Vote

@@ -85,11 +85,11 @@ public class BallotBoxFactory {
         world.getAllReachableSigs(), command, options);
 
       if (solution.satisfiable()) { // Extract ballots from the solution
-        BallotBox ballotBox = new BallotBox(new VoteTable(solution));
+        final VoteTable voteTable = new VoteTable(solution);
+        BallotBox ballotBox = voteTable.getBallotBox();
         logger.info("Scenario " + scenario.toString() + " has ballot box: "
                     + ballotBox.toString());
         return ballotBox;
-        
       } 
       // Increase the scope and try again
       return generateBallotBox (scenario, scope+1);

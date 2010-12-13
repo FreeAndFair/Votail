@@ -27,8 +27,6 @@
 
 package election.tally;
 
-import ie.votail.model.VoteTable;
-
 /** Data transfer structure for set of all valid ballots */
 public class BallotBox {
 
@@ -77,10 +75,6 @@ public class BallotBox {
   public/*@ pure @*/BallotBox() {
     index = 0;
     numberOfBallots = 0;
-  }
-
-  public BallotBox(VoteTable voteTable) {
-    // TODO Auto-generated constructor stub
   }
 
   /**

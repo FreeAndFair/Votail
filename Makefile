@@ -19,7 +19,7 @@ JUNITCP = $(LIB)/junit.jar
 javac ?= javac
 jml ?= ./external_tools/bin/jml
 jmlrac ?= ./external_tools/bin/jmlrac
-jmlc ?= ./external_tools/bin/jmlc
+jmlc ?= ./external_tools/bin/jmlc -G
 jmldoc ?= ./external_tools/bin/jmldoc
 jmlunit ?= ./external_tools/bin/jmlunit
 version ?= 1.5
@@ -260,8 +260,6 @@ jml-junit-tests:	classes jmlunit_classes
 	java junit.textui.TestRunner $(test_memory_use) election.tally.Candidate_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.CandidateStatus_JML_Test
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	java junit.textui.TestRunner $(test_memory_use) election.tally.Constituency_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.CountConfiguration_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\

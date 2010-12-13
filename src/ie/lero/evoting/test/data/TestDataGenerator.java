@@ -88,12 +88,12 @@ public class TestDataGenerator {
     } else if (n <= 3) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(n, 3);
-      constituency.setNumberOfCandidates(n + 1);
+      constituency.setNumberOfCandidates(n + 2);
       return constituency;
     } else if (n <= 5) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(n, 5);
-      constituency.setNumberOfCandidates(n + 2);
+      constituency.setNumberOfCandidates(n + 1);
     } else if (n == 6) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(1, 4);

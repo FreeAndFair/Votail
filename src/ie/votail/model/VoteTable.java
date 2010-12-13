@@ -7,6 +7,7 @@ import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
+import election.tally.BallotBox;
 
 public class VoteTable {
   
@@ -37,6 +38,11 @@ public class VoteTable {
    */
   public void add(/*@ non_null*/ Vote vote) {
     this.add(vote);
+  }
+
+  public BallotBox getBallotBox() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }
