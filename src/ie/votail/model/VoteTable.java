@@ -38,21 +38,12 @@ public class VoteTable {
    * @param solution The Alloy Analyser solution for an electoral scenario.
    */
   //@ requires solution.satisfiable();
-  public VoteTable(/*@ non_null*/ final A4Solution solution) {
+  public VoteTable() {
     
     votes = new ArrayList<Vote>();
     ballotIDs = new int[MAX_BALLOTS];
     
-    // Iterate through the solution and add each vote to the table
-    for (Sig sig : solution.getAllReachableSigs()) {
-      if (sig.label.contains("Vote")) {
-        A4TupleSet tupleSet = solution.eval(sig);
-        for (A4Tuple tuple : tupleSet) {
-          // Tuple should consist of ballotID, candidateID and ranking
-          this.add(new Vote(tuple));
-        }
-      }
-    }
+    
   }
 
   /**
@@ -67,7 +58,7 @@ public class VoteTable {
   /*@ assignable numberOfBallots;
     @ ensures \old(numberOfBallots) <= numberOfBallots;
     @*/
-  protected final void add(/*@ non_null*/ final Vote vote) {
+  public final void add(/*@ non_null*/ final Vote vote) {
     votes.add(vote);
     updateBallotIDs(vote.ballotID);
   }

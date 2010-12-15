@@ -17,13 +17,17 @@ import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
+import edu.mit.csail.sdg.alloy4.ErrorSyntax;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
+import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Options;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
+import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
 import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 import election.tally.BallotBox;
 
@@ -79,19 +83,32 @@ public class BallotBoxFactory {
     
     // Find a ballot box which creates this scenario
     try {
-      Expr predicate = CompUtil.parseOneExpression_fromString(world,
-        scenario.toPredicate());
-      Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, 
-                                    predicate);
-      A4Solution solution = TranslateAlloyToKodkod.execute_command(reporter,
-        world.getAllReachableSigs(), command, options);
+      A4Solution solution = findSolution(scenario, scope);
 
       if (solution.satisfiable()) { // Extract ballots from the solution
-        final VoteTable voteTable = new VoteTable(solution);
-        BallotBox ballotBox = voteTable.getBallotBox();
-        logger.info("Scenario " + scenario.toString() + " has ballot box: "
+     // Iterate through the solution and add each vote to the table
+        for (Sig sig : solution.getAllReachableSigs()) {
+          if (sig.label.contains("Vote")) {
+            A4TupleSet tupleSet = solution.eval(sig);
+              final VoteTable voteTable = new VoteTable();
+              // Iterate through the solution and add each vote to the table
+              for (A4Tuple tuple : tupleSet) {
+                // Tuple should consist of ballotID, candidateID and ranking
+                final Vote vote = new Vote();
+                int ballotID = 0, candidateID = 0, ranking = 0;
+                // TODO extract data from tuple
+                // FIXME extract data from Alloy solution
+                vote.setBallotID(ballotID);
+                vote.setRanking(ranking);
+                vote.setCandidateID(candidateID);
+                voteTable.add(vote);
+              }
+              BallotBox ballotBox = voteTable.getBallotBox();
+              logger.info("Scenario " + scenario.toString() + " has ballot box: "
                     + ballotBox.toString());
-        return ballotBox;
+              return ballotBox;
+          }
+        }
       } 
       // Increase the scope and try again
       return generateBallotBox (scenario, scope+1);
@@ -103,5 +120,23 @@ public class BallotBoxFactory {
                     + " because " + e.msg);
       return null;
     }
+  }
+
+  /**
+   * @param scenario
+   * @param scope
+   * @return
+   * @throws Err
+   * @throws ErrorSyntax
+   */
+  public A4Solution findSolution(Scenario scenario, int scope) throws Err,
+      ErrorSyntax {
+    Expr predicate = CompUtil.parseOneExpression_fromString(world,
+      scenario.toPredicate());
+    Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, 
+                                  predicate);
+    A4Solution solution = TranslateAlloyToKodkod.execute_command(reporter,
+      world.getAllReachableSigs(), command, options);
+    return solution;
   }
 }

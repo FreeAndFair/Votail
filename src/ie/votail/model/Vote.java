@@ -17,10 +17,7 @@ public class Vote {
    */
   //@ requires tuple.arity() == 3;
   //@ ensures 0 < ranking;
-  public Vote(A4Tuple tuple) {
-      this.ballotID = Integer.parseInt(tuple.atom(0));
-      this.candidateID = Integer.parseInt(tuple.atom(1));
-      this.ranking = Integer.parseInt(tuple.atom(2));
+  public Vote() {
   }
   public int getBallotID() {
     return ballotID;
@@ -34,6 +31,16 @@ public class Vote {
    */
   public int getRanking() {
     return ranking;
+  }
+  public void setBallotID(int theBallotID) {
+    this.ballotID = theBallotID;
+    
+  }
+  public void setCandidateID(int candidateID) {
+    this.candidateID = candidateID;
+  }
+  public void setRanking(int ranking) {
+    this.ranking = ranking;
   }
 
   
