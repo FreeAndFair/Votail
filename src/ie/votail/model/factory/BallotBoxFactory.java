@@ -1,8 +1,10 @@
 /**
- * Dermot Cochran, 2010, IT University of Copenhagen
+ * @author Dermot Cochran, 2010, IT University of Copenhagen
  * 
- * This class generates ballot boxes that fulfull a given scenario, by using
- * the Alloy Analayser API with a pre-defined model of PR-STV voting
+ * This class generates ballot boxes that create an electoral scenario, 
+ * for example, one winner by tie breaker and two losers, or one winner by 
+ * quota, one winner as the highest continuing candidate on the last round, and
+ * three losers below the threshold.
  */
 
 package ie.votail.model.factory;

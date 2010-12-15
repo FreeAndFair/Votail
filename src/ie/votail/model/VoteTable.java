@@ -2,25 +2,46 @@ package ie.votail.model;
 
 import java.util.ArrayList;
 
-import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
 import election.tally.BallotBox;
 
+/**
+ * A table of preference votes which can be converted into ballots for 
+ * counting.
+ * 
+ * @author Dermot Cochran
+ */
 public class VoteTable {
   
+  /** The null value for a candidate ID */
+  protected static final int NO_CANDIDATE_ID = 0;
+  
+  /** The maximum expected number of ballots to use when testing the count */
+  protected static final int MAX_BALLOTS = 100000;
+  
+  /** The number of ballots represented in this table of votes */
   protected int numberOfBallots = 0;
+  
+  /** The votes */
   protected ArrayList<Vote> votes;
+  
+  /** The list of ballots identifiers stored in this table */
+  protected int[] ballotIDs;
 
   /**
+   * Create a vote table from an Alloy Analyser solution for creation of an
+   * electoral scenario.
    * 
-   * @param solution
+   * @param solution The Alloy Analyser solution for an electoral scenario.
    */
-  public VoteTable(A4Solution solution) {
+  //@ requires solution.satisfiable();
+  public VoteTable(/*@ non_null*/ final A4Solution solution) {
     
     votes = new ArrayList<Vote>();
+    ballotIDs = new int[MAX_BALLOTS];
     
     // Iterate through the solution and add each vote to the table
     for (Sig sig : solution.getAllReachableSigs()) {
@@ -28,30 +49,51 @@ public class VoteTable {
         A4TupleSet tupleSet = solution.eval(sig);
         for (A4Tuple tuple : tupleSet) {
           // Tuple should consist of ballotID, candidateID and ranking
-          votes.add(new Vote(tuple));
-          numberOfBallots++;
+          this.add(new Vote(tuple));
         }
       }
     }
   }
 
   /**
+   * Add a <code>vote</code> to this table and update the list of ballots.
+   * <p>
+   * A <code>ballot</code> is a ranked sequence of votes. A <code>vote</code> 
+   * is a tuple consisting of
+   * <code>ballotID, ranking</code> and <code>candidateID</code>.
    * 
-   * @param vote
+   * @param vote The <code>vote</code> to be added
    */
-  public void add(/*@ non_null*/ Vote vote) {
+  /*@ assignable numberOfBallots;
+    @ ensures \old(numberOfBallots) <= numberOfBallots;
+    @*/
+  protected final void add(/*@ non_null*/ final Vote vote) {
     votes.add(vote);
+    updateBallotIDs(vote.ballotID);
+  }
+
+  /**
+   * Add this ballotID to the list if not already added.
+   * 
+   * @param ballotID
+   */
+  protected void updateBallotIDs(int ballotID) {
+    for (int i=0; i < numberOfBallots; i++) {
+      if (ballotID == ballotIDs[i]) {
+        return;
+      }
+    }
+    ballotIDs[numberOfBallots] = ballotID;
     numberOfBallots++;
   }
 
   /**
+   * Convert the table of votes into a ballot box that can be counted
    * 
-   * @return
+   * @return The Ballot Box
    */
   public BallotBox getBallotBox() {
     BallotBox box = new BallotBox();
-    
-    int[] ballotIDs = this.getBallotIDs();
     
     for (int i=0; i < numberOfBallots; i++) {
       int ballotID = ballotIDs[i];
@@ -66,24 +108,33 @@ public class VoteTable {
     return box;
   }
 
-  private int getCandidateID(int ballotID, int ranking) {
-    // TODO Auto-generated method stub
-    return 0;
+  /**
+   * 
+   * @param ballotID
+   * @param ranking
+   * @return
+   */
+  protected int getCandidateID(int ballotID, int ranking) {
+    for (Vote vote : votes) {
+      if (vote.ballotID == ballotID && vote.ranking == ranking) {
+        return vote.candidateID;
+      }
+    }
+    return NO_CANDIDATE_ID;
   }
 
-  private int getNumberOfRankings(int ballotID) {
-    // TODO Auto-generated method stub
-    return 0;
+  /**
+   * 
+   * @param ballotID
+   * @return
+   */
+  protected int getNumberOfRankings(int ballotID) {
+    int count = 0;
+    for (Vote vote : votes) {
+      if (vote.ballotID == ballotID) {
+        count++;
+      }
+    }
+    return count;
   }
-
-  private int[] getBallotIDs() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  private int getNumberOfBallots() {
-    // TODO Auto-generated method stub
-    return 0;
-  }
-
 }

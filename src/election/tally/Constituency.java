@@ -31,7 +31,6 @@ package election.tally;
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  * Dermot Cochran</a>
  */
-
 public class Constituency {
 
   /** Number of candidates for election in this constituency */
@@ -83,7 +82,10 @@ public class Constituency {
       //@ set candidateDataInUse = true;
   }
 
-  private void makeListOfCandidates() {
+  /**
+   * 
+   */
+  protected void makeListOfCandidates() {
     if (this.candidateList.length < this.numberOfCandidates) {
       this.candidateList = new Candidate[this.numberOfCandidates];
       for (int index=0; index < this.numberOfCandidates; index++) {
@@ -92,10 +94,18 @@ public class Constituency {
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   public /*@ pure @*/ int getNumberOfSeatsInThisElection() {
     return numberOfSeatsInThisElection;
   }
 
+  /**
+   * 
+   * @return
+   */
   public /*@ pure @*/ int getTotalNumberOfSeats() {
     return totalNumberOfSeats;
   }
@@ -108,6 +118,10 @@ public class Constituency {
     this.totalNumberOfSeats = totalNumberOfSeats;
   }
 
+  /**
+   * 
+   * @return
+   */
   //@ ensures \result == numberOfCandidates;
   public /*@ pure @*/ int getNumberOfCandidates() {
     return numberOfCandidates;
