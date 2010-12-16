@@ -1,12 +1,9 @@
 package ie.votail.model;
 
-import java.util.ArrayList;
-
-import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
 import election.tally.BallotBox;
+import election.tally.Candidate;
 
 /**
  * A table of preference votes which can be converted into ballots for 
@@ -22,45 +19,25 @@ public class VoteTable {
   /** The maximum expected number of ballots to use when testing the count */
   protected static final int MAX_BALLOTS = 100000;
   
+  protected static final int MAX_VOTES = MAX_BALLOTS * Candidate.MAX_CANDIDATES;
+  
   /** The number of ballots represented in this table of votes */
   protected int numberOfBallots = 0;
   
   /** The votes */
-  protected ArrayList<Vote> votes;
+  protected Vote[] votes;
   
   /** The list of ballots identifiers stored in this table */
   protected int[] ballotIDs;
 
-  /**
-   * Create a vote table from an Alloy Analyser solution for creation of an
-   * electoral scenario.
-   * 
-   * @param solution The Alloy Analyser solution for an electoral scenario.
-   */
-  //@ requires solution.satisfiable();
-  public VoteTable() {
-    
-    votes = new ArrayList<Vote>();
-    ballotIDs = new int[MAX_BALLOTS];
-    
-    
-  }
+  protected int numberOfVotes = 0;
 
   /**
-   * Add a <code>vote</code> to this table and update the list of ballots.
-   * <p>
-   * A <code>ballot</code> is a ranked sequence of votes. A <code>vote</code> 
-   * is a tuple consisting of
-   * <code>ballotID, ranking</code> and <code>candidateID</code>.
-   * 
-   * @param vote The <code>vote</code> to be added
+   * Create a vote table.
    */
-  /*@ assignable numberOfBallots;
-    @ ensures \old(numberOfBallots) <= numberOfBallots;
-    @*/
-  public final void add(/*@ non_null*/ final Vote vote) {
-    votes.add(vote);
-    updateBallotIDs(vote.ballotID);
+  public VoteTable() {
+    votes = new Vote [MAX_VOTES];
+    ballotIDs = new int[MAX_BALLOTS];
   }
 
   /**
@@ -100,10 +77,11 @@ public class VoteTable {
   }
 
   /**
+   * Get the candidate of given rank on a given ballot
    * 
-   * @param ballotID
-   * @param ranking
-   * @return
+   * @param ballotID The ballot identifier
+   * @param ranking The ranking
+   * @return The candidate identifier
    */
   protected int getCandidateID(int ballotID, int ranking) {
     for (Vote vote : votes) {
@@ -115,10 +93,12 @@ public class VoteTable {
   }
 
   /**
+   * Get the number of rankings on a given ballot
    * 
-   * @param ballotID
-   * @return
+   * @param ballotID The ballot identifier
+   * @return The number of preferences used
    */
+  //@ ensures 0 <= \result;
   protected int getNumberOfRankings(int ballotID) {
     int count = 0;
     for (Vote vote : votes) {
@@ -127,5 +107,48 @@ public class VoteTable {
       }
     }
     return count;
+  }
+
+  /**
+   * Extract the list of ballot identifiers from an Alloy tuple set
+   * 
+   * @param tupleSet The Alloy tuple set
+   */
+  public void extractBallotIDs(A4TupleSet tupleSet) {    
+    
+    for (A4Tuple tuple: tupleSet) {
+      int index = Integer.parseInt(tuple.atom(0).substring(5));
+      int ballotID = Integer.parseInt(tuple.atom(1));
+      updateBallotIDs(ballotID);
+      votes[index].setBallotID(ballotID);
+    }  
+  }
+
+  /**
+   * Extract the list of rankings from an Alloy tuple set
+   * 
+   * @param tupleSet The Alloy tuple set
+   */
+  public void extractRankings(A4TupleSet tupleSet) {
+    for (A4Tuple tuple: tupleSet) {
+      
+      int index = Integer.parseInt(tuple.atom(0).substring(5));
+      int ranking = Integer.parseInt(tuple.atom(1));
+      votes[index].setRanking(ranking);
+    }
+  }
+
+  /**
+   * Extract the list of candidate identifiers from an Alloy tuple set
+   * 
+   * @param tupleSet The Alloy tuple set
+   */
+  public void extractCandidateIDs(A4TupleSet tupleSet) {
+
+    for (A4Tuple tuple: tupleSet) {
+      int index = Integer.parseInt(tuple.atom(0).substring(5));
+      int candidateID = Integer.parseInt(tuple.atom(1));
+      votes[index].setCandidateID(candidateID);
+    }
   }
 }

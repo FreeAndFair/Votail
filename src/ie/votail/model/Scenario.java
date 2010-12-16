@@ -73,6 +73,8 @@ public class Scenario {
   
   private OutcomeList listOfOutcomes;
 
+  private int numberOfCandidates;
+
   /**
    * Create a new model scenario.
    */
@@ -338,17 +340,8 @@ public class Scenario {
     for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; 
       numberOfWinners++) {
         result += numberOfScenarios (numberOfWinners, 
-                                     numberOfOutcomes - numberOfWinners);
+          numberOfOutcomes - numberOfWinners);
     }
     return result;
-  }
-
-  /**
-   * 
-   * @param string
-   * @return
-   */
-  public String toFilename(String string) {
-    return toString() + string;
   }
 }

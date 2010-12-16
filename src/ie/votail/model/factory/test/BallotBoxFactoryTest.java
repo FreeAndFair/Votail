@@ -19,7 +19,9 @@ public class BallotBoxFactoryTest extends TestCase {
     Scenario scenario = new Scenario();
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
-    BallotBoxFactory ballotBoxFactory 
+    //scenario.addOutcome(Outcome.EarlyLoser);
+    //scenario.addOutcome(Outcome.SoreLoser);
+    BallotBoxFactory /*@ non_null*/ ballotBoxFactory 
       = new BallotBoxFactory(BallotBoxFactoryTest.MODELS_VOTING_ALS);
     BallotBox ballotBox = ballotBoxFactory.generateBallotBox(scenario, 7);
     assertFalse (ballotBox == null);
