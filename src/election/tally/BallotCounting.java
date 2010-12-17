@@ -1,5 +1,7 @@
 package election.tally;
 
+import ie.votail.model.Scenario;
+
  
 /**
  * Ballot counting for elections to Dail Eireann - the lower house of the Irish 
@@ -139,10 +141,16 @@ public class BallotCounting extends AbstractBallotCounting {
     //@ assert getSurplus (candidateList[winner]) == 0;
 	}
 
-
-	//@ requires 0 <= index && index < candidateList.length;
-	//@ requires 0 <= winner && winner < candidateList.length;
-	//@ requires \nonnullelements (candidateList);
+  /**
+   * Move surplus ballots from a winner's stack to another continuing
+   * candidate.
+   * 
+   * @param winner
+   * @param index
+   */
+  //@ requires 0 <= index && index < candidateList.length;
+  //@ requires 0 <= winner && winner < candidateList.length;
+  //@ requires \nonnullelements (candidateList);
   protected void moveSurplusBallots(final int winner, final int index) {
     //@ assert candidateList[index] != null;
     if ((index != winner) && 
@@ -433,8 +441,26 @@ public class BallotCounting extends AbstractBallotCounting {
   }
 
 
-  public AbstractCountStatus getCountStatus() {
+  /**
+   * Verify that the election results match the expected scenario.
+   * 
+   * @param scenario
+   * @return
+   */
+  //* requires 
+  public boolean verify(Scenario scenario) {
     // TODO Auto-generated method stub
+    //@ assert false;
+    return false;
+  }
+
+
+  /**
+   * Return the status of the count
+   * 
+   * @return The status of the count
+   */
+  public /*@ pure*/ AbstractCountStatus getCountStatus() {
     return countStatus;
   }
 

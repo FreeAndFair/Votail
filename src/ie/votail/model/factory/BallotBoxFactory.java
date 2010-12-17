@@ -93,12 +93,10 @@ public class BallotBoxFactory {
         for (Sig sig : solution.getAllReachableSigs()) {
           if (sig.label.contains("this/Vote")) {
             
-            
-            
             for (Field field : sig.getFields()) {
               
-              
               A4TupleSet tupleSet = solution.eval(field);
+              //@ assert tupleSet != null;
               
               if (field.label.contains("ballot")) {
                 voteTable.extractBallotIDs(tupleSet);

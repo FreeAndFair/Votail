@@ -482,3 +482,9 @@ pred MultipleBallotsUnderSTV {
 	and 0 < #c.preferences and 0 < #d.preferences and a.preferences.first = b.preferences.last
 }
 run MultipleBallotsUnderSTV for 10
+
+pred WinnerLoserEarlyLoser {
+	some a,b,c,d : Candidate | a.outcome = Winner and b.outcome = Loser and c.outcome = EarlyLoser
+		and d.outcome = SoreLoser
+}
+run WinnerLoserEarlyLoser for 7

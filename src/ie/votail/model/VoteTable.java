@@ -114,12 +114,17 @@ public class VoteTable {
    * 
    * @param tupleSet The Alloy tuple set
    */
-  public void extractBallotIDs(A4TupleSet tupleSet) {    
+  public void extractBallotIDs(/*@ non_null */ A4TupleSet tupleSet) {    
     
     for (A4Tuple tuple: tupleSet) {
       int index = Integer.parseInt(tuple.atom(0).substring(5));
       int ballotID = Integer.parseInt(tuple.atom(1));
       updateBallotIDs(ballotID);
+      
+      //@ assert index < MAX_VOTES;
+      if (votes[index] == null) {
+        votes[index] = new Vote();
+      }
       votes[index].setBallotID(ballotID);
     }  
   }
@@ -134,6 +139,11 @@ public class VoteTable {
       
       int index = Integer.parseInt(tuple.atom(0).substring(5));
       int ranking = Integer.parseInt(tuple.atom(1));
+      
+      //@ assert index < MAX_VOTES;
+      if (votes[index] == null) {
+        votes[index] = new Vote();
+      }
       votes[index].setRanking(ranking);
     }
   }
@@ -148,6 +158,11 @@ public class VoteTable {
     for (A4Tuple tuple: tupleSet) {
       int index = Integer.parseInt(tuple.atom(0).substring(5));
       int candidateID = Integer.parseInt(tuple.atom(1));
+      
+      //@ assert index < MAX_VOTES;
+      if (votes[index] == null) {
+        votes[index] = new Vote();
+      }
       votes[index].setCandidateID(candidateID);
     }
   }
