@@ -69,7 +69,7 @@ public class VoteTable {
       int[] preferences = new int[numberOfRankings];
       
       for (int ranking=1; ranking <= numberOfRankings; ranking++) {
-        preferences[ranking] = this.getCandidateID(ballotID,ranking);
+        preferences[ranking-1] = this.getCandidateID(ballotID,ranking);
       }
       box.accept(preferences);
     }
@@ -101,9 +101,11 @@ public class VoteTable {
   //@ ensures 0 <= \result;
   protected int getNumberOfRankings(int ballotID) {
     int count = 0;
-    for (Vote vote : votes) {
-      if (vote.ballotID == ballotID) {
-        count++;
+    for (int index = 0; index < votes.length; index++) {
+      if (votes[index] != null) {
+        if (votes[index].ballotID == ballotID) {
+          count++;
+        }
       }
     }
     return count;
@@ -117,14 +119,11 @@ public class VoteTable {
   public void extractBallotIDs(/*@ non_null */ A4TupleSet tupleSet) {    
     
     for (A4Tuple tuple: tupleSet) {
-      int index = Integer.parseInt(tuple.atom(0).substring(5));
+      int index = getIndex(tuple);
       int ballotID = Integer.parseInt(tuple.atom(1));
       updateBallotIDs(ballotID);
       
-      //@ assert index < MAX_VOTES;
-      if (votes[index] == null) {
-        votes[index] = new Vote();
-      }
+      makeVote(index);
       votes[index].setBallotID(ballotID);
     }  
   }
@@ -137,13 +136,10 @@ public class VoteTable {
   public void extractRankings(A4TupleSet tupleSet) {
     for (A4Tuple tuple: tupleSet) {
       
-      int index = Integer.parseInt(tuple.atom(0).substring(5));
+      int index = getIndex(tuple);
       int ranking = Integer.parseInt(tuple.atom(1));
       
-      //@ assert index < MAX_VOTES;
-      if (votes[index] == null) {
-        votes[index] = new Vote();
-      }
+      makeVote(index);
       votes[index].setRanking(ranking);
     }
   }
@@ -156,14 +152,48 @@ public class VoteTable {
   public void extractCandidateIDs(A4TupleSet tupleSet) {
 
     for (A4Tuple tuple: tupleSet) {
-      int index = Integer.parseInt(tuple.atom(0).substring(5));
+      int index = getIndex(tuple);
       int candidateID = Integer.parseInt(tuple.atom(1));
       
-      //@ assert index < MAX_VOTES;
-      if (votes[index] == null) {
-        votes[index] = new Vote();
-      }
+      makeVote(index);
       votes[index].setCandidateID(candidateID);
     }
+  }
+
+  /**
+   * Get the index number of the vote
+   * 
+   * @param tuple
+   * @return
+   */
+  protected int getIndex(A4Tuple tuple) {
+    return Integer.parseInt(tuple.atom(0).substring(5));
+  }
+
+  /**
+   * Initialise the vote object if not already created
+   * 
+   * @param index The position of the vote in the array
+   */
+//@ require 0 <= index && index < MAX_VOTES;
+  protected void makeVote(int index) {
+    
+    if (votes[index] == null) {
+      votes[index] = new Vote();
+      numberOfVotes++;
+    }
+  }
+  
+  public String toString() {
+    StringBuffer buffer = new StringBuffer(numberOfVotes + " votes in " + 
+                                           numberOfBallots + " ballots ");
+    
+    for (int index = 0; index < votes.length; index++) {
+      if (votes[index] != null) {
+        buffer.append("(" + votes[index] + ") ");
+      }
+    }
+    
+    return buffer.toString();
   }
 }

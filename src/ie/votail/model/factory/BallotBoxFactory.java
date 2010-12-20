@@ -108,6 +108,7 @@ public class BallotBoxFactory {
                 voteTable.extractCandidateIDs(tupleSet);
               }
               else {
+                //@ assert false;
                 logger.warning("Unexpected field called " + field.label + 
                   " in signature of " + sig.label);
               }
@@ -115,8 +116,8 @@ public class BallotBoxFactory {
           }
         }
         BallotBox ballotBox = voteTable.getBallotBox();
-        logger.info("Scenario " + scenario.toString() + " has ballot box: "
-              + ballotBox.toString());
+        logger.info("Scenario for " + scenario.toString() + 
+          " has ballot box with " + ballotBox.toString());
         return ballotBox;
       } 
       // Increase the scope and try again

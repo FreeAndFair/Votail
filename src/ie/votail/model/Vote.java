@@ -42,6 +42,10 @@ public class Vote {
   public void setRanking(int ranking) {
     this.ranking = ranking;
   }
+  
+  public String toString() {
+    return "ballot " + ballotID + " ranking " + ranking + " candidate " + candidateID;
+  }
 
   
 }

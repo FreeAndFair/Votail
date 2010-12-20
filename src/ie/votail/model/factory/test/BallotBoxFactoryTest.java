@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
+import election.tally.AbstractBallotCounting;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 
@@ -27,7 +28,7 @@ public class BallotBoxFactoryTest extends TestCase {
     BallotCounting counter = new BallotCounting();
     counter.load(ballotBox);
     counter.count();
-    assertTrue (counter.verify(scenario));
+    assertTrue(counter.getStatus() == AbstractBallotCounting.FINISHED);
   }
   
   @Test
@@ -44,7 +45,7 @@ public class BallotBoxFactoryTest extends TestCase {
     BallotCounting counter = new BallotCounting();
     counter.load(ballotBox);
     counter.count();
-    assertTrue (counter.verify(scenario));
+    assertTrue(counter.getStatus() == AbstractBallotCounting.FINISHED);
   }
   
   @Test
@@ -62,6 +63,6 @@ public class BallotBoxFactoryTest extends TestCase {
     BallotCounting counter = new BallotCounting();
     counter.load(ballotBox);
     counter.count();
-    assertTrue (counter.verify(scenario));
+    assertTrue(counter.getStatus() == AbstractBallotCounting.FINISHED);
   }
 }

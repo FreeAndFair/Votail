@@ -379,6 +379,12 @@ assert validCompromise {
 }
 check validCompromise for 6 int
 
+// There is at least one ballot with at least one vote
+assert atLeastOneVote {
+	some v: Vote | some b: Ballot | b.identifier = v.ballot
+}
+check atLeastOneVote for 6 int
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
@@ -484,7 +490,9 @@ pred MultipleBallotsUnderSTV {
 run MultipleBallotsUnderSTV for 10
 
 pred WinnerLoserEarlyLoser {
-	some a,b,c,d : Candidate | a.outcome = Winner and b.outcome = Loser and c.outcome = EarlyLoser
-		and d.outcome = SoreLoser
+	some a,b,c,d : Candidate | a.outcome = Winner and b.outcome = Loser and 
+		c.outcome = EarlyLoser and d.outcome = SoreLoser
+	Election.method = STV
+	some v: Vote | some b: Ballot | b.identifier = v.ballot
 }
 run WinnerLoserEarlyLoser for 7

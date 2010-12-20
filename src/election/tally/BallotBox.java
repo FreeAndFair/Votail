@@ -126,7 +126,7 @@ public class BallotBox {
    * @return The Ballot Box as a string
    */
   public /*@ pure non_null */ String toString() {
-    StringBuffer stringBuffer = new StringBuffer();
+    StringBuffer stringBuffer = new StringBuffer(numberOfBallots + " ballots ");
     for (int i = 0; i < numberOfBallots; i++) {
       stringBuffer.append(ballots[i].toString());
     }

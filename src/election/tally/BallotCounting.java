@@ -447,4 +447,19 @@ public class BallotCounting extends AbstractBallotCounting {
     return countStatus;
   }
 
+  public String toString() {
+    return "status " + getCountStatus() + " results " + getResults();
+  }
+  
+  public String getResults() {
+    StringBuffer buffer = new StringBuffer();
+    
+    buffer.append("Number of rounds of counting " + this.countNumberValue);
+    
+    for (int index=0; index < this.totalNumberOfCandidates; index++) {
+      buffer.append(" candidate (" + candidates[index] + ")");
+    }
+    
+    return buffer.toString();
+  }
 }

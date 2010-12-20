@@ -87,7 +87,8 @@ public class Scenario {
    */
   public /*@ pure*/ String toString() {
     Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
-    StringBuffer stringBuffer = new StringBuffer ("(");
+    StringBuffer stringBuffer = new StringBuffer (numberOfCandidates + 
+      " candidates (");
     if (iterator.hasNext()) {
       stringBuffer.append(iterator.next().toString());
     }
@@ -104,11 +105,12 @@ public class Scenario {
    * 
    * @param outcome The candidate outcome to be added to this scenario
    */
-  /*@ ensures 1 + \old(numberOfOutcomes) == numberOfOutcomes;
+  /*@ ensures 1 + \old(numberOfCandidates) == numberOfCandidates;
     @ ensures outcomes.contains(outcome);
     @*/
   public void addOutcome(/*@ non_null*/ final Outcome outcome) {
     listOfOutcomes.add(outcome);
+    numberOfCandidates++;
   }
   
   /**
@@ -149,6 +151,8 @@ public class Scenario {
       i++;
     }
     stringBuffer.append("\n Election.method = STV");
+    stringBuffer.append(
+      "\n some v: Vote | some b: Ballot | b.identifier = v.ballot");
     return stringBuffer.toString();
   }
 
