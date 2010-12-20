@@ -1,7 +1,5 @@
 package election.tally;
 
-import ie.votail.model.Scenario;
-
  
 /**
  * Ballot counting for elections to Dail Eireann - the lower house of the Irish 
@@ -439,21 +437,6 @@ public class BallotCounting extends AbstractBallotCounting {
   public /*@ pure @*/ int getContinuingCandidates() {
     return getNumberContinuing();
   }
-
-
-  /**
-   * Verify that the election results match the expected scenario.
-   * 
-   * @param scenario
-   * @return
-   */
-  //* requires 
-  public boolean verify(Scenario scenario) {
-    // TODO Auto-generated method stub
-    //@ assert false;
-    return false;
-  }
-
 
   /**
    * Return the status of the count

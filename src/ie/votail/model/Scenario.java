@@ -104,10 +104,9 @@ public class Scenario {
    * 
    * @param outcome The candidate outcome to be added to this scenario
    */
-  /*@
-   * ensures 1 + \old(numberOfOutcomes) == numberOfOutcomes;
-   * ensures outcomes.contains(outcome);
-   */
+  /*@ ensures 1 + \old(numberOfOutcomes) == numberOfOutcomes;
+    @ ensures outcomes.contains(outcome);
+    @*/
   public void addOutcome(/*@ non_null*/ final Outcome outcome) {
     listOfOutcomes.add(outcome);
   }
@@ -130,9 +129,7 @@ public class Scenario {
    * </p>
    * @return The <code>Alloy</code> predicate as a string
    */
-  /*@
-   * requires 0 < outcomes.size();
-   */
+  //@ requires 0 < outcomes.size();
   public /*@ pure*/ String toPredicate() {
     Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
     StringBuffer stringBuffer = new StringBuffer("some disj ");
@@ -160,9 +157,7 @@ public class Scenario {
    *
    * @return The equivalent scenario with the candidate outcomes in canonical order
    */
-  /*@
-   * ensures this.outcomes.size() == \result.outcomes.size();
-   */
+  //@ ensures this.outcomes.size() == \result.outcomes.size();
   public Scenario canonical () {
     Scenario sorted = new Scenario();
     // Extract each type of outcome in canonical order

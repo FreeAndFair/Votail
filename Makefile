@@ -166,7 +166,7 @@ jml:	jml.stamp
 
 jml.stamp:	$(javafiles)
 	export CLASSPATH=$(JMLC_CLASSPATH);\
-	$(jml) --Quiet --source $(version) -A -a $(javapat) && \
+	$(jml) --Quiet --source $(version) -G -A -a $(javapat) && \
 	touch jml.stamp
 
 jmlc:	jmlc.stamp
