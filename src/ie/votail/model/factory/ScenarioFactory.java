@@ -23,37 +23,37 @@ public class ScenarioFactory {
     @ ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
     @ ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
     @*/
-  public /*@ pure */ ScenarioList find(int numberOfOutcomes) {
+  public /*@ pure */ ScenarioList find(int numberOfOutcomes, int numberOfSeats) {
     ScenarioList scenarios = new ScenarioList();
     if (numberOfOutcomes == 2) {
       
       // Winner gets majority of votes, loser reaches threshold
-      Scenario commonScenario = new Scenario();
+      Scenario commonScenario = new Scenario(numberOfSeats);
       commonScenario.addOutcome(Outcome.Winner);
       commonScenario.addOutcome(Outcome.Loser);
       scenarios.add(commonScenario);
       
       // Winner by tie breaker, loser reaches threshold
-      Scenario tiedScenario = new Scenario();
+      Scenario tiedScenario = new Scenario(numberOfSeats);
       tiedScenario.addOutcome(Outcome.TiedWinner);
       tiedScenario.addOutcome(Outcome.TiedLoser);
       scenarios.add(tiedScenario);
       
       // Winner by tie breaker, loser below threshold
-      Scenario landslideScenario = new Scenario();
+      Scenario landslideScenario = new Scenario(numberOfSeats);
       landslideScenario.addOutcome(Outcome.Winner);
       landslideScenario.addOutcome(Outcome.SoreLoser);
       scenarios.add(landslideScenario);
       
       // Winner by tie breaker, loser below threshold
-      Scenario unusualScenario = new Scenario();
+      Scenario unusualScenario = new Scenario(numberOfSeats);
       unusualScenario.addOutcome(Outcome.TiedWinner);
       unusualScenario.addOutcome(Outcome.TiedSoreLoser);
       scenarios.add(unusualScenario);
     }
     else {
       // Extend the base scenario by adding one additional candidate outcome
-      ScenarioList baseScenarios = find (numberOfOutcomes-1);
+      ScenarioList baseScenarios = find (numberOfOutcomes-1, numberOfSeats);
       Iterator<Scenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
         Scenario baseScenario = iterator.next();

@@ -10,7 +10,6 @@
 package ie.votail.model.factory;
 
 import ie.votail.model.Scenario;
-import ie.votail.model.Vote;
 import ie.votail.model.VoteTable;
 
 import java.util.logging.Logger;
@@ -18,28 +17,24 @@ import java.util.logging.Logger;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4.ErrorSyntax;
-import edu.mit.csail.sdg.alloy4.SafeList;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
-import edu.mit.csail.sdg.alloy4compiler.ast.ExprVar;
 import edu.mit.csail.sdg.alloy4compiler.ast.Module;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig.Field;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Options;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
 import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
-import election.tally.BallotBox;
 
 /**
  * 
  */
-public class BallotBoxFactory {
+public class VoteFactory {
 
   private static final int DEFAULT_BIT_WIDTH = 6;
-  private static final String LOG_FILENAME = "testdata/generation.log";
+  public static final String LOG_FILENAME = "testdata/generation.log";
   protected Module world;
   
   /**
@@ -57,7 +52,7 @@ public class BallotBoxFactory {
    * @param log_filename
    *        The name of the log file
    */
-  public BallotBoxFactory(String model_filename) {
+  public VoteFactory(String model_filename) {
 
     reporter = new A4Reporter();
     options = new A4Options();
@@ -80,13 +75,17 @@ public class BallotBoxFactory {
    * @param scope The scope for model finding in Alloy Analyser
    * @return The Ballot Box (null if generation fails)
    */
-  public BallotBox generateBallotBox(
+  public VoteTable generateVoteTable(
     /*@ non_null*/ Scenario scenario, int scope) {
+    
+    final VoteTable voteTable = new VoteTable();
+    voteTable.setNumberOfWinners(scenario.numberOfWinners());
+    voteTable.setNumberOfSeats(scenario.getNumberOfSeats());
+    voteTable.setNumberOfCandidates(scenario.getNumberOfCandidates());
     
     // Find a ballot box which creates this scenario
     try {
       A4Solution solution = findSolution(scenario, scope);
-      final VoteTable voteTable = new VoteTable();
       
       if (solution.satisfiable()) { // Extract ballots from the solution
      // Iterate through the solution and add each vote to the table
@@ -115,13 +114,12 @@ public class BallotBoxFactory {
             }
           }
         }
-        BallotBox ballotBox = voteTable.getBallotBox();
-        logger.info("Scenario for " + scenario.toString() + 
-          " has ballot box with " + ballotBox.toString());
-        return ballotBox;
+        logger.info("Scenario for " + scenario + " has " + 
+          voteTable);
+        return voteTable;
       } 
       // Increase the scope and try again
-      return generateBallotBox (scenario, scope+1);
+      return generateVoteTable (scenario, scope+1);
 
     } catch (Err e) {
       // Log failure to find scenario

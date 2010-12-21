@@ -126,4 +126,12 @@ public class Constituency {
   public /*@ pure @*/ int getNumberOfCandidates() {
     return numberOfCandidates;
   }
-}
+
+  public void load(int[] candidateIDs, int theNumberOfCandidates) {
+    this.numberOfCandidates = theNumberOfCandidates;
+    this.candidateList = new Candidate[this.numberOfCandidates];
+      for (int index=0; index < this.numberOfCandidates; index++) {
+        this.candidateList[index] = new Candidate(candidateIDs[index]);
+      }
+    }
+  }

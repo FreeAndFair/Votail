@@ -75,11 +75,14 @@ public class Scenario {
 
   private int numberOfCandidates;
 
+  private int numberOfSeats;
+
   /**
    * Create a new model scenario.
    */
-  public Scenario () {
+  public Scenario (int theNumberOfSeats) {
     listOfOutcomes = new OutcomeList();
+    this.numberOfSeats = theNumberOfSeats;
   }
   
   /**
@@ -163,7 +166,7 @@ public class Scenario {
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
   public Scenario canonical () {
-    Scenario sorted = new Scenario();
+    Scenario sorted = new Scenario(this.numberOfSeats);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
       Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
@@ -226,7 +229,7 @@ public class Scenario {
    * ensures \result.equals(this);
    */
   private /*@ pure*/ Scenario copy() {
-    Scenario clone = new Scenario();
+    Scenario clone = new Scenario(this.numberOfSeats);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());
@@ -342,5 +345,13 @@ public class Scenario {
           numberOfOutcomes - numberOfWinners);
     }
     return result;
+  }
+
+  public int getNumberOfSeats() {
+    return numberOfSeats;
+  }
+
+  public int getNumberOfCandidates() {
+    return this.numberOfCandidates;
   }
 }

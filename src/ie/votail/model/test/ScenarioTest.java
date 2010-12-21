@@ -11,35 +11,16 @@ import org.junit.Test;
 public class ScenarioTest {
 
   @Test
-  public void testToString() {
-    Scenario scenario = new Scenario();
-    assertEquals("Scenario: ()",scenario.toString());
-    scenario.addOutcome(Outcome.Winner);
-    scenario.addOutcome(Outcome.Loser);
-    assertEquals("Scenario: (Winner,Loser)",scenario.toString());
-  }
-
-  @Test
   public void testAddOutcome() {
-    Scenario scenario = new Scenario();
+    Scenario scenario = new Scenario(1);
     assertFalse(scenario.hasTiedSoreLoser());
     scenario.addOutcome(Outcome.TiedSoreLoser);
     assertTrue(scenario.hasTiedSoreLoser());
   }
 
   @Test
-  public void testToPredicate() {
-    Scenario scenario = new Scenario();
-    scenario.addOutcome(Outcome.TiedWinner);
-    scenario.addOutcome(Outcome.TiedLoser);
-    assertEquals(
-      "some disj c0,c1: Candidate | c0.outcome = TiedWinner and c1.outcome = TiedLoser",
-      scenario.toPredicate());
-  }
-
-  @Test
   public void testCanonical() {
-    Scenario scenario = new Scenario();
+    Scenario scenario = new Scenario(1);
     scenario.addOutcome(Outcome.EarlyLoser);
     Scenario canonical = scenario.canonical();
     assertTrue (scenario.equivalentTo(canonical));
@@ -47,7 +28,7 @@ public class ScenarioTest {
 
   @Test
   public void testAppend() {
-    Scenario scenario = new Scenario();
+    Scenario scenario = new Scenario(1);
     Scenario oneWinner = scenario.append(Outcome.Winner);
     Scenario oneLoser = scenario.append(Outcome.Loser);
     Scenario twoOutcomes = oneWinner.append(Outcome.Loser);
@@ -61,7 +42,7 @@ public class ScenarioTest {
 
   @Test
   public void testIsTied() {
-    Scenario scenario = new Scenario();
+    Scenario scenario = new Scenario(1);
     assertFalse (scenario.isTied());
     scenario.addOutcome(Outcome.TiedWinner);
     assertTrue (scenario.isTied());

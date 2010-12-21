@@ -2,7 +2,8 @@ package ie.votail.model.factory.test;
 
 import ie.votail.model.Outcome;
 import ie.votail.model.Scenario;
-import ie.votail.model.factory.BallotBoxFactory;
+import ie.votail.model.VoteTable;
+import ie.votail.model.factory.VoteFactory;
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -10,19 +11,22 @@ import org.junit.Test;
 import election.tally.AbstractBallotCounting;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
+import election.tally.Constituency;
 
-public class BallotBoxFactoryTest extends TestCase {
+public class VoteFactoryTest extends TestCase {
 
-  private static final String MODELS_VOTING_ALS = "models/voting.als";
+  public static final String MODELS_VOTING_ALS = "models/voting.als";
 
   @Test
   public void testGenerateSmallestBallotBox() {
-    Scenario scenario = new Scenario();
+    Scenario scenario = new Scenario(1);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
-    BallotBoxFactory /*@ non_null*/ ballotBoxFactory 
-      = new BallotBoxFactory(BallotBoxFactoryTest.MODELS_VOTING_ALS);
-    BallotBox ballotBox = ballotBoxFactory.generateBallotBox(scenario, 7);
+    VoteFactory /*@ non_null*/ voteFactory 
+      = new VoteFactory(VoteFactoryTest.MODELS_VOTING_ALS);
+    VoteTable voteTable = voteFactory.generateVoteTable(scenario, 7);
+    BallotBox ballotBox = voteTable.getBallotBox();
+    Constituency constituency = voteTable.getConstituency();
     assertFalse (ballotBox == null);
     assertEquals (1, ballotBox.size());
     BallotCounting counter = new BallotCounting();
@@ -33,13 +37,15 @@ public class BallotBoxFactoryTest extends TestCase {
   
   @Test
   public void testGenerateSmallBallotBox() {
-    Scenario scenario = new Scenario();
+    Scenario scenario = new Scenario(1);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     scenario.addOutcome(Outcome.EarlyLoser);
-    BallotBoxFactory /*@ non_null*/ ballotBoxFactory 
-      = new BallotBoxFactory(BallotBoxFactoryTest.MODELS_VOTING_ALS);
-    BallotBox ballotBox = ballotBoxFactory.generateBallotBox(scenario, 7);
+    VoteFactory /*@ non_null*/ voteFactory 
+    = new VoteFactory(VoteFactoryTest.MODELS_VOTING_ALS);
+  VoteTable voteTable = voteFactory.generateVoteTable(scenario, 7);
+  BallotBox ballotBox = voteTable.getBallotBox();
+  Constituency constituency = voteTable.getConstituency();
     assertFalse (ballotBox == null);
     assertEquals (2, ballotBox.size());
     BallotCounting counter = new BallotCounting();
@@ -50,14 +56,16 @@ public class BallotBoxFactoryTest extends TestCase {
   
   @Test
   public void testGenerateBallotBox() {
-    Scenario scenario = new Scenario();
+    Scenario scenario = new Scenario(1);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     scenario.addOutcome(Outcome.EarlyLoser);
     scenario.addOutcome(Outcome.SoreLoser);
-    BallotBoxFactory /*@ non_null*/ ballotBoxFactory 
-      = new BallotBoxFactory(BallotBoxFactoryTest.MODELS_VOTING_ALS);
-    BallotBox ballotBox = ballotBoxFactory.generateBallotBox(scenario, 7);
+    VoteFactory /*@ non_null*/ voteFactory 
+    = new VoteFactory(VoteFactoryTest.MODELS_VOTING_ALS);
+  VoteTable voteTable = voteFactory.generateVoteTable(scenario, 7);
+  BallotBox ballotBox = voteTable.getBallotBox();
+  Constituency constituency = voteTable.getConstituency();
     assertFalse (ballotBox == null);
     assertEquals (4, ballotBox.size());
     BallotCounting counter = new BallotCounting();

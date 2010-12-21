@@ -2,8 +2,10 @@ package ie.votail.model;
 
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.Candidate;
+import election.tally.Constituency;
 
 /**
  * A table of preference votes which can be converted into ballots for 
@@ -14,12 +16,9 @@ import election.tally.Candidate;
 public class VoteTable {
   
   /** The null value for a candidate ID */
-  protected static final int NO_CANDIDATE_ID = 0;
+  public static final int NO_CANDIDATE_ID = 0;
   
-  /** The maximum expected number of ballots to use when testing the count */
-  protected static final int MAX_BALLOTS = 100000;
-  
-  protected static final int MAX_VOTES = MAX_BALLOTS * Candidate.MAX_CANDIDATES;
+  public static final int MAX_VOTES = Ballot.MAX_BALLOTS * Candidate.MAX_CANDIDATES;
   
   /** The number of ballots represented in this table of votes */
   protected int numberOfBallots = 0;
@@ -29,15 +28,27 @@ public class VoteTable {
   
   /** The list of ballots identifiers stored in this table */
   protected int[] ballotIDs;
+  
+  /** The list of candidate identifiers stored in this table */
+  protected int[] candidateIDs;
+  
+  protected int numberOfWinners;
 
   protected int numberOfVotes = 0;
+
+  protected int numberOfSeats;
+
+  protected int numberOfCandidates;
+
+  private int numberOfCandidateIDs;
 
   /**
    * Create a vote table.
    */
   public VoteTable() {
     votes = new Vote [MAX_VOTES];
-    ballotIDs = new int[MAX_BALLOTS];
+    ballotIDs = new int[Ballot.MAX_BALLOTS];
+    candidateIDs = new int [Candidate.MAX_CANDIDATES];
   }
 
   /**
@@ -154,10 +165,22 @@ public class VoteTable {
     for (A4Tuple tuple: tupleSet) {
       int index = getIndex(tuple);
       int candidateID = Integer.parseInt(tuple.atom(1));
+      updateCandidateIDs(candidateID);
       
       makeVote(index);
       votes[index].setCandidateID(candidateID);
     }
+  }
+
+  //@ ensures numberOfCandidateIDs <= numberOfCandidates;
+  protected void updateCandidateIDs(int candidateID) {
+    for (int i=0; i < numberOfCandidateIDs; i++) {
+      if (candidateID == candidateIDs[i]) {
+        return;
+      }
+    }
+    candidateIDs[numberOfCandidateIDs] = candidateID;
+    numberOfCandidateIDs++;
   }
 
   /**
@@ -195,5 +218,33 @@ public class VoteTable {
     }
     
     return buffer.toString();
+  }
+
+  /**
+   * Generate a constituency to match the vote table for this scenario
+   * 
+   * @return The constituency with matching candidate ID numbers
+   */
+  public Constituency getConstituency() {
+    Constituency constituency = new Constituency();
+    constituency.setNumberOfSeats(this.numberOfWinners, this.numberOfSeats);
+    constituency.load(this.candidateIDs, this.numberOfCandidates);
+    return constituency;
+  }
+
+  //@ requires 0 < theNumberOfWinners
+  //@ ensures this.numberOfWinners == theNumberOfWinners
+  public void setNumberOfWinners(int theNumberOfWinners) {
+    this.numberOfWinners = theNumberOfWinners;
+  }
+
+  //@ requires this.numberOfWinners <= theNumberOfSeats
+  //@ ensures this.numberOfSeats == theNumberOfSeats
+  public void setNumberOfSeats(int theNumberOfSeats) {
+    this.numberOfSeats = theNumberOfSeats;
+  }
+
+  public void setNumberOfCandidates(int theNumberOfCandidates) {
+    this.numberOfCandidates = theNumberOfCandidates;
   }
 }
