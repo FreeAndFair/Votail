@@ -153,9 +153,10 @@ public class Scenario {
       stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
       i++;
     }
-    stringBuffer.append("\n Election.method = STV");
-    stringBuffer.append(
-      "\n some v: Vote | some b: Ballot | b.identifier = v.ballot");
+    stringBuffer.append(" and Election.method = STV");
+    stringBuffer.append(" and #Election.candidates = " + this.numberOfCandidates);
+    stringBuffer.append(" and #Election.seats = " + this.numberOfSeats);
+    stringBuffer.append(" and #Scenario.winners = " + this.numberOfWinners());
     return stringBuffer.toString();
   }
 

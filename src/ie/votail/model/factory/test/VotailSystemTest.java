@@ -17,8 +17,7 @@ import election.tally.Constituency;
 public class VotailSystemTest {
   @Test
   public void twoCandidateTest() {
-    VoteFactory voteFactory = new VoteFactory(
-      VoteFactoryTest.MODELS_VOTING_ALS);
+    
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     BallotCounting ballotCounting = new BallotCounting();
     Logger logger = Logger.getLogger(VoteFactory.LOG_FILENAME);
@@ -30,6 +29,7 @@ public class VotailSystemTest {
     for (Scenario scenario: scenarios) {
       logger.info(scenario.toString());
       final int scope = 5;
+      VoteFactory voteFactory = new VoteFactory();
       VoteTable voteTable = voteFactory.generateVoteTable(scenario, scope);
       Constituency constituency = voteTable.getConstituency();
       logger.info(constituency.toString());
@@ -41,5 +41,4 @@ public class VotailSystemTest {
       logger.info(ballotCounting.getResults());
     }
   }
-
 }

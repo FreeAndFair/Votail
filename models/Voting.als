@@ -6,7 +6,7 @@ module Voting
 
 open util/integer
 
--- A individual person standing for election
+-- An individual person standing for election
 sig Candidate {
     identifier:       Int,             -- Unique identifier for this candidate
     votes: 			  set Ballot, 	-- First preference ballots assigned to this candidate
@@ -15,8 +15,9 @@ sig Candidate {
 	outcome: 		  Event	
 } {
 	no b: Ballot | b in votes & transfers
-	all b: Ballot | b in votes + transfers => this in b.assignees
+	all b: Ballot | b in votes + transfers implies this in b.assignees
 	surplus in votes + transfers
+    #surplus < #transfers implies surplus in transfers -- surpluses are taken from transfers
 	Election.method = Plurality implies #surplus = 0 and #transfers = 0
     0 < identifier
 }
@@ -34,14 +35,15 @@ sig Ballot {
 	Election.method = Plurality implies #preferences = 1
     0 < #preferences
     0 < identifier
-    some v: Vote | v.ballot = identifier and v.candidate = preferences.first.identifier and v.ranking = 1
+    some v: Vote | v.ballot = identifier and v.candidate = preferences.first.identifier 
+        and v.ranking = 1
     some v: Vote | v.ballot = identifier and 
 		v.candidate = preferences.last.identifier and v.ranking = #preferences
-    all v: Vote | v.ballot = identifier implies 
+    all v: Vote | v.ballot = identifier implies -- ranking according to order of preferences
 		v.candidate = preferences.subseq[v.ranking-1,v.ranking].first.identifier
 }
 
--- Table of fragments of Votes used for encoding of results
+-- Table of votes used for simplified encoding of results
 sig Vote {
 	ballot:			Int,		-- Ballot identifier
     candidate: 	Int,		-- Candidate identifier
@@ -71,7 +73,8 @@ one sig Scenario {
 	threshold < quota
 	Election.method = Plurality implies #eliminated = 0
 	eliminated in losers
-	all c: Candidate | c in losers implies Election.method = Plurality or #c.votes + #c.transfers < quota
+	all c: Candidate | c in losers implies Election.method = Plurality 
+       or #c.votes + #c.transfers < quota
 }
 
 /* 
@@ -268,7 +271,7 @@ fact tieBreaker {
 fact validTieBreaker {
 	all l: Candidate | some w: Candidate | 
     (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies 
-    w.outcome = TiedWinner
+    w.outcome = TiedWinner and 0 < #w.votes + #w.transfers
 }
 
 -- Axioms for the recording of vote fragments
@@ -291,14 +294,14 @@ fact wellFormedRanking {
 // Compromise winner must have more votes than any tied winners
 fact compromiseNotTied {
 	all disj c,t: Candidate | (c.outcome = CompromiseWinner and t.outcome = TiedWinner) implies
-		#t.votes + #t.transfers < #c.votes + #t.transfers
+		#t.votes + #t.transfers < #c.votes + #c.transfers
 }
 
 // Equal losers are tied
 fact equalityofTiedWinnersAndLosers {
 	all disj w,l: Candidate | w in Scenario.winners and l in Scenario.losers and 
 		#w.votes = #l.votes and #w.transfers = #l.transfers implies
-			w.outcome = TiedWinner and 
+			w.outcome = TiedWinner and 0 < #w.votes + #w.transfers and 
 			(l.outcome = TiedLoser or l.outcome = TiedEarlyLoser or l.outcome = TiedSoreLoser)
 }
 
@@ -312,6 +315,13 @@ fact highestWinner {
 fact atLeastOne {
   some b: Ballot | Election.method = STV implies 1 < #b.preferences
 }
+
+// Tied Winners and Tied Losers have an equal number of votes
+fact equalTies {
+	all disj a,b: Candidate | a.outcome = TiedWinner and b.outcome = TiedLoser implies
+		#a.votes + #a.transfers = #b.votes + #b.transfers and 0 < #a.votes + #a.transfers
+}
+
 
 -- Basic Lemmas
 assert honestCount {
@@ -384,6 +394,8 @@ assert atLeastOneVote {
 	some v: Vote | some b: Ballot | b.identifier = v.ballot
 }
 check atLeastOneVote for 6 int
+
+
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -485,7 +497,8 @@ run LongBallot for 7 but 6 int
 pred MultipleBallotsUnderSTV {
 	Election.method = STV
 	some disj a,b,c,d: Ballot | 1 < #a.preferences and 1 < #b.preferences 
-	and 0 < #c.preferences and 0 < #d.preferences and a.preferences.first = b.preferences.last
+	and 0 < #c.preferences and 0 < #d.preferences and 
+        a.preferences.first = b.preferences.last
 }
 run MultipleBallotsUnderSTV for 10
 
@@ -496,3 +509,12 @@ pred WinnerLoserEarlyLoser {
 	some v: Vote | some b: Ballot | b.identifier = v.ballot
 }
 run WinnerLoserEarlyLoser for 7
+
+pred TiedScenario { 
+  some a,b: Candidate | a.outcome = TiedLoser and b.outcome = TiedWinner
+     and Election.method = STV
+     and #Election.candidates = 2
+     and #Election.seats = 1
+     and #Scenario.winners = 1
+}
+run TiedScenario for 20

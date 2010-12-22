@@ -19,9 +19,9 @@ import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4.ErrorSyntax;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
-import edu.mit.csail.sdg.alloy4compiler.ast.Module;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig.Field;
+import edu.mit.csail.sdg.alloy4compiler.parser.CompModule;
 import edu.mit.csail.sdg.alloy4compiler.parser.CompUtil;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Options;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
@@ -33,39 +33,17 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
  */
 public class VoteFactory {
 
-  private static final int DEFAULT_BIT_WIDTH = 6;
-  public static final String LOG_FILENAME = "testdata/generation.log";
-  protected Module world;
-  
-  /**
-   * 
-   */
-  private final static Logger logger = Logger.getLogger(LOG_FILENAME);
-  protected A4Reporter reporter;
-  protected A4Options options;
+  public static final int DEFAULT_BIT_WIDTH = 6;
+  public static final String LOG_FILENAME = "VoteFactory.log";
+  public static final String MODELS_VOTING_ALS = "models/voting.als";
+  protected final static Logger logger = Logger.getLogger(LOG_FILENAME);
+  protected String modelName;
 
   /**
-   * Start the generation of ballot boxes and load the Alloy model
-   * 
-   * @param model_filename
-   *        The name of the Alloy model file
-   * @param log_filename
-   *        The name of the log file
+   *
    */
-  public VoteFactory(String model_filename) {
-
-    reporter = new A4Reporter();
-    options = new A4Options();
-    options.solver = A4Options.SatSolver.SAT4J;
-
-    try {
-      world = CompUtil.parseEverything_fromFile(reporter, null,
-        model_filename);
-    } catch (Err e) {
-      world = null;
-      logger.severe("Unable to find model " + model_filename + " because of "
-                    + e.msg);
-    }
+  public VoteFactory() {
+    modelName = MODELS_VOTING_ALS;
   }
 
   /**
@@ -139,6 +117,11 @@ public class VoteFactory {
    */
   protected A4Solution findSolution(Scenario scenario, int scope) throws Err,
       ErrorSyntax {
+    A4Reporter reporter = new A4Reporter();
+    A4Options options = new A4Options();
+    options.solver = A4Options.SatSolver.SAT4J;
+    CompModule world = CompUtil.parseEverything_fromFile(reporter, null,
+      modelName);
     Expr predicate = CompUtil.parseOneExpression_fromString(world,
       scenario.toPredicate());
     Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, 
