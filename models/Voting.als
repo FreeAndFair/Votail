@@ -6,6 +6,13 @@ module Voting
 
 open util/integer
 
+sig ChangeSet {
+  version: Int
+}
+{
+  version =  0 -- changeset $REV$
+}
+
 -- An individual person standing for election
 sig Candidate {
     identifier:       Int,             -- Unique identifier for this candidate
@@ -15,44 +22,44 @@ sig Candidate {
 	outcome: 		  Event	
 } {
 	no b: Ballot | b in votes & transfers
-	all b: Ballot | b in votes + transfers implies this in b.assignees
+	all b: Ballot | b in votes + transfers implies identifier in b.assignees
 	surplus in votes + transfers
-    #surplus < #transfers implies surplus in transfers -- surpluses are taken from transfers
+    #surplus < #transfers implies surplus in transfers -- surpluses are taken first from transfers
 	Election.method = Plurality implies #surplus = 0 and #transfers = 0
     0 < identifier
 }
 
 -- A digital or paper artifact which accurately records the intentions of the voter
 sig Ballot {
-  identifier:		Int,				    -- Unique identifier for this ballot
-  assignees: 		set Candidate,  -- Candidates to which this ballot has been assigned
-  preferences: 	seq Candidate
+  identifier:		Int,		 -- Unique identifier for this ballot
+  assignees: 		set Int,  -- Candidate  IDs to which this ballot has been assigned
+  preferences: 	seq Int  -- Ranking of candidate IDs
 } {
 	assignees in preferences.elems
     not preferences.hasDups
-	preferences.elems in Election.candidates
+	--preferences.elems in Election.candidates
 	preferences.first in assignees
 	Election.method = Plurality implies #preferences = 1
     0 < #preferences
     0 < identifier
-    some v: Vote | v.ballot = identifier and v.candidate = preferences.first.identifier 
-        and v.ranking = 1
-    some v: Vote | v.ballot = identifier and 
-		v.candidate = preferences.last.identifier and v.ranking = #preferences
-    all v: Vote | v.ballot = identifier implies -- ranking according to order of preferences
-		v.candidate = preferences.subseq[v.ranking-1,v.ranking].first.identifier
+    --some v: Vote | v.ballot = identifier and v.candidate = preferences.first.identifier 
+        --and v.ranking = 1
+    --some v: Vote | v.ballot = identifier and 
+		--v.candidate = preferences.last.identifier and v.ranking = #preferences
+    --all v: Vote | v.ballot = identifier implies -- ranking according to order of preferences
+		--v.candidate = preferences.subseq[v.ranking-1,v.ranking].first.identifier
 }
 
 -- Table of votes used for simplified encoding of results
-sig Vote {
-	ballot:			Int,		-- Ballot identifier
-    candidate: 	Int,		-- Candidate identifier
-    ranking: 		Int		-- Ranking of candidate on ballot paper (e.g. 1,2,3,...)
-} {
-	0 < ranking and ranking <= #Election.candidates
-    some b: Ballot | b.identifier = ballot and ranking <= #b.preferences
-    some c: Candidate | c.identifier = candidate
-}
+--sig Vote {
+	--ballot:			Int,		-- Ballot identifier
+    --candidate: 	Int,		-- Candidate identifier
+    --ranking: 		Int		-- Ranking of candidate on ballot paper (e.g. 1,2,3,...)
+--} {
+	--0 < ranking and ranking <= #Election.candidates
+    --some b: Ballot | b.identifier = ballot and ranking <= #b.preferences
+    --some c: Candidate | c.identifier = candidate
+--}
 
 -- An election result
 one sig Scenario {
@@ -117,12 +124,12 @@ fact uniqueBallotID {
   no disj a,b: Ballot | a.identifier = b.identifier
 }
 
-fact nonDuplicationOfVotes {
-  no disj a,b: Vote | a.ballot = b.ballot and a.candidate = b.candidate
-}
+--fact nonDuplicationOfVotes {
+  --no disj a,b: Vote | a.ballot = b.ballot and a.candidate = b.candidate
+--}
 
 fact integrity {
-  all c: Candidate | all b: Ballot | b in c.votes implies c in b.assignees
+  all c: Candidate | all b: Ballot | b in c.votes implies c.identifier in b.assignees
 }
 
 fact pluralityEvents {
@@ -137,18 +144,18 @@ fact winnerSTV {
 }
 
 fact transferWinner {
-	all c: Candidate | c.outcome = QuotaWinner iff 
-		#c.votes < Scenario.quota and Scenario.quota <= #c.votes + #c.transfers 
+	all c: Candidate | c.outcome = QuotaWinner iff
+		(not Scenario.quota <= #c.votes and Scenario.quota <= #c.votes + #c.transfers)
 }
 
 fact closeWinner {
-	all c: Candidate | c.outcome = CompromiseWinner or c.outcome = TiedWinner iff 
-		c in Scenario.winners and #c.votes + #c.transfers < Scenario.quota
+	all c: Candidate | (c.outcome = CompromiseWinner or c.outcome = TiedWinner) iff
+		(c in Scenario.winners and not Scenario.quota <= #c.votes + #c.transfers)
 }
 
 fact soreLoser {
 	all c: Candidate | (c.outcome = SoreLoser or c.outcome = TiedSoreLoser) iff 
-		#c.votes + #c.transfers < Scenario.threshold
+		((#c.votes + #c.transfers < Scenario.threshold) and not c in Scenario.winners)
 }
 
 fact loser {
@@ -157,8 +164,8 @@ fact loser {
 }
 
 fact earlyLoser {
-	all c: Candidate | c.outcome = EarlyLoser or c.outcome = TiedEarlyLoser iff 
-		(c in Scenario.losers & Scenario.eliminated and Scenario.threshold <= #c.votes + #c.transfers)
+	all c: Candidate | (c.outcome = EarlyLoser or c.outcome = TiedEarlyLoser) iff 
+		(c in Scenario.losers & Scenario.eliminated and not #c.votes + #c.transfers < Scenario.threshold)
 }
 
 fact winners {
@@ -188,7 +195,7 @@ fact winnersNeedNoTransfers {
 }
 
 fact firstPreference {
-	all b: Ballot | all c: Candidate | b.preferences.first = c iff b in c.votes
+	all b: Ballot | all c: Candidate | b.preferences.first = c.identifier iff b in c.votes
 }
 
 fact sizeOfSurplus {
@@ -198,10 +205,10 @@ fact sizeOfSurplus {
 
 fact transferToNextPreference {
 	all b: Ballot | all disj donor,receiver: Candidate |
-		(donor + receiver in b.assignees and
+		(donor.identifier + receiver.identifier in b.assignees and
 		b in receiver.transfers and b in donor.surplus implies 
 		b.preferences.idxOf[donor] < b.preferences.idxOf[receiver] and
-		receiver in b.preferences.rest.elems)
+		receiver.identifier in b.preferences.rest.elems)
 }
 
 fact pluralityWinner {
@@ -212,15 +219,15 @@ fact pluralityWinner {
 fact transferToNextContinuingCandidate {
 	all disj skipped, receiving: Candidate | all b: Ballot |
 		b.preferences.idxOf[skipped] < b.preferences.idxOf[receiving] and
-		receiving in b.assignees and (not skipped in b.assignees) implies
+		receiving.identifier in b.assignees and (not skipped.identifier in b.assignees) implies
 		(skipped in Scenario.eliminated or skipped.outcome = Winner or 
 		skipped.outcome = QuotaWinner)
 }
 
 // All ballots transfers are associated with the last candidate to receive the transfer
 fact ownership {
-	all disj c,d: Candidate | all b: Ballot | b in c.transfers implies c in b.assignees and 
-		(d not in b.assignees or b.preferences.idxOf[d] < b.preferences.idxOf[c])
+	all disj c,d: Candidate | all b: Ballot | b in c.transfers implies c.identifier in b.assignees and 
+		(d.identifier not in b.assignees or b.preferences.idxOf[d] < b.preferences.idxOf[c])
 }
 
 // Lowest candidate is eliminated first
@@ -244,16 +251,16 @@ fact equalityOfTiedLosers {
 }
 
 // Ranking of votes on ballots
-fact firstPreference {
-	all v: Vote | some b: Ballot | v.ballot = b.identifier and
-		v.ranking = 1 implies b.preferences.first.identifier = v.candidate
-}
+--fact firstPreference {
+	--all v: Vote | some b: Ballot | v.ballot = b.identifier and
+		--v.ranking = 1 implies b.preferences.first.identifier = v.candidate
+--}
 
-fact rankingOfVotes {
-   	all v: Vote | some b: Ballot | some c: Candidate | Election.method = STV and
-		v.ballot = b.identifier and v.candidate = c.identifier implies
-	    c in b.preferences.elems and v.ranking = b.preferences.idxOf[c] + 1
-}
+--fact rankingOfVotes {
+   	--all v: Vote | some b: Ballot | some c: Candidate | Election.method = STV and
+		--v.ballot = b.identifier and v.candidate = c.identifier implies
+	    --c in b.preferences.elems and v.ranking = b.preferences.idxOf[c] + 1
+--}
 
 -- Scenario Validity Axioms
 // When there is a tied sore loser then there are no non-sore losers
@@ -275,21 +282,21 @@ fact validTieBreaker {
 }
 
 -- Axioms for the recording of vote fragments
-fact allVotesRecorded {
-   all b: Ballot | some v: Vote | v.ballot = b.identifier and v.ranking = #b.preferences
-}
+--fact allVotesRecorded {
+   --all b: Ballot | some v: Vote | v.ballot = b.identifier and v.ranking = #b.preferences
+--}
 
 // All vote fragments are recorded for each ballot
-fact lowerRankings {
-   all v: Vote | some w: Vote | 1 < v.ranking implies w.ranking + 1 = v.ranking and
-	v.ballot = w.ballot and not v.candidate = w.candidate
-}
+--fact lowerRankings {
+   --all v: Vote | some w: Vote | 1 < v.ranking implies w.ranking + 1 = v.ranking and
+	--v.ballot = w.ballot and not v.candidate = w.candidate
+--}
 
 // No duplicate ranking of candidates in same ballot
-fact wellFormedRanking {
-	no disj v,w: Vote | v.ballot = w.ballot and
-		(v.candidate = w.candidate or v.ranking = w.ranking)
-}
+--fact wellFormedRanking {
+	--no disj v,w: Vote | v.ballot = w.ballot and
+		--(v.candidate = w.candidate or v.ranking = w.ranking)
+--}
 
 // Compromise winner must have more votes than any tied winners
 fact compromiseNotTied {
@@ -312,9 +319,9 @@ fact highestWinner {
 }
 
 // At least one long ballot for STV
-fact atLeastOne {
-  some b: Ballot | Election.method = STV implies 1 < #b.preferences
-}
+--fact atLeastOne {
+--  some b: Ballot | Election.method = STV implies 1 < #b.preferences
+--}
 
 // Tied Winners and Tied Losers have an equal number of votes
 fact equalTies {
@@ -325,7 +332,7 @@ fact equalTies {
 
 -- Basic Lemmas
 assert honestCount {
-	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
+	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c.identifier in b.assignees
 }
 check honestCount for 15 but 6 int
 
@@ -339,14 +346,14 @@ assert atLeastOneWinner {
 }
 check atLeastOneWinner for 14 but 6 int
 
-assert wellFormednessOfBallots {
-	all b: Ballot | b.assignees in Election.candidates
-}
-check wellFormednessOfBallots for 18 but 6 int
+--assert wellFormednessOfBallots {
+	--all b: Ballot | b.assignees in Election.candidates
+--}
+--check wellFormednessOfBallots for 18 but 6 int
 
 assert plurality {
 	all c: Candidate | all b: Ballot | b in c.votes and 
-		Election.method = Plurality implies c in b.preferences.first
+		Election.method = Plurality implies c.identifier in b.preferences.first
 }
 check plurality for 18 but 6 int
 
@@ -364,15 +371,15 @@ assert validSurplus {
 }
 check validSurplus for 16 but 6 int
 
-assert wellFormedVote {
-	all v: Vote | 0 < v.ballot and 0 < v.candidate
-}
-check wellFormedVote for 4 but 6 int
+--assert wellFormedVote {
+	--all v: Vote | 0 < v.ballot and 0 < v.candidate
+--}
+--check wellFormedVote for 4 but 6 int
 
 -- Advanced Lemmas
 // No lost votes during counting
 assert accounting {
-	all b: Ballot | one c: Candidate | b in c.votes and c in b.assignees
+	all b: Ballot | one c: Candidate | b in c.votes and c.identifier in b.assignees
 }
 check accounting for 16 but 6 int
 
@@ -390,10 +397,10 @@ assert validCompromise {
 check validCompromise for 6 int
 
 // There is at least one ballot with at least one vote
-assert atLeastOneVote {
-	some v: Vote | some b: Ballot | b.identifier = v.ballot
-}
-check atLeastOneVote for 6 int
+--assert atLeastOneVote {
+	--some v: Vote | some b: Ballot | b.identifier = v.ballot
+--}
+--check atLeastOneVote for 6 int
 
 
 
@@ -506,15 +513,24 @@ pred WinnerLoserEarlyLoser {
 	some a,b,c,d : Candidate | a.outcome = Winner and b.outcome = Loser and 
 		c.outcome = EarlyLoser and d.outcome = SoreLoser
 	Election.method = STV
-	some v: Vote | some b: Ballot | b.identifier = v.ballot
+	--some v: Vote | some b: Ballot | b.identifier = v.ballot
 }
 run WinnerLoserEarlyLoser for 7
 
 pred TiedScenario { 
-  some a,b: Candidate | a.outcome = TiedLoser and b.outcome = TiedWinner
-     and Election.method = STV
-     and #Election.candidates = 2
-     and #Election.seats = 1
-     and #Scenario.winners = 1
+  some disj a,b: Candidate | a.outcome = TiedLoser and b.outcome = TiedWinner
+     Election.method = STV
+     #Election.candidates = 2
+     #Election.seats = 1
+	 --some v: Vote | some b: Ballot | b.identifier = v.ballot
 }
-run TiedScenario for 20
+run TiedScenario for 7 
+
+pred NoTiesAndNoSoresScenarios {
+  Election.method = STV
+  #Election.candidates > 3
+  #Ballot > 6
+  no c: Candidate | c.outcome = TiedLoser or c.outcome = TiedWinner or
+    c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser or c.outcome = SoreLoser
+}
+run NoTiesAndNoSoresScenarios for 10 but 6 int
