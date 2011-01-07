@@ -9,8 +9,8 @@
 
 package ie.votail.model.factory;
 
-import ie.votail.model.Scenario;
-import ie.votail.model.VoteTable;
+import ie.votail.model.ElectoralScenario;
+import ie.votail.model.ElectionConfiguration;
 
 import java.util.logging.Logger;
 
@@ -31,7 +31,7 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 /**
  * 
  */
-public class VoteFactory {
+public class BallotBoxFactory {
 
   public static final int DEFAULT_BIT_WIDTH = 6;
   public static final String LOG_FILENAME = "VoteFactory.log";
@@ -42,7 +42,7 @@ public class VoteFactory {
   /**
    *
    */
-  public VoteFactory() {
+  public BallotBoxFactory() {
     modelName = MODELS_VOTING_ALS;
   }
 
@@ -53,51 +53,44 @@ public class VoteFactory {
    * @param scope The scope for model finding in Alloy Analyser
    * @return The Ballot Box (null if generation fails)
    */
-  public VoteTable generateVoteTable(
-    /*@ non_null*/ Scenario scenario, int scope) {
+  public ElectionConfiguration extractBallots(
+    /*@ non_null*/ ElectoralScenario scenario, int scope) {
     
-    final VoteTable voteTable = new VoteTable();
-    voteTable.setNumberOfWinners(scenario.numberOfWinners());
-    voteTable.setNumberOfSeats(scenario.getNumberOfSeats());
-    voteTable.setNumberOfCandidates(scenario.getNumberOfCandidates());
+    final ElectionConfiguration electionConfiguration = new ElectionConfiguration(LOG_FILENAME);
+    electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
+    electionConfiguration.setNumberOfSeats(scenario.getNumberOfSeats());
+    electionConfiguration.setNumberOfCandidates(scenario.getNumberOfCandidates());
     
     // Find a ballot box which creates this scenario
     try {
       A4Solution solution = findSolution(scenario, scope);
       
       if (solution.satisfiable()) { // Extract ballots from the solution
-     // Iterate through the solution and add each vote to the table
+      // Iterate through the solution and add each vote to the table
         for (Sig sig : solution.getAllReachableSigs()) {
-          if (sig.label.contains("this/Vote")) {
+          // Log the model version number
+          if (sig.label.contains("version")) {
+            logger.info(sig.getDescription());
+          }
+          
+          else if (sig.label.contains("this/Ballot")) {
             
             for (Field field : sig.getFields()) {
               
-              A4TupleSet tupleSet = solution.eval(field);
-              //@ assert tupleSet != null;
-              
-              if (field.label.contains("ballot")) {
-                voteTable.extractBallotIDs(tupleSet);
-              }
-              else if (field.label.contains("ranking")) {
-                voteTable.extractRankings(tupleSet);
-              }
-              else if (field.label.contains("candidate")) {
-                voteTable.extractCandidateIDs(tupleSet);
-              }
-              else {
-                //@ assert false;
-                logger.warning("Unexpected field called " + field.label + 
-                  " in signature of " + sig.label);
+              if (field.label.contains("preferences")) {
+                A4TupleSet tupleSet = solution.eval(field);
+                //@ assert tupleSet != null;
+                electionConfiguration.extractPreferences(tupleSet);
               }
             }
           }
         }
         logger.info("Scenario for " + scenario + " has " + 
-          voteTable);
-        return voteTable;
+          electionConfiguration);
+        return electionConfiguration;
       } 
       // Increase the scope and try again
-      return generateVoteTable (scenario, scope+1);
+      return extractBallots (scenario, scope+1);
 
     } catch (Err e) {
       // Log failure to find scenario
@@ -109,13 +102,15 @@ public class VoteFactory {
   }
 
   /**
+   * Find the Alloy solution for an electoral scenario
+   * 
    * @param scenario
    * @param scope
    * @return
    * @throws Err
    * @throws ErrorSyntax
    */
-  protected A4Solution findSolution(Scenario scenario, int scope) throws Err,
+  protected A4Solution findSolution(ElectoralScenario scenario, int scope) throws Err,
       ErrorSyntax {
     A4Reporter reporter = new A4Reporter();
     A4Options options = new A4Options();

@@ -102,9 +102,14 @@ public class Ballot {
   public Ballot(final/*@ non_null @*/int[] preferences) {
     numberOfPreferences = preferences.length;
     positionInList = 0;
+    int index = 0;
     preferenceList = new int[numberOfPreferences];
     for (int i = 0; i < preferences.length; i++) {
-      preferenceList[i] = preferences[i];
+      int preference = preferences[i];
+      if (preference != NONTRANSFERABLE && 
+          preference != Candidate.NO_CANDIDATE) {
+        preferenceList[index++] = preference;
+      }
     }
     // TODO set preferenceList.owner = this;
   }

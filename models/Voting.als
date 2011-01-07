@@ -255,6 +255,13 @@ fact equalTies {
 		#a.votes = #b.votes and #a.transfers = #b.transfers
 }
 
+// Winners have more votes than non-tied losers
+fact winnersHaveVotes {
+	all w,l: Candidate | w.outcome = Winner and 
+      (l.outcome = Loser or l.outcome = EarlyLoser or l.outcome = SoreLoser) implies 
+     ((#l.votes < #w.votes) or (#l.votes + #l.transfers < #w.votes + #w.transfers))
+}
+
 -- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
@@ -270,11 +277,6 @@ assert atLeastOneWinner {
 	0 < #Scenario.winners
 }
 check atLeastOneWinner for 14 but 6 int
-
---assert wellFormednessOfBallots {
-	--all b: Ballot | b.assignees in Election.candidates
---}
---check wellFormednessOfBallots for 18 but 6 int
 
 assert plurality {
 	all c: Candidate | all b: Ballot | b in c.votes and 
@@ -296,15 +298,10 @@ assert validSurplus {
 }
 check validSurplus for 16 but 6 int
 
---assert wellFormedVote {
-	--all v: Vote | 0 < v.ballot and 0 < v.candidate
---}
---check wellFormedVote for 4 but 6 int
-
 -- Advanced Lemmas
 // No lost votes during counting
 assert accounting {
-	all b: Ballot | one c: Candidate | b in c.votes and c in b.assignees
+	all b: Ballot | some c: Candidate | b in c.votes and c in b.assignees
 }
 check accounting for 16 but 6 int
 
@@ -320,14 +317,6 @@ assert validCompromise {
 	all c: Candidate | c.outcome = CompromiseWinner implies 0 < #c.votes + #c.transfers
 }
 check validCompromise for 6 int
-
-// There is at least one ballot with at least one vote
---assert atLeastOneVote {
-	--some v: Vote | some b: Ballot | b.identifier = v.ballot
---}
---check atLeastOneVote for 6 int
-
-
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -458,12 +447,19 @@ pred NoTiesAndNoSoresScenarios {
 }
 run NoTiesAndNoSoresScenarios for 10 but 6 int
 
+-- Unit Tests
+pred UnitTest {
+  some disj c0,c1: Candidate | c0.outcome = Winner and c1.outcome = Loser and 
+	Election.method = STV and #Election.candidates = 2 and #Election.seats = 1
+}
+run UnitTest for 10 but 6 int
+
 -- Version Control
 one sig Version {
    year, month, day : Int
 } {
   year = 11
   month = 01
-  day = 06
-  -- Dermot Cochran 2011-01-06
+  day = 07
+  -- Dermot Cochran 2011-01-07
 }

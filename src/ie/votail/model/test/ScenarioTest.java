@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import ie.votail.model.Outcome;
-import ie.votail.model.Scenario;
+import ie.votail.model.ElectoralScenario;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ public class ScenarioTest {
 
   @Test
   public void testAddOutcome() {
-    Scenario scenario = new Scenario(1);
+    ElectoralScenario scenario = new ElectoralScenario(1);
     assertFalse(scenario.hasTiedSoreLoser());
     scenario.addOutcome(Outcome.TiedSoreLoser);
     assertTrue(scenario.hasTiedSoreLoser());
@@ -20,18 +20,18 @@ public class ScenarioTest {
 
   @Test
   public void testCanonical() {
-    Scenario scenario = new Scenario(1);
+    ElectoralScenario scenario = new ElectoralScenario(1);
     scenario.addOutcome(Outcome.EarlyLoser);
-    Scenario canonical = scenario.canonical();
+    ElectoralScenario canonical = scenario.canonical();
     assertTrue (scenario.equivalentTo(canonical));
   }
 
   @Test
   public void testAppend() {
-    Scenario scenario = new Scenario(1);
-    Scenario oneWinner = scenario.append(Outcome.Winner);
-    Scenario oneLoser = scenario.append(Outcome.Loser);
-    Scenario twoOutcomes = oneWinner.append(Outcome.Loser);
+    ElectoralScenario scenario = new ElectoralScenario(1);
+    ElectoralScenario oneWinner = scenario.append(Outcome.Winner);
+    ElectoralScenario oneLoser = scenario.append(Outcome.Loser);
+    ElectoralScenario twoOutcomes = oneWinner.append(Outcome.Loser);
     assertEquals (1,twoOutcomes.numberOfWinners());
     assertEquals (1,oneWinner.numberOfWinners());
     assertEquals (0,oneLoser.numberOfWinners());
@@ -42,7 +42,7 @@ public class ScenarioTest {
 
   @Test
   public void testIsTied() {
-    Scenario scenario = new Scenario(1);
+    ElectoralScenario scenario = new ElectoralScenario(1);
     assertFalse (scenario.isTied());
     scenario.addOutcome(Outcome.TiedWinner);
     assertTrue (scenario.isTied());
@@ -50,15 +50,15 @@ public class ScenarioTest {
 
   @Test
   public void testNumberOfScenarios() {
-    assertEquals (Scenario.totalNumberOfScenarios(2), 
-                  Scenario.numberOfScenarios(1, 1));  
+    assertEquals (ElectoralScenario.totalNumberOfScenarios(2), 
+                  ElectoralScenario.numberOfScenarios(1, 1));  
   }
 
   @Test
   public void testTotalNumberOfScenarios() {
     assertEquals (
-      Scenario.numberOfScenarios(2, 1) + Scenario.numberOfScenarios(1, 2), 
-      Scenario.totalNumberOfScenarios(3));
+      ElectoralScenario.numberOfScenarios(2, 1) + ElectoralScenario.numberOfScenarios(1, 2), 
+      ElectoralScenario.totalNumberOfScenarios(3));
   }
 
 }

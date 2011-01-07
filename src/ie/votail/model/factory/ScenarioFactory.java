@@ -7,7 +7,7 @@
 package ie.votail.model.factory;
 
 import ie.votail.model.Outcome;
-import ie.votail.model.Scenario;
+import ie.votail.model.ElectoralScenario;
 
 import java.util.Iterator;
 
@@ -28,25 +28,25 @@ public class ScenarioFactory {
     if (numberOfOutcomes == 2) {
       
       // Winner gets majority of votes, loser reaches threshold
-      Scenario commonScenario = new Scenario(numberOfSeats);
+      ElectoralScenario commonScenario = new ElectoralScenario(numberOfSeats);
       commonScenario.addOutcome(Outcome.Winner);
       commonScenario.addOutcome(Outcome.Loser);
       scenarios.add(commonScenario);
       
       // Winner by tie breaker, loser reaches threshold
-      Scenario tiedScenario = new Scenario(numberOfSeats);
+      ElectoralScenario tiedScenario = new ElectoralScenario(numberOfSeats);
       tiedScenario.addOutcome(Outcome.TiedWinner);
       tiedScenario.addOutcome(Outcome.TiedLoser);
       scenarios.add(tiedScenario);
       
       // Winner by tie breaker, loser below threshold
-      Scenario landslideScenario = new Scenario(numberOfSeats);
+      ElectoralScenario landslideScenario = new ElectoralScenario(numberOfSeats);
       landslideScenario.addOutcome(Outcome.Winner);
       landslideScenario.addOutcome(Outcome.SoreLoser);
       scenarios.add(landslideScenario);
       
       // Winner by tie breaker, loser below threshold
-      Scenario unusualScenario = new Scenario(numberOfSeats);
+      ElectoralScenario unusualScenario = new ElectoralScenario(numberOfSeats);
       unusualScenario.addOutcome(Outcome.TiedWinner);
       unusualScenario.addOutcome(Outcome.TiedSoreLoser);
       scenarios.add(unusualScenario);
@@ -54,9 +54,9 @@ public class ScenarioFactory {
     else {
       // Extend the base scenario by adding one additional candidate outcome
       ScenarioList baseScenarios = find (numberOfOutcomes-1, numberOfSeats);
-      Iterator<Scenario> iterator = baseScenarios.iterator();
+      Iterator<ElectoralScenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
-        Scenario baseScenario = iterator.next();
+        ElectoralScenario baseScenario = iterator.next();
         scenarios.add(baseScenario.append(Outcome.Winner));
         scenarios.add(baseScenario.append(Outcome.QuotaWinner));
         scenarios.add(baseScenario.append(Outcome.CompromiseWinner));

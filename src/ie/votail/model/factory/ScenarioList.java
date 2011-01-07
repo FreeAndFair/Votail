@@ -8,7 +8,7 @@
 
 package ie.votail.model.factory;
 
-import ie.votail.model.Scenario;
+import ie.votail.model.ElectoralScenario;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,16 +18,16 @@ import java.util.Iterator;
  * @author Dermot Cochran
  *
  */
-public class ScenarioList extends ArrayList<Scenario> {
+public class ScenarioList extends ArrayList<ElectoralScenario> {
   
   // Maximum number of winners to keep track of
   public static int MAX_PARTITIONS = 6;
   
   // Sublists of scenarios for each fixed number of winners
-  protected ArrayList<Scenario>[] partitions;
+  protected ArrayList<ElectoralScenario>[] partitions;
   
   // Scenarios with a larger number of winners, not held in any partition
-  protected ArrayList<Scenario> bucket;
+  protected ArrayList<ElectoralScenario> bucket;
 
   /**
    * Creates a new empty list of scenarios, with an empty bucket and 
@@ -43,9 +43,9 @@ public class ScenarioList extends ArrayList<Scenario> {
   public ScenarioList() {
     this.partitions = new ArrayList[MAX_PARTITIONS];
     for (int i=0; i<MAX_PARTITIONS; i++) {
-      partitions[i] = new ArrayList<Scenario>();
+      partitions[i] = new ArrayList<ElectoralScenario>();
     }
-    bucket = new ArrayList<Scenario>();
+    bucket = new ArrayList<ElectoralScenario>();
   }
 
   /**
@@ -54,8 +54,8 @@ public class ScenarioList extends ArrayList<Scenario> {
    * @param scenario The scenario to look for
    * @return <code>true</code> if the scenario is in the list
    */
-  public boolean hasScenario(/*@ non_null*/ Scenario scenario) {
-    Iterator<Scenario> it = this.iterator();
+  public boolean hasScenario(/*@ non_null*/ ElectoralScenario scenario) {
+    Iterator<ElectoralScenario> it = this.iterator();
     while (it.hasNext()) {
       if (it.next().equivalentTo(scenario)) {
         return true;
@@ -75,13 +75,13 @@ public class ScenarioList extends ArrayList<Scenario> {
    * ensures this.hasScenario(scenario);
    */
   @Override
-  public boolean add(/*@ non_null*/ Scenario scenario) {
+  public boolean add(/*@ non_null*/ ElectoralScenario scenario) {
     if (this.hasScenario(scenario)) {
       return false;
     }
     
     // Sort the scenario into canonical order before adding it
-    Scenario canonical = scenario.canonical();
+    ElectoralScenario canonical = scenario.canonical();
     
     // Also, add to sublist according to number of winners
     int partitionNumber = scenario.numberOfWinners();

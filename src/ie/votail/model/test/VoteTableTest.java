@@ -2,7 +2,7 @@ package ie.votail.model.test;
 
 import static org.junit.Assert.*;
 import ie.votail.model.Vote;
-import ie.votail.model.VoteTable;
+import ie.votail.model.ElectionConfiguration;
 
 import org.junit.Test;
 

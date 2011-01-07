@@ -10,7 +10,7 @@ import java.util.Iterator;
  * A combination of possible election outcomes for each candidate.
  */
 
-public class Scenario {
+public class ElectoralScenario {
 
   // Refinement from Alloy Analyser axioms to JML invariants
 
@@ -80,7 +80,7 @@ public class Scenario {
   /**
    * Create a new model scenario.
    */
-  public Scenario (int theNumberOfSeats) {
+  public ElectoralScenario (int theNumberOfSeats) {
     listOfOutcomes = new OutcomeList();
     this.numberOfSeats = theNumberOfSeats;
   }
@@ -165,8 +165,8 @@ public class Scenario {
    * @return The equivalent scenario with the candidate outcomes in canonical order
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
-  public Scenario canonical () {
-    Scenario sorted = new Scenario(this.numberOfSeats);
+  public ElectoralScenario canonical () {
+    ElectoralScenario sorted = new ElectoralScenario(this.numberOfSeats);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
       Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
@@ -189,7 +189,7 @@ public class Scenario {
   /*@
    * ensures \result <==> this.canonical().equals(other.canonical());
    */
-  public /*@ pure*/ boolean equivalentTo (/*@ non_null*/ Scenario other) {
+  public /*@ pure*/ boolean equivalentTo (/*@ non_null*/ ElectoralScenario other) {
     if (this.listOfOutcomes.getOutcomes().size() != other.listOfOutcomes.getOutcomes().size()) {
       return false;
     }
@@ -214,8 +214,8 @@ public class Scenario {
    * ensures \result.contains (outcome);
    * ensures \result.equivalentTo (this.addOutcome(outcome));
    */
-  public /*@ pure*/ Scenario append(/*@ non_null*/ Outcome outcome) {
-    Scenario result = this.copy();
+  public /*@ pure*/ ElectoralScenario append(/*@ non_null*/ Outcome outcome) {
+    ElectoralScenario result = this.copy();
     result.addOutcome(outcome);
     return result;
   }
@@ -228,8 +228,8 @@ public class Scenario {
   /*@
    * ensures \result.equals(this);
    */
-  private /*@ pure*/ Scenario copy() {
-    Scenario clone = new Scenario(this.numberOfSeats);
+  private /*@ pure*/ ElectoralScenario copy() {
+    ElectoralScenario clone = new ElectoralScenario(this.numberOfSeats);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());

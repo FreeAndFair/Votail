@@ -2,9 +2,9 @@ package ie.votail.model.factory.test;
 
 import java.util.logging.Logger;
 
-import ie.votail.model.Scenario;
-import ie.votail.model.VoteTable;
-import ie.votail.model.factory.VoteFactory;
+import ie.votail.model.ElectoralScenario;
+import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
@@ -20,23 +20,23 @@ public class VotailSystemTest {
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     BallotCounting ballotCounting = new BallotCounting();
-    Logger logger = Logger.getLogger(VoteFactory.LOG_FILENAME);
+    Logger logger = Logger.getLogger(BallotBoxFactory.LOG_FILENAME);
     
     final int candidates = 2;
     final int seats = 1;
     ScenarioList scenarios = scenarioFactory.find(candidates,seats);
     
-    for (Scenario scenario: scenarios) {
+    for (ElectoralScenario scenario: scenarios) {
       logger.info(scenario.toString());
       final int scope = 5;
-      VoteFactory voteFactory = new VoteFactory();
-      VoteTable voteTable = voteFactory.generateVoteTable(scenario, scope);
-      Constituency constituency = voteTable.getConstituency();
+      BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
+      ElectionConfiguration electionConfiguration 
+        = ballotBoxFactory.extractBallots(scenario, scope);
+      Constituency constituency = electionConfiguration.getConstituency();
       logger.info(constituency.toString());
-      BallotBox ballotBox = voteTable.getBallotBox();
-      logger.info(ballotBox.toString());
+      logger.info(electionConfiguration.toString());
       ballotCounting.setup(constituency);
-      ballotCounting.load(ballotBox);
+      ballotCounting.load(electionConfiguration);
       ballotCounting.count();
       logger.info(ballotCounting.getResults());
     }
