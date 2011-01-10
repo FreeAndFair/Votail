@@ -43,14 +43,14 @@ export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx
 BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
-JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(BASE_CLASSPATH)
+JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(BASE_CLASSPATH):src/ie/votail/model/test:src/ie/votail/model/factory/test
 ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(ESCJAVA2CP)
 UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
 javapat	=	$(srcpath)/election/tally/*.java
 javafiles =	$(wildcard $(srcpath)/election/tally/*.java)
-jmlunitpat =	$(jmlunit_path)/election/tally/*.java
+jmlunitpat =	$(jmlunit_path)/election/tally/*.java:src/ie/votail/model/factory/test/VotailSystemTest.java
 jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
 classfiles =	$(foreach javafile,$(javafiles),\
@@ -64,7 +64,7 @@ main_memory_use =	-ms256M -mx256M
 rac_memory_use =	-ms256M -mx320M
 test_memory_use	=	-ms256M -mx3200M
 
-copyright = "Votail<br />&copy; 2006-10 Dermot Cochran <br />All Rights Reserved"
+copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved"
 
 # implicit rules for paper documentation generation
 
@@ -127,7 +127,7 @@ build:	classes jml jmlc jmlunit_classes
 
 escjava:	escjava2-typecheck escjava2
 
-test:	jml-junit-tests
+test:	jml-junit-tests universal-test
 
 # paper documentation-related
 
@@ -268,6 +268,10 @@ jml-junit-tests:	classes jmlunit_classes
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotBox_JML_Test
+	
+universal-test:		jml-junit-tests
+    export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	java junit.textui.TestRunner $(test_memory_use) ie.votail.model.factory.test.VotailSystemTest
 
 # generating source-based documentation
 
