@@ -21,8 +21,8 @@ public class VotailSystemTest {
     BallotCounting ballotCounting = new BallotCounting();
     Logger logger = Logger.getLogger(BallotBoxFactory.LOG_FILENAME);
     
-    final int candidates = 2;
-    final int seats = 1;
+    final int candidates = 20;
+    final int seats = 3;
     ScenarioList scenarios = scenarioFactory.find(candidates,seats);
     
     for (ElectoralScenario scenario: scenarios) {
