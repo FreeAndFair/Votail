@@ -6,63 +6,13 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>fr.univartois.cril.alloyplugin.builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>ie.ucd.bon.plugin.boncbuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>ie.ucd.bon.beetlz.plugin.beetlzbuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
 			<name>net.sourceforge.metrics.builder</name>
 			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>com.stateofflow.eclipse.metrics.MetricsBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>edu.umd.cs.findbugs.plugin.eclipse.findbugsBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>net.sf.eclipsecs.core.CheckstyleBuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/net.sourceforge.pmd.eclipse.plugin.pmdBuilder (1).launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/mobius.escjava2.ui.autocheckEscjavaBuilder.launch</value>
-				</dictionary>
 			</arguments>
 		</buildCommand>
 	</buildSpec>

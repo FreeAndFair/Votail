@@ -3,11 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="/usr/local/JML/bin/jmljunitruntime.jar"/>
-	<classpathentry kind="lib" path="/usr/local/JML/bin/jmlruntime.jar"/>
-	<classpathentry kind="lib" path="/usr/local/JML/bin/jmlmodels.jar"/>
 	<classpathentry kind="lib" path="external_libraries/alloy4.jar"/>
-	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
-	<classpathentry kind="src" path="/jmlspecs"/>
+	<classpathentry kind="lib" path="external_libraries/jmlunitng-1_0a2.jar"/>
+	<classpathentry kind="lib" path="external_libraries/testng-5.14.6.jar"/>
+	<classpathentry kind="lib" path="external_libraries/jmljunitruntime.jar"/>
+	<classpathentry kind="lib" path="external_libraries/jmlmodels.jar"/>
+	<classpathentry kind="lib" path="external_libraries/jmlmodelsnonrac.jar"/>
+	<classpathentry kind="lib" path="external_libraries/jml-release.jar"/>
+	<classpathentry kind="lib" path="external_libraries/jmlruntime.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

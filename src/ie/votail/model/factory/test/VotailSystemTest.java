@@ -1,16 +1,15 @@
 package ie.votail.model.factory.test;
 
-import java.util.logging.Logger;
-
-import ie.votail.model.ElectoralScenario;
 import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
-import org.testng.annotations.Test;
+import java.util.logging.Logger;
 
-import election.tally.BallotBox;
+import org.junit.Test;
+
 import election.tally.BallotCounting;
 import election.tally.Constituency;
 
