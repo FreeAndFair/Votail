@@ -2,7 +2,6 @@ package ie.lero.evoting.scenario;
 
 import junit.framework.TestCase;
 import election.tally.AbstractCountStatus;
-import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;

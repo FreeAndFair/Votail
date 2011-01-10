@@ -21,8 +21,6 @@ public class ElectionConfiguration extends BallotBox {
   public static final int NO_CANDIDATE_ID = 0;
   
   public static final int MAX_VOTES = Ballot.MAX_BALLOTS;
-
-  private static final String regex = null;
   
   protected int numberOfWinners;
 

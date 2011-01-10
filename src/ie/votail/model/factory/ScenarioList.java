@@ -15,11 +15,13 @@ import java.util.Iterator;
 
 /**
  * 
- * @author Dermot Cochran
+ * @author Dermot Cochran, 2010-2011, IT University of Copenhagen
  *
  */
 public class ScenarioList extends ArrayList<ElectoralScenario> {
   
+  private static final long serialVersionUID = 7705389889600073583L;
+
   // Maximum number of winners to keep track of
   public static int MAX_PARTITIONS = 6;
   
