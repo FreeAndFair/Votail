@@ -155,7 +155,6 @@ public class ElectoralScenario {
     }
     stringBuffer.append(" and Election.method = STV");
     stringBuffer.append(" and #Election.candidates = " + this.numberOfCandidates);
-    stringBuffer.append(" and #Election.seats = " + this.numberOfSeats);
     return stringBuffer.toString();
   }
 

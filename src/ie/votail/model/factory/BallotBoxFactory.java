@@ -33,7 +33,7 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
  */
 public class BallotBoxFactory {
 
-  public static final int DEFAULT_BIT_WIDTH = 6;
+  public static final int DEFAULT_BIT_WIDTH = 7;
   public static final String LOG_FILENAME = "VoteFactory.log";
   public static final String MODELS_VOTING_ALS = "models/voting.als";
   protected final static Logger logger = Logger.getLogger(LOG_FILENAME);
@@ -47,19 +47,21 @@ public class BallotBoxFactory {
   }
 
   /**
-   * Generate a ballot box from a scenario description, using Alloy model
+   * Generate Ballots for an Election Configuration from an Electoral Scenario
    * 
    * @param scenario The scenario which will be tested by this ballot box
    * @param scope The scope for model finding in Alloy Analyser
-   * @return The Ballot Box (null if generation fails)
+   * @return The ELection Configuration (null if generation fails)
    */
   public ElectionConfiguration extractBallots(
     /*@ non_null*/ ElectoralScenario scenario, int scope) {
     
-    final ElectionConfiguration electionConfiguration = new ElectionConfiguration(LOG_FILENAME);
+    final ElectionConfiguration electionConfiguration 
+      = new ElectionConfiguration(LOG_FILENAME);
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
     electionConfiguration.setNumberOfSeats(scenario.getNumberOfSeats());
-    electionConfiguration.setNumberOfCandidates(scenario.getNumberOfCandidates());
+    electionConfiguration.setNumberOfCandidates(
+      scenario.getNumberOfCandidates());
     
     // Find a ballot box which creates this scenario
     try {

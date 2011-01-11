@@ -130,8 +130,8 @@ fact earlyLoser {
 
 fact winners {
 	all c: Candidate | c in Scenario.winners iff 
-		c.outcome = Winner or c.outcome = QuotaWinner or c.outcome = CompromiseWinner or 
-		c.outcome = TiedWinner
+		(c.outcome = Winner or c.outcome = QuotaWinner or c.outcome = CompromiseWinner or 
+		c.outcome = TiedWinner)
 }
 
 fact losers {
@@ -404,11 +404,12 @@ pred FiveWayTie {
 run FiveWayTie for 7 but 6 int
 
 pred ScenarioLWW {
-	some disj a,b,c: Candidate | a in Scenario.losers and b.outcome = Winner and 
-		c in Scenario.winners
+	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = Winner and 
+		c.outcome = Winner
     #Election.candidates = 3
+	Election.method = STV
 }
-run ScenarioLWW for 6 but 6 int
+run ScenarioLWW for 7 but 7 int
 
 pred LongBallot {
 	some b: Ballot | #b.preferences = 7
@@ -454,7 +455,7 @@ pred UnitTest {
 }
 run UnitTest for 10 but 6 int
 
--- Version Control
+-- Version Control for changes to signatures and axioms, exlcuding lemmas and tests
 one sig Version {
    year, month, day : Int
 } {

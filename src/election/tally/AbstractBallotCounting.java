@@ -137,7 +137,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   }
 
   /**
-   * Determine if the candidate was elected in any previous round <BON>query
+   * Determine if the candidate was elected in any previous round 
+   * <BON> query
    * "Has the candidate been elected?"</BON>
    * 
    * @param candidate
@@ -1027,5 +1028,68 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     return totalNumberOfCandidates
            - (numberOfCandidatesElected + numberOfCandidatesEliminated);
   }
+
+/**
+ * @return the totalNumberOfCandidates
+ */
+public int getTotalNumberOfCandidates() {
+    return totalNumberOfCandidates;
+}
+
+/**
+ * @return the numberOfCandidatesElected
+ */
+public int getNumberOfCandidatesElected() {
+    return numberOfCandidatesElected;
+}
+
+/**
+ * @return the numberOfCandidatesEliminated
+ */
+public int getNumberOfCandidatesEliminated() {
+    return numberOfCandidatesEliminated;
+}
+
+/**
+ * @return the numberOfSeats
+ */
+public int getNumberOfSeats() {
+    return numberOfSeats;
+}
+
+/**
+ * @return the totalNumberOfSeats
+ */
+public int getTotalNumberOfSeats() {
+    return totalNumberOfSeats;
+}
+
+/**
+ * @return the totalNumberOfVotes
+ */
+public int getTotalNumberOfVotes() {
+    return totalNumberOfVotes;
+}
+
+/**
+ * @return the savingThreshold
+ */
+public int getSavingThreshold() {
+    return savingThreshold;
+}
+
+/**
+ * @return the countNumberValue
+ */
+public int getCountNumberValue() {
+    return countNumberValue;
+}
+
+/**
+ * @return the totalRemainingSeats
+ */
+public int getTotalRemainingSeats() {
+    return totalRemainingSeats;
+}
 
 }
