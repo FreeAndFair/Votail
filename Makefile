@@ -50,7 +50,7 @@ CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
 javapat	=	$(srcpath)/election/tally/*.java
 javafiles =	$(wildcard $(srcpath)/election/tally/*.java)
-jmlunitpat =	$(jmlunit_path)/election/tally/*.java:src/ie/votail/model/factory/test/VotailSystemTest.java
+jmlunitpat =	$(jmlunit_path)/election/tally/*.java
 jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
 classfiles =	$(foreach javafile,$(javafiles),\
