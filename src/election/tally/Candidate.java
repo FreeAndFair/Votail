@@ -334,4 +334,15 @@ public class Candidate extends CandidateStatus {
                         getTotalAtCount (lastCountNumber) + " final votes");
     return stringBuffer.toString();
   }
+
+  //@ ensures \result == getTotalAtCount (lastCountNumber);
+  public int getFinalVote() {
+    
+    return getTotalAtCount (lastCountNumber);
+  }
+
+//@ ensures \result <==> (state == ELIMINATED);
+public boolean isEliminated() {
+    return state == ELIMINATED;
+}
 }

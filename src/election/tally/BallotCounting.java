@@ -480,10 +480,10 @@ public class BallotCounting extends AbstractBallotCounting {
         }
 
         // Elected candidates in reverse order from lowest to highest
-        for (int j = numberOfCandidatesEliminated; 
-          j < totalNumberOfCandidates; j++) {
-          candidateList[j] = 
-            candidates[electedCandidateIndex[totalNumberOfCandidates-j]];
+        for (int j = 0; 
+          j < totalNumberOfSeats; j++) {
+          candidateList[candidateList.length - 1 - j] = 
+            candidates[electedCandidateIndex[j]];
         }
 
         return candidateList;

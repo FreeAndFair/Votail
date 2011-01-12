@@ -364,6 +364,9 @@ public class ElectoralScenario {
  */
   //@ requires ballotCounting.isFinished();
 public boolean matches(BallotCounting ballotCounting) {
+    int quota = ballotCounting.getQuota();
+    int threshold = ballotCounting.getSavingThreshold();
+    
     if (this.numberOfCandidates == ballotCounting.getTotalNumberOfCandidates() &&
         this.numberOfSeats == ballotCounting.getTotalNumberOfSeats()) {
         
@@ -372,7 +375,7 @@ public boolean matches(BallotCounting ballotCounting) {
         // Match each candidate with an outcome and each outcome with a candidate
         int index = 0;
         for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
-            if (!outcome.matches(candidateList[index])) {
+            if (!outcome.matches(candidateList[index],quota,threshold)) {
               return false;
             }
             
