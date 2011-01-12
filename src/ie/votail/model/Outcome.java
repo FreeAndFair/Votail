@@ -39,13 +39,16 @@ public enum Outcome {
    * @param candidate The candidate to be verified
    * @return True if the results match the outcome
    */
-public boolean matches(Candidate candidate, int quota, int threshold) {
-    // TODO Auto-generated method stub
+  //@ requires (0 <= threshold) && (threshold <= quota);
+public boolean matches(/*@ non_null*/ Candidate candidate, 
+    int quota, int threshold) {
+
     if (this == Winner && quota <= candidate.getOriginalVote()) {
         return true;
     }
-    else if (this == Loser && candidate.isEliminated() && threshold < candidate.getFinalVote()) {
-        
+    else if (this == Loser && candidate.isEliminated() && 
+      threshold <= candidate.getFinalVote()) {
+        return true;
     }
         
     return false;
