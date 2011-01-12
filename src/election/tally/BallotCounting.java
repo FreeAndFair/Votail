@@ -31,428 +31,461 @@ package election.tally;
  */
 public class BallotCounting extends AbstractBallotCounting {
 
-  /**
-   * Inner class for state machine
-   */
-  public class CountStatus extends AbstractCountStatus {
-
-    // Initial state
     /**
-     * Inner state machine for counting of Dail election ballots.
+     * Inner class for state machine
      */
-    public CountStatus() {
-      super();
-      substate = READY_TO_COUNT;
-    }
+    public class CountStatus extends AbstractCountStatus {
 
-    //@ public initially substate == READY_TO_COUNT;
-    protected/*@ spec_public @*/int substate;
-
-    /**
-     * Get the state of the inner automaton for counting ballots in Dail
-     * elections.
-     * 
-     * @return The state of the count.
-     */
-    /*@ also ensures \result == substate;
-      @*/
-    public/*@ pure @*/int getState() {
-      return substate;
-    }
-
-    /**
-     * Move along the next valid transition in state.
-     * 
-     * @param newState
-     *        The next stage of counting.
-     */
-    //@ also assignable substate;
-    //@ ensures newState == getState();
-    public void changeState(final int newState) {
-      substate = newState;
-    }
-
-    /**
-     * Is this a valid state for the count to be in?
-     * 
-     * @param value
-     *        The state to be checked.
-     * @return <code>true</code> if this stage exists with the automaton for
-     *         counting of Dail ballots
-     */
-    public/*@ pure @*/boolean isPossibleState(final int value) {
-      return ((READY_TO_COUNT == value) || (NO_SEATS_FILLED_YET == value)
-              || (CANDIDATES_HAVE_QUOTA == value)
-              || (CANDIDATE_ELECTED == value)
-              || (NO_SURPLUS_AVAILABLE == value)
-              || (SURPLUS_AVAILABLE == value)
-              || (READY_TO_ALLOCATE_SURPLUS == value)
-              || (READY_TO_MOVE_BALLOTS == value)
-              || (CANDIDATE_EXCLUDED == value)
-              || (READY_FOR_NEXT_ROUND_OF_COUNTING == value)
-              || (LAST_SEAT_BEING_FILLED == value)
-              || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
-              || (ONE_OR_MORE_SEATS_REMAINING == value)
-              || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
-    }
-  }
-
-  // Status of the ballot counting process
-  public/*@ non_null @*/CountStatus countStatus;
-
-  /**
-   * Distribute the surplus of an elected candidate.
-   * 
-   * @param winner
-   *        The elected candidate
-   */
-  /*@ also
-    @   requires state == COUNTING;
-    @   requires countStatus.getState() == AbstractCountStatus.SURPLUS_AVAILABLE;
-    @   requires isElected (candidateList[winner]);
-    @   requires \nonnullelements (candidateList);
-    @   requires 0 <= winner && winner < candidateList.length;
-    @*/
-  public void distributeSurplus(final int winner) {
-    //@ assert candidateList[winner] != null;
-    final int surplus = getSurplus(candidates[winner]);
-    final int totalTransferableVotes =
-                                       getTotalTransferableVotes(candidates[winner]);
-    if (0 < surplus && 0 < totalTransferableVotes) {
-      countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
-
-      for (int i = 0; i < totalNumberOfCandidates; i++) {
-        moveSurplusBallots(winner, i);
-      }
-      // Move non-transferable part of surplus
-      removeNonTransferableBallots(winner, surplus, totalTransferableVotes);
-    }
-
-    countStatus
-               .changeState(AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
-    //@ assert getSurplus (candidateList[winner]) == 0;
-  }
-
-  /**
-   * Move surplus ballots from a winner's stack to another continuing candidate.
-   * 
-   * @param winner
-   * @param index
-   */
-  //@ requires 0 <= index && index < candidateList.length;
-  //@ requires 0 <= winner && winner < candidateList.length;
-  //@ requires \nonnullelements (candidateList);
-  protected void moveSurplusBallots(final int winner, final int index) {
-    //@ assert candidateList[index] != null;
-    if ((index != winner) &&
-    // TODO 2009.10.15 JML null reference warning
-        (candidates[index].getStatus() == CandidateStatus.CONTINUING)) {
-      final int numberOfTransfers = calculateNumberOfTransfers(winner, index);
-      // TODO 2009.10.15 ESC precondition warning
-      transferVotes(candidates[winner], candidates[index], numberOfTransfers); //@ nowarn;
-    }
-  }
-
-  //@ requires 0 <= winner && winner < candidateList.length;
-  //@ requires \nonnullelements (candidateList);
-  //@ requires \nonnullelements (ballotsToCount);
-  protected void removeNonTransferableBallots(final int winner,
-                                              final int surplus,
-                                              final int totalTransferableVotes) {
-    if (surplus > totalTransferableVotes) {
-      int numberToRemove = surplus - totalTransferableVotes;
-      //@ assert 0 < numberToRemove;
-      //@ assert candidateList[winner] != null;
-      final int fromCandidateID = candidates[winner].getCandidateID();
-      for (int b = 0; b < ballots.length; b++) {
-        //@ assert ballotsToCount[b] != null;
-        if ((ballots[b].isAssignedTo(fromCandidateID))
-            && (0 < numberToRemove)
-            && (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
-          transferBallot(ballots[b]);
-          numberToRemove--;
+        // Initial state
+        /**
+         * Inner state machine for counting of Dail election ballots.
+         */
+        public CountStatus() {
+            super();
+            substate = READY_TO_COUNT;
         }
-      }
-    }
-  }
 
-  //@ requires 0 <= index && index < candidateList.length;
-  //@ requires 0 <= winner && winner < candidateList.length;
-  //@ requires \nonnullelements (candidateList);
-  protected int calculateNumberOfTransfers(final int winner, final int index) {
-    int numberOfTransfers =
-    // TODO 2009.10.15 JML null dereference warning
-                            // TODO 2009.10.15 ESC precondition warning
-                            getActualTransfers(candidates[winner],
-                                               candidates[index]); //@ nowarn;
+        //@ public initially substate == READY_TO_COUNT;
+        protected/*@ spec_public @*/int substate;
 
-    // TODO 2009.10.15 ESC precondition warning
-    if (0 <= getTransferShortfall(candidates[winner])) { //@ nowarn;
-      numberOfTransfers +=
-      // TODO 2009.10.15 ESC precondition warning
-                           getRoundedFractionalValue(candidates[winner],
-                                                     candidates[index]); //@ nowarn;
-    }
-    return numberOfTransfers;
-  }
-
-  /**
-   * Transfer votes from one Dail candidate to another.
-   * 
-   * @param fromCandidate
-   *        The elected or excluded candidate from which to transfer votes
-   * @param toCandidate
-   *        The continuing candidate to receive the transferred votes
-   * @param numberOfVotes
-   *        The number of votes to be transferred
-   */
-  //@ also
-  //@   requires state == COUNTING;
-  //@   requires countStatus.getState() == AbstractCountStatus.READY_TO_MOVE_BALLOTS;
-  public void transferVotes(final/*@ non_null @*/Candidate fromCandidate,
-                            final/*@ non_null @*/Candidate toCandidate,
-                            final int numberOfVotes) {
-
-    // Update the totals for each candidate
-    // TODO 2009.10.15 ESC precondition warning
-    fromCandidate.removeVote(numberOfVotes, countNumberValue); //@ nowarn;
-    // TODO 2009.10.15 ESC precondition warning
-    toCandidate.addVote(numberOfVotes, countNumberValue); //@ nowarn;
-
-    // Transfer the required number of ballots
-    final int fromCandidateID = fromCandidate.getCandidateID();
-    final int toCandidateID = toCandidate.getCandidateID();
-    int ballotsMoved = 0;
-    // TODO 2009.10.15 ESC null dereference warning
-    for (int b = 0; b < ballots.length; b++) { //@ nowarn;
-      // TODO 2009.10.15 ESC null dereference warning 
-      if ((ballots[b].getCandidateID() == fromCandidateID) && //@ nowarn;
-          (getNextContinuingPreference(ballots[b]) == toCandidateID)) {
-        // TODO 2009.10.15 ESC assignable warning
-        transferBallot(ballots[b]); //@ nowarn;
-        ballotsMoved++;
-        if (ballotsMoved == numberOfVotes) {
-          break;
-        }
-      }
-    }
-    // TODO 2009.10.15 ESC warning
-  } //@ nowarn Post;
-
-  /**
-   * Count the ballots for this constituency using the rules of proportional
-   * representation by single transferable vote.
-   * 
-   * @see "requirement 1, section 3, item 2, page 12"
-   */
-  /*@ also
-    @   requires state == PRECOUNT || state == COUNTING;
-    @   requires \nonnullelements (candidateList);
-    @		assignable countNumberValue, ballotsToCount, candidateList[*];
-    @   assignable candidates, candidates[*];
-    @		assignable totalRemainingSeats, countStatus;
-    @		assignable savingThreshold, ballots, ballotsToCount;
-    @		assignable numberOfCandidatesElected;
-    @		assignable numberOfCandidatesEliminated;
-    @		assignable status, countStatus;
-    @		assignable remainingSeats, totalRemainingSeats;
-    @   ensures state == ElectionStatus.FINISHED;
-    @*/
-  public void count() {
-
-    // Start or else resume the counting of ballots
-    if (status < ElectionStatus.COUNTING) {
-      // TODO 2009.10.14 ESC warning
-      startCounting(); //@ nowarn;
-    }
-
-    // TODO 2009.10.15 ESC invariant warning
-    while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
-           countNumberValue < CountConfiguration.MAXCOUNT) {
-      // TODO 2009.10.15 ESC assignable warning
-      countStatus.changeState( //@ nowarn;
-                 AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
-
-      // Transfer surplus votes from winning candidates
-      // TODO 2009.10.15 ESC precondition warning
-      electCandidatesWithSurplus(); //@ nowarn;
-
-      // Exclusion of lowest continuing candidates if no surplus
-      // TODO 2009.10.15 ESC precondition warning
-      excludeLowestCandidates(); //@ nowarn;
-      // TODO 2009.10.15 ESC invariant warning
-      incrementCountNumber(); //@ nowarn;
-    }
-
-    // Filling of last seats
-    // TODO 2009.10.15 ESC warnings
-    if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
-      fillLastSeats(); //@ nowarn;
-
-    }
-
-    // TODO 2009.10.16 ESC assignable warning
-    countStatus.changeState(AbstractCountStatus.END_OF_COUNT); //@ nowarn Modifies ;
-    status = ElectionStatus.FINISHED;
-    // TODO 2009.10.16 ESC postcondition warning
-  } //@ nowarn;
-
-  /*@ assignable candidateList, ballotsToCount, candidates,
-    @   numberOfCandidatesElected, totalRemainingSeats;
-    @*/
-  protected void electCandidatesWithSurplus() {
-    while (getTotalSumOfSurpluses() > 0
-           && countNumberValue < CountConfiguration.MAXCOUNT
-           && getNumberContinuing() > totalRemainingSeats) {
-
-      countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
-      final int winner = findHighestCandidate();
-
-      if (winner != NONE_FOUND_YET) {
-
-        // Elect highest continuing candidate
-        updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
-        //@ assert 0 <= winner && winner < totalCandidates;
-        //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
-        //@ assert numberElected < seats;
-        //@ assert 0 < remainingSeats;
-        /*@ assert (hasQuota(candidateList[winner])) 
-          @   || (winner == findHighestCandidate())
-          @   || (getNumberContinuing() == totalRemainingSeats);
+        /**
+         * Get the state of the inner automaton for counting ballots in Dail
+         * elections.
+         * 
+         * @return The state of the count.
+         */
+        /*@ also ensures \result == substate;
           @*/
-        electCandidate(winner);
-        countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
-        distributeSurplus(winner);
-      }
+        public/*@ pure @*/int getState() {
+            return substate;
+        }
+
+        /**
+         * Move along the next valid transition in state.
+         * 
+         * @param newState
+         *        The next stage of counting.
+         */
+        //@ also assignable substate;
+        //@ ensures newState == getState();
+        public void changeState(final int newState) {
+            substate = newState;
+        }
+
+        /**
+         * Is this a valid state for the count to be in?
+         * 
+         * @param value
+         *        The state to be checked.
+         * @return <code>true</code> if this stage exists with the automaton for
+         *         counting of Dail ballots
+         */
+        public/*@ pure @*/boolean isPossibleState(final int value) {
+            return ((READY_TO_COUNT == value)
+                    || (NO_SEATS_FILLED_YET == value)
+                    || (CANDIDATES_HAVE_QUOTA == value)
+                    || (CANDIDATE_ELECTED == value)
+                    || (NO_SURPLUS_AVAILABLE == value)
+                    || (SURPLUS_AVAILABLE == value)
+                    || (READY_TO_ALLOCATE_SURPLUS == value)
+                    || (READY_TO_MOVE_BALLOTS == value)
+                    || (CANDIDATE_EXCLUDED == value)
+                    || (READY_FOR_NEXT_ROUND_OF_COUNTING == value)
+                    || (LAST_SEAT_BEING_FILLED == value)
+                    || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
+                    || (ONE_OR_MORE_SEATS_REMAINING == value)
+                    || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
+        }
     }
-  }
 
-  /*@ requires \nonnullelements (candidateList);
-    @ assignable countStatus, countNumberValue, candidates, candidateList;
-    @ assignable numberOfCandidatesEliminated, ballots,
-    @   ballotsToCount;
-    @*/
-  protected void excludeLowestCandidates() {
-    while (getTotalSumOfSurpluses() == 0
-           && getNumberContinuing() > totalRemainingSeats
-           && countNumberValue < CountConfiguration.MAXCOUNT) {
+    // Status of the ballot counting process
+    public/*@ non_null @*/CountStatus countStatus;
 
-      // TODO 2009.10.14 ESC assignable warning
-      countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE); //@ nowarn;
-      // TODO 2009.10.15 ESC precondition warning
-      final int loser = findLowestCandidate(); //@ nowarn;
+    /**
+     * Distribute the surplus of an elected candidate.
+     * 
+     * @param winner
+     *        The elected candidate
+     */
+    /*@ also
+      @   requires state == COUNTING;
+      @   requires countStatus.getState() == AbstractCountStatus.SURPLUS_AVAILABLE;
+      @   requires isElected (candidateList[winner]);
+      @   requires \nonnullelements (candidateList);
+      @   requires 0 <= winner && winner < candidateList.length;
+      @*/
+    public void distributeSurplus(final int winner) {
+        //@ assert candidateList[winner] != null;
+        final int surplus = getSurplus(candidates[winner]);
+        final int totalTransferableVotes = getTotalTransferableVotes(candidates[winner]);
+        if (0 < surplus && 0 < totalTransferableVotes) {
+            countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
 
-      if (loser != NONE_FOUND_YET) {
+            for (int i = 0; i < totalNumberOfCandidates; i++) {
+                moveSurplusBallots(winner, i);
+            }
+            // Move non-transferable part of surplus
+            removeNonTransferableBallots(winner, surplus,
+                    totalTransferableVotes);
+        }
+
+        countStatus
+                .changeState(AbstractCountStatus.READY_FOR_NEXT_ROUND_OF_COUNTING);
+        //@ assert getSurplus (candidateList[winner]) == 0;
+    }
+
+    /**
+     * Move surplus ballots from a winner's stack to another continuing candidate.
+     * 
+     * @param winner
+     * @param index
+     */
+    //@ requires 0 <= index && index < candidateList.length;
+    //@ requires 0 <= winner && winner < candidateList.length;
+    //@ requires \nonnullelements (candidateList);
+    protected void moveSurplusBallots(final int winner, final int index) {
+        //@ assert candidateList[index] != null;
+        if ((index != winner) &&
+        // TODO 2009.10.15 JML null reference warning
+                (candidates[index].getStatus() == CandidateStatus.CONTINUING)) {
+            final int numberOfTransfers = calculateNumberOfTransfers(winner,
+                    index);
+            // TODO 2009.10.15 ESC precondition warning
+            transferVotes(candidates[winner], candidates[index],
+                    numberOfTransfers); //@ nowarn;
+        }
+    }
+
+    //@ requires 0 <= winner && winner < candidateList.length;
+    //@ requires \nonnullelements (candidateList);
+    //@ requires \nonnullelements (ballotsToCount);
+    protected void removeNonTransferableBallots(final int winner,
+            final int surplus, final int totalTransferableVotes) {
+        if (surplus > totalTransferableVotes) {
+            int numberToRemove = surplus - totalTransferableVotes;
+            //@ assert 0 < numberToRemove;
+            //@ assert candidateList[winner] != null;
+            final int fromCandidateID = candidates[winner].getCandidateID();
+            for (int b = 0; b < ballots.length; b++) {
+                //@ assert ballotsToCount[b] != null;
+                if ((ballots[b].isAssignedTo(fromCandidateID))
+                        && (0 < numberToRemove)
+                        && (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
+                    transferBallot(ballots[b]);
+                    numberToRemove--;
+                }
+            }
+        }
+    }
+
+    //@ requires 0 <= index && index < candidateList.length;
+    //@ requires 0 <= winner && winner < candidateList.length;
+    //@ requires \nonnullelements (candidateList);
+    protected int calculateNumberOfTransfers(final int winner, final int index) {
+        int numberOfTransfers =
+        // TODO 2009.10.15 JML null dereference warning
+        // TODO 2009.10.15 ESC precondition warning
+        getActualTransfers(candidates[winner], candidates[index]); //@ nowarn;
 
         // TODO 2009.10.15 ESC precondition warning
-        countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED); //@ nowarn;
+        if (0 <= getTransferShortfall(candidates[winner])) { //@ nowarn;
+            numberOfTransfers +=
+            // TODO 2009.10.15 ESC precondition warning
+            getRoundedFractionalValue(candidates[winner], candidates[index]); //@ nowarn;
+        }
+        return numberOfTransfers;
+    }
+
+    /**
+     * Transfer votes from one Dail candidate to another.
+     * 
+     * @param fromCandidate
+     *        The elected or excluded candidate from which to transfer votes
+     * @param toCandidate
+     *        The continuing candidate to receive the transferred votes
+     * @param numberOfVotes
+     *        The number of votes to be transferred
+     */
+    //@ also
+    //@   requires state == COUNTING;
+    //@   requires countStatus.getState() == AbstractCountStatus.READY_TO_MOVE_BALLOTS;
+    public void transferVotes(final/*@ non_null @*/Candidate fromCandidate,
+            final/*@ non_null @*/Candidate toCandidate, final int numberOfVotes) {
+
+        // Update the totals for each candidate
         // TODO 2009.10.15 ESC precondition warning
-        eliminateCandidate(loser); //@ nowarn;
-        // TODO 2009.10.15 ESC assignable warning
-        countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS); //@ nowarn;
-        // TODO 2009.10.15 ESC null warning
-        redistributeBallots(candidates[loser].getCandidateID()); //@ nowarn;
-      }
-    }
-    // TODO 2009.10.15 ESC warnings
-  } //@ nowarn;
-
-  /*@ assignable candidateList[*], countNumber, countNumberValue;
-    @ assignable numberOfCandidatesElected, totalRemainingSeats;
-    @ assignable candidates;
-    @*/
-  protected void fillLastSeats() {
-    // TODO 2009.10.14 ESC assignable warning
-    countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED); //@ nowarn;
-    for (int c = 0; c < totalNumberOfCandidates; c++) {
-      if (isContinuingCandidateID(candidates[c].getCandidateID())) {
+        fromCandidate.removeVote(numberOfVotes, countNumberValue); //@ nowarn;
         // TODO 2009.10.15 ESC precondition warning
-        electCandidate(c); //@ nowarn;
-      }
+        toCandidate.addVote(numberOfVotes, countNumberValue); //@ nowarn;
+
+        // Transfer the required number of ballots
+        final int fromCandidateID = fromCandidate.getCandidateID();
+        final int toCandidateID = toCandidate.getCandidateID();
+        int ballotsMoved = 0;
+        // TODO 2009.10.15 ESC null dereference warning
+        for (int b = 0; b < ballots.length; b++) { //@ nowarn;
+            // TODO 2009.10.15 ESC null dereference warning 
+            if ((ballots[b].getCandidateID() == fromCandidateID) && //@ nowarn;
+                    (getNextContinuingPreference(ballots[b]) == toCandidateID)) {
+                // TODO 2009.10.15 ESC assignable warning
+                transferBallot(ballots[b]); //@ nowarn;
+                ballotsMoved++;
+                if (ballotsMoved == numberOfVotes) {
+                    break;
+                }
+            }
+        }
+        // TODO 2009.10.15 ESC warning
+    } //@ nowarn Post;
+
+    /**
+     * Count the ballots for this constituency using the rules of proportional
+     * representation by single transferable vote.
+     * 
+     * @see "requirement 1, section 3, item 2, page 12"
+     */
+    /*@ also
+      @   requires state == PRECOUNT || state == COUNTING;
+      @   requires \nonnullelements (candidateList);
+      @		assignable countNumberValue, ballotsToCount, candidateList[*];
+      @   assignable candidates, candidates[*];
+      @		assignable totalRemainingSeats, countStatus;
+      @		assignable savingThreshold, ballots, ballotsToCount;
+      @		assignable numberOfCandidatesElected;
+      @		assignable numberOfCandidatesEliminated;
+      @		assignable status, countStatus;
+      @		assignable remainingSeats, totalRemainingSeats;
+      @   ensures state == ElectionStatus.FINISHED;
+      @*/
+    public void count() {
+
+        // Start or else resume the counting of ballots
+        if (status < ElectionStatus.COUNTING) {
+            // TODO 2009.10.14 ESC warning
+            startCounting(); //@ nowarn;
+        }
+
+        // TODO 2009.10.15 ESC invariant warning
+        while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
+                countNumberValue < CountConfiguration.MAXCOUNT) {
+            // TODO 2009.10.15 ESC assignable warning
+            countStatus.changeState( //@ nowarn;
+                    AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
+
+            // Transfer surplus votes from winning candidates
+            // TODO 2009.10.15 ESC precondition warning
+            electCandidatesWithSurplus(); //@ nowarn;
+
+            // Exclusion of lowest continuing candidates if no surplus
+            // TODO 2009.10.15 ESC precondition warning
+            excludeLowestCandidates(); //@ nowarn;
+            // TODO 2009.10.15 ESC invariant warning
+            incrementCountNumber(); //@ nowarn;
+        }
+
+        // Filling of last seats
+        // TODO 2009.10.15 ESC warnings
+        if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
+            fillLastSeats(); //@ nowarn;
+
+        }
+
+        // TODO 2009.10.16 ESC assignable warning
+        countStatus.changeState(AbstractCountStatus.END_OF_COUNT); //@ nowarn Modifies ;
+        status = ElectionStatus.FINISHED;
+        // TODO 2009.10.16 ESC postcondition warning
+    } //@ nowarn;
+
+    /*@ assignable candidateList, ballotsToCount, candidates,
+      @   numberOfCandidatesElected, totalRemainingSeats;
+      @*/
+    protected void electCandidatesWithSurplus() {
+        while (getTotalSumOfSurpluses() > 0
+                && countNumberValue < CountConfiguration.MAXCOUNT
+                && getNumberContinuing() > totalRemainingSeats) {
+
+            countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
+            final int winner = findHighestCandidate();
+
+            if (winner != NONE_FOUND_YET) {
+
+                // Elect highest continuing candidate
+                updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
+                //@ assert 0 <= winner && winner < totalCandidates;
+                //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
+                //@ assert numberElected < seats;
+                //@ assert 0 < remainingSeats;
+                /*@ assert (hasQuota(candidateList[winner])) 
+                  @   || (winner == findHighestCandidate())
+                  @   || (getNumberContinuing() == totalRemainingSeats);
+                  @*/
+                electCandidate(winner);
+                countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
+                distributeSurplus(winner);
+            }
+        }
     }
-  }
 
-  /*@ requires state == PRECOUNT;
-    @ assignable state, countStatus, countNumberValue, totalRemainingSeats,
-    @   savingThreshold, numberOfCandidatesElected, numberOfCandidatesEliminated;
-    @ ensures state == COUNTING;
-    @*/
-  public void startCounting() {
-    status = ElectionStatus.COUNTING;
-    countNumberValue = 0;
+    /*@ requires \nonnullelements (candidateList);
+      @ assignable countStatus, countNumberValue, candidates, candidateList;
+      @ assignable numberOfCandidatesEliminated, ballots,
+      @   ballotsToCount;
+      @*/
+    protected void excludeLowestCandidates() {
+        while (getTotalSumOfSurpluses() == 0
+                && getNumberContinuing() > totalRemainingSeats
+                && countNumberValue < CountConfiguration.MAXCOUNT) {
 
-    totalRemainingSeats = numberOfSeats;
-    // TODO 2009.10.14 ESC invariant warning
-    savingThreshold = getDepositSavingThreshold(); //@ nowarn;
-    numberOfCandidatesElected = 0;
-    numberOfCandidatesEliminated = 0;
-    // TODO 2009.10.14 ESC postcondition warning
-  } //@ nowarn;
+            // TODO 2009.10.14 ESC assignable warning
+            countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE); //@ nowarn;
+            // TODO 2009.10.15 ESC precondition warning
+            final int loser = findLowestCandidate(); //@ nowarn;
 
-  public/*@ pure @*/int getDepositSavingThreshold() {
-    return 1 + (getQuota() / 4);
-  }
+            if (loser != NONE_FOUND_YET) {
 
-  /**
-   * Default constructor for BallotCounting. Creates and initialises the inner
-   * state machine for count status.
-   */
-  public BallotCounting() {
-    super();
-    // TODO 2009.10.14 ESC invariant warning
-    countStatus = new CountStatus(); //@ nowarn;
-    countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
-    // TODO 2009.10.14 ESC postcondition warning
-  } //@ nowarn;
+                // TODO 2009.10.15 ESC precondition warning
+                countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED); //@ nowarn;
+                // TODO 2009.10.15 ESC precondition warning
+                eliminateCandidate(loser); //@ nowarn;
+                // TODO 2009.10.15 ESC assignable warning
+                countStatus
+                        .changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS); //@ nowarn;
+                // TODO 2009.10.15 ESC null warning
+                redistributeBallots(candidates[loser].getCandidateID()); //@ nowarn;
+            }
+        }
+        // TODO 2009.10.15 ESC warnings
+    } //@ nowarn;
 
-  /*@ requires state == COUNTING && countStatus != null;
-    @ assignable countStatus.substate;
-    @*/
-  public void updateCountStatus(final int countingStatus) {
-    // TODO 2009.10.14 ESC assignable warning
-    countStatus.changeState(countingStatus); //@ nowarn;
-  }
-
-  //@ assignable countNumberValue;
-  //@ ensures \old(countNumberValue) + 1 == countNumberValue;
-  public void incrementCountNumber() {
-    countNumberValue++;
-  }
-
-  //@ ensures totalRemainingSeats == \result;
-  public/*@ pure @*/int getRemainingSeats() {
-    return totalRemainingSeats;
-  }
-
-  //@ ensures getNumberContinuing() == \result;
-  public/*@ pure @*/int getContinuingCandidates() {
-    return getNumberContinuing();
-  }
-
-  /**
-   * Return the status of the count
-   * 
-   * @return The status of the count
-   */
-  public AbstractCountStatus getCountStatus() {
-    return countStatus;
-  }
-
-  public String toString() {
-    return "state " + countStatus.getState() + " results " + getResults();
-  }
-
-  public String getResults() {
-    StringBuffer buffer = new StringBuffer();
-
-    buffer.append(this.countNumberValue + " rounds of counting ");
-
-    buffer.append(this.totalNumberOfCandidates + " candidates ");
-
-    for (int index = 0; index < this.totalNumberOfCandidates; index++) {
-      buffer.append("(" + candidates[index] + ") ");
+    /*@ assignable candidateList[*], countNumber, countNumberValue;
+      @ assignable numberOfCandidatesElected, totalRemainingSeats;
+      @ assignable candidates;
+      @*/
+    protected void fillLastSeats() {
+        // TODO 2009.10.14 ESC assignable warning
+        countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED); //@ nowarn;
+        for (int c = 0; c < totalNumberOfCandidates; c++) {
+            if (isContinuingCandidateID(candidates[c].getCandidateID())) {
+                // TODO 2009.10.15 ESC precondition warning
+                electCandidate(c); //@ nowarn;
+            }
+        }
     }
 
-    return buffer.toString();
-  }
+    /*@ requires state == PRECOUNT;
+      @ assignable state, countStatus, countNumberValue, totalRemainingSeats,
+      @   savingThreshold, numberOfCandidatesElected, numberOfCandidatesEliminated;
+      @ ensures state == COUNTING;
+      @*/
+    public void startCounting() {
+        status = ElectionStatus.COUNTING;
+        countNumberValue = 0;
+
+        totalRemainingSeats = numberOfSeats;
+        // TODO 2009.10.14 ESC invariant warning
+        savingThreshold = getDepositSavingThreshold(); //@ nowarn;
+        numberOfCandidatesElected = 0;
+        numberOfCandidatesEliminated = 0;
+        // TODO 2009.10.14 ESC postcondition warning
+    } //@ nowarn;
+
+    public/*@ pure @*/int getDepositSavingThreshold() {
+        return 1 + (getQuota() / 4);
+    }
+
+    /**
+     * Default constructor for BallotCounting. Creates and initialises the inner
+     * state machine for count status.
+     */
+    public BallotCounting() {
+        super();
+        // TODO 2009.10.14 ESC invariant warning
+        countStatus = new CountStatus(); //@ nowarn;
+        countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
+        // TODO 2009.10.14 ESC postcondition warning
+    } //@ nowarn;
+
+    /*@ requires state == COUNTING && countStatus != null;
+      @ assignable countStatus.substate;
+      @*/
+    public void updateCountStatus(final int countingStatus) {
+        // TODO 2009.10.14 ESC assignable warning
+        countStatus.changeState(countingStatus); //@ nowarn;
+    }
+
+    //@ assignable countNumberValue;
+    //@ ensures \old(countNumberValue) + 1 == countNumberValue;
+    public void incrementCountNumber() {
+        countNumberValue++;
+    }
+
+    //@ ensures totalRemainingSeats == \result;
+    public/*@ pure @*/int getRemainingSeats() {
+        return totalRemainingSeats;
+    }
+
+    //@ ensures getNumberContinuing() == \result;
+    public/*@ pure @*/int getContinuingCandidates() {
+        return getNumberContinuing();
+    }
+
+    /**
+     * Return the status of the count
+     * 
+     * @return The status of the count
+     */
+    public AbstractCountStatus getCountStatus() {
+        return countStatus;
+    }
+
+    public String toString() {
+        return "state " + countStatus.getState() + " results " + getResults();
+    }
+
+    public String getResults() {
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("quota = " + this.getQuota());
+        buffer.append(" threshold = " + this.getSavingThreshold() + "\n");
+        buffer.append(this.countNumberValue + " rounds of counting ");
+        buffer.append(this.totalNumberOfCandidates + " candidates\n");
+
+        for (int index = 0; index < this.totalNumberOfCandidates; index++) {
+            buffer.append("(" + candidates[index].toString() + ") ");
+        }
+
+        return buffer.toString();
+    }
+
+    /*@ ensures \result <==> 
+     * (this.getCountStatus().getState() == CountStatus.END_OF_COUNT && 
+     *  this.status == FINISHED)
+     */
+    public boolean isFinished() {
+        return this.getCountStatus().getState() == CountStatus.END_OF_COUNT
+                && this.status == FINISHED;
+    }
+
+    /**
+     * Get list of candidates from lowest to highest
+     * 
+     * @return An ordered list of candidates
+     */
+    public Candidate[] getOrderedListCandidates() {
+        Candidate[] candidateList = new Candidate[totalNumberOfCandidates];
+
+        // Losing candidates from lowest to highest
+        for (int i = 0; i < numberOfCandidatesEliminated; i++) {
+          candidateList[i] = candidates[excludedIndex[i]];
+        }
+
+        // Elected candidates in reverse order from lowest to highest
+        for (int j = numberOfCandidatesEliminated; 
+          j < totalNumberOfCandidates; j++) {
+          candidateList[j] = 
+            candidates[electedCandidateIndex[totalNumberOfCandidates-j]];
+        }
+
+        return candidateList;
+    }
 }

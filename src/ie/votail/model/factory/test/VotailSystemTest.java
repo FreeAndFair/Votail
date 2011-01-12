@@ -22,7 +22,7 @@ public class VotailSystemTest {
 
         ScenarioFactory scenarioFactory = new ScenarioFactory();
         BallotCounting ballotCounting = new BallotCounting();
-        Logger logger = Logger.getLogger(BallotBoxFactory.LOG_FILENAME);
+        Logger logger = Logger.getLogger(BallotBoxFactory.SUBSYSTEM_NAME);
 
         for (int seats = 1; seats <= 7; seats++) {
           for (int candidates = 1 + seats; candidates <= 1 + seats * seats; 
@@ -40,14 +40,12 @@ public class VotailSystemTest {
                     assert 0 < electionConfiguration.size();
                     Constituency constituency = 
                       electionConfiguration.getConstituency();
-                    logger.info(constituency.toString());
                     logger.info(electionConfiguration.toString());
                     ballotCounting.setup(constituency);
                     ballotCounting.load(electionConfiguration);
                     ballotCounting.count();
-                    String results = ballotCounting.getResults();
-                    logger.info(results);
-                    // TODO compare results with scenario
+                    logger.info(ballotCounting.getResults());
+                    assert scenario.matches (ballotCounting);
                 }
             }
         }

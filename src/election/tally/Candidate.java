@@ -321,7 +321,7 @@ public class Candidate extends CandidateStatus {
    * Summary of candidate information, excluding transfers
    */
   public String toString() {
-    StringBuffer stringBuffer = new StringBuffer("Candidate ID " + candidateID);
+    StringBuffer stringBuffer = new StringBuffer("Candidate " + candidateID);
     if (isElected()) {
       stringBuffer.append(" elected");
     } else if (state == ELIMINATED) {
@@ -330,7 +330,8 @@ public class Candidate extends CandidateStatus {
       stringBuffer.append(" continuing");
     }
     stringBuffer.append(" on round " + lastCountNumber + " with "
-                        + getOriginalVote() + " votes");
+                        + getOriginalVote() + " original votes and " +
+                        getTotalAtCount (lastCountNumber) + " final votes");
     return stringBuffer.toString();
   }
 }

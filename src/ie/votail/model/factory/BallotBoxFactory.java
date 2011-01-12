@@ -34,9 +34,9 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 public class BallotBoxFactory {
 
   public static final int DEFAULT_BIT_WIDTH = 7;
-  public static final String LOG_FILENAME = "VoteFactory.log";
+  public static final String SUBSYSTEM_NAME = "ie.votail";
   public static final String MODELS_VOTING_ALS = "models/voting.als";
-  protected final static Logger logger = Logger.getLogger(LOG_FILENAME);
+  protected final static Logger logger = Logger.getLogger(SUBSYSTEM_NAME);
   protected String modelName;
 
   /**
@@ -57,7 +57,7 @@ public class BallotBoxFactory {
     /*@ non_null*/ ElectoralScenario scenario, int scope) {
     
     final ElectionConfiguration electionConfiguration 
-      = new ElectionConfiguration(LOG_FILENAME);
+      = new ElectionConfiguration(SUBSYSTEM_NAME);
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
     electionConfiguration.setNumberOfSeats(scenario.getNumberOfSeats());
     electionConfiguration.setNumberOfCandidates(
@@ -76,9 +76,7 @@ public class BallotBoxFactory {
           }
           
           else if (sig.label.contains("this/Ballot")) {
-            
             for (Field field : sig.getFields()) {
-              
               if (field.label.contains("preferences")) {
                 A4TupleSet tupleSet = solution.eval(field);
                 //@ assert tupleSet != null;

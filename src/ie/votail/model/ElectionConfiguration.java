@@ -33,10 +33,10 @@ public class ElectionConfiguration extends BallotBox {
   //@ invariant numberOfCandidateIDs <= numberOfCandidates;
   private int numberOfCandidateIDs;
 
+  //@ invariant numberOfCandidateIDs <= candidateIDs.length;
   private int[] candidateIDs;
 
   private int currentBallotID;
-
 
   public ElectionConfiguration(String loggerName) {
     logger = Logger.getLogger(loggerName);
@@ -53,7 +53,7 @@ public class ElectionConfiguration extends BallotBox {
    * @param tupleSet The Alloy tuple set
    */
   public void extractPreferences(/*@ non_null*/ A4TupleSet tupleSet) {
-    int[] preferences = new int[Candidate.MAX_CANDIDATES];
+    int[] preferences = new int[numberOfCandidates];
     int lengthOfBallot = 0;
     
     for (A4Tuple tuple: tupleSet) {  
@@ -64,7 +64,7 @@ public class ElectionConfiguration extends BallotBox {
         //@ assert 0 <= preference
         String candidate = tuple.atom(2).substring(10); // prefix = "Candidate$"
         int candidateID = 1 + Integer.parseInt(candidate); 
-        logger.info("ballot = " + ballotID + ", preference = " + preference +
+        logger.info("ballot = " + ballotID + ", preference = " + (preference+1) +
                     ", candidate = " + candidateID);
         updateCandidateIDs(candidateID);
         

@@ -91,6 +91,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @           numberOfSeats - numberOfCandidatesElected;
     @*/
 
+protected int[] electedCandidateIndex;
+
+protected int[] excludedIndex;
+
   /**
    * Default Constructor.
    */
@@ -296,6 +300,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * 
    * @param ballotBox
    *        The ballots to be counted, already "shuffled and mixed".
+ * @param  
    */
   /*@ also
     @   protected normal_behavior
@@ -307,6 +312,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     ensures totalVotes == ballotsToCount.length;
     @*/
   public void load(final/*@ non_null @*/BallotBox ballotBox) {
+    electedCandidateIndex = new int [numberOfSeats];
+    excludedIndex = new int [totalNumberOfCandidates - numberOfSeats];
+    
     totalNumberOfVotes = ballotBox.size();
     ballots = new Ballot[totalNumberOfVotes];
     int index = 0;
@@ -935,6 +943,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   ballotsToCount[b].getCandidateID() != candidateList[loser].getCandidateID());
     @*/
   public void eliminateCandidate(final int loser) {
+    excludedIndex[numberOfCandidatesEliminated] = loser;
     candidates[loser].declareEliminated();
     redistributeBallots(candidates[loser].getCandidateID());
     numberOfCandidatesEliminated++;
@@ -1012,10 +1021,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ ensures isElected (candidateList[winner]);
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;
+    electedCandidateIndex[numberOfCandidatesElected] = winner;
     candidates[winner].declareElected();
     numberOfCandidatesElected++;
     totalRemainingSeats--;
     // TODO 2009.10.14 ESC precondition
+    
   } //@ nowarn;
 
   /**

@@ -6,6 +6,9 @@ package ie.votail.model;
 
 import java.util.Iterator;
 
+import election.tally.BallotCounting;
+import election.tally.Candidate;
+
 /**
  * A combination of possible election outcomes for each candidate.
  */
@@ -130,7 +133,6 @@ public class ElectoralScenario {
    *     <li>c6.outcome = TiedWinner and</li>
    *     <li>c7.outcome = TiedLoser and</li>
    *     <li>c8.outcome = TiedEarlyLoser</li>
-   *     Election.quota = 1
    * </p>
    * @return The <code>Alloy</code> predicate as a string
    */
@@ -153,7 +155,7 @@ public class ElectoralScenario {
       stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
       i++;
     }
-    stringBuffer.append(" and Election.method = STV");
+    stringBuffer.append(" and Election.method = STV and 0 < #Ballot");
     stringBuffer.append(" and #Election.candidates = " + this.numberOfCandidates);
     return stringBuffer.toString();
   }
@@ -353,4 +355,31 @@ public class ElectoralScenario {
   public int getNumberOfCandidates() {
     return this.numberOfCandidates;
   }
+
+/** 
+ * Does this scenario match the election result?
+ * 
+ * @param ballotCounting The results of the election count
+ * @return True if this scenario matches this election result
+ */
+  //@ requires ballotCounting.isFinished();
+public boolean matches(BallotCounting ballotCounting) {
+    if (this.numberOfCandidates == ballotCounting.getTotalNumberOfCandidates() &&
+        this.numberOfSeats == ballotCounting.getTotalNumberOfSeats()) {
+        
+        Candidate[] candidateList = ballotCounting.getOrderedListCandidates();
+        
+        // Match each candidate with an outcome and each outcome with a candidate
+        int index = 0;
+        for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
+            if (!outcome.matches(candidateList[index])) {
+              return false;
+            }
+            
+            index++;
+        }
+        return true;
+    }
+    return false;
+}
 }

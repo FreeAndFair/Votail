@@ -408,6 +408,7 @@ pred ScenarioLWW {
 		c.outcome = Winner
     #Election.candidates = 3
 	Election.method = STV
+    0 < #Ballot
 }
 run ScenarioLWW for 7 but 7 int
 
@@ -454,6 +455,15 @@ pred UnitTest {
 	Election.method = STV and #Election.candidates = 2 and #Election.seats = 1
 }
 run UnitTest for 10 but 6 int
+
+pred LQQW {
+	some disj a,b,c,d: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
+		c.outcome = Winner and d.outcome = QuotaWinner
+    #Election.candidates = 4
+	Election.method = STV
+    0 < #Ballot
+}
+run LQQW for 10 but 7 int
 
 -- Version Control for changes to signatures and axioms, exlcuding lemmas and tests
 one sig Version {
