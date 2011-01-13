@@ -16,7 +16,6 @@ sig Candidate {
 	no b: Ballot | b in votes & transfers
 	all b: Ballot | b in votes + transfers implies this in b.assignees
 	surplus in votes + transfers
-    #surplus < #transfers implies surplus in transfers -- surpluses are taken first from transfers
 	Election.method = Plurality implies #surplus = 0 and #transfers = 0
 }
 
@@ -47,7 +46,7 @@ one sig Scenario {
  	no c: Candidate | c in losers & winners
  	0 < #losers
  	all w: Candidate | all l: Candidate | l in losers and w in winners implies 
-		#l.votes + #l.transfers <= #w.votes + #w.transfers
+		((#l.votes + #l.transfers <= #w.votes + #w.transfers) and (#l.votes <= #w.votes))
 	0 <= threshold
 	threshold <= quota
     Election.method = STV implies (threshold = 1 + quota.div[4])
@@ -96,6 +95,15 @@ fact threshold {
    Election.method = Plurality implies Scenario.threshold = Election.ballots.div[20]
 }
 
+fact surplus {
+  all c: Candidate | c.outcome = Winner implies
+     ((#c.surplus <= #c.votes - Scenario.quota) and (#transfers = 0)) 
+}
+
+fact surplusFromTransfers {
+  all c: Candidate | c.outcome = QuotaWinner implies ((surplus in transfers) and
+     (#c.surplus <= #c.transfers) and (#c.surplus <= (#c.votes + #c.transfers - Scenario.quota)))
+}
 
 fact integrity {
   all c: Candidate | all b: Ballot | b in c.votes implies c in b.assignees
@@ -478,9 +486,9 @@ pred LQQW {
 	Election.method = STV
     0 < #Ballot
 }
-run LQQW for 10 but 7 int
+run LQQW for 16 but 7 int
 
--- Version Control for changes to signatures and axioms, exlcuding lemmas and tests
+-- Version Control for changes to signatures and axioms, excluding lemmas and tests
 one sig Version {
    year, month, day : Int
 } {
