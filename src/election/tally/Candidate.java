@@ -163,7 +163,7 @@ public class Candidate extends CandidateStatus {
       votesAdded[i] = 0;
       votesRemoved[i] = 0;
     }
-    lastCountNumber = 0;
+    lastCountNumber = 1;
   }
 
   /**
@@ -344,5 +344,15 @@ public class Candidate extends CandidateStatus {
 //@ ensures \result <==> (state == ELIMINATED);
 public boolean isEliminated() {
     return state == ELIMINATED;
+}
+
+//@ ensures \result = lastCountNumber;
+public int getLastRound() {
+  return lastCountNumber+1;
+}
+
+//@ ensures \result == getTotalAtCount(0);
+public int getInitialVote() {
+  return getTotalAtCount(0);
 }
 }

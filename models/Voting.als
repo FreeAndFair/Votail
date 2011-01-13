@@ -49,7 +49,8 @@ one sig Scenario {
  	all w: Candidate | all l: Candidate | l in losers and w in winners implies 
 		#l.votes + #l.transfers <= #w.votes + #w.transfers
 	0 <= threshold
-	threshold < quota
+	threshold <= quota
+    Election.method = STV implies (threshold = 1 + quota.div[4])
 	Election.method = Plurality implies #eliminated = 0
 	eliminated in losers
 	all c: Candidate | c in losers implies Election.method = Plurality 
@@ -79,15 +80,23 @@ enum Method {Plurality, STV}
 one sig Election {
   candidates: 	set Candidate,
   seats: 				Int,
-  method: 	Method
+  method: 			Method,
+  ballots:			Int -- number of ballots cast
 }
 {
  	0 < seats
  	seats < #candidates
  	all c: Candidate | c in candidates
+    ballots = #Ballot
+    Scenario.quota = 1 + ballots.div[seats+1]
 }
 
 -- Independent (or Fundamental) Axioms
+fact threshold {
+   Election.method = Plurality implies Scenario.threshold = Election.ballots.div[20]
+}
+
+
 fact integrity {
   all c: Candidate | all b: Ballot | b in c.votes implies c in b.assignees
 }
@@ -318,6 +327,12 @@ assert validCompromise {
 }
 check validCompromise for 6 int
 
+// Quota not more than the number of ballots cast
+assert maxQuota {
+  Scenario.quota < Election.ballots
+}
+check maxQuota for 7 int
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
@@ -471,6 +486,6 @@ one sig Version {
 } {
   year = 11
   month = 01
-  day = 07
-  -- Dermot Cochran 2011-01-07
+  day = 13
+  -- Dermot Cochran 2011-01-13
 }
