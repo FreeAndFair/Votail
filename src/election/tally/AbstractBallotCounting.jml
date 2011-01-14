@@ -134,8 +134,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /** Number of rounds of counting so far */
   //@ public model int countNumber;
-  //@ public initially countNumber == 0;
-  //@ public invariant 0 <= countNumber;
+  //@ public initially countNumber == 1;
+  //@ public invariant 0 < countNumber;
   /*@ public invariant (PRELOAD <= state) ==>
     @   countNumber <= CountConfiguration.MAXCOUNT;
     @ public constraint (state == COUNTING) ==> 
@@ -153,7 +153,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
 
   /*@ ensures \nonnullelements (candidateList);
-    @ 
     @*/
    public AbstractBallotCounting();
 	

@@ -393,10 +393,17 @@ public class BallotCounting extends AbstractBallotCounting {
   public BallotCounting() {
     super();
     // TODO 2009.10.14 ESC invariant warning
-    countStatus = new CountStatus(); //@ nowarn;
+    countStatus = createCountStatus(); //@ nowarn;
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
     // TODO 2009.10.14 ESC postcondition warning
   } //@ nowarn;
+
+  /**
+   * @return
+   */
+  public CountStatus createCountStatus() {
+    return new CountStatus();
+  }
   
   /*@ requires state == COUNTING && countStatus != null;
     @ assignable countStatus.substate;
@@ -427,15 +434,16 @@ public class BallotCounting extends AbstractBallotCounting {
    * 
    * @return The status of the count
    */
-  public AbstractCountStatus getCountStatus() {
+  //@ ensures \result == countStatus;
+  public /*@ pure*/ AbstractCountStatus getCountStatus() {
     return countStatus;
   }
   
-  public String toString() {
+  public /*@ non_null pure*/ String toString() {
     return "state " + countStatus.getState() + " results " + getResults();
   }
   
-  public String getResults() {
+  public /*@ pure*/ String getResults() {
     StringBuffer buffer = new StringBuffer();
     
     buffer.append("quota = " + this.getQuota());
@@ -450,11 +458,11 @@ public class BallotCounting extends AbstractBallotCounting {
     return buffer.toString();
   }
   
-  /*@ ensures \result <==> 
-   * (this.getCountStatus().getState() == CountStatus.END_OF_COUNT && 
-   *  this.status == FINISHED)
-   */
-  public boolean isFinished() {
+  /*@ ensures \result <==>
+    @   (this.getCountStatus().getState() == CountStatus.END_OF_COUNT &&
+    @  this.status == FINISHED);
+    @*/
+  public /*@ pure*/ boolean isFinished() {
     return this.getCountStatus().getState() == CountStatus.END_OF_COUNT
         && this.status == FINISHED;
   }
@@ -464,6 +472,9 @@ public class BallotCounting extends AbstractBallotCounting {
    * 
    * @return An ordered list of candidates
    */
+  //@ requires 0 <= totalNumberOfCandidates;
+  //@ requires excludedIndex != null;
+  //@ requires electedCandidateIndex != null;
   public Candidate[] getOrderedListCandidates() {
     Candidate[] candidateList = new Candidate[totalNumberOfCandidates];
     
@@ -481,7 +492,7 @@ public class BallotCounting extends AbstractBallotCounting {
     return candidateList;
   }
   
-  //@ ensures \result == this.countNumberValue;
+  //@ ensures \result + 1 == this.countNumberValue;
   public int getNumberOfRounds() {
     return this.countNumberValue-1;
   }

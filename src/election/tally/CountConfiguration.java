@@ -15,5 +15,5 @@ public class CountConfiguration {
    * @design This value is not set by the legislation; it is chosen so that
    *         fixed length arrays can be used in the specification.
    */
-  public static final int    MAXCOUNT = 50;
+  public static final int MAXCOUNT = 50;
 }

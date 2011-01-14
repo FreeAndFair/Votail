@@ -70,7 +70,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public represents seats <- numberOfSeats;
 
   /** Number of seats in this constituency */
-  protected transient int totalNumberOfSeats;
+  protected transient /*@ spec_public*/ int totalNumberOfSeats;
   //@ protected represents totalSeats <- totalNumberOfSeats;
 
   /** Total number of valid ballot papers */
@@ -91,9 +91,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @           numberOfSeats - numberOfCandidatesElected;
     @*/
 
-protected int[] electedCandidateIndex;
+protected /*@ spec_public*/ int[] electedCandidateIndex;
 
-protected int[] excludedIndex;
+protected /*@ spec_public*/ int[] excludedIndex;
 
   /**
    * Default Constructor.
@@ -115,7 +115,7 @@ protected int[] excludedIndex;
     numberOfCandidatesEliminated = 0;
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
-  }
+  } // TODO ESC 2011.01.14 Postcondition possibly not established (Post)
 
   /**
    * Determine if the candidate has enough votes to be elected.
@@ -306,7 +306,7 @@ protected int[] excludedIndex;
     @   protected normal_behavior
     @     requires state == PRELOAD;
     @     assignable state, totalVotes, ballotsToCount, ballots;
-    @     assignable totalNumberOfVotes;
+    @     assignable totalNumberOfVotes, electedCandidateIndex, excludedIndex;
     @     ensures state == PRECOUNT;
     @     ensures totalVotes == ballotBox.numberOfBallots;
     @     ensures totalVotes == ballotsToCount.length;
@@ -932,6 +932,8 @@ protected int[] excludedIndex;
     @ requires \nonnullelements (candidateList);
     @ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
     @ requires hasQuota (candidateList[loser]) == false;
+    @ requires 0 < numberOfCandidatesEliminated;
+    @ requires numberOfCandidatesEliminated <= excludedIndex.length;
     @ assignable candidateList;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
@@ -940,7 +942,8 @@ protected int[] excludedIndex;
     @ ensures numberElected <= seats;
     @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
     @ ensures (\forall int b; 0 <= b && b < ballotsToCount.length;
-    @   ballotsToCount[b].getCandidateID() != candidateList[loser].getCandidateID());
+    @   ballotsToCount[b].getCandidateID() != 
+    @   candidateList[loser].getCandidateID());
     @*/
   public void eliminateCandidate(final int loser) {
     excludedIndex[numberOfCandidatesEliminated] = loser;
@@ -1015,6 +1018,7 @@ protected int[] excludedIndex;
     @*/
   //@ requires state == ElectionStatus.COUNTING;
   //@ requires 0 < candidateList[winner].getCandidateID();
+  //@ requires numberOfCandidatesElected < electedCandidateIndex.length;
   //@ assignable candidates, numberOfCandidatesElected;
   //@ assignable totalRemainingSeats;
   //@ assignable candidates[winner], candidates[winner].state;
@@ -1035,7 +1039,10 @@ protected int[] excludedIndex;
    * 
    * @return The number of continuing candidates.
    */
-  public/*@ pure @*/int getNumberContinuing() {
+/*@ also ensures \result == (totalNumberOfCandidates
+  @   - (numberOfCandidatesElected + numberOfCandidatesEliminated));
+  @*/
+  public/*@ pure @*/ int getNumberContinuing() {
     return totalNumberOfCandidates
            - (numberOfCandidatesElected + numberOfCandidatesEliminated);
   }
@@ -1043,63 +1050,72 @@ protected int[] excludedIndex;
 /**
  * @return the totalNumberOfCandidates
  */
-public int getTotalNumberOfCandidates() {
+//@ ensures \result == totalNumberOfCandidates;
+public /*@ pure*/ int getTotalNumberOfCandidates() {
     return totalNumberOfCandidates;
 }
 
 /**
  * @return the numberOfCandidatesElected
  */
-public int getNumberOfCandidatesElected() {
+//@ ensures \result == numberOfCandidatesElected;
+public /*@ pure*/ int getNumberOfCandidatesElected() {
     return numberOfCandidatesElected;
 }
 
 /**
  * @return the numberOfCandidatesEliminated
  */
-public int getNumberOfCandidatesEliminated() {
+//@ ensures \result == numberOfCandidatesEliminated;
+public /*@ pure*/ int getNumberOfCandidatesEliminated() {
     return numberOfCandidatesEliminated;
 }
 
 /**
  * @return the numberOfSeats
  */
-public int getNumberOfSeats() {
+//@ ensures \result == numberOfSeats;
+public /*@ pure*/ int getNumberOfSeats() {
     return numberOfSeats;
 }
 
 /**
  * @return the totalNumberOfSeats
  */
-public int getTotalNumberOfSeats() {
+//@ ensures \result == totalNumberOfSeats;
+public /*@ pure*/ int getTotalNumberOfSeats() {
     return totalNumberOfSeats;
 }
 
 /**
  * @return the totalNumberOfVotes
  */
-public int getTotalNumberOfVotes() {
+//@ ensures \result == totalNumberOfVotes;
+public /*@ pure*/ int getTotalNumberOfVotes() {
     return totalNumberOfVotes;
 }
 
 /**
  * @return the savingThreshold
  */
-public int getSavingThreshold() {
+//@ ensures \result == savingThreshold;
+public /*@ pure*/ int getSavingThreshold() {
     return savingThreshold;
 }
 
 /**
  * @return the countNumberValue
  */
-public int getCountNumberValue() {
+//@ ensures \result == countNumberValue;
+public /*@ pure*/ int getCountNumberValue() {
     return countNumberValue;
 }
 
 /**
  * @return the totalRemainingSeats
  */
-public int getTotalRemainingSeats() {
+//@ ensures \result == totalRemainingSeats;
+public /*@ pure*/ int getTotalRemainingSeats() {
     return totalRemainingSeats;
 }
 
