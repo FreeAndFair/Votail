@@ -288,6 +288,11 @@ fact winnersHaveVotes {
      ((#l.votes < #w.votes) or (#l.votes + #l.transfers < #w.votes + #w.transfers))
 }
 
+// Losers above threshold
+fact losersAboveThreshold {
+  all c: Candidate | c.outcome = Loser implies Scenario.threshold < (#c.votes + #c.transfers)
+}
+
 -- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
@@ -356,13 +361,15 @@ assert quotaWinnerNeedsTransfers {
 }
 check quotaWinnerNeedsTransfers for 7 int
 
+
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
 	Election.seats = 1
 	#Election.candidates = 2
 }
-run TwoCandidatePlurality for 10 but 1 Ballot, 6 int
+run TwoCandidatePlurality for 10 but 2 Ballot, 6 int
 
 pred PluralityTiedWinner {
 	Election.method = Plurality
@@ -487,14 +494,13 @@ pred NoTiesAndNoSoresScenarios {
 }
 run NoTiesAndNoSoresScenarios for 10 but 6 int
 
--- Unit Tests
-pred UnitTest {
+-- Scenario tests
+pred LW {
   some disj c0,c1: Candidate | c0.outcome = Winner and c1.outcome = Loser and 
 	Election.method = STV and #Election.candidates = 2 and #Election.seats = 1
 }
-run UnitTest for 10 but 6 int
+run LW for 10 but 6 int
 
--- Difficult scenarios
 pred LQ {
 	some disj a,b: Candidate | a.outcome = Loser and b.outcome = QuotaWinner
     #Election.candidates = 2
@@ -530,7 +536,7 @@ pred LQQW {
 }
 run LQQW for 10 but 6 int
 
--- Version Control for changes to signatures and axioms, excluding lemmas and tests
+-- Version Control for changes to signatures and axioms, excluding lemmas and predicates
 one sig Version {
    year, month, day : Int
 } {
