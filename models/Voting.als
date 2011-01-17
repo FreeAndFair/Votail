@@ -96,13 +96,17 @@ fact threshold {
 }
 
 fact surplus {
-  all c: Candidate | c.outcome = Winner implies
-     ((#c.surplus <= #c.votes - Scenario.quota) and (#transfers = 0)) 
+  all c: Candidate | (c.outcome = Winner and Election.method = STV) implies
+     Scenario.quota + #c.surplus = #c.votes 
+}
+
+fact winnersWithoutTransfers {
+  all c: Candidate | (c.outcome = Winner and Election.method = STV) implies #c.transfers = 0 
 }
 
 fact surplusFromTransfers {
-  all c: Candidate | c.outcome = QuotaWinner implies ((surplus in transfers) and
-     (#c.surplus <= #c.transfers) and (#c.surplus <= (#c.votes + #c.transfers - Scenario.quota)))
+  all c: Candidate | c.outcome = QuotaWinner implies ((surplus in transfers) and 
+     ((Scenario.quota + #c.surplus) = (#c.votes + #c.transfers)))
 }
 
 fact integrity {
@@ -116,28 +120,33 @@ fact pluralityEvents {
 }
 
 fact winnerSTV {
-	all c: Candidate | Election.method = STV implies (
-		c.outcome = Winner iff Scenario.quota <= #c.votes)
+	all c: Candidate | (Election.method = STV and c.outcome = Winner) implies 
+       Scenario.quota <= #c.votes
 }
 
-fact transferWinner {
-	all c: Candidate | c.outcome = QuotaWinner iff
-		(not Scenario.quota <= #c.votes and Scenario.quota <= #c.votes + #c.transfers)
+fact transferWinnerWithQuota {
+	all c: Candidate | (Election.method = STV and c.outcome = QuotaWinner) implies
+	   Scenario.quota <= #c.votes + #c.transfers
+}
+
+fact transferWinnerNotFirst {
+	all c: Candidate |  (Election.method = STV and c.outcome = QuotaWinner) implies
+		not Scenario.quota <= #c.votes
 }
 
 fact closeWinner {
-	all c: Candidate | (c.outcome = CompromiseWinner or c.outcome = TiedWinner) iff
-		(c in Scenario.winners and not Scenario.quota <= #c.votes + #c.transfers)
+	all c: Candidate | (c.outcome = CompromiseWinner or c.outcome = TiedWinner) implies
+		not (Scenario.quota <= #c.votes + #c.transfers) or Election.method = Plurality
 }
 
 fact soreLoser {
-	all c: Candidate | (c.outcome = SoreLoser or c.outcome = TiedSoreLoser) iff 
-		((#c.votes + #c.transfers < Scenario.threshold) and not c in Scenario.winners)
+	all c: Candidate | (c.outcome = SoreLoser or c.outcome = TiedSoreLoser) implies 
+		(#c.votes + #c.transfers < Scenario.threshold)
 }
 
 fact loser {
-	all c: Candidate | (c.outcome = Loser or c.outcome = TiedLoser or c.outcome = TiedSoreLoser) iff 
-		c in Scenario.losers - Scenario.eliminated
+	all c: Candidate | (c.outcome = Loser or c.outcome = TiedLoser or c.outcome = TiedSoreLoser) 
+        implies c in Scenario.losers - Scenario.eliminated
 }
 
 fact earlyLoser {
@@ -337,9 +346,15 @@ check validCompromise for 6 int
 
 // Quota not more than the number of ballots cast
 assert maxQuota {
-  Scenario.quota < Election.ballots
+  Scenario.quota <= #Ballot
 }
 check maxQuota for 7 int
+
+// Quota winner needs transfers
+assert quotaWinnerNeedsTransfers {
+  all c: Candidate | c.outcome = QuotaWinner implies 0 < #c.transfers
+}
+check quotaWinnerNeedsTransfers for 7 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -479,6 +494,33 @@ pred UnitTest {
 }
 run UnitTest for 10 but 6 int
 
+-- Difficult scenarios
+pred LQ {
+	some disj a,b: Candidate | a.outcome = Loser and b.outcome = QuotaWinner
+    #Election.candidates = 2
+	Election.method = STV
+    0 < #Ballot
+}
+run LQ for 10 but 6 int
+
+pred LQQ {
+	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and
+       c.outcome = QuotaWinner
+    #Election.candidates = 3
+	Election.method = STV
+    0 < #Ballot
+}
+run LQQ for 10 but 6 int
+
+pred LQW {
+	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
+		c.outcome = Winner
+    #Election.candidates = 3
+	Election.method = STV
+    0 < #Ballot
+}
+run LQW for 10 but 6 int
+
 pred LQQW {
 	some disj a,b,c,d: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
 		c.outcome = Winner and d.outcome = QuotaWinner
@@ -486,7 +528,7 @@ pred LQQW {
 	Election.method = STV
     0 < #Ballot
 }
-run LQQW for 16 but 7 int
+run LQQW for 10 but 6 int
 
 -- Version Control for changes to signatures and axioms, excluding lemmas and tests
 one sig Version {
@@ -494,6 +536,6 @@ one sig Version {
 } {
   year = 11
   month = 01
-  day = 13
-  -- Dermot Cochran 2011-01-13
+  day = 17
+  -- Dermot Cochran 2011-01-17
 }
