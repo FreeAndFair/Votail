@@ -68,7 +68,7 @@ one sig Scenario {
     TiedEarlyLoser:			(L3) reaches threshold but eliminated by tie breaker (STV only),
 	EarlyLoser:					(L4) reaches threshold but is eliminated before last round (STV only),
 	TiedSoreLoser:				(L5) loses only by tie breaker but does not reach threshold,
-	SoreLoser: 					(L6) does not even reach the mimimum threshold of votes
+	SoreLoser: 					(L6) does not even reach the mimimum threshold of votes.
 */
 enum Event {Winner, QuotaWinner, CompromiseWinner, TiedWinner, 
 	TiedLoser, Loser, TiedEarlyLoser, EarlyLoser, TiedSoreLoser, SoreLoser}
@@ -520,11 +520,10 @@ run NoTiesAndNoSoresScenarios for 10 but 6 int
 
 -- Scenario tests
 pred LW {
-  some disj c0,c1: Candidate | c0.outcome = Winner and c1.outcome = Loser and 
-	Election.method = STV and #Election.candidates = 2 and #Election.seats = 1 and
-    (Scenario.threshold < #c1.votes + #c1.transfers)
+  some disj c0,c1: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
+  Election.method = STV and 0 < #Ballot and #Election.candidates = 2
 }
-run LW for 10 but 6 int
+run LW for 5 but 6 int
 
 pred LQ {
 	some disj a,b: Candidate | a.outcome = Loser and b.outcome = QuotaWinner
