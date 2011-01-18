@@ -40,12 +40,12 @@ public enum Outcome {
     if (this == Winner && quota <= candidate.getInitialVote()) {
       return true;
     }
-    else if (this == QuotaWinner && quota <= candidate.getOriginalVote()
+    else if (this == QuotaWinner && quota <= candidate.getFinalVote()
         && candidate.getInitialVote() < quota) {
       return true;
     }
     else if ((this == CompromiseWinner || this == TiedWinner)
-        && candidate.isElected() && candidate.getOriginalVote() < quota) {
+        && candidate.isElected() && candidate.getFinalVote() < quota) {
       return true;
     }
     else if ((this == Loser || this == TiedLoser) && candidate.isEliminated()

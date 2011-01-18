@@ -74,11 +74,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ protected represents totalSeats <- totalNumberOfSeats;
 
   /** Total number of valid ballot papers */
-  protected/*@ spec_public @*/transient int         totalNumberOfVotes;
+  protected /*@ spec_public @*/transient int         totalNumberOfVotes;
   //@ protected represents totalVotes <- totalNumberOfVotes;
 
   /** Number of votes needed to save deposit unless elected */
-  protected transient/*@ spec_public @*/int         savingThreshold;
+  protected /*@ spec_public @*/int         savingThreshold;
   //@ protected represents depositSavingThreshold <- savingThreshold;
 
   /** Number of rounds of counting so far. */
@@ -91,9 +91,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @           numberOfSeats - numberOfCandidatesElected;
     @*/
 
-protected /*@ spec_public*/ int[] electedCandidateIndex;
+  protected /*@ spec_public non_null @*/ int[] electedCandidateIndex;
 
-protected /*@ spec_public*/ int[] excludedIndex;
+  protected /*@ spec_public non_null @*/ int[] excludedIndex;
 
   /**
    * Default Constructor.
@@ -110,12 +110,13 @@ protected /*@ spec_public*/ int[] excludedIndex;
   public AbstractBallotCounting() {
     super();
     status = ElectionStatus.EMPTY;
-    countNumberValue = 0;
+    countNumberValue = 1;
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
-  } // TODO ESC 2011.01.14 Postcondition possibly not established (Post)
+  } //@ nowarn Post;
+  // TODO ESC 2011.01.17 Postcondition possibly not established (Post)
 
   /**
    * Determine if the candidate has enough votes to be elected.
@@ -315,7 +316,9 @@ protected /*@ spec_public*/ int[] excludedIndex;
     electedCandidateIndex = new int [numberOfSeats];
     excludedIndex = new int [totalNumberOfCandidates - numberOfSeats];
     
-    totalNumberOfVotes = ballotBox.size();
+    totalNumberOfVotes = ballotBox.size(); //@ nowarn;
+    // TODO ESC 2011.01.17 Possible violation of object invariant
+    
     ballots = new Ballot[totalNumberOfVotes];
     int index = 0;
     // TODO 2009.10.14 ESC invariant violation

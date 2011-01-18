@@ -441,7 +441,8 @@ public class BallotCounting extends AbstractBallotCounting {
   
   public /*@ non_null pure*/ String toString() {
     return "state " + countStatus.getState() + " results " + getResults();
-  }
+  } //@ nowarn Post;
+  // TODO ESC 2011.01.17 Postcondition possibly not established
   
   public /*@ pure*/ String getResults() {
     StringBuffer buffer = new StringBuffer();
@@ -475,21 +476,47 @@ public class BallotCounting extends AbstractBallotCounting {
   //@ requires 0 <= totalNumberOfCandidates;
   //@ requires excludedIndex != null;
   //@ requires electedCandidateIndex != null;
+  //@ requires numberOfCandidatesEliminated <= excludedIndex.length;
   public Candidate[] getOrderedListCandidates() {
     Candidate[] candidateList = new Candidate[totalNumberOfCandidates];
     
     // Losing candidates from lowest to highest
     for (int i = 0; i < numberOfCandidatesEliminated; i++) {
-      candidateList[i] = candidates[excludedIndex[i]];
+      final int excludedCandidateIndex = getExcludedCandidateIndex(i);
+      candidateList[i] = candidates[excludedCandidateIndex];
     }
     
     // Elected candidates in reverse order from lowest to highest
     for (int j = 0; j < totalNumberOfSeats; j++) {
-      candidateList[candidateList.length - 1 - j] =
-          candidates[electedCandidateIndex[j]];
+      final int electedCandidate = getElectedCandidateIndex(j);
+      final int index = candidateList.length - 1 - j;
+      candidateList[index] =
+          candidates[electedCandidate];
     }
     
     return candidateList;
+  }
+
+  /**
+   * @param index
+   * @return
+   */
+  //@ requires electedCandidateIndex != null;
+  //@ requires 0 <= index && index < electedCandidateIndex.length;
+  //@ ensures 0 <= \result && \result < candidates.length;
+  public int getElectedCandidateIndex(int index) {
+    return electedCandidateIndex[index];
+  }
+
+  /**
+   * @param index
+   * @return
+   */
+  //@ requires excludedIndex != null;
+  //@ requires 0 <= index && index < excludedIndex.length;
+  //@ ensures 0 <= \result && \result < candidates.length;
+  public int getExcludedCandidateIndex(int index) {
+    return excludedIndex[index];
   }
   
   //@ ensures \result + 1 == this.countNumberValue;

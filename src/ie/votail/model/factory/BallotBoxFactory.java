@@ -119,10 +119,13 @@ public class BallotBoxFactory {
       modelName);
     Expr predicate = CompUtil.parseOneExpression_fromString(world,
       scenario.toPredicate());
+    logger.info("Using this predicate: " + predicate.toString() + " " + 
+      predicate.getDescription());
     Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, 
-                                  predicate);
+      predicate);
     A4Solution solution = TranslateAlloyToKodkod.execute_command(reporter,
       world.getAllReachableSigs(), command, options);
+    logger.info("Found this solution: " + solution.toString());
     return solution;
   }
 }
