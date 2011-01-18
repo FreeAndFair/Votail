@@ -145,13 +145,13 @@ fact soreLoser {
 }
 
 fact loser {
-	all c: Candidate | (c.outcome = Loser or c.outcome = TiedLoser or c.outcome = TiedSoreLoser) 
-        implies c in Scenario.losers - Scenario.eliminated
+	all c: Candidate | (c.outcome = Loser or c.outcome = TiedLoser) 
+        implies (c in Scenario.losers and c not in Scenario.eliminated)
 }
 
 fact earlyLoser {
 	all c: Candidate | (c.outcome = EarlyLoser or c.outcome = TiedEarlyLoser) iff 
-		(c in Scenario.losers & Scenario.eliminated and not #c.votes + #c.transfers < Scenario.threshold)
+		(c in Scenario.eliminated and not (#c.votes + #c.transfers < Scenario.threshold))
 }
 
 fact winners {
@@ -173,7 +173,7 @@ fact transfers {
 
 fact onlyWinnersAndQuotaWinnersHaveSurplus {
 	all c: Candidate | 0 < #c.surplus implies 
-		c.outcome = Winner or c.outcome = QuotaWinner
+		(c.outcome = Winner or c.outcome = QuotaWinner)
 }
 
 fact winnersNeedNoTransfers {
@@ -186,20 +186,20 @@ fact firstPreference {
 
 fact sizeOfSurplus {
 	all c: Candidate | (c in Scenario.winners and Election.method = STV and 0 < #c.surplus) implies 
-		#c.surplus = #c.votes + #c.transfers - Scenario.quota
+		(#c.surplus = #c.votes + #c.transfers - Scenario.quota)
 }
 
 fact transferToNextPreference {
 	all b: Ballot | all disj donor,receiver: Candidate |
 		(donor + receiver in b.assignees and
-		b in receiver.transfers and b in donor.surplus implies 
-		b.preferences.idxOf[donor] < b.preferences.idxOf[receiver] and
+		b in receiver.transfers and b in donor.surplus) implies 
+		(b.preferences.idxOf[donor] < b.preferences.idxOf[receiver] and
 		receiver in b.preferences.rest.elems)
 }
 
 fact pluralityWinner {
-	all disj a, b: Candidate | (Election.method = Plurality and Election.seats = 1) and
-		a.outcome = Winner implies #b.votes <= #a.votes
+	all disj a, b: Candidate | (Election.method = Plurality and Election.seats = 1 and
+		a.outcome = Winner) implies #b.votes <= #a.votes
 }
 
 fact transferToNextContinuingCandidate {
@@ -210,7 +210,7 @@ fact transferToNextContinuingCandidate {
 		skipped.outcome = QuotaWinner)
 }
 
-// All ballots transfers are associated with the last candidate to receive the transfer
+// All ballot transfers are associated with the last candidate to receive the transfer
 fact ownership {
 	all disj c,d: Candidate | all b: Ballot | b in c.transfers implies c in b.assignees and 
 		(d not in b.assignees or b.preferences.idxOf[d] < b.preferences.idxOf[c])
@@ -288,9 +288,21 @@ fact winnersHaveVotes {
      ((#l.votes < #w.votes) or (#l.votes + #l.transfers < #w.votes + #w.transfers))
 }
 
-// Losers above threshold
+// All non-sore losers are above the threshold
 fact losersAboveThreshold {
-  all c: Candidate | c.outcome = Loser implies Scenario.threshold < (#c.votes + #c.transfers)
+  all c: Candidate | c.outcome = Loser implies (Scenario.threshold < #c.votes + #c.transfers)
+}
+
+fact earlyLosersAboveThreshold {
+  all c: Candidate | c.outcome = EarlyLoser implies (Scenario.threshold < #c.votes + #c.transfers)
+}
+
+fact tiedLosersAboveThreshold {
+  all c: Candidate | c.outcome = TiedLoser implies (Scenario.threshold < #c.votes + #c.transfers)
+}
+
+fact tiedEarlyLosersAboveThreshold {
+  all c: Candidate | c.outcome = TiedEarlyLoser implies (Scenario.threshold < #c.votes + #c.transfers)
 }
 
 -- Basic Lemmas
@@ -361,7 +373,19 @@ assert quotaWinnerNeedsTransfers {
 }
 check quotaWinnerNeedsTransfers for 7 int
 
+// Sore losers below threshold
+assert soreLoserBelowThreshold {
+  all c: Candidate | c.outcome = SoreLoser implies not (Scenario.threshold <= #c.votes + #c.transfers)
+}
+check soreLoserBelowThreshold for 10 but 6 int
 
+// Possible outcomes when under the threshold
+assert underThresholdOutcomes {
+  all c: Candidate | (#c.votes + #c.transfers < Scenario.threshold) implies
+     (c.outcome = SoreLoser or c.outcome = TiedSoreLoser or c.outcome = TiedWinner or
+     c.outcome = CompromiseWinner)
+}
+check underThresholdOutcomes for 10 but 6 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -497,7 +521,8 @@ run NoTiesAndNoSoresScenarios for 10 but 6 int
 -- Scenario tests
 pred LW {
   some disj c0,c1: Candidate | c0.outcome = Winner and c1.outcome = Loser and 
-	Election.method = STV and #Election.candidates = 2 and #Election.seats = 1
+	Election.method = STV and #Election.candidates = 2 and #Election.seats = 1 and
+    (Scenario.threshold < #c1.votes + #c1.transfers)
 }
 run LW for 10 but 6 int
 
@@ -536,12 +561,21 @@ pred LQQW {
 }
 run LQQW for 10 but 6 int
 
--- Version Control for changes to signatures and axioms, excluding lemmas and predicates
+pred SLQQW {
+	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
+		c.outcome = Winner and d.outcome = QuotaWinner and e.outcome = SoreLoser
+    #Election.candidates = 5
+	Election.method = STV
+    0 < #Ballot
+}
+run SLQQW for 10 but 6 int
+
+-- Version Control for changes to model
 one sig Version {
    year, month, day : Int
 } {
   year = 11
   month = 01
-  day = 17
-  -- Dermot Cochran 2011-01-17
+  day = 18
+  -- Dermot Cochran 2011-01-18
 }
