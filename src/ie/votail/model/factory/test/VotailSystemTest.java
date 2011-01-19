@@ -25,6 +25,8 @@ public class VotailSystemTest {
     BallotCounting ballotCounting = new BallotCounting();
     Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     
+    int numberOfFailures = 0;
+    
     for (int seats = 1; seats <= 7; seats++) {
       for (int candidates = 1 + seats; candidates <= 1 + seats * seats; candidates++) {
         
@@ -44,11 +46,16 @@ public class VotailSystemTest {
           ballotCounting.count();
           logger.info(ballotCounting.getResults());
           if (!scenario.matches(ballotCounting)) {
-            Assert.fail("Unexpected results for scenario " + scenario
+            logger.severe("Unexpected results for scenario " + scenario
                 + " and ballot box " + electionConfiguration);
+            numberOfFailures++;
           }
         }
       }
     }
+    if (0 < numberOfFailures) {
+      Assert.fail(numberOfFailures + " mismatched scenarios.");
+    }
+    assert numberOfFailures == 0;
   }
 }
