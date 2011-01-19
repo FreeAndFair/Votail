@@ -110,7 +110,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public AbstractBallotCounting() {
     super();
     status = ElectionStatus.EMPTY;
-    countNumberValue = 1;
+    countNumberValue = 0;
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
     totalNumberOfVotes = 0;
@@ -237,7 +237,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     // TODO 2009.10.14 ESC negative index warning
     final Candidate candidate = candidates[index]; //@ nowarn;
     // TODO 2009.10.14 ESC precondition warning
-    final int originalVote = candidate.getOriginalVote(); //@ nowarn;
+    final int originalVote = candidate.getTotalVote(); //@ nowarn;
     final boolean elected = isElected(candidate);
     return ((originalVote >= savingThreshold) || elected);
   }
@@ -950,7 +950,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public void eliminateCandidate(final int loser) {
     excludedIndex[numberOfCandidatesEliminated] = loser;
-    candidates[loser].declareEliminated();
+    candidates[loser].declareEliminated(this.countNumberValue);
     redistributeBallots(candidates[loser].getCandidateID());
     numberOfCandidatesEliminated++;
   }
@@ -1029,7 +1029,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;
     electedCandidateIndex[numberOfCandidatesElected] = winner;
-    candidates[winner].declareElected();
+    candidates[winner].declareElected(this.countNumberValue);
     numberOfCandidatesElected++;
     totalRemainingSeats--;
     // TODO 2009.10.14 ESC precondition

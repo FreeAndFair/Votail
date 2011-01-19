@@ -34,9 +34,9 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
 public class BallotBoxFactory {
 
   public static final int DEFAULT_BIT_WIDTH = 7;
-  public static final String SUBSYSTEM_NAME = "ie.votail";
+  public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "models/voting.als";
-  protected final static Logger logger = Logger.getLogger(SUBSYSTEM_NAME);
+  protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
   protected String modelName;
 
   /**
@@ -57,7 +57,7 @@ public class BallotBoxFactory {
     /*@ non_null*/ ElectoralScenario scenario, int scope) {
     
     final ElectionConfiguration electionConfiguration 
-      = new ElectionConfiguration(SUBSYSTEM_NAME);
+      = new ElectionConfiguration();
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
     electionConfiguration.setNumberOfSeats(scenario.getNumberOfSeats());
     electionConfiguration.setNumberOfCandidates(
@@ -66,13 +66,14 @@ public class BallotBoxFactory {
     // Find a ballot box which creates this scenario
     try {
       A4Solution solution = findSolution(scenario, scope);
+      // FIXME why does only one ballot exist in solution?
       
       if (solution.satisfiable()) { // Extract ballots from the solution
       // Iterate through the solution and add each vote to the table
         for (Sig sig : solution.getAllReachableSigs()) {
           // Log the model version number
-          if (sig.label.contains("version")) {
-            logger.info(sig.getDescription());
+          if (sig.label.contains("Version")) {
+            // TODO extract version number
           }
           
           else if (sig.label.contains("this/Ballot")) {
@@ -119,13 +120,13 @@ public class BallotBoxFactory {
       modelName);
     Expr predicate = CompUtil.parseOneExpression_fromString(world,
       scenario.toPredicate());
-    logger.info("Using this predicate: " + predicate.toString() + " " + 
+    logger.finest("Using this predicate: " + predicate.toString() + " " + 
       predicate.getDescription());
     Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, 
       predicate);
     A4Solution solution = TranslateAlloyToKodkod.execute_command(reporter,
       world.getAllReachableSigs(), command, options);
-    logger.info("Found this solution: " + solution.toString());
+    logger.finest("Found this solution: " + solution.toString());
     return solution;
   }
 }

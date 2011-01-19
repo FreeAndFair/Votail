@@ -40,31 +40,33 @@ public enum Outcome {
     if (this == Winner && quota <= candidate.getInitialVote()) {
       return true;
     }
-    else if (this == QuotaWinner && quota <= candidate.getFinalVote()
+    else if (this == QuotaWinner && quota <= candidate.getTotalVote()
         && candidate.getInitialVote() < quota) {
       return true;
     }
     else if ((this == CompromiseWinner || this == TiedWinner)
-        && candidate.isElected() && candidate.getFinalVote() < quota) {
+        && candidate.isElected() && candidate.getTotalVote() < quota) {
       return true;
     }
     else if ((this == Loser || this == TiedLoser) && candidate.isEliminated()
-        && threshold <= candidate.getFinalVote()
+        && threshold <= candidate.getTotalVote()
         && lastRound == candidate.getLastRound()) {
       return true;
     }
     else if ((this == EarlyLoser || this == TiedEarlyLoser)
-        && candidate.isEliminated() && threshold <= candidate.getFinalVote()
+        && candidate.isEliminated() && threshold <= candidate.getTotalVote()
         && candidate.getLastRound() < lastRound) {
       return true;
     }
     else if ((this == SoreLoser || this == TiedSoreLoser)
-        && candidate.isEliminated() && candidate.getFinalVote() < threshold) {
+        && candidate.isEliminated() && candidate.getTotalVote() < threshold) {
       return true;
     }
     
-    Logger.getAnonymousLogger().warning("Outcome " + this.toString() + " failed to match candidate " + candidate + " for quota " + quota +
-        " and threshold " + threshold);
+    Logger.getAnonymousLogger().warning(
+        "Outcome " + this.toString() + " failed to match " + candidate
+            + " for quota of " + quota + ", threshold of " + threshold
+            + " and " + lastRound + " rounds of counting.");
     return false;
   }
 }

@@ -1,5 +1,7 @@
 package ie.votail.model;
 
+import ie.votail.model.factory.BallotBoxFactory;
+
 import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
@@ -38,8 +40,8 @@ public class ElectionConfiguration extends BallotBox {
 
   private int currentBallotID;
 
-  public ElectionConfiguration(String loggerName) {
-    logger = Logger.getLogger(loggerName);
+  public ElectionConfiguration() {
+    logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     candidateIDs = new int [Candidate.MAX_CANDIDATES];
     for (int i=0; i < candidateIDs.length; i++) {
       candidateIDs[i] = Candidate.NO_CANDIDATE;

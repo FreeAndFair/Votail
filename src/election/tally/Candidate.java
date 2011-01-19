@@ -1,5 +1,7 @@
 package election.tally;
 
+import java.util.logging.Logger;
+
 /**
  * The Candidate object records the number of votes received during each round
  * of counting. Votes can only be added to the candidate's stack while the
@@ -69,6 +71,8 @@ public class Candidate extends CandidateStatus {
   //@ public constraint \old(lastCountNumber) <= lastCountNumber;
   //@ public invariant lastCountNumber <= CountConfiguration.MAXCOUNT;
   protected transient/*@ spec_public @*/int  lastCountNumber;
+
+  private Logger logger;
   
   public static final int                     NO_CANDIDATE    = 0;
   
@@ -108,7 +112,7 @@ public class Candidate extends CandidateStatus {
   /*@ requires lastCountNumber < votesAdded.length;
     @
     @*/
-  public/*@ pure @*/int getOriginalVote() {
+  public/*@ pure @*/int getTotalVote() {
     int originalVote = 0;
     
     for (int i = 0; i <= lastCountNumber; i++) {
@@ -154,6 +158,7 @@ public class Candidate extends CandidateStatus {
     candidateID = getUniqueID();
     initialiseVotes(); //@ nowarn;
     // TODO ESC 2011.01.14 Possible violation of object invariant (Invariant)
+    logger = Logger.getLogger("ie.votail.Candidate");
   }
   
   /**
@@ -181,8 +186,8 @@ public class Candidate extends CandidateStatus {
       this.candidateID = getUniqueID();
     }
     initialiseVotes(); //@ nowarn;
+    logger = Logger.getLogger("ie.votail.Candidate");
     // TODO ESC 2011.01.14 Possible violation of object invariant
-;
   }
   
   public static int getUniqueID() {
@@ -211,9 +216,19 @@ public class Candidate extends CandidateStatus {
     @*/
   public void addVote(final int numberOfVotes, final int count) {
     votesAdded[count] += numberOfVotes;
-    lastCountNumber = count;
+    updateCountNumber(count);
   } //@ nowarn;
   // TODO ESC 2011.01.14 Postcondition possibly not established (Post)
+
+  /**
+   * @param count
+   */
+  //@ assignable lastCountNumber;
+  protected void updateCountNumber(final int count) {
+    if (lastCountNumber < count) {
+      lastCountNumber = count;
+    }
+  }
   
   /**
    * Removes a number of votes from a candidates ballot stack.
@@ -238,18 +253,21 @@ public class Candidate extends CandidateStatus {
     @*/
   public void removeVote(final int numberOfVotes, final int count) {
     votesRemoved[count] += numberOfVotes;
-    lastCountNumber = count;
+    updateCountNumber(count);
   } //@ nowarn Post;
   // TODO ESC 2011.01.14 Postcondition possibly not established (Post)
   
   /** Declares the candidate to be elected */
   /*@ public normal_behavior
     @   requires state == CONTINUING;
-    @   assignable state;
+    @   assignable state, lastCountNumber;
     @   ensures state == ELECTED;
     @*/
-  public void declareElected() {
+  public void declareElected(int countNumber) {
     state = ELECTED;
+    updateCountNumber(countNumber);
+    logger.info("Candidate " + candidateID + " elected on count number "
+        + countNumber);
   }
   
   /** Declares the candidate to be eliminated */
@@ -258,8 +276,12 @@ public class Candidate extends CandidateStatus {
     @   assignable this.state;
     @   ensures state == ELIMINATED;
     @*/
-  public void declareEliminated() {
+  public void declareEliminated(int countNumber) {
     state = ELIMINATED;
+    updateCountNumber(countNumber);
+    logger.info("Candidate " + this.candidateID + " excluded on count number "
+        + countNumber);
+   
   }
   
   /**
@@ -338,8 +360,8 @@ public class Candidate extends CandidateStatus {
       stringBuffer.append(" continuing");
     }
     stringBuffer.append(" on round " + lastCountNumber + " with "
-        + getOriginalVote() + " original votes and "
-        + getTotalAtCount(lastCountNumber) + " final votes");
+        + getInitialVote() + " first preference votes and "
+        + getTotalVote() + " votes in total");
     return stringBuffer.toString();
   }
   
@@ -348,7 +370,7 @@ public class Candidate extends CandidateStatus {
   public /*@ pure*/ int getFinalVote() {
     
     return getTotalAtCount (lastCountNumber); //@ nowarn;
-    // TODO ESC 2001.01.14 Preconidtion possibility not established (Pre)
+    // TODO ESC 2001.01.14 Precondition possibility not established (Pre)
   }
   
   //@ ensures \result <==> (state == ELIMINATED);
@@ -358,7 +380,7 @@ public class Candidate extends CandidateStatus {
   
   //@ ensures \result == lastCountNumber + 1;
   public/*@ pure*/ int getLastRound() {
-    return lastCountNumber + 1;
+    return lastCountNumber;
   }
   
   //@ ensures \result == getTotalAtCount(0);

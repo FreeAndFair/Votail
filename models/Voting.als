@@ -387,6 +387,12 @@ assert underThresholdOutcomes {
 }
 check underThresholdOutcomes for 10 but 6 int
 
+// Non-sore loser gets at least one vote
+assert zeroVote {
+  all c: Candidate | (#c.votes + #c.transfers = 0) implies c.outcome = SoreLoser
+}
+check zeroVote for 10 but 6 int
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality

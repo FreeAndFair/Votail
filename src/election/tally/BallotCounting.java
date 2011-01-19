@@ -262,6 +262,8 @@ public class BallotCounting extends AbstractBallotCounting {
     // TODO 2009.10.15 ESC invariant warning
     while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
         countNumberValue < CountConfiguration.MAXCOUNT) {
+      incrementCountNumber(); //@ nowarn;
+
       // TODO 2009.10.15 ESC assignable warning
       countStatus.changeState( //@ nowarn;
           AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
@@ -274,7 +276,6 @@ public class BallotCounting extends AbstractBallotCounting {
       // TODO 2009.10.15 ESC precondition warning
       excludeLowestCandidates(); //@ nowarn;
       // TODO 2009.10.15 ESC invariant warning
-      incrementCountNumber(); //@ nowarn;
     }
     
     // Filling of last seats
@@ -372,7 +373,7 @@ public class BallotCounting extends AbstractBallotCounting {
     @*/
   public void startCounting() {
     status = ElectionStatus.COUNTING;
-    countNumberValue = 1;
+    countNumberValue = 0;
     
     totalRemainingSeats = numberOfSeats;
     // TODO 2009.10.14 ESC invariant warning
@@ -521,6 +522,6 @@ public class BallotCounting extends AbstractBallotCounting {
   
   //@ ensures \result + 1 == this.countNumberValue;
   public int getNumberOfRounds() {
-    return this.countNumberValue-1;
+    return this.countNumberValue;
   }
 }

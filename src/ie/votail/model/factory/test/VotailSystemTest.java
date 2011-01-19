@@ -17,13 +17,13 @@ import election.tally.Constituency;
 
 public class VotailSystemTest {
   @Test
-  public void alloyTest() {
+  public void universalTest() {
     
     final int scope = 7;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     BallotCounting ballotCounting = new BallotCounting();
-    Logger logger = Logger.getLogger(BallotBoxFactory.SUBSYSTEM_NAME);
+    Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     
     for (int seats = 1; seats <= 7; seats++) {
       for (int candidates = 1 + seats; candidates <= 1 + seats * seats; candidates++) {

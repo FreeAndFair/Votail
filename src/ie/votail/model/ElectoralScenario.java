@@ -77,6 +77,8 @@ public class ElectoralScenario {
   private int                 numberOfCandidates;
   
   private int                 numberOfSeats;
+
+  private String minimum;
   
   /**
    * Create a new model scenario.
@@ -153,7 +155,7 @@ public class ElectoralScenario {
       stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
       i++;
     }
-    stringBuffer.append(" and Election.method = STV and 0 < #Ballot");
+    stringBuffer.append(" and Election.method = STV and 1 < #Ballot");
     stringBuffer.append(" and #Election.candidates = "
         + this.numberOfCandidates);
     return stringBuffer.toString();
@@ -384,8 +386,8 @@ public class ElectoralScenario {
           boolean foundTie = false;
           for (int other=0; other < this.numberOfCandidates; other++) {
             if (other != index) {
-              if (candidateList[other].getOriginalVote() == 
-                candidateList[index].getOriginalVote()) {
+              if (candidateList[other].getTotalVote() == 
+                candidateList[index].getTotalVote()) {
                     foundTie = true;
                   }
               else if (candidateList[other].getInitialVote() == 
