@@ -37,8 +37,8 @@ public class VotailSystemTest {
           BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
           ElectionConfiguration electionConfiguration =
               ballotBoxFactory.extractBallots(scenario, scope);
-          assert electionConfiguration != null;
-          assert 0 < electionConfiguration.size();
+          //@ assert electionConfiguration != null;
+          //@ assert 0 < electionConfiguration.size();
           Constituency constituency = electionConfiguration.getConstituency();
           logger.info(electionConfiguration.toString());
           ballotCounting.setup(constituency);

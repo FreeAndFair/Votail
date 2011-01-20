@@ -488,19 +488,21 @@ public class BallotCounting extends AbstractBallotCounting {
   //@ requires numberOfCandidatesEliminated <= excludedIndex.length;
   public Candidate[] getOrderedListCandidates() {
     Candidate[] candidateList = new Candidate[totalNumberOfCandidates];
+    final int numberOfLosers = totalNumberOfCandidates - numberOfSeats;
     
     // Losing candidates from lowest to highest
-    for (int i = 0; i < numberOfCandidatesEliminated; i++) {
-      final int excludedCandidateIndex = getExcludedCandidateIndex(i);
-      candidateList[i] = candidates[excludedCandidateIndex];
-    }
-    
-    // Elected candidates in reverse order from lowest to highest
-    for (int j = 0; j < totalNumberOfSeats; j++) {
-      final int electedCandidate = getElectedCandidateIndex(j);
-      final int index = candidateList.length - 1 - j;
-      candidateList[index] =
-          candidates[electedCandidate];
+    for (int i = 0; i < totalNumberOfCandidates; i++) {
+      if (i < numberOfLosers) {
+        final int excludedCandidateIndex = getExcludedCandidateIndex(i);
+        candidateList[i] = candidates[excludedCandidateIndex];
+        }
+      else {
+        // Elected candidates in reverse order from lowest to highest
+        final int index = i - numberOfLosers;
+        //@ assert index < numberOfSeats;
+        final int electedCandidateIndex = getElectedCandidateIndex(index);
+        candidateList[i] = candidates[electedCandidateIndex];
+        }
     }
     
     return candidateList;

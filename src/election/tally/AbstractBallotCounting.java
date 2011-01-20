@@ -82,7 +82,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ protected represents depositSavingThreshold <- savingThreshold;
 
   /** Number of rounds of counting so far. */
-  protected transient/*@ spec_public @*/int         countNumberValue;
+  protected /*@ spec_public*/ int         countNumberValue;
   //@ protected represents countNumber <- countNumberValue;
 
   /** Number of seats remaining to be filled */
@@ -188,6 +188,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     if (surplus < 0) {
       return 0;
     }
+    // 2011.01.20 do not count non transferable surplus from an existing winner
+    if (candidate.isElected()) {
+      return 0; // Transferable votes have already been distributed
+    }
     return surplus;
   }
 
@@ -287,7 +291,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.numberOfSeats = constituency.getNumberOfSeatsInThisElection();
     this.totalNumberOfSeats = constituency.getTotalNumberOfSeats();
     this.status = PRELOAD;
-    candidates = new Candidate[this.totalNumberOfCandidates];
+    this.candidates = new Candidate[this.totalNumberOfCandidates];
+    this.electedCandidateIndex = new int [numberOfSeats];
+    this.excludedIndex = new int [totalNumberOfCandidates - numberOfSeats];
     for (int i = 0; i < candidates.length; i++) {
       // TODO 2009.10.14 ESC precondition
       this.candidates[i] = constituency.getCandidate(i); //@ nowarn;
@@ -313,8 +319,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     ensures totalVotes == ballotsToCount.length;
     @*/
   public void load(final/*@ non_null @*/BallotBox ballotBox) {
-    electedCandidateIndex = new int [numberOfSeats];
-    excludedIndex = new int [totalNumberOfCandidates - numberOfSeats];
     
     totalNumberOfVotes = ballotBox.size(); //@ nowarn;
     // TODO ESC 2011.01.17 Possible violation of object invariant
@@ -350,13 +354,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ requires \nonnullelements (candidateList);
   //@ requires \nonnullelements (ballotsToCount);
   //@ assignable candidates[*];
+  //@ requires countNumberValue = 0;
   protected void calculateFirstPreferences() {
     for (int c = 0; c < candidates.length; c++) {
         final int candidateID = candidates[c].getCandidateID();
         final int numberOfBallotsInPile = countFirstPreferences(candidateID);
         if (0 < numberOfBallotsInPile) {
-          // TODO 2009.10.14 ESC warning
-          candidates[c].addVote(numberOfBallotsInPile, countNumberValue); //@ nowarn;
+          candidates[c].addVote(numberOfBallotsInPile, 0);
         }
       
     }

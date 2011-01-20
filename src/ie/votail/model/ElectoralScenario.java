@@ -373,11 +373,13 @@ public class ElectoralScenario {
         && this.numberOfSeats == ballotCounting.getTotalNumberOfSeats()) {
       
       Candidate[] candidateList = ballotCounting.getOrderedListCandidates();
+      //@ assert candidateList != null;
       
       // Match each candidate with an outcome and each outcome with a candidate
       int index = 0;
       for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
-        if (!outcome.matches(candidateList[index], quota, threshold, lastRound)) {
+        final Candidate candidate = candidateList[index];
+        if (!outcome.matches(candidate, quota, threshold, lastRound)) {
           return false;
         }
         
@@ -386,12 +388,13 @@ public class ElectoralScenario {
           boolean foundTie = false;
           for (int other=0; other < this.numberOfCandidates; other++) {
             if (other != index) {
-              if (candidateList[other].getTotalVote() == 
-                candidateList[index].getTotalVote()) {
+              final Candidate otherCandidate = candidateList[other];
+              if (otherCandidate.getTotalVote() == 
+                candidate.getTotalVote()) {
                     foundTie = true;
                   }
-              else if (candidateList[other].getInitialVote() == 
-                candidateList[index].getInitialVote()) {
+              else if (otherCandidate.getInitialVote() == 
+                candidate.getInitialVote()) {
                 foundTie = true;
               }
             }
@@ -401,6 +404,10 @@ public class ElectoralScenario {
           }
         }
         index++;
+        
+        if (candidateList.length < index) {
+          return false;
+        }
       }
       
       return true;
