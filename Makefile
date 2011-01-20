@@ -1,5 +1,5 @@
 
-RELEASE = v0.0.1
+RELEASE = v0.0.2
 BASE	= proposal
 BIBTEXOPT = 
 BIBWARN = 'LaTeX Warning: Citation'
@@ -10,7 +10,7 @@ FIGSCALE = 0.5
 # CLASSPATH components
 
 LIB = external_libraries
-CORECP	= src:unittest:$(LIB)/alloy4.jar
+CORECP	= src:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar
 SPECS = external_tools/JML/specs
 JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
 JUNITCP = $(LIB)/junit.jar
@@ -49,7 +49,8 @@ UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(F
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
 javapat	=	$(srcpath)/election/tally/*.java
-javafiles =	$(wildcard $(srcpath)/election/tally/*.java)
+javapat5	= $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java $(srcpath)/ie/votail/model/factory/test/VotailSystemTest.java
+javafiles =	$(wildcard $(srcpath)/election/tally/*.java $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java $(srcpath)/ie/votail/model/factory/test/VotailSystemTest.java)
 jmlunitpat =	$(jmlunit_path)/election/tally/*.java
 jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
@@ -160,6 +161,7 @@ classes.stamp:	$(javafiles)
 	@mkdir -p $(buildpath)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
 	$(javac) -g -d $(buildpath) $(java_source_version) $(javapat) && \
+	$(javac) -g -d $(buildpath) $(java_source_version5) $(javapat5) && \
 	touch classes.stamp
 
 jml:	jml.stamp
@@ -250,10 +252,9 @@ main-jmlrac: jmlc
 	jmlrac $(rac_memory_use) election.tally.*
 
 jml-junit-tests:	classes jmlunit_classes
-# TODO investigate invariant failure for Abstract Count Status
-# export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-# java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
-  export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.Ballot_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotCounting_JML_Test
@@ -269,10 +270,13 @@ jml-junit-tests:	classes jmlunit_classes
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotBox_JML_Test
-	
-universal-test:		jml-junit-tests
-    export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	java junit.textui.TestRunner $(test_memory_use) ie.votail.model.factory.test.VotailSystemTest
+
+universal-test:	universal.stamp jml-junit-tests
+
+universal.stamp:	jml-junit-tests
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
+	java ie.votail.model.factory.test.VotailSystemTest; \
+	touch universal.stamp
 
 # generating source-based documentation
 
@@ -357,14 +361,14 @@ clean_distr:
 
 clean_src_distr:
 	rm -rf src_distr.stamp
-	
+
 bonc:
 	external_tools/bonc/bonc -i --print=HTML -po=doc/bonc.html design/*.bon
-	
+
 release: clean
 	mkdir -p release
 	tar cvf release/Votail0.0.1b.tar --exclude .svn src design diagrams doc requirements license.txt read.me release.notes
 	gzip release/Votail0.0.1b.tar
-	
+
 tech_report:
 	make -C TechnicalReport
