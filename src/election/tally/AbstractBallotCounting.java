@@ -353,8 +353,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ requires PRECOUNT <= state;
   //@ requires \nonnullelements (candidateList);
   //@ requires \nonnullelements (ballotsToCount);
+  //@ requires 0 == countNumberValue;
   //@ assignable candidates[*];
-  //@ requires countNumberValue = 0;
   protected void calculateFirstPreferences() {
     for (int c = 0; c < candidates.length; c++) {
         final int candidateID = candidates[c].getCandidateID();

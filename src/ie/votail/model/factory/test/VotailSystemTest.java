@@ -58,4 +58,9 @@ public class VotailSystemTest {
     }
     assert numberOfFailures == 0;
   }
+  
+  public static void main(String [ ] args) {
+    VotailSystemTest test = new VotailSystemTest();
+    test.universalTest();
+  }
 }

@@ -252,7 +252,7 @@ fact tieBreaker {
 fact validTieBreaker {
 	all l: Candidate | some w: Candidate | 
     (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies 
-    w.outcome = TiedWinner and 0 < #w.votes + #w.transfers
+    w.outcome = TiedWinner and (#w.votes + #w.transfers = #l.votes + #l.transfers)
 }
 
 // Compromise winner must have more votes than any tied winners
@@ -389,7 +389,7 @@ check underThresholdOutcomes for 10 but 6 int
 
 // Non-sore loser gets at least one vote
 assert zeroVote {
-  all c: Candidate | (#c.votes + #c.transfers = 0) implies c.outcome = SoreLoser
+  all c: Candidate | (#c.votes + #c.transfers = 0) implies (c.outcome = SoreLoser)
 }
 check zeroVote for 10 but 6 int
 
@@ -581,6 +581,6 @@ one sig Version {
 } {
   year = 11
   month = 01
-  day = 18
-  -- Dermot Cochran 2011-01-18
+  day = 20
+  -- Dermot Cochran 2011-01-20
 }
