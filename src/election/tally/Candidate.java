@@ -393,6 +393,6 @@ public class Candidate extends CandidateStatus {
   
   //@ ensures \result == getTotalAtCount(0);
   public int getInitialVote() {
-    return getTotalAtCount(0);
+    return getTotalAtCount(1);
   }
 }
