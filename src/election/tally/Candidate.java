@@ -123,6 +123,14 @@ public class Candidate extends CandidateStatus {
   }
   
   /**
+    @deprecated - use getTotalVote() instead
+  */
+  // ensures \result == getTotalVote();
+  public /*@ pure */ int getOriginalVote() {
+    return getTotalVote();
+  }
+  
+  /**
    * Get status at the current round of counting; {@link #ELECTED},
    * {@link #ELIMINATED} or {@link #CONTINUING}
    * 
@@ -273,7 +281,7 @@ public class Candidate extends CandidateStatus {
   /** Declares the candidate to be eliminated */
   /*@ public normal_behavior
     @   requires state == CONTINUING;
-    @   assignable this.state;
+    @   assignable this.state, lastCountNumber;
     @   ensures state == ELIMINATED;
     @*/
   public void declareEliminated(int countNumber) {
