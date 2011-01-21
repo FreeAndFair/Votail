@@ -60,7 +60,7 @@ public class BallotBoxFactory {
     final ElectionConfiguration electionConfiguration 
       = new ElectionConfiguration();
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
-    final int numberOfSeats = scenario.getNumberOfSeats();
+    final int numberOfSeats = scenario.numberOfWinners();
     electionConfiguration.setNumberOfSeats(numberOfSeats);
     final int numberOfCandidates = scenario.getNumberOfCandidates();
     electionConfiguration.setNumberOfCandidates(
@@ -128,8 +128,9 @@ public class BallotBoxFactory {
       scenario.toPredicate());
     logger.finest("Using this predicate: " + predicate.toString() + " " + 
       predicate.getDescription());
-    Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, 
+    Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, -1, 
       predicate);
+    logger.info("using scope " + scope + " and bitwidth " + DEFAULT_BIT_WIDTH);
     A4Solution solution = TranslateAlloyToKodkod.execute_command(reporter,
       world.getAllReachableSigs(), command, options);
     logger.finest("Found this solution: " + solution.toString());

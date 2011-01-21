@@ -271,6 +271,8 @@ public class BallotCounting extends AbstractBallotCounting {
     if (this.plurality) {
       int winner = this.findHighestCandidate();
       this.electCandidate(winner);
+      this.countNumberValue = 1;
+      this.excludeLowestCandidates();
     }
     else { // PR-STV by default
     

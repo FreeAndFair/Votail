@@ -48,18 +48,18 @@ public enum Outcome {
         && candidate.isElected() && candidate.getTotalVote() < quota) {
       return true;
     }
-    else if ((this == Loser || this == TiedLoser) && candidate.isEliminated()
+    else if ((this == Loser || this == TiedLoser) && !candidate.isElected()
         && threshold <= candidate.getTotalVote()
         && lastRound == candidate.getLastRound()) {
       return true;
     }
     else if ((this == EarlyLoser || this == TiedEarlyLoser)
-        && candidate.isEliminated() && threshold <= candidate.getTotalVote()
+        && !candidate.isElected() && threshold <= candidate.getTotalVote()
         && candidate.getLastRound() < lastRound) {
       return true;
     }
     else if ((this == SoreLoser || this == TiedSoreLoser)
-        && candidate.isEliminated() && candidate.getTotalVote() < threshold) {
+        && !candidate.isElected() && candidate.getTotalVote() < threshold) {
       return true;
     }
     
