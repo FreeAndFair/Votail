@@ -122,13 +122,13 @@ copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved
 
 default: classes
 
-all:	build test bonc
+all:	build bonc test
 
 build:	classes jml jmlc jmlunit_classes
 
 escjava:	escjava2-typecheck escjava2
 
-test:	jml-junit-tests universal-test
+test:	jml-junit-tests universal-test universal-rac-test
 
 # paper documentation-related
 
@@ -253,8 +253,6 @@ main-jmlrac: jmlc
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
-	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
-	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.Ballot_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotCounting_JML_Test
@@ -270,10 +268,19 @@ jml-junit-tests:	classes jmlunit_classes
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotBox_JML_Test
+        export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 
-universal-test:	universal.stamp jml-junit-tests
+universal-test:	universal.stamp
 
-universal.stamp:	jml-junit-tests
+universal.stamp:	classes
+	export CLASSPATH=$(JAVAC_CLASSPATH); \
+	java ie.votail.model.factory.test.VotailSystemTest; \
+	touch universal.stamp
+
+universal-rac-test:	universal-rac.stamp
+
+universal-rac.stamp:	universal-test jml-junit-test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
 	java ie.votail.model.factory.test.VotailSystemTest; \
 	touch universal.stamp
