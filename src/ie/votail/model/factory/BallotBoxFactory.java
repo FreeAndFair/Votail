@@ -44,6 +44,7 @@ public class BallotBoxFactory {
    */
   public BallotBoxFactory() {
     modelName = MODELS_VOTING_ALS;
+    logger.info("Using model " + modelName);
   }
 
   /**
@@ -59,14 +60,19 @@ public class BallotBoxFactory {
     final ElectionConfiguration electionConfiguration 
       = new ElectionConfiguration();
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
-    electionConfiguration.setNumberOfSeats(scenario.getNumberOfSeats());
+    final int numberOfSeats = scenario.getNumberOfSeats();
+    electionConfiguration.setNumberOfSeats(numberOfSeats);
+    final int numberOfCandidates = scenario.getNumberOfCandidates();
     electionConfiguration.setNumberOfCandidates(
-      scenario.getNumberOfCandidates());
+      numberOfCandidates);
+    logger.info(numberOfCandidates + " candidates for " + 
+        numberOfSeats + " seats");
     
     // Find a ballot box which creates this scenario
     try {
       A4Solution solution = findSolution(scenario, scope);
-      // FIXME why does only one ballot exist in solution?
+      logger.info("Using scope = " + scope + " found scenario " + scenario);
+      
       
       if (solution.satisfiable()) { // Extract ballots from the solution
       // Iterate through the solution and add each vote to the table

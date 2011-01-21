@@ -19,7 +19,7 @@ public class BallotBoxFactoryTest extends TestCase {
 
   @Test
   public void testGenerateSmallestBallotBox() {
-    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
+    ElectoralScenario scenario = new ElectoralScenario(Method.STV);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     BallotBoxFactory /*@ non_null*/ ballotBoxFactory = new BallotBoxFactory();
@@ -34,7 +34,7 @@ public class BallotBoxFactoryTest extends TestCase {
 
   @Test
   public void testGenerateSmallBallotBox() {
-    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
+    ElectoralScenario scenario = new ElectoralScenario(Method.STV);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     scenario.addOutcome(Outcome.EarlyLoser);
@@ -50,7 +50,7 @@ public class BallotBoxFactoryTest extends TestCase {
 
   @Test
   public void testGenerateBallotBox() {
-    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
+    ElectoralScenario scenario = new ElectoralScenario(Method.STV);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     scenario.addOutcome(Outcome.EarlyLoser);
@@ -63,7 +63,7 @@ public class BallotBoxFactoryTest extends TestCase {
 
   @Test
   public void testBallotBoxForTiedScenario() {
-    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
+    ElectoralScenario scenario = new ElectoralScenario(Method.STV);
     scenario.addOutcome(Outcome.TiedWinner);
     scenario.addOutcome(Outcome.TiedLoser);
     BallotBoxFactory /*@ non_null*/ voteFactory = new BallotBoxFactory();

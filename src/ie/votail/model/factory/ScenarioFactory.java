@@ -30,25 +30,25 @@ public class ScenarioFactory {
     if (numberOfOutcomes == 2) {
       
       // Winner gets majority of votes, loser reaches threshold
-      ElectoralScenario commonScenario = new ElectoralScenario(numberOfSeats, method);
+      ElectoralScenario commonScenario = new ElectoralScenario(method);
       commonScenario.addOutcome(Outcome.Winner);
       commonScenario.addOutcome(Outcome.Loser);
       scenarios.add(commonScenario);
       
       // Winner by tie breaker, loser reaches threshold
-      ElectoralScenario tiedScenario = new ElectoralScenario(numberOfSeats, method);
+      ElectoralScenario tiedScenario = new ElectoralScenario(method);
       tiedScenario.addOutcome(Outcome.TiedWinner);
       tiedScenario.addOutcome(Outcome.TiedLoser);
       scenarios.add(tiedScenario);
       
       // Winner by tie breaker, loser below threshold
-      ElectoralScenario landslideScenario = new ElectoralScenario(numberOfSeats, method);
+      ElectoralScenario landslideScenario = new ElectoralScenario(method);
       landslideScenario.addOutcome(Outcome.Winner);
       landslideScenario.addOutcome(Outcome.SoreLoser);
       scenarios.add(landslideScenario);
       
       // Winner by tie breaker, loser below threshold
-      ElectoralScenario unusualScenario = new ElectoralScenario(numberOfSeats, method);
+      ElectoralScenario unusualScenario = new ElectoralScenario(method);
       unusualScenario.addOutcome(Outcome.TiedWinner);
       unusualScenario.addOutcome(Outcome.TiedSoreLoser);
       scenarios.add(unusualScenario);
@@ -59,17 +59,19 @@ public class ScenarioFactory {
       Iterator<ElectoralScenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
         ElectoralScenario baseScenario = iterator.next();
-        scenarios.add(baseScenario.append(Outcome.Winner));
         scenarios.add(baseScenario.append(Outcome.Loser));
         scenarios.add(baseScenario.append(Outcome.SoreLoser));
         if (method == Method.STV) {
+          scenarios.add(baseScenario.append(Outcome.Winner));
           scenarios.add(baseScenario.append(Outcome.QuotaWinner));
           scenarios.add(baseScenario.append(Outcome.CompromiseWinner));
           scenarios.add(baseScenario.append(Outcome.EarlyLoser));
         }
         // Additional ties are only possible when base scenario has tie breaks
         if (baseScenario.isTied()) {
-          scenarios.add(baseScenario.append(Outcome.TiedWinner));
+          if (method == Method.STV) {
+            scenarios.add(baseScenario.append(Outcome.TiedWinner));
+          }
           // Cannot have a tie-breaker involving both a sore and non-sore loser
           if (baseScenario.hasTiedSoreLoser()) {
             scenarios.add(baseScenario.append(Outcome.TiedSoreLoser));

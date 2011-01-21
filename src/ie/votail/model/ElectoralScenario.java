@@ -72,21 +72,16 @@ public class ElectoralScenario {
    */
   public static final boolean AXIOM_FOR_TYPE_OF_TIED_LOSER = true;
   
-  private OutcomeList         listOfOutcomes;
-  
-  private int                 numberOfCandidates;
-  
-  private int                 numberOfSeats;
-
-  private Method method;
+  protected OutcomeList         listOfOutcomes;
+  protected int                 numberOfCandidates;
+  protected Method              method;
   
   /**
    * Create a new model scenario.
    * @param method 
    */
-  public ElectoralScenario(int theNumberOfSeats, Method method) {
+  public ElectoralScenario(Method method) {
     listOfOutcomes = new OutcomeList();
-    this.numberOfSeats = theNumberOfSeats;
     this.method = method;
   }
   
@@ -170,7 +165,7 @@ public class ElectoralScenario {
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
   public ElectoralScenario canonical() {
-    ElectoralScenario sorted = new ElectoralScenario(this.numberOfSeats, this.method);
+    ElectoralScenario sorted = new ElectoralScenario(this.method);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
       Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
@@ -236,7 +231,7 @@ public class ElectoralScenario {
    * ensures \result.equals(this);
    */
   private/*@ pure*/ElectoralScenario copy() {
-    ElectoralScenario clone = new ElectoralScenario(this.numberOfSeats, this.method);
+    ElectoralScenario clone = new ElectoralScenario(this.method);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());
@@ -351,8 +346,12 @@ public class ElectoralScenario {
     return result;
   }
   
-  public int getNumberOfSeats() {
-    return numberOfSeats;
+  /**
+   * @deprecated
+   */
+  //@ ensures \result = numberOfWinners();
+  public /*@ pure */ int getNumberOfSeats() {
+    return numberOfWinners();
   }
   
   public int getNumberOfCandidates() {
@@ -372,7 +371,7 @@ public class ElectoralScenario {
     int lastRound = ballotCounting.getNumberOfRounds();
     
     if (this.numberOfCandidates == ballotCounting.getTotalNumberOfCandidates()
-        && this.numberOfSeats == ballotCounting.getTotalNumberOfSeats()) {
+        && this.numberOfWinners() == ballotCounting.getTotalNumberOfSeats()) {
       
       Candidate[] candidateList = ballotCounting.getOrderedListCandidates();
       //@ assert candidateList != null;

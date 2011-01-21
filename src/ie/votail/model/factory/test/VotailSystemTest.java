@@ -28,6 +28,7 @@ public class VotailSystemTest {
     logger.info("Using scope = " + scope);
     
     int numberOfFailures = 0;
+    int total = 0;
     
     for (int seats = 1; seats <= numberOfSeats; seats++) {
       for (int candidates = 1 + seats; candidates <= 1 + seats * seats; candidates++) {
@@ -53,25 +54,19 @@ public class VotailSystemTest {
                 + " and ballot box " + electionConfiguration);
             numberOfFailures++;
           }
+          total++;
         }
       }
     }
     if (0 < numberOfFailures) {
-      Assert.fail(numberOfFailures + " mismatched scenarios.");
+      Assert.fail(numberOfFailures + " failures out of " + total);
     }
-    assert numberOfFailures == 0;
   }
   
   public static void main(String [ ] args) {
     VotailSystemTest universalTest = new VotailSystemTest();
-    universalTest.plurality(7);
-    universalTest.irv(7);
+    universalTest.plurality(12);
     universalTest.prstv(7);
-  }
-
-  protected void irv(int i) {
-    // TODO Auto-generated method stub
-    
   }
 
   protected void plurality(int numberOfCandidates) {
@@ -85,6 +80,7 @@ public class VotailSystemTest {
     logger.info("Using scope = " + scope);
     
     int numberOfFailures = 0;
+    int total = 0;
     
       for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
         
@@ -110,11 +106,11 @@ public class VotailSystemTest {
                 + " and ballot box " + electionConfiguration);
             numberOfFailures++;
           }
+          total++;
         }
       }
     if (0 < numberOfFailures) {
-      Assert.fail(numberOfFailures + " mismatched scenarios.");
+      Assert.fail(numberOfFailures + " failures out of " + total);
     }
-    assert numberOfFailures == 0;    
   }
 }
