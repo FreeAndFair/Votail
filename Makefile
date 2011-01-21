@@ -128,7 +128,7 @@ build:	classes jml jmlc jmlunit_classes
 
 escjava:	escjava2-typecheck escjava2
 
-test:	jml-junit-tests universal-test universal-rac-test
+test:	universal-test jml-junit-tests universal-rac-test
 
 # paper documentation-related
 
