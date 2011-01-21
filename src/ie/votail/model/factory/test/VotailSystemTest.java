@@ -48,7 +48,7 @@ public class VotailSystemTest {
           ballotCounting.load(electionConfiguration);
           ballotCounting.count();
           logger.info(ballotCounting.getResults());
-          if (!scenario.matches(ballotCounting)) {
+          if (!scenario.check(ballotCounting)) {
             logger.severe("Unexpected results for scenario " + scenario
                 + " and ballot box " + electionConfiguration);
             numberOfFailures++;
@@ -102,9 +102,10 @@ public class VotailSystemTest {
           logger.info(electionConfiguration.toString());
           ballotCounting.setup(constituency);
           ballotCounting.load(electionConfiguration);
+          ballotCounting.usePlurality();
           ballotCounting.count();
           logger.info(ballotCounting.getResults());
-          if (!scenario.matches(ballotCounting)) {
+          if (!scenario.check(ballotCounting)) {
             logger.severe("Unexpected results for scenario " + scenario
                 + " and ballot box " + electionConfiguration);
             numberOfFailures++;

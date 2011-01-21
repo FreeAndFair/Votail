@@ -362,7 +362,7 @@ public class Candidate extends CandidateStatus {
       stringBuffer.append(" elected");
     }
     else if (state == ELIMINATED) {
-      stringBuffer.append(" lost");
+      stringBuffer.append(" eliminated");
     }
     else {
       stringBuffer.append(" continuing");

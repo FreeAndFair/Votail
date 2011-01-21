@@ -366,7 +366,7 @@ public class ElectoralScenario {
    * @return True if this scenario matches this election result
    */
   //@ requires ballotCounting.isFinished();
-  public boolean matches(BallotCounting ballotCounting) {
+  public boolean check(BallotCounting ballotCounting) {
     int quota = ballotCounting.getQuota();
     int threshold = ballotCounting.getSavingThreshold();
     int lastRound = ballotCounting.getNumberOfRounds();
@@ -381,7 +381,7 @@ public class ElectoralScenario {
       int index = 0;
       for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
         final Candidate candidate = candidateList[index];
-        if (!outcome.matches(candidate, quota, threshold, lastRound)) {
+        if (!outcome.check(candidate, quota, threshold, lastRound)) {
           return false;
         }
         

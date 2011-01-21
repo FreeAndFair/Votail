@@ -1,5 +1,6 @@
 package election.tally;
 
+
 /**
  * Ballot counting for elections to Dail Eireann - the lower house of the Irish
  * Parliament.
@@ -35,6 +36,7 @@ public class BallotCounting extends AbstractBallotCounting {
    * 
    */
   public BallotCounting() {
+    this.plurality = false;
   }
 
   /**
@@ -102,6 +104,7 @@ public class BallotCounting extends AbstractBallotCounting {
   
   // Status of the ballot counting process
   public/*@ non_null @*/CountStatus countStatus;
+  protected boolean plurality = false;
   
   /**
    * Distribute the surplus of an elected candidate.
@@ -265,6 +268,12 @@ public class BallotCounting extends AbstractBallotCounting {
       startCounting(); //@ nowarn;
     }
     
+    if (this.plurality) {
+      int winner = this.findHighestCandidate();
+      this.electCandidate(winner);
+    }
+    else { // PR-STV by default
+    
     // TODO 2009.10.15 ESC invariant warning
     while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
         0 < totalRemainingSeats && // infinite loop detected 2011.01.20
@@ -290,6 +299,7 @@ public class BallotCounting extends AbstractBallotCounting {
     if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
       fillLastSeats(); //@ nowarn;
       
+    }
     }
     
     // TODO 2009.10.16 ESC assignable warning
@@ -522,5 +532,9 @@ public class BallotCounting extends AbstractBallotCounting {
   //@ ensures \result + 1 == this.countNumberValue;
   public int getNumberOfRounds() {
     return this.countNumberValue;
+  }
+
+  public void usePlurality() {
+    this.plurality = true;
   }
 }

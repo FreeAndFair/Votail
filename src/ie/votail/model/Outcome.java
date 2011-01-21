@@ -34,7 +34,7 @@ public enum Outcome {
    */
   //@ requires (0 <= threshold) && (threshold <= quota);
   //@ requires 0 <= lastRound;
-  public boolean matches(/*@ non_null*/Candidate candidate, int quota,
+  public boolean check(/*@ non_null*/Candidate candidate, int quota,
       int threshold, int lastRound) {
     
     if (this == Winner && quota <= candidate.getInitialVote()) {

@@ -35,7 +35,7 @@ public class BallotBoxFactory {
 
   public static final int DEFAULT_BIT_WIDTH = 7;
   public static final String LOGGER_NAME = "votail.log";
-  public static final String MODELS_VOTING_ALS = "models/voting.als";
+  public static final String MODELS_VOTING_ALS = "./models/voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
   protected String modelName;
 
