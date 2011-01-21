@@ -78,14 +78,16 @@ public class ElectoralScenario {
   
   private int                 numberOfSeats;
 
-  private String minimum;
+  private Method method;
   
   /**
    * Create a new model scenario.
+   * @param method 
    */
-  public ElectoralScenario(int theNumberOfSeats) {
+  public ElectoralScenario(int theNumberOfSeats, Method method) {
     listOfOutcomes = new OutcomeList();
     this.numberOfSeats = theNumberOfSeats;
+    this.method = method;
   }
   
   /**
@@ -155,7 +157,7 @@ public class ElectoralScenario {
       stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
       i++;
     }
-    stringBuffer.append(" and Election.method = STV and 1 < #Ballot");
+    stringBuffer.append(" and Election.method = " + method + " and 1 < #Ballot");
     stringBuffer.append(" and #Election.candidates = "
         + this.numberOfCandidates);
     return stringBuffer.toString();
@@ -168,7 +170,7 @@ public class ElectoralScenario {
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
   public ElectoralScenario canonical() {
-    ElectoralScenario sorted = new ElectoralScenario(this.numberOfSeats);
+    ElectoralScenario sorted = new ElectoralScenario(this.numberOfSeats, this.method);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
       Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
@@ -234,7 +236,7 @@ public class ElectoralScenario {
    * ensures \result.equals(this);
    */
   private/*@ pure*/ElectoralScenario copy() {
-    ElectoralScenario clone = new ElectoralScenario(this.numberOfSeats);
+    ElectoralScenario clone = new ElectoralScenario(this.numberOfSeats, this.method);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());

@@ -1,5 +1,6 @@
 package ie.votail.model.factory.test;
 
+import ie.votail.model.Method;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 import junit.framework.TestCase;
@@ -11,7 +12,7 @@ public class ScenarioFactoryTest extends TestCase {
   @Test
   public void testTwoCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    ScenarioList twoCandidateScenarios = scenarioFactory.find(2,1);
+    ScenarioList twoCandidateScenarios = scenarioFactory.find(2,1,Method.STV);
     assertEquals (4, twoCandidateScenarios.size());
     assertEquals (4, twoCandidateScenarios.getNumberOfScenarios(1));
   }
@@ -20,7 +21,7 @@ public class ScenarioFactoryTest extends TestCase {
   public void testThreeCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     final int numberOfOutcomes = 3;
-    ScenarioList threeCandidateScenarios = scenarioFactory.find(numberOfOutcomes,1);
+    ScenarioList threeCandidateScenarios = scenarioFactory.find(numberOfOutcomes,1,Method.STV);
     assertEquals (28, threeCandidateScenarios.size());
     assertEquals (14, threeCandidateScenarios.getNumberOfScenarios(1));
     assertEquals (14, threeCandidateScenarios.getNumberOfScenarios(2));
@@ -30,7 +31,7 @@ public class ScenarioFactoryTest extends TestCase {
   public void testFourCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     final int numberOfOutcomes = 4;
-    ScenarioList candidateScenarios = scenarioFactory.find(numberOfOutcomes,1);
+    ScenarioList candidateScenarios = scenarioFactory.find(numberOfOutcomes,1,Method.STV);
     assertEquals (117, candidateScenarios.size());
   }
   
@@ -38,7 +39,7 @@ public class ScenarioFactoryTest extends TestCase {
   public void testFiveCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     final int numberOfOutcomes = 5;
-    ScenarioList candidateScenarios = scenarioFactory.find(numberOfOutcomes,1);
+    ScenarioList candidateScenarios = scenarioFactory.find(numberOfOutcomes,1,Method.STV);
     assertEquals (376, candidateScenarios.size());
   }
   
@@ -46,7 +47,7 @@ public class ScenarioFactoryTest extends TestCase {
   public void testManyCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     final int numberOfOutcomes = ScenarioList.MAX_PARTITIONS + 1;
-    ScenarioList candidateScenarios = scenarioFactory.find(numberOfOutcomes,1);
+    ScenarioList candidateScenarios = scenarioFactory.find(numberOfOutcomes,1,Method.STV);
     assertEquals (2457,candidateScenarios.size());
     assertEquals (154, candidateScenarios.getNumberOfScenarios(numberOfOutcomes));
   }

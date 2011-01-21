@@ -32,6 +32,12 @@ package election.tally;
 public class BallotCounting extends AbstractBallotCounting {
   
   /**
+   * 
+   */
+  public BallotCounting() {
+  }
+
+  /**
    * Inner class for state machine
    */
   public class CountStatus extends AbstractCountStatus {
@@ -40,8 +46,8 @@ public class BallotCounting extends AbstractBallotCounting {
     /**
      * Inner state machine for counting of Dail election ballots.
      */
+    //@ ensures READY_TO_COUNT == substate;
     public CountStatus() {
-      super();
       substate = READY_TO_COUNT;
     }
     
@@ -381,6 +387,8 @@ public class BallotCounting extends AbstractBallotCounting {
     @*/
   public void startCounting() {
     status = ElectionStatus.COUNTING;
+    countStatus = new CountStatus();
+    countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
     countNumberValue = 0;
     
     totalRemainingSeats = numberOfSeats;
@@ -393,25 +401,6 @@ public class BallotCounting extends AbstractBallotCounting {
   
   public/*@ pure @*/int getDepositSavingThreshold() {
     return 1 + (getQuota() / 4);
-  }
-  
-  /**
-   * Default constructor for BallotCounting. Creates and initialises the inner
-   * state machine for count status.
-   */
-  public BallotCounting() {
-    super();
-    // TODO 2009.10.14 ESC invariant warning
-    countStatus = createCountStatus(); //@ nowarn;
-    countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
-    // TODO 2009.10.14 ESC postcondition warning
-  } //@ nowarn;
-
-  /**
-   * @return
-   */
-  public CountStatus createCountStatus() {
-    return new CountStatus();
   }
   
   /*@ requires state == COUNTING && countStatus != null;

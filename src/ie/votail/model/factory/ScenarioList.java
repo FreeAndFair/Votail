@@ -9,6 +9,7 @@
 package ie.votail.model.factory;
 
 import ie.votail.model.ElectoralScenario;
+import ie.votail.model.Method;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,9 +32,12 @@ public class ScenarioList extends ArrayList<ElectoralScenario> {
   // Scenarios with a larger number of winners, not held in any partition
   protected ArrayList<ElectoralScenario> bucket;
 
+  private Method method;
+
   /**
    * Creates a new empty list of scenarios, with an empty bucket and 
    * empty partitions.
+   * @param method 
    */
   /*@
    * ensures this.partitions.length == MAX_PARTITIONS;
@@ -42,7 +46,8 @@ public class ScenarioList extends ArrayList<ElectoralScenario> {
    */
   @SuppressWarnings("unchecked")
   
-  public ScenarioList() {
+  public ScenarioList(Method method) {
+    this.method = method;
     this.partitions = new ArrayList[MAX_PARTITIONS];
     for (int i=0; i<MAX_PARTITIONS; i++) {
       partitions[i] = new ArrayList<ElectoralScenario>();

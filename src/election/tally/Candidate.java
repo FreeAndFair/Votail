@@ -362,14 +362,13 @@ public class Candidate extends CandidateStatus {
       stringBuffer.append(" elected");
     }
     else if (state == ELIMINATED) {
-      stringBuffer.append(" excluded");
+      stringBuffer.append(" lost");
     }
     else {
       stringBuffer.append(" continuing");
     }
     stringBuffer.append(" on round " + lastCountNumber + " with "
-        + getInitialVote() + " first preference votes and "
-        + getTotalVote() + " votes in total");
+        + getTotalVote() + " votes");
     return stringBuffer.toString();
   }
   

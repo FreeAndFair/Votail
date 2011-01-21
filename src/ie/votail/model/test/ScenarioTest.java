@@ -3,6 +3,7 @@ package ie.votail.model.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import ie.votail.model.Method;
 import ie.votail.model.Outcome;
 import ie.votail.model.ElectoralScenario;
 
@@ -12,7 +13,7 @@ public class ScenarioTest {
 
   @Test
   public void testAddOutcome() {
-    ElectoralScenario scenario = new ElectoralScenario(1);
+    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
     assertFalse(scenario.hasTiedSoreLoser());
     scenario.addOutcome(Outcome.TiedSoreLoser);
     assertTrue(scenario.hasTiedSoreLoser());
@@ -20,7 +21,7 @@ public class ScenarioTest {
 
   @Test
   public void testCanonical() {
-    ElectoralScenario scenario = new ElectoralScenario(1);
+    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
     scenario.addOutcome(Outcome.EarlyLoser);
     ElectoralScenario canonical = scenario.canonical();
     assertTrue (scenario.equivalentTo(canonical));
@@ -28,7 +29,7 @@ public class ScenarioTest {
 
   @Test
   public void testAppend() {
-    ElectoralScenario scenario = new ElectoralScenario(1);
+    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
     ElectoralScenario oneWinner = scenario.append(Outcome.Winner);
     ElectoralScenario oneLoser = scenario.append(Outcome.Loser);
     ElectoralScenario twoOutcomes = oneWinner.append(Outcome.Loser);
@@ -42,7 +43,7 @@ public class ScenarioTest {
 
   @Test
   public void testIsTied() {
-    ElectoralScenario scenario = new ElectoralScenario(1);
+    ElectoralScenario scenario = new ElectoralScenario(1,Method.STV);
     assertFalse (scenario.isTied());
     scenario.addOutcome(Outcome.TiedWinner);
     assertTrue (scenario.isTied());

@@ -6,6 +6,7 @@
 
 package ie.votail.model.factory;
 
+import ie.votail.model.Method;
 import ie.votail.model.Outcome;
 import ie.votail.model.ElectoralScenario;
 
@@ -23,46 +24,49 @@ public class ScenarioFactory {
     @ ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
     @ ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
     @*/
-  public /*@ pure */ ScenarioList find(int numberOfOutcomes, int numberOfSeats) {
-    ScenarioList scenarios = new ScenarioList();
+  public /*@ pure */ ScenarioList find(int numberOfOutcomes, int numberOfSeats,
+      Method method) {
+    ScenarioList scenarios = new ScenarioList(method);
     if (numberOfOutcomes == 2) {
       
       // Winner gets majority of votes, loser reaches threshold
-      ElectoralScenario commonScenario = new ElectoralScenario(numberOfSeats);
+      ElectoralScenario commonScenario = new ElectoralScenario(numberOfSeats, method);
       commonScenario.addOutcome(Outcome.Winner);
       commonScenario.addOutcome(Outcome.Loser);
       scenarios.add(commonScenario);
       
       // Winner by tie breaker, loser reaches threshold
-      ElectoralScenario tiedScenario = new ElectoralScenario(numberOfSeats);
+      ElectoralScenario tiedScenario = new ElectoralScenario(numberOfSeats, method);
       tiedScenario.addOutcome(Outcome.TiedWinner);
       tiedScenario.addOutcome(Outcome.TiedLoser);
       scenarios.add(tiedScenario);
       
       // Winner by tie breaker, loser below threshold
-      ElectoralScenario landslideScenario = new ElectoralScenario(numberOfSeats);
+      ElectoralScenario landslideScenario = new ElectoralScenario(numberOfSeats, method);
       landslideScenario.addOutcome(Outcome.Winner);
       landslideScenario.addOutcome(Outcome.SoreLoser);
       scenarios.add(landslideScenario);
       
       // Winner by tie breaker, loser below threshold
-      ElectoralScenario unusualScenario = new ElectoralScenario(numberOfSeats);
+      ElectoralScenario unusualScenario = new ElectoralScenario(numberOfSeats, method);
       unusualScenario.addOutcome(Outcome.TiedWinner);
       unusualScenario.addOutcome(Outcome.TiedSoreLoser);
       scenarios.add(unusualScenario);
     }
     else {
       // Extend the base scenario by adding one additional candidate outcome
-      ScenarioList baseScenarios = find (numberOfOutcomes-1, numberOfSeats);
+      ScenarioList baseScenarios = find (numberOfOutcomes-1, numberOfSeats, method);
       Iterator<ElectoralScenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
         ElectoralScenario baseScenario = iterator.next();
         scenarios.add(baseScenario.append(Outcome.Winner));
-        scenarios.add(baseScenario.append(Outcome.QuotaWinner));
-        scenarios.add(baseScenario.append(Outcome.CompromiseWinner));
         scenarios.add(baseScenario.append(Outcome.Loser));
-        scenarios.add(baseScenario.append(Outcome.EarlyLoser));
         scenarios.add(baseScenario.append(Outcome.SoreLoser));
+        if (method == Method.STV) {
+          scenarios.add(baseScenario.append(Outcome.QuotaWinner));
+          scenarios.add(baseScenario.append(Outcome.CompromiseWinner));
+          scenarios.add(baseScenario.append(Outcome.EarlyLoser));
+        }
         // Additional ties are only possible when base scenario has tie breaks
         if (baseScenario.isTied()) {
           scenarios.add(baseScenario.append(Outcome.TiedWinner));
@@ -73,7 +77,9 @@ public class ScenarioFactory {
           else {
             // Difference between loser and early loser is order of elimination
             scenarios.add(baseScenario.append(Outcome.TiedLoser));
-            scenarios.add(baseScenario.append(Outcome.TiedEarlyLoser));
+            if (method == Method.STV) {
+              scenarios.add(baseScenario.append(Outcome.TiedEarlyLoser));
+            }
           }
         }
       }

@@ -525,6 +525,16 @@ pred NoTiesAndNoSoresScenarios {
 run NoTiesAndNoSoresScenarios for 10 but 6 int
 
 -- Scenario tests
+pred SSSSLW {
+  some disj c0,c1,d,e,f,g: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
+  d.outcome = SoreLoser and
+  e.outcome = SoreLoser and
+  f.outcome = SoreLoser and
+  g.outcome = SoreLoser and
+  Election.method = STV and 0 < #Ballot and #Election.candidates = 6
+}
+run SSSSLW for 6 but 6 int
+
 pred LW {
   some disj c0,c1: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
   Election.method = STV and 0 < #Ballot and #Election.candidates = 2

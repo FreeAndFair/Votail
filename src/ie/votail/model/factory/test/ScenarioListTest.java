@@ -3,6 +3,7 @@ package ie.votail.model.factory.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import ie.votail.model.Method;
 import ie.votail.model.Outcome;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.ScenarioList;
@@ -13,8 +14,8 @@ public class ScenarioListTest {
 
   @Test
   public void testAddScenario() {
-    ScenarioList scenarioList = new ScenarioList();
-    ElectoralScenario scenario= new ElectoralScenario(1);
+    ScenarioList scenarioList = new ScenarioList(Method.STV);
+    ElectoralScenario scenario= new ElectoralScenario(1,Method.STV);
     scenarioList.add(scenario);
     scenarioList.add(scenario.canonical());
     boolean addDuplicate = scenarioList.add(scenario);
@@ -25,8 +26,8 @@ public class ScenarioListTest {
 
   @Test
   public void testGetNumberOfScenarios() {
-    ScenarioList scenarioList = new ScenarioList();
-    ElectoralScenario scenario= new ElectoralScenario(1);
+    ScenarioList scenarioList = new ScenarioList(Method.STV);
+    ElectoralScenario scenario= new ElectoralScenario(1,Method.STV);
     scenario.addOutcome(Outcome.Winner);
     scenarioList.add(scenario);
     assertEquals (1, scenarioList.getNumberOfScenarios(1));
@@ -34,8 +35,8 @@ public class ScenarioListTest {
   
   @Test
   public void testHasScenario() {
-    ScenarioList scenarioList = new ScenarioList();
-    ElectoralScenario scenario= new ElectoralScenario(1);
+    ScenarioList scenarioList = new ScenarioList(Method.STV);
+    ElectoralScenario scenario= new ElectoralScenario(1,Method.STV);
     assertFalse (scenarioList.hasScenario(scenario));
   }
 
