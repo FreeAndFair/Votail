@@ -14,9 +14,9 @@ public class ScenarioTest {
   @Test
   public void testAddOutcome() {
     ElectoralScenario scenario = new ElectoralScenario(Method.STV);
-    assertFalse(scenario.hasTiedSoreLoser());
+    assertFalse(scenario.hasOutcome(Outcome.TiedSoreLoser));
     scenario.addOutcome(Outcome.TiedSoreLoser);
-    assertTrue(scenario.hasTiedSoreLoser());
+    assertTrue(scenario.hasOutcome(Outcome.TiedSoreLoser));
   }
 
   @Test
