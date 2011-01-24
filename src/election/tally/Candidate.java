@@ -375,7 +375,7 @@ public class Candidate extends CandidateStatus {
   }
   
   //@ ensures \result <==> (state == ELIMINATED);
-  public/*@ pure*/ boolean isEliminated() {
+  public /*@ pure*/ boolean isEliminated() {
     return state == ELIMINATED;
   }
   

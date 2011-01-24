@@ -38,20 +38,12 @@ public class VotailSystemTest {
         
         for (ElectoralScenario scenario : scenarioList) {
           logger.info(scenario.toString());
-          BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
           ElectionConfiguration electionConfiguration =
-              ballotBoxFactory.extractBallots(scenario, scope);
-          //@ assert electionConfiguration != null;
-          //@ assert 0 < electionConfiguration.size();
-          Constituency constituency = electionConfiguration.getConstituency();
-          logger.info(electionConfiguration.toString());
-          ballotCounting.setup(constituency);
-          ballotCounting.load(electionConfiguration);
+              createElection(scope, ballotCounting, logger, scenario);
           ballotCounting.count();
           logger.info(ballotCounting.getResults());
           if (!scenario.check(ballotCounting)) {
-            logger.severe("Unexpected results for scenario " + scenario
-                + " and ballot box " + electionConfiguration);
+            logFailure(scope, logger, scenario, electionConfiguration);
             numberOfFailures++;
           }
           total++;
@@ -61,6 +53,41 @@ public class VotailSystemTest {
     if (0 < numberOfFailures) {
       Assert.fail(numberOfFailures + " failures out of " + total);
     }
+  }
+
+  /**
+   * @param scope
+   * @param ballotCounting
+   * @param logger
+   * @param scenario
+   * @return
+   */
+  protected ElectionConfiguration createElection(final int scope,
+      BallotCounting ballotCounting, Logger logger, ElectoralScenario scenario) {
+    BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
+    ElectionConfiguration electionConfiguration =
+        ballotBoxFactory.extractBallots(scenario, scope);
+    //@ assert electionConfiguration != null;
+    //@ assert 0 < electionConfiguration.size();
+    Constituency constituency = electionConfiguration.getConstituency();
+    logger.info(electionConfiguration.toString());
+    ballotCounting.setup(constituency);
+    ballotCounting.load(electionConfiguration);
+    return electionConfiguration;
+  }
+
+  /**
+   * @param scope
+   * @param logger
+   * @param scenario
+   * @param electionConfiguration
+   */
+  protected void logFailure(final int scope, Logger logger,
+      ElectoralScenario scenario, ElectionConfiguration electionConfiguration) {
+    logger.severe("Unexpected results for scenario " + scenario
+        + " using predicate " + scenario.toPredicate()
+        + " with scope " + scope
+        + " and ballot box " + electionConfiguration);
   }
   
   public static void main(String [ ] args) {
@@ -89,21 +116,13 @@ public class VotailSystemTest {
         
         for (ElectoralScenario scenario : scenarioList) {
           logger.info(scenario.toString());
-          BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
           ElectionConfiguration electionConfiguration =
-              ballotBoxFactory.extractBallots(scenario, scope);
-          //@ assert electionConfiguration != null;
-          //@ assert 0 < electionConfiguration.size();
-          Constituency constituency = electionConfiguration.getConstituency();
-          logger.info(electionConfiguration.toString());
-          ballotCounting.setup(constituency);
-          ballotCounting.load(electionConfiguration);
+              createElection(scope, ballotCounting, logger, scenario);
           ballotCounting.usePlurality();
           ballotCounting.count();
           logger.info(ballotCounting.getResults());
           if (!scenario.check(ballotCounting)) {
-            logger.severe("Unexpected results for scenario " + scenario
-                + " and ballot box " + electionConfiguration);
+            logFailure(scope, logger, scenario, electionConfiguration);
             numberOfFailures++;
           }
           total++;

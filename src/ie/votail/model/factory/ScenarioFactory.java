@@ -59,13 +59,20 @@ public class ScenarioFactory {
       Iterator<ElectoralScenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
         ElectoralScenario baseScenario = iterator.next();
-        scenarios.add(baseScenario.append(Outcome.Loser));
+        if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser) && 
+            !baseScenario.hasOutcome(Outcome.TiedEarlyLoser)) {
+            // Cannot have a Loser with a Tied Sore Loser or Tied Early Loser
+          scenarios.add(baseScenario.append(Outcome.Loser));
+        }
         scenarios.add(baseScenario.append(Outcome.SoreLoser));
         if (method == Method.STV) {
           scenarios.add(baseScenario.append(Outcome.Winner));
           scenarios.add(baseScenario.append(Outcome.QuotaWinner));
           scenarios.add(baseScenario.append(Outcome.CompromiseWinner));
-          scenarios.add(baseScenario.append(Outcome.EarlyLoser));
+          if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
+            // Cannot have an Early Loser with a Tied Sore Loser
+            scenarios.add(baseScenario.append(Outcome.EarlyLoser));
+          }
         }
         // Additional ties are only possible when base scenario has tie breaks
         if (baseScenario.isTied()) {
@@ -73,14 +80,20 @@ public class ScenarioFactory {
             scenarios.add(baseScenario.append(Outcome.TiedWinner));
           }
           // Cannot have a tie-breaker involving both a sore and non-sore loser
-          if (baseScenario.hasTiedSoreLoser()) {
+          if (baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
             scenarios.add(baseScenario.append(Outcome.TiedSoreLoser));
           }
           else {
             // Difference between loser and early loser is order of elimination
-            scenarios.add(baseScenario.append(Outcome.TiedLoser));
-            if (method == Method.STV) {
-              scenarios.add(baseScenario.append(Outcome.TiedEarlyLoser));
+            if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
+              if (method == Method.Plurality || 
+                  !baseScenario.hasOutcome(Outcome.TiedEarlyLoser)) {
+                // Cannot have a Tied Loser with a Tied Early Loser
+                scenarios.add(baseScenario.append(Outcome.TiedLoser));
+              }
+              if (method == Method.STV) {
+                scenarios.add(baseScenario.append(Outcome.TiedEarlyLoser));
+              }
             }
           }
         }

@@ -256,19 +256,18 @@ public class ElectoralScenario {
   }
   
   /**
-   * Check if this scenario involves a tie between a sore loser and another
-   * equal candidate
+   * Check if this scenario includes a specific outcome
    * 
-   * @return True if there are any tied sore losers in this scenario
+   * @return True if there is at least outcome of that kind
    */
   /*@
    * ensures \result ==> isTied();
    */
-  public/*@ pure*/boolean hasTiedSoreLoser() {
+  public/*@ pure*/boolean hasOutcome(Outcome theOutcome) {
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
-      if (outcome == Outcome.TiedSoreLoser) {
+      if (outcome == theOutcome) {
         return true;
       }
     }
@@ -301,7 +300,7 @@ public class ElectoralScenario {
   }
   
   /**
-   * Using the formulae in the ICSE 2011 paper calculate the maximum number
+   * Calculate the maximum number
    * of distinct scenarios when the number of winners and losers is known,
    * adjusted by restricting invalid combinations of tied outcomes
    * 

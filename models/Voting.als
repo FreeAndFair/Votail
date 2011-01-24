@@ -36,9 +36,9 @@ sig Ballot {
 one sig Scenario {
    	losers: 				set Candidate,
    	winners: 			set Candidate,
-	eliminated: 		set Candidate, 		-- Candidates excluded under STV rules
-	threshold: 		Int, 						-- Minimum number of votes for a Loser or EarlyLoser
-	quota: 				Int						-- Minimum number of votes for a STV Winner or QuotaWinner
+	eliminated: 		set Candidate, 		-- Early and Sore Losers under STV rules
+	threshold: 		Int, 						-- Minimum number of votes for a Loser or Early Loser
+	quota: 				Int						-- Minimum number of votes for a STV Winner or Quota Winner
 }
 {
  	winners + losers = Election.candidates
@@ -47,9 +47,7 @@ one sig Scenario {
  	0 < #losers
  	all w: Candidate | all l: Candidate | l in losers and w in winners implies 
 		((#l.votes + #l.transfers <= #w.votes + #w.transfers) and (#l.votes <= #w.votes))
-	0 <= threshold
-	threshold <= quota
-    Election.method = STV implies (threshold = 1 + quota.div[4])
+    threshold = 1 + quota.div[4]
 	Election.method = Plurality implies #eliminated = 0
 	eliminated in losers
 	all c: Candidate | c in losers implies Election.method = Plurality 
@@ -91,9 +89,6 @@ one sig Election {
 }
 
 -- Independent (or Fundamental) Axioms
-fact threshold {
-   Election.method = Plurality implies Scenario.threshold = Election.ballots.div[20]
-}
 
 fact surplus {
   all c: Candidate | (c.outcome = Winner and Election.method = STV) implies
@@ -141,7 +136,7 @@ fact closeWinner {
 
 fact soreLoser {
 	all c: Candidate | (c.outcome = SoreLoser or c.outcome = TiedSoreLoser) implies 
-		(#c.votes + #c.transfers < Scenario.threshold)
+		((#c.votes + #c.transfers) < Scenario.threshold)
 }
 
 fact loser {
@@ -277,7 +272,8 @@ fact highestWinners {
 
 // Tied Winners and Tied Losers have an equal number of votes
 fact equalTies {
-	all disj a,b: Candidate | a.outcome = TiedWinner and b.outcome = TiedLoser implies
+	all disj a,b: Candidate | a.outcome = TiedWinner and 
+        (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or b.outcome = TiedSoreLoser) implies
 		#a.votes = #b.votes and #a.transfers = #b.transfers
 }
 
@@ -383,7 +379,7 @@ check soreLoserBelowThreshold for 10 but 6 int
 assert underThresholdOutcomes {
   all c: Candidate | (#c.votes + #c.transfers < Scenario.threshold) implies
      (c.outcome = SoreLoser or c.outcome = TiedSoreLoser or c.outcome = TiedWinner or
-     c.outcome = CompromiseWinner)
+     c.outcome = CompromiseWinner or (Election.method = Plurality and c.outcome = Winner))
 }
 check underThresholdOutcomes for 10 but 6 int
 
@@ -392,6 +388,19 @@ assert zeroVote {
   all c: Candidate | (#c.votes + #c.transfers = 0) implies (c.outcome = SoreLoser)
 }
 check zeroVote for 10 but 6 int
+
+// Tied Winners have equality of votes and transfers
+assert tiedWinnerEquality {
+  all a,b: Candidate | (a.outcome = TiedWinner and b.outcome = TiedWinner) implies
+	#a.votes + #a.transfers = #b.votes + #b.transfers
+}
+check tiedWinnerEquality for 10 but 6 int
+
+// Non-negative threshold and quota
+assert nonNegativeThresholdAndQuota {
+	0 <= Scenario.threshold and Scenario.threshold <= Scenario.quota
+}
+check nonNegativeThresholdAndQuota for 6 but 6 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -406,7 +415,7 @@ pred PluralityTiedWinner {
 	Election.seats = 1
 	some disj a,b: Candidate | a.outcome = TiedWinner and b.outcome = TiedLoser
 }
-run PluralityTiedWinner for 10 but 2 Ballot, 6 int
+run PluralityTiedWinner for 10 but 6 int
 
 pred ThreeCandidatePlurality {
 	Election.method = Plurality
@@ -469,7 +478,7 @@ pred ThreeWayTie {
 		b.outcome = TiedLoser and
 		c.outcome = TiedLoser
 }
-run ThreeWayTie for 5 but 6 int
+run ThreeWayTie for 10 but 6 int
 
 pred FiveWayTie {
 	some disj a,b,c,d,e: Candidate | a.outcome = TiedWinner and
@@ -525,26 +534,42 @@ pred NoTiesAndNoSoresScenarios {
 run NoTiesAndNoSoresScenarios for 10 but 6 int
 
 -- Scenario tests
+pred SLW {
+  some disj c0,c1,d: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
+  d.outcome = SoreLoser and
+  Election.method = Plurality and #Election.candidates = 3
+  Scenario.threshold = 1
+}
+run SLW for 6 but 6 int
+
+pred SSSLW {
+  some disj c0,c1,d,e,f: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
+  d.outcome = SoreLoser and
+  e.outcome = SoreLoser and
+  f.outcome = SoreLoser and
+  Election.method = Plurality and #Election.candidates = 5
+}
+run SSSLW for 6 but 6 int
+
 pred SSSSLW {
   some disj c0,c1,d,e,f,g: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
   d.outcome = SoreLoser and
   e.outcome = SoreLoser and
   f.outcome = SoreLoser and
   g.outcome = SoreLoser and
-  Election.method = STV and 0 < #Ballot and #Election.candidates = 6
+  Election.method = Plurality and #Election.candidates = 6
 }
 run SSSSLW for 6 but 6 int
 
 pred LW {
   some disj c0,c1: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
-  Election.method = STV and 0 < #Ballot and #Election.candidates = 2
+  Election.method = Plurality and 0 < #Ballot and #Election.candidates = 2
 }
 run LW for 5 but 6 int
 
 pred LQ {
 	some disj a,b: Candidate | a.outcome = Loser and b.outcome = QuotaWinner
     #Election.candidates = 2
-	Election.method = STV
     0 < #Ballot
 }
 run LQ for 10 but 6 int
@@ -553,7 +578,6 @@ pred LQQ {
 	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and
        c.outcome = QuotaWinner
     #Election.candidates = 3
-	Election.method = STV
     0 < #Ballot
 }
 run LQQ for 10 but 6 int
@@ -562,7 +586,6 @@ pred LQW {
 	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
 		c.outcome = Winner
     #Election.candidates = 3
-	Election.method = STV
     0 < #Ballot
 }
 run LQW for 10 but 6 int
@@ -571,7 +594,6 @@ pred LQQW {
 	some disj a,b,c,d: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
 		c.outcome = Winner and d.outcome = QuotaWinner
     #Election.candidates = 4
-	Election.method = STV
     0 < #Ballot
 }
 run LQQW for 10 but 6 int
@@ -580,17 +602,24 @@ pred SLQQW {
 	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
 		c.outcome = Winner and d.outcome = QuotaWinner and e.outcome = SoreLoser
     #Election.candidates = 5
-	Election.method = STV
     0 < #Ballot
 }
-run SLQQW for 10 but 6 int
+
+pred tenCandidates {
+  some disj c0,c1,c2,c3,c4,c5,c6,c7,c8,c9: Candidate | c0.outcome = SoreLoser and 
+  c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
+  c4.outcome = Loser and c5.outcome = Loser and c6.outcome = Loser and 
+  c7.outcome = TiedLoser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
+  Election.method = Plurality and 1 < #Ballot and #Election.candidates = 10
+}
+run tenCandidates for 13 but 7 int
 
 -- Version Control for changes to model
 one sig Version {
-   year, month, day : Int
+   year, month, day: Int
 } {
   year = 11
   month = 01
-  day = 20
-  -- Dermot Cochran 2011-01-20
+  day = 24
+  -- Dermot Cochran 2011-01-24
 }
