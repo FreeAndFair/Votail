@@ -136,7 +136,7 @@ fact closeWinner {
 
 fact soreLoser {
 	all c: Candidate | (c.outcome = SoreLoser or c.outcome = TiedSoreLoser) implies 
-		((#c.votes + #c.transfers) < Scenario.threshold)
+		#c.votes + #c.transfers < Scenario.threshold
 }
 
 fact loser {
@@ -286,19 +286,19 @@ fact winnersHaveVotes {
 
 // All non-sore losers are above the threshold
 fact losersAboveThreshold {
-  all c: Candidate | c.outcome = Loser implies (Scenario.threshold < #c.votes + #c.transfers)
+  all c: Candidate | c.outcome = Loser implies Scenario.threshold < #c.votes + #c.transfers
 }
 
 fact earlyLosersAboveThreshold {
-  all c: Candidate | c.outcome = EarlyLoser implies (Scenario.threshold < #c.votes + #c.transfers)
+  all c: Candidate | c.outcome = EarlyLoser implies Scenario.threshold < #c.votes + #c.transfers
 }
 
 fact tiedLosersAboveThreshold {
-  all c: Candidate | c.outcome = TiedLoser implies (Scenario.threshold < #c.votes + #c.transfers)
+  all c: Candidate | c.outcome = TiedLoser implies Scenario.threshold < #c.votes + #c.transfers
 }
 
 fact tiedEarlyLosersAboveThreshold {
-  all c: Candidate | c.outcome = TiedEarlyLoser implies (Scenario.threshold < #c.votes + #c.transfers)
+  all c: Candidate | c.outcome = TiedEarlyLoser implies Scenario.threshold < #c.votes + #c.transfers
 }
 
 -- Basic Lemmas
@@ -610,9 +610,9 @@ pred tenCandidates {
     c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c5.outcome = Loser and c6.outcome = Loser and 
     c7.outcome = TiedLoser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
-    Election.method = Plurality and 1 < #Ballot and #Election.candidates = 10
+    Election.method = Plurality and #Election.candidates = 10
 }
-run tenCandidates for 30 but 7 int
+run tenCandidates for 16 but 6 int
 
 -- Version Control for changes to model
 one sig Version {

@@ -252,7 +252,7 @@ public class TestDataGenerator {
   //@ requires 0 <= n;
   public static BallotCounting getBallotCounting(int n) {
     if (n == 0) {
-      return new BallotCounting();
+      return new BallotCounting(); //@ nowarn;
     }
     throw new java.util.NoSuchElementException();
   }
