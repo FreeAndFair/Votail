@@ -128,7 +128,7 @@ build:	classes jml jmlc jmlunit_classes
 
 escjava:	escjava2-typecheck escjava2
 
-test:	universal-test jml-junit-tests universal-rac-test
+test:	jml-junit-tests universal-rac-test
 
 # paper documentation-related
 
@@ -268,7 +268,7 @@ jml-junit-tests:	classes jmlunit_classes
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractBallotCounting_JML_Test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.BallotBox_JML_Test
-        export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
+	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 
 universal-test:	universal.stamp

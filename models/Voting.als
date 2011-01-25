@@ -259,8 +259,8 @@ fact compromiseNotTied {
 // Equal losers are tied
 fact equalityofTiedWinnersAndLosers {
 	all disj w,l: Candidate | w in Scenario.winners and l in Scenario.losers and 
-		#w.votes = #l.votes and #w.transfers = #l.transfers implies
-			w.outcome = TiedWinner and 0 < #w.votes + #w.transfers and 
+		#w.votes + #w.transfers = #l.votes + #l.transfers implies
+			w.outcome = TiedWinner and 
 			(l.outcome = TiedLoser or l.outcome = TiedEarlyLoser or l.outcome = TiedSoreLoser)
 }
 
@@ -357,12 +357,6 @@ assert validCompromise {
 }
 check validCompromise for 6 int
 
-// Quota not more than the number of ballots cast
-assert maxQuota {
-  Scenario.quota <= #Ballot
-}
-check maxQuota for 7 int
-
 // Quota winner needs transfers
 assert quotaWinnerNeedsTransfers {
   all c: Candidate | c.outcome = QuotaWinner implies 0 < #c.transfers
@@ -382,12 +376,6 @@ assert underThresholdOutcomes {
      c.outcome = CompromiseWinner or (Election.method = Plurality and c.outcome = Winner))
 }
 check underThresholdOutcomes for 10 but 6 int
-
-// Non-sore loser gets at least one vote
-assert zeroVote {
-  all c: Candidate | (#c.votes + #c.transfers = 0) implies (c.outcome = SoreLoser)
-}
-check zeroVote for 10 but 6 int
 
 // Tied Winners have equality of votes and transfers
 assert tiedWinnerEquality {

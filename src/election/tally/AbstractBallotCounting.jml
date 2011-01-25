@@ -37,7 +37,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ public invariant (state == PRELOAD || state == LOADING) ==>
 	  @   (\forall int i; 0 <= i && i < totalCandidates;
 	  @     candidateList[i].getStatus() == Candidate.CONTINUING &&
-	  @     candidateList[i].getOriginalVote() == 0);
+	  @     candidateList[i].getTotalVote() == 0);
 	  @
 	  @ public invariant (state == PRELOAD || state == LOADING ||   
 	  @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
@@ -134,8 +134,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 
   /** Number of rounds of counting so far */
   //@ public model int countNumber;
-  //@ public initially countNumber == 1;
-  //@ public invariant 0 < countNumber;
+  //@ public initially countNumber == 0;
+  //@ public invariant 0 <= countNumber;
   /*@ public invariant (PRELOAD <= state) ==>
     @   countNumber <= CountConfiguration.MAXCOUNT;
     @ public constraint (state == COUNTING) ==> 
@@ -237,7 +237,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * or has been elected
    */
   /*@ requires (state == COUNTING) || (state == FINISHED);
-    @ ensures \result == (candidateList[index].getOriginalVote() >= depositSavingThreshold) ||
+    @ ensures \result <==> 
+    @   (candidateList[index].getTotalVote() >= depositSavingThreshold) ||
     @   (isElected (candidateList[index]) == true);
     @*/
   public /*@ pure @*/ boolean isDepositSaved (int index);

@@ -1,6 +1,6 @@
 package ie.lero.evoting.test.data;
 
-// (c) Copyright 2009, LGSSE (Lero, Science Foundation Ireland) and University College Dublin, Ireland
+// (c) Copyright 2009, LGSSE and University College Dublin, Ireland
 // (c) Copyright 2010, IT University of Copenhagen, Denmark
 // (c) Copyright 2009-2010 Dermot Cochran and Joseph R. Kiniry
 // (c) Dermot Cochran, 2010-2011, IT University of Copenhagen
@@ -248,11 +248,15 @@ public class TestDataGenerator {
   /**
    * BallotCounting is the top level object in the system; it is neither a field
    * nor a formal parameter for any other object.
+   * 
+   * @param n
+   * @return A Ballot Counting object
    */
   //@ requires 0 <= n;
   public static BallotCounting getBallotCounting(int n) {
-    if (n == 0) {
-      return new BallotCounting(); //@ nowarn;
+    if (ballotCounting_count == 0 || n == 0) {
+      ballotCounting_count++;
+      return new BallotCounting();
     }
     throw new java.util.NoSuchElementException();
   }
@@ -264,11 +268,11 @@ public class TestDataGenerator {
 
   //@ requires 0 <= n;
   public static AbstractCountStatus getAbstractCountStatus(int n) {
-    if (n == 0) {
-      BallotCounting bc = new BallotCounting();
-      return bc.countStatus;
+    if (abstractCountStatus_count == 0 || n == 0) {
+      abstractCountStatus_count++;
+      BallotCounting ballotCounting = new BallotCounting();
+      return ballotCounting.getCountStatus();
     }
-    else
     throw new java.util.NoSuchElementException();
   }
 }

@@ -33,11 +33,17 @@ package election.tally;
 public class BallotCounting extends AbstractBallotCounting {
   
   /**
-   * 
+   * Default constructor for BallotCounting. Creates and initialises the inner
+   * state machine for count status.
    */
   public BallotCounting() {
-    this.plurality = false;
-  }
+    super();
+    plurality = false;
+    // TODO 2009.10.14 ESC invariant warning
+    countStatus = new CountStatus(); //@ nowarn;
+    countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
+    // TODO 2009.10.14 ESC postcondition warning
+  } //@ nowarn;
 
   /**
    * Inner class for state machine
