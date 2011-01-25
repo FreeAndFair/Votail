@@ -274,7 +274,7 @@ fact highestWinners {
 fact equalTies {
 	all disj a,b: Candidate | a.outcome = TiedWinner and 
         (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or b.outcome = TiedSoreLoser) implies
-		#a.votes = #b.votes and #a.transfers = #b.transfers
+		#a.votes + #a.transfers = #b.votes + #b.transfers
 }
 
 // Winners have more votes than non-tied losers
@@ -607,12 +607,12 @@ pred SLQQW {
 
 pred tenCandidates {
   some disj c0,c1,c2,c3,c4,c5,c6,c7,c8,c9: Candidate | c0.outcome = SoreLoser and 
-  c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
-  c4.outcome = Loser and c5.outcome = Loser and c6.outcome = Loser and 
-  c7.outcome = TiedLoser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
-  Election.method = Plurality and 1 < #Ballot and #Election.candidates = 10
+    c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
+    c4.outcome = Loser and c5.outcome = Loser and c6.outcome = Loser and 
+    c7.outcome = TiedLoser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
+    Election.method = Plurality and 1 < #Ballot and #Election.candidates = 10
 }
-run tenCandidates for 13 but 7 int
+run tenCandidates for 30 but 7 int
 
 -- Version Control for changes to model
 one sig Version {
@@ -620,6 +620,6 @@ one sig Version {
 } {
   year = 11
   month = 01
-  day = 24
-  -- Dermot Cochran 2011-01-24
+  day = 25
+  -- Dermot Cochran 2011-01-25
 }
