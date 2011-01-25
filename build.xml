@@ -30,7 +30,6 @@
   <property name="project" value="Votail"/>
   <property name="version" value="1"/>
 
-  <property name="libs_dir" value="${basedir}/Utils"/>
 
 
 
@@ -529,15 +528,7 @@
     <delete>
       <fileset dir="."
                includes="TEST-*.txt"/>
-    </delete>            
-    <delete>
-      <fileset dir="${libs_dir}"
-               includes="${project}*.jar"/>
-    </delete>            
-    <delete>
-      <fileset dir="${libs_dir}"
-               includes="escjava.jar,houdini.jar,javafe.jar"/>
-    </delete>            
+    </delete>                          
     <delete>
       <fileset dir="." includes="*.txt" excludes="README.txt"/>
     </delete>
