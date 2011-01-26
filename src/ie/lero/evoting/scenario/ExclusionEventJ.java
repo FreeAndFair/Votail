@@ -26,6 +26,7 @@ public class ExclusionEventJ extends TestCase {
 	/**
 	 * Execute this scenario.
 	 */
+  //@ requires ballotCounting != null;
 	public final void testExclusion() {
 	 	
 	  assertTrue (ballotCounting.getStatus() == ElectionStatus.PRECOUNT);
@@ -58,6 +59,7 @@ public class ExclusionEventJ extends TestCase {
 		}
 	}
 
+ 	//@ requires parameters != null;
   protected void setUpParameters() {
  		parameters.setNumberOfSeats (4,4);
 		numberOfCandidates = 2 + parameters.getNumberOfSeatsInThisElection();

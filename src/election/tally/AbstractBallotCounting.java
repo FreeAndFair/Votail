@@ -115,8 +115,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     numberOfCandidatesEliminated = 0;
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
-  } //@ nowarn Post;
-  // TODO ESC 2011.01.17 Postcondition possibly not established (Post)
+  }
 
   /**
    * Determine if the candidate has enough votes to be elected.
@@ -292,6 +291,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.totalNumberOfSeats = constituency.getTotalNumberOfSeats();
     this.status = PRELOAD;
     this.candidates = new Candidate[this.totalNumberOfCandidates];
+    //@ assert 0 <= numberOfSeats;
     this.electedCandidateIndex = new int [numberOfSeats];
     this.excludedIndex = new int [totalNumberOfCandidates - numberOfSeats];
     for (int i = 0; i < candidates.length; i++) {
@@ -488,6 +488,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ also
     @   requires \nonnullelements (candidateList);
+    @   requires candidates != null;
     @   ensures \result == (\exists int i;
     @     0 <= i && i < candidateList.length;
     @     candidateID == candidateList[i].getCandidateID() &&
@@ -939,8 +940,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires \nonnullelements (candidateList);
     @ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
     @ requires hasQuota (candidateList[loser]) == false;
-    @ requires 0 < numberOfCandidatesEliminated;
-    @ requires numberOfCandidatesEliminated <= excludedIndex.length;
+    @ requires 0 <= numberOfCandidatesEliminated;
+    @ requires numberOfCandidatesEliminated < excludedIndex.length;
     @ assignable candidateList;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
@@ -1029,6 +1030,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ assignable candidates, numberOfCandidatesElected;
   //@ assignable totalRemainingSeats;
   //@ assignable candidates[winner], candidates[winner].state;
+  //@ assignable electedCandidateIndex;
   //@ ensures isElected (candidateList[winner]);
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;

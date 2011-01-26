@@ -32,7 +32,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * each vote held by a candidate.
    */
   /*@ public model non_null Candidate[] candidateList;
-    @ public invariant \nonnullelements (candidateList);
+    @ public invariant (PRELOAD < state) ==> \nonnullelements (candidateList);
     @ public invariant totalCandidates == candidateList.length;
 	  @ public invariant (state == PRELOAD || state == LOADING) ==>
 	  @   (\forall int i; 0 <= i && i < totalCandidates;

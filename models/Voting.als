@@ -46,9 +46,8 @@ one sig Scenario {
  	no c: Candidate | c in losers & winners
  	0 < #losers
  	all w: Candidate | all l: Candidate | l in losers and w in winners implies 
-		((#l.votes + #l.transfers <= #w.votes + #w.transfers) and (#l.votes <= #w.votes))
-    threshold = 1 + quota.div[4]
-	Election.method = Plurality implies #eliminated = 0
+		(#l.votes + #l.transfers <= #w.votes + #w.transfers)
+    Election.method = STV implies threshold = 1 + quota.div[4]
 	eliminated in losers
 	all c: Candidate | c in losers implies Election.method = Plurality 
        or #c.votes + #c.transfers < quota
@@ -78,14 +77,14 @@ one sig Election {
   candidates: 	set Candidate,
   seats: 				Int,
   method: 			Method,
-  ballots:			Int -- number of ballots cast
+  ballots:			Int -- number of unspoilt ballots cast
 }
 {
  	0 < seats
  	seats < #candidates
  	all c: Candidate | c in candidates
     ballots = #Ballot
-    Scenario.quota = 1 + ballots.div[seats+1]
+    method = STV implies Scenario.quota = 1 + ballots.div[seats+1]
 }
 
 -- Independent (or Fundamental) Axioms
@@ -120,22 +119,32 @@ fact winnerSTV {
 }
 
 fact transferWinnerWithQuota {
-	all c: Candidate | (Election.method = STV and c.outcome = QuotaWinner) implies
+	all c: Candidate | c.outcome = QuotaWinner implies
 	   Scenario.quota <= #c.votes + #c.transfers
 }
 
 fact transferWinnerNotFirst {
-	all c: Candidate |  (Election.method = STV and c.outcome = QuotaWinner) implies
+	all c: Candidate |  c.outcome = QuotaWinner implies
 		not Scenario.quota <= #c.votes
 }
 
 fact closeWinner {
-	all c: Candidate | (c.outcome = CompromiseWinner or c.outcome = TiedWinner) implies
+	all c: Candidate | c.outcome = CompromiseWinner  implies
+		not (Scenario.quota <= #c.votes + #c.transfers)
+}
+
+fact tiedWinner {
+	all c: Candidate | c.outcome = TiedWinner implies
 		not (Scenario.quota <= #c.votes + #c.transfers) or Election.method = Plurality
 }
 
 fact soreLoser {
-	all c: Candidate | (c.outcome = SoreLoser or c.outcome = TiedSoreLoser) implies 
+	all c: Candidate | c.outcome = SoreLoser implies 
+		#c.votes + #c.transfers < Scenario.threshold
+}
+
+fact tiedSoreLoser {
+	all c: Candidate | c.outcome = TiedSoreLoser implies 
 		#c.votes + #c.transfers < Scenario.threshold
 }
 
@@ -231,6 +240,11 @@ fact equalityOfTiedLosers {
        (#s.votes = #w.votes) or (#s.votes + #s.transfers = #w.votes + #w.transfers)
 }
 
+// An ordinary plurality loser must have received at least five percent of the total vote
+fact minimumThreshold {
+	Election.method = Plurality implies 1 + Election.ballots.div[20] = Scenario.threshold
+}
+
 -- Scenario Validity Axioms
 // When there is a tied sore loser then there are no non-sore losers
 fact typeOfTiedLoser {
@@ -245,9 +259,15 @@ fact tieBreaker {
 }
 
 fact validTieBreaker {
-	all l: Candidate | some w: Candidate | 
-    (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies 
-    w.outcome = TiedWinner and #w.votes + #w.transfers = #l.votes + #l.transfers
+	all l: Candidate |
+      (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies 
+      some w: Candidate |  w.outcome = TiedWinner
+}
+
+fact equalTieBreaker {
+	all disj l,w: Candidate | 
+    (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) and
+    w.outcome = TiedWinner implies #w.votes + #w.transfers = #l.votes + #l.transfers
 }
 
 // Compromise winner must have more votes than any tied winners
@@ -306,6 +326,10 @@ fact winnerHigherThanAllNonTiedLosers {
   all disj c,d: Candidate | c in Scenario.winners and 
      (d.outcome = SoreLoser or d.outcome = EarlyLoser or d.outcome = Loser) implies
 	 #d.votes + #d.transfers < #c.votes + #c.transfers
+}
+
+fact nonNegativeQuota {
+  0 <= Scenario.quota
 }
 
 -- Basic Lemmas
@@ -407,9 +431,15 @@ check tiedWinnerEquality for 10 but 6 int
 
 // Non-negative threshold and quota
 assert nonNegativeThresholdAndQuota {
-	0 <= Scenario.threshold and Scenario.threshold <= Scenario.quota
+	0 <= Scenario.threshold and 0 <= Scenario.quota
 }
 check nonNegativeThresholdAndQuota for 6 but 6 int
+
+// STV threshold below quota
+assert thresholdBelowQuota {
+   Election.method = STV and 0 < #Ballot implies Scenario.threshold <= Scenario.quota
+}
+check thresholdBelowQuota for 13 but 7 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -646,23 +676,23 @@ pred SSLLTT {
 }
 run SSLLTT for 13 but 7 int
 
-pred SSLLLTT {
+pred SSLLLTTw {
   some disj c0,c1,c3,c4,c5,c7,c8: Candidate | c0.outcome = SoreLoser and 
     c1.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c5.outcome = Loser and 
-    c7.outcome = TiedLoser and c8.outcome = TiedLoser and 
+    c7.outcome = TiedLoser and c8.outcome = TiedWinner and 
     Election.method = Plurality and #Election.candidates = 7
 }
-run SSLLLTT for 20 but 7 int
+run SSLLLTTw for 13 but 7 int
 
-pred SSSLLLLTTT {
+pred SSSLLLLTTTw {
   some disj c0,c1,c2,c3,c4,c5,c6,c7,c8,c9: Candidate | c0.outcome = SoreLoser and 
     c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c5.outcome = Loser and c6.outcome = Loser and 
     c7.outcome = TiedLoser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
     Election.method = Plurality and #Election.candidates = 10
 }
-run SSSLLLLTTT for 13 but 7 int
+run SSSLLLLTTTw for 13 but 7 int
 
 -- Version Control for changes to model
 one sig Version {

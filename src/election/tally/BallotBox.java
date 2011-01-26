@@ -91,9 +91,8 @@ public class BallotBox {
     @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
     @*/
   public void accept(final/*@ non_null @*/int[] preferences) {
-    final Ballot ballot = new Ballot(preferences);
     final int next = numberOfBallots++;
-    ballots[next] = ballot;
+    ballots[next] = new Ballot(preferences);
   }
 
   /**
