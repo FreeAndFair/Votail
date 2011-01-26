@@ -247,7 +247,7 @@ fact tieBreaker {
 fact validTieBreaker {
 	all l: Candidate | some w: Candidate | 
     (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies 
-    w.outcome = TiedWinner and (#w.votes + #w.transfers = #l.votes + #l.transfers)
+    w.outcome = TiedWinner and #w.votes + #w.transfers = #l.votes + #l.transfers
 }
 
 // Compromise winner must have more votes than any tied winners
@@ -256,13 +256,7 @@ fact compromiseNotTied {
 		#t.votes + #t.transfers < #c.votes + #c.transfers
 }
 
-// Equal losers are tied
-fact equalityofTiedWinnersAndLosers {
-	all disj w,l: Candidate | w in Scenario.winners and l in Scenario.losers and 
-		#w.votes + #w.transfers = #l.votes + #l.transfers implies
-			w.outcome = TiedWinner and 
-			(l.outcome = TiedLoser or l.outcome = TiedEarlyLoser or l.outcome = TiedSoreLoser)
-}
+
 
 // Highest winner has a quota
 fact highestWinners {
@@ -301,6 +295,19 @@ fact tiedEarlyLosersAboveThreshold {
   all c: Candidate | c.outcome = TiedEarlyLoser implies Scenario.threshold < #c.votes + #c.transfers
 }
 
+fact nonTiedWinnerHigherThanAllLosers {
+  all disj c,d: Candidate | 
+	(c.outcome = CompromiseWinner or c.outcome = QuotaWinner or c.outcome = Winner) and 
+	d in Scenario.losers implies
+	 #d.votes + #d.transfers < #c.votes + #c.transfers
+}
+
+fact winnerHigherThanAllNonTiedLosers {
+  all disj c,d: Candidate | c in Scenario.winners and 
+     (d.outcome = SoreLoser or d.outcome = EarlyLoser or d.outcome = Loser) implies
+	 #d.votes + #d.transfers < #c.votes + #c.transfers
+}
+
 -- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
@@ -323,6 +330,11 @@ assert plurality {
 }
 check plurality for 18 but 6 int
 
+assert pluralityNoTransfers {
+  all c: Candidate | Election.method = Plurality implies 0 = #c.transfers
+}
+check pluralityNoTransfers for 13 but 7 int
+
 assert wellFormedTieBreaker {
 	some w,l : Candidate | (w in Scenario.winners and l in Scenario.losers and 
 		#w.votes = #l.votes and #w.transfers = #l.transfers) implies 
@@ -338,6 +350,15 @@ assert validSurplus {
 check validSurplus for 16 but 6 int
 
 -- Advanced Lemmas
+// Equal losers are tied
+assert equalityofTiedWinnersAndLosers {
+	all disj w,l: Candidate | w in Scenario.winners and l in Scenario.losers and 
+		#w.votes + #w.transfers = #l.votes + #l.transfers implies
+			w.outcome = TiedWinner and 
+			(l.outcome = TiedLoser or l.outcome = TiedEarlyLoser or l.outcome = TiedSoreLoser)
+}
+check equalityofTiedWinnersAndLosers for 13 but 7 int
+
 // No lost votes during counting
 assert accounting {
 	all b: Ballot | some c: Candidate | b in c.votes and c in b.assignees
@@ -593,14 +614,55 @@ pred SLQQW {
     0 < #Ballot
 }
 
-pred tenCandidates {
+pred SLTT {
+  some disj c1,c3,c8,c9: Candidate | 
+    c1.outcome = SoreLoser and c3.outcome = Loser and 
+    c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
+    Election.method = Plurality and #Election.candidates = 4
+}
+run SLTT for 13 but 7 int
+
+pred SLLTT {
+  some disj c2,c3,c4,c8,c9: Candidate | 
+    c2.outcome = SoreLoser and c3.outcome = Loser and 
+    c4.outcome = Loser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
+    Election.method = Plurality and #Election.candidates = 5
+}
+run SLLTT for 13 but 7 int
+
+pred SSLTT {
+  some disj c1,c2,c4,c8,c9: Candidate | 
+    c1.outcome = SoreLoser and c2.outcome = SoreLoser and 
+    c4.outcome = Loser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
+    Election.method = Plurality and #Election.candidates = 5
+}
+run SSLTT for 13 but 7 int
+
+pred SSLLTT {
+  some disj c1,c2,c3,c4,c8,c9: Candidate | 
+    c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
+    c4.outcome = Loser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
+    Election.method = Plurality and #Election.candidates = 6
+}
+run SSLLTT for 13 but 7 int
+
+pred SSLLLTT {
+  some disj c0,c1,c3,c4,c5,c7,c8: Candidate | c0.outcome = SoreLoser and 
+    c1.outcome = SoreLoser and c3.outcome = Loser and 
+    c4.outcome = Loser and c5.outcome = Loser and 
+    c7.outcome = TiedLoser and c8.outcome = TiedLoser and 
+    Election.method = Plurality and #Election.candidates = 7
+}
+run SSLLLTT for 20 but 7 int
+
+pred SSSLLLLTTT {
   some disj c0,c1,c2,c3,c4,c5,c6,c7,c8,c9: Candidate | c0.outcome = SoreLoser and 
     c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c5.outcome = Loser and c6.outcome = Loser and 
     c7.outcome = TiedLoser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
     Election.method = Plurality and #Election.candidates = 10
 }
-run tenCandidates for 16 but 6 int
+run SSSLLLLTTT for 13 but 7 int
 
 -- Version Control for changes to model
 one sig Version {
@@ -608,6 +670,6 @@ one sig Version {
 } {
   year = 11
   month = 01
-  day = 25
-  -- Dermot Cochran 2011-01-25
+  day = 26
+  -- Dermot Cochran 2011-01-26
 }
