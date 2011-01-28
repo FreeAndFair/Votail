@@ -22,7 +22,8 @@ package election.tally;
  *         OTHER DEALINGS IN THE SOFTWARE. This work was supported, in part, by
  *         Science Foundation Ireland grant 03/CE2/I303_1 to Lero - the Irish
  *         Software Engineering Research Centre (www.lero.ie) and, in part, by
- *         the European Project Mobius IST 15909 within the IST 6th Framework.
+ *         the European Project Mobius IST 15909 within the IST 6th Framework,
+ *         and in part by the IT University of Copenhagen.
  *         This software reflects only the authors' views and the European
  *         Community is not liable for any use that may be made of the
  *         information contained therein.
