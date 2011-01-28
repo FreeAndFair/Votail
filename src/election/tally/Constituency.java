@@ -4,6 +4,7 @@ package election.tally;
  * Votail, (c) Dermot Cochran, 2005-2011
  * 
  * @author Dermot Cochran, 2005-2009, University College Dublin
+ * 
  * @author Dermot Cochran, 2010-2011, IT Univeristy of Copenhagen
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -12,10 +13,10 @@ package election.tally;
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,30 +30,33 @@ package election.tally;
  * Size of constituency and list of candidates for election..
  * 
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
- * Dermot Cochran</a>
+ *         Dermot Cochran</a>
  */
 public class Constituency {
-
+  
   /** Number of candidates for election in this constituency */
   //@ public invariant 0 <= numberOfCandidates;
   //@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
-	protected /*@ spec_public @*/ transient int numberOfCandidates = 0;
-	
+  protected/*@ spec_public @*/int numberOfCandidates;
+  
   /** Number of seats to be filled in this election */
   //@ public invariant 0 <= numberOfSeatsInThisElection;
   //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
-	protected /*@ spec_public @*/ transient int numberOfSeatsInThisElection = 0;
-	
+  protected/*@ spec_public @*/int numberOfSeatsInThisElection;
+  
   /** Number of seats in this constituency */
-  //@ public invariant 0 < totalNumberOfSeats;
-  protected /*@ spec_public @*/ transient int totalNumberOfSeats = 1;
-
+  //@ public invariant 0 <= totalNumberOfSeats;
+  protected/*@ spec_public @*/int totalNumberOfSeats;
+  
   /** List of all candidates in this election */
   //@ public invariant \nonnullelements (candidateList);
-  protected /*@ spec_public non_null @*/ Candidate[] candidateList = new Candidate[0];
-
+  protected/*@ spec_public non_null @*/Candidate[] candidateList;
+  
   //@ public ghost boolean candidateDataInUse = false;
-
+  
+  public Constituency() {
+  }
+  
   /**
    * Get the <code>Candidate</code> object.
    * 
@@ -61,83 +65,98 @@ public class Constituency {
   //@ requires \nonnullelements (candidateList);
   //@ requires 0 <= index && index < candidateList.length;
   //@ ensures candidateList[index] == \result;
-  public /*@ pure non_null @*/ Candidate getCandidate(final int index) {
+  public/*@ pure non_null @*/Candidate getCandidate(final int index) {
     return candidateList[index];
   }
-
+  
   /**
    * Determine the number of candidates in this election.
    * 
-   * @param number The number of candidates in this election. 
-   *   There must be at least two candidates or choices in any election.
+   * @param number
+   *          The number of candidates in this election.
+   *          There must be at least two candidates or choices in any election.
    */
   //@ requires 2 <= number;
-	//@ requires number <= Candidate.MAX_CANDIDATES;
-	//@ requires candidateDataInUse == false;
-  //@ ensures number == numberOfCandidates;
-	//@ ensures number <= candidateList.length;
+  //@ requires number <= Candidate.MAX_CANDIDATES;
+  //@ requires candidateDataInUse == false;
+  //@ ensures number == this.numberOfCandidates;
+  //@ ensures this.numberOfCandidates <= candidateList.length;
   public void setNumberOfCandidates(final int number) {
-      this.numberOfCandidates = number;
-      makeListOfCandidates();
-      //@ set candidateDataInUse = true;
+    this.numberOfCandidates = number;
+    makeListOfCandidates();
+    //@ set candidateDataInUse = true;
   }
-
+  
   /**
-   * 
+   * Create the list of candidates.
    */
+  //@ requires candidateDataInUse == false;
+  //@ ensures this.numberOfCandidates <= this.candidateList.length;
   protected void makeListOfCandidates() {
-    if (this.candidateList.length < this.numberOfCandidates) {
+    if (candidateList == null || candidateList.length < this.numberOfCandidates) {
       this.candidateList = new Candidate[this.numberOfCandidates];
-      for (int index=0; index < this.numberOfCandidates; index++) {
+      for (int index = 0; index < this.numberOfCandidates; index++) {
         this.candidateList[index] = new Candidate();
       }
     }
   }
-
+  
   /**
    * 
    * @return
    */
-  public /*@ pure @*/ int getNumberOfSeatsInThisElection() {
+  public/*@ pure @*/int getNumberOfSeatsInThisElection() {
     return numberOfSeatsInThisElection;
   }
-
+  
   /**
    * 
    * @return
    */
-  public /*@ pure @*/ int getTotalNumberOfSeats() {
+  public/*@ pure @*/int getTotalNumberOfSeats() {
     return totalNumberOfSeats;
   }
-
+  
   //@ requires numberOfSeatsInThisElection <= totalNumberOfSeats;
   //@ requires 0 <= numberOfSeatsInThisElection;
-  public void setNumberOfSeats(
-     final int numberOfSeatsInThisElection, final int totalNumberOfSeats) {
+  //@ assignable this.numberOfSeatsInThisElection;
+  //@ assignable this.totalNumberOfSeats;
+  //@ ensures this.numberOfSeatsInThisElection == numberOfSeatsInThisElection;
+  //@ ensures this.totalNumberOfSeats == totalNumberOfSeats;
+  //@ ensures this.totalNumberOfSeats <= this.totalNumberOfSeats;
+  //@ ensures 0 <= this.numberOfSeatsInThisElection;
+  public void setNumberOfSeats(final int numberOfSeatsInThisElection,
+      final int totalNumberOfSeats) {
     this.numberOfSeatsInThisElection = numberOfSeatsInThisElection;
     this.totalNumberOfSeats = totalNumberOfSeats;
   }
-
+  
   /**
+   * Get the number of candidates running for election in this constituency.
    * 
-   * @return
+   * @return The number of candidates.
    */
-  //@ ensures \result == numberOfCandidates;
-  public /*@ pure @*/ int getNumberOfCandidates() {
-    return numberOfCandidates;
+  //@ ensures \result == this.numberOfCandidates;
+  public/*@ pure @*/int getNumberOfCandidates() {
+    return this.numberOfCandidates;
   }
-
+  
   /**
+   * Load the list of candidates for this constituency.
    * 
    * @param candidateIDs
+   *          The list of candidates
    * @param theNumberOfCandidates
+   *          The number of candidates
    */
-  public void load(int[] candidateIDs, int theNumberOfCandidates) {
+  //@ requires 0 <= theNumberOfCandidates; 
+  public void load(/*@ non_null @*/int[] candidateIDs,
+      int theNumberOfCandidates) {
     this.numberOfCandidates = theNumberOfCandidates;
     //@ assert 0 <= this.numberOfCandidates;
     this.candidateList = new Candidate[this.numberOfCandidates];
-      for (int index=0; index < this.numberOfCandidates; index++) {
-        this.candidateList[index] = new Candidate(candidateIDs[index]);
-      }
+    for (int index = 0; index < this.candidateList.length; index++) {
+      this.candidateList[index] = new Candidate(candidateIDs[index]);
     }
   }
+}

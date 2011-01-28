@@ -1,6 +1,5 @@
 package election.tally;
 
-
 /**
  * Ballot counting for elections to Dail Eireann - the lower house of the Irish
  * Parliament.
@@ -44,7 +43,7 @@ public class BallotCounting extends AbstractBallotCounting {
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
     // TODO 2009.10.14 ESC postcondition warning
   } //@ nowarn;
-
+  
   /**
    * Inner class for state machine
    */
@@ -54,12 +53,11 @@ public class BallotCounting extends AbstractBallotCounting {
     /**
      * Inner state machine for counting of Dail election ballots.
      */
-    //@ ensures READY_TO_COUNT == substate;
+    //@ ensures READY_TO_COUNT == this.substate;
     public CountStatus() {
-      substate = READY_TO_COUNT;
+      this.substate = READY_TO_COUNT;
     }
     
-    //@ public initially substate == READY_TO_COUNT;
     protected/*@ spec_public @*/int substate;
     
     /**
@@ -71,14 +69,14 @@ public class BallotCounting extends AbstractBallotCounting {
     /*@ also ensures \result == substate;
       @*/
     public/*@ pure @*/int getState() {
-      return substate;
+      return this.substate;
     }
     
     /**
      * Move along the next valid transition in state.
      * 
      * @param newState
-     *        The next stage of counting.
+     *          The next stage of counting.
      */
     //@ also assignable substate;
     //@ ensures newState == getState();
@@ -90,7 +88,7 @@ public class BallotCounting extends AbstractBallotCounting {
      * Is this a valid state for the count to be in?
      * 
      * @param value
-     *        The state to be checked.
+     *          The state to be checked.
      * @return <code>true</code> if this stage exists with the automaton for
      *         counting of Dail ballots
      */
@@ -109,14 +107,16 @@ public class BallotCounting extends AbstractBallotCounting {
   }
   
   // Status of the ballot counting process
-  public/*@ non_null @*/CountStatus countStatus;
-  protected boolean plurality = false;
+  public CountStatus countStatus;
+  
+  // Option to use plurality shortcut
+  protected /*@ spec_public @*/ boolean plurality = false;
   
   /**
    * Distribute the surplus of an elected candidate.
    * 
    * @param winner
-   *        The elected candidate
+   *          The elected candidate
    */
   /*@ also
     @   requires state == COUNTING;
@@ -209,11 +209,11 @@ public class BallotCounting extends AbstractBallotCounting {
    * Transfer votes from one Dail candidate to another.
    * 
    * @param fromCandidate
-   *        The elected or excluded candidate from which to transfer votes
+   *          The elected or excluded candidate from which to transfer votes
    * @param toCandidate
-   *        The continuing candidate to receive the transferred votes
+   *          The continuing candidate to receive the transferred votes
    * @param numberOfVotes
-   *        The number of votes to be transferred
+   *          The number of votes to be transferred
    */
   //@ also
   //@   requires state == COUNTING;
@@ -264,6 +264,7 @@ public class BallotCounting extends AbstractBallotCounting {
     @		assignable numberOfCandidatesEliminated;
     @		assignable status, countStatus;
     @		assignable remainingSeats, totalRemainingSeats;
+    @   assignable candidateList, excludedIndex;
     @   ensures state == ElectionStatus.FINISHED;
     @*/
   public void count() {
@@ -274,7 +275,7 @@ public class BallotCounting extends AbstractBallotCounting {
       startCounting(); //@ nowarn;
     }
     
-    if (this.plurality) {
+    if (this.plurality && 1 <= getNumberContinuing()) {
       int winner = this.findHighestCandidate();
       this.electCandidate(winner);
       this.countNumberValue = 1;
@@ -282,32 +283,32 @@ public class BallotCounting extends AbstractBallotCounting {
     }
     else { // PR-STV by default
     
-    // TODO 2009.10.15 ESC invariant warning
-    while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
-        0 < totalRemainingSeats && // infinite loop detected 2011.01.20
-        countNumberValue < CountConfiguration.MAXCOUNT) {
-      incrementCountNumber(); //@ nowarn;
-
-      // TODO 2009.10.15 ESC assignable warning
-      countStatus.changeState( //@ nowarn;
-          AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
-      
-      // Transfer surplus votes from winning candidates
-      // TODO 2009.10.15 ESC precondition warning
-      electCandidatesWithSurplus(); //@ nowarn;
-      
-      // Exclusion of lowest continuing candidates if no surplus
-      // TODO 2009.10.15 ESC precondition warning
-      excludeLowestCandidates(); //@ nowarn;
       // TODO 2009.10.15 ESC invariant warning
-    }
-    
-    // Filling of last seats
-    // TODO 2009.10.15 ESC warnings
-    if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
-      fillLastSeats(); //@ nowarn;
+      while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
+          0 < totalRemainingSeats && // infinite loop detected 2011.01.20
+          countNumberValue < CountConfiguration.MAXCOUNT) {
+        incrementCountNumber(); //@ nowarn;
+        
+        // TODO 2009.10.15 ESC assignable warning
+        countStatus.changeState( //@ nowarn;
+            AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
+        
+        // Transfer surplus votes from winning candidates
+        // TODO 2009.10.15 ESC precondition warning
+        electCandidatesWithSurplus(); //@ nowarn;
+        
+        // Exclusion of lowest continuing candidates if no surplus
+        // TODO 2009.10.15 ESC precondition warning
+        excludeLowestCandidates(); //@ nowarn;
+        // TODO 2009.10.15 ESC invariant warning
+      }
       
-    }
+      // Filling of last seats
+      // TODO 2009.10.15 ESC warnings
+      if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
+        fillLastSeats(); //@ nowarn;
+        
+      }
     }
     
     // TODO 2009.10.16 ESC assignable warning
@@ -329,26 +330,26 @@ public class BallotCounting extends AbstractBallotCounting {
       
       if (winner == NONE_FOUND_YET) {
         // No more continuing candidates with surpluses to distribute
-        break; 
+        break;
         /* This break was added to fix an infinite loop detected on 2011.01.20 
          * for a scenario with 5 ballots of length one with first preference 
          * for the same candidate, with 1 seat for election and 2 candidates.
          */
       }
-        
-        // Elect highest continuing candidate
-        updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
-        //@ assert 0 <= winner && winner < totalCandidates;
-        //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
-        //@ assert numberElected < seats;
-        //@ assert 0 < remainingSeats;
-        /*@ assert (hasQuota(candidateList[winner])) 
-          @   || (winner == findHighestCandidate())
-          @   || (getNumberContinuing() == totalRemainingSeats);
-          @*/
-        electCandidate(winner);
-        countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
-        distributeSurplus(winner);
+      
+      // Elect highest continuing candidate
+      updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
+      //@ assert 0 <= winner && winner < totalCandidates;
+      //@ assert candidateList[winner].getStatus() == Candidate.CONTINUING;
+      //@ assert numberElected < seats;
+      //@ assert 0 < remainingSeats;
+      /*@ assert (hasQuota(candidateList[winner])) 
+        @   || (winner == findHighestCandidate())
+        @   || (getNumberContinuing() == totalRemainingSeats);
+        @*/
+      electCandidate(winner);
+      countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
+      distributeSurplus(winner);
       
     }
   }
@@ -356,7 +357,7 @@ public class BallotCounting extends AbstractBallotCounting {
   /*@ requires \nonnullelements (candidateList);
     @ assignable countStatus, countNumberValue, candidates, candidateList;
     @ assignable numberOfCandidatesEliminated, ballots,
-    @   ballotsToCount;
+    @   ballotsToCount, excludedIndex;
     @*/
   protected void excludeLowestCandidates() {
     while (getTotalSumOfSurpluses() == 0
@@ -383,9 +384,17 @@ public class BallotCounting extends AbstractBallotCounting {
     // TODO 2009.10.15 ESC warnings
   } //@ nowarn;
   
-  /*@ assignable candidateList[*], countNumber, countNumberValue;
+  /**
+   * As the number of remaining seats equals the number of continuing
+   * candidates, all continuing candidates are deemed to be elected without
+   * reaching the quota.
+   */
+  /*@ requires candidates != null;
+    @ requires getContinuingCandidates() == totalRemainingSeats;
+    @ assignable candidateList[*], countNumber, countNumberValue;
     @ assignable numberOfCandidatesElected, totalRemainingSeats;
     @ assignable candidates;
+    @ ensures 0 == totalRemainingSeats;
     @*/
   protected void fillLastSeats() {
     // TODO 2009.10.14 ESC assignable warning
@@ -451,16 +460,17 @@ public class BallotCounting extends AbstractBallotCounting {
    * @return The status of the count
    */
   //@ ensures \result == countStatus;
-  public /*@ pure*/ AbstractCountStatus getCountStatus() {
+  public/*@ pure*/AbstractCountStatus getCountStatus() {
     return countStatus;
   }
   
-  public /*@ non_null pure*/ String toString() {
+  public/*@ non_null pure*/String toString() {
     return "state " + countStatus.getState() + " results " + getResults();
   } //@ nowarn Post;
+  
   // TODO ESC 2011.01.17 Postcondition possibly not established
   
-  public /*@ pure*/ String getResults() {
+  public/*@ pure*/String getResults() {
     StringBuffer buffer = new StringBuffer();
     
     buffer.append("quota = " + this.getQuota());
@@ -475,11 +485,12 @@ public class BallotCounting extends AbstractBallotCounting {
     return buffer.toString();
   }
   
-  /*@ ensures \result <==>
+  /*@ requires countStatus != null;
+    @ ensures \result <==>
     @   (this.getCountStatus().getState() == CountStatus.END_OF_COUNT &&
     @  this.status == FINISHED);
     @*/
-  public /*@ pure*/ boolean isFinished() {
+  public/*@ pure*/boolean isFinished() {
     return this.getCountStatus().getState() == CountStatus.END_OF_COUNT
         && this.status == FINISHED;
   }
@@ -493,55 +504,63 @@ public class BallotCounting extends AbstractBallotCounting {
   //@ requires excludedIndex != null;
   //@ requires electedCandidateIndex != null;
   //@ requires numberOfCandidatesEliminated <= excludedIndex.length;
+  //@ requires \nonnullelements (candidateList);
   public Candidate[] getOrderedListCandidates() {
-    Candidate[] candidateList = new Candidate[totalNumberOfCandidates];
-    final int numberOfLosers = totalNumberOfCandidates - numberOfSeats;
+    Candidate[] candidateList = new Candidate[this.totalNumberOfCandidates];
+    final int numberOfLosers =
+        this.totalNumberOfCandidates - this.numberOfSeats;
     
     // Losing candidates from lowest to highest
-    for (int i = 0; i < totalNumberOfCandidates; i++) {
-      if (i < numberOfLosers) {
+    for (int i = 0; i < this.totalNumberOfCandidates; i++) {
+      if (i < this.excludedIndex.length) {
         final int excludedCandidateIndex = getExcludedCandidateIndex(i);
         candidateList[i] = candidates[excludedCandidateIndex];
-        }
+      }
       else {
         // Elected candidates in reverse order from lowest to highest
         final int index = i - numberOfLosers;
         //@ assert index < numberOfSeats;
         final int electedCandidateIndex = getElectedCandidateIndex(index);
         candidateList[i] = candidates[electedCandidateIndex];
-        }
+      }
     }
     
     return candidateList;
   }
-
-  /**
-   * @param index
-   * @return
-   */
+  
   //@ requires electedCandidateIndex != null;
   //@ requires 0 <= index && index < electedCandidateIndex.length;
-  //@ ensures 0 <= \result && \result < candidates.length;
-  public int getElectedCandidateIndex(int index) {
+  //@ ensures \result == electedCandidateIndex[index];
+  protected/*@ spec_public pure @*/int getElectedCandidateIndex(int index) {
     return electedCandidateIndex[index];
   }
-
-  /**
-   * @param index
-   * @return
-   */
+  
   //@ requires excludedIndex != null;
   //@ requires 0 <= index && index < excludedIndex.length;
-  //@ ensures 0 <= \result && \result < candidates.length;
-  public int getExcludedCandidateIndex(int index) {
+  //@ ensures \result == excludedIndex[index];
+  protected/*@ spec_public pure @*/int getExcludedCandidateIndex(int index) {
     return excludedIndex[index];
   }
   
-  //@ ensures \result + 1 == this.countNumberValue;
-  public int getNumberOfRounds() {
+  /**
+   * Get the number of rounds of counting so far.
+   * <p>
+   * A new round of counting happens after each transferal of votes by
+   * distribution of surpluses or elimination of lowest candidates.
+   * </p>
+   * 
+   * @return The number of rounds of counting so far.
+   */
+  //@ ensures \result == this.countNumberValue;
+  public/*@ pure @*/int getNumberOfRounds() {
     return this.countNumberValue;
   }
-
+  
+  /**
+   * Treat all ballots as simple ballots of one preference.
+   */
+  //@ assignable this.plurality;
+  //@ ensures this.plurality;
   public void usePlurality() {
     this.plurality = true;
   }

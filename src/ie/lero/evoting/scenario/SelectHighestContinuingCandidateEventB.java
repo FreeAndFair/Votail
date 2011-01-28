@@ -40,8 +40,8 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
   /**
 	 * Test selection of highest continuing candidate
 	 */
+  //@ requires ballotCounting != null;
 	public void testEvent() {
-	  assertTrue (ballotCounting != null);
     ballotCounting.startCounting();
     final int winner = ballotCounting.findHighestCandidate();
     assertTrue(winner == candidateToWin);

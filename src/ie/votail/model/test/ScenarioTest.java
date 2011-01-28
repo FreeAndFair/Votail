@@ -3,9 +3,9 @@ package ie.votail.model.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
 import ie.votail.model.Outcome;
-import ie.votail.model.ElectoralScenario;
 
 import org.junit.Test;
 

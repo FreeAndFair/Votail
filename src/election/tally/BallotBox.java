@@ -71,10 +71,11 @@ public class BallotBox {
   /**
    * Create an empty ballot box.
    */
-  //@ assignable index, numberOfBallots;
-  public/*@ pure @*/BallotBox() {
+  //@ assignable index, numberOfBallots, ballots;
+  public BallotBox() {
     index = 0;
     numberOfBallots = 0;
+    ballots = new Ballot[Ballot.MAX_BALLOTS];
   }
 
   /**

@@ -88,7 +88,6 @@ one sig Election {
 }
 
 -- Independent (or Fundamental) Axioms
-
 fact surplus {
   all c: Candidate | (c.outcome = Winner and Election.method = STV) implies
      Scenario.quota + #c.surplus = #c.votes 
@@ -266,8 +265,8 @@ fact validTieBreaker {
 
 fact equalTieBreaker {
 	all disj l,w: Candidate | 
-    (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) and
-    w.outcome = TiedWinner implies #w.votes + #w.transfers = #l.votes + #l.transfers
+    ((l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) and
+    w.outcome = TiedWinner) implies #w.votes + #w.transfers = #l.votes + #l.transfers
 }
 
 // Compromise winner must have more votes than any tied winners
@@ -325,7 +324,7 @@ fact nonTiedWinnerHigherThanAllLosers {
 fact winnerHigherThanAllNonTiedLosers {
   all disj c,d: Candidate | c in Scenario.winners and 
      (d.outcome = SoreLoser or d.outcome = EarlyLoser or d.outcome = Loser) implies
-	 #d.votes + #d.transfers < #c.votes + #c.transfers
+	 (#d.votes + #d.transfers) < (#c.votes + #c.transfers)
 }
 
 fact nonNegativeQuota {
@@ -440,6 +439,13 @@ assert thresholdBelowQuota {
    Election.method = STV and 0 < #Ballot implies Scenario.threshold <= Scenario.quota
 }
 check thresholdBelowQuota for 13 but 7 int
+
+// Plurality sore loser
+assert pluralitySoreLoser {
+	all c: Candidate | (c.outcome = SoreLoser and Election.method = Plurality) implies
+       #c.votes < Scenario.threshold
+}
+check pluralitySoreLoser for 13 but 7 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -685,14 +691,89 @@ pred SSLLLTTw {
 }
 run SSLLLTTw for 13 but 7 int
 
-pred SSSLLLLTTTw {
-  some disj c0,c1,c2,c3,c4,c5,c6,c7,c8,c9: Candidate | c0.outcome = SoreLoser and 
-    c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
-    c4.outcome = Loser and c5.outcome = Loser and c6.outcome = Loser and 
-    c7.outcome = TiedLoser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
-    Election.method = Plurality and #Election.candidates = 10
+pred SSSLLLTTw {
+  some disj c0,s2,c1,c3,c4,c5,c7,c8: Candidate | c0.outcome = SoreLoser and 
+    c1.outcome = SoreLoser and s2.outcome = SoreLoser and c3.outcome = Loser and 
+    c4.outcome = Loser and c5.outcome = Loser and 
+    c7.outcome = TiedLoser and c8.outcome = TiedWinner and 
+    Election.method = Plurality and #Election.candidates = 8
 }
-run SSSLLLLTTTw for 13 but 7 int
+run SSSLLLTTw for 13 but 7 int
+
+pred LLLLTTw {
+  some disj c3,c4,c5,c6,c7,c9: Candidate | 
+    c3.outcome = Loser and 
+    c4.outcome = Loser and 
+    c5.outcome = Loser and 
+    c6.outcome = Loser and 
+    c7.outcome = TiedLoser and 
+    c9.outcome = TiedWinner and 
+    Election.method = Plurality and 
+    #Election.candidates = 6
+}
+run LLLLTTw for 20 but 7 int
+
+pred SLLLLTTw {
+  some disj c2,c3,c4,c5,c6,c7,c9: Candidate | 
+    c2.outcome = SoreLoser and 
+    c3.outcome = Loser and 
+    c4.outcome = Loser and 
+    c5.outcome = Loser and 
+    c6.outcome = Loser and 
+    c7.outcome = TiedLoser and 
+    c9.outcome = TiedWinner and 
+    Election.method = Plurality and 
+    #Election.candidates = 7
+}
+run SLLLLTTw for 20 but 7 int
+
+pred SSLLLLTTw {
+  some disj c1,c2,c3,c4,c5,c6,c7,c9: Candidate | 
+    c1.outcome = SoreLoser and 
+    c2.outcome = SoreLoser and 
+    c3.outcome = Loser and 
+    c4.outcome = Loser and 
+    c5.outcome = Loser and 
+    c6.outcome = Loser and 
+    c7.outcome = TiedLoser and 
+    c9.outcome = TiedWinner and 
+    Election.method = Plurality and 
+    #Election.candidates = 8
+}
+run SSLLLLTTw for 20 but 7 int
+
+pred SSSLLLLTTw {
+  some disj c0,c1,c2,c3,c4,c5,c6,c7,c9: Candidate | 
+    c0.outcome = SoreLoser and 
+    c1.outcome = SoreLoser and 
+    c2.outcome = SoreLoser and 
+    c3.outcome = Loser and 
+    c4.outcome = Loser and 
+    c5.outcome = Loser and 
+    c6.outcome = Loser and 
+    c7.outcome = TiedLoser and 
+    c9.outcome = TiedWinner and 
+    Election.method = Plurality and 
+    #Election.candidates = 9
+}
+run SSSLLLLTTw for 20 but 7 int
+
+pred SSSLLLLTTTw {
+  some disj c0,c1,c2,c3,c4,c5,c6,c7,c8,c9: Candidate | 
+    c0.outcome = SoreLoser and 
+    c1.outcome = SoreLoser and 
+    c2.outcome = SoreLoser and 
+    c3.outcome = Loser and 
+    c4.outcome = Loser and 
+    c5.outcome = Loser and 
+    c6.outcome = Loser and 
+    c7.outcome = TiedLoser and 
+    c8.outcome = TiedLoser and 
+    c9.outcome = TiedWinner and 
+    Election.method = Plurality and 
+    #Election.candidates = 10
+}
+run SSSLLLLTTTw for 20 but 7 int
 
 -- Version Control for changes to model
 one sig Version {

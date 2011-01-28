@@ -79,7 +79,17 @@ public class BallotBoxFactory {
         for (Sig sig : solution.getAllReachableSigs()) {
           // Log the model version number
           if (sig.label.contains("Version")) {
-            // TODO extract version number
+            for (Field field : sig.getFields()) {
+              if (field.label.contains("year")) {
+                logger.info(field.toString());
+              }
+              else if (field.label.contains("month")) {
+                logger.info(field.toString());
+              }
+              else if (field.label.contains("day")) {
+                logger.info(field.toString());
+              }
+            }
           }
           
           else if (sig.label.contains("this/Ballot")) {

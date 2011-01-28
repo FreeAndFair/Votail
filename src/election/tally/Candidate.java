@@ -110,7 +110,7 @@ public class Candidate extends CandidateStatus {
    * @return Gross total of votes received
    */
   /*@ requires lastCountNumber < votesAdded.length;
-    @
+    @ ensures 0 <= \result && \result <= getFinalVote();
     @*/
   public/*@ pure @*/int getTotalVote() {
     int originalVote = 0;
@@ -125,7 +125,8 @@ public class Candidate extends CandidateStatus {
   /**
     @deprecated - use getTotalVote() instead
   */
-  // ensures \result == getTotalVote();
+  //@ requires lastCountNumber < votesAdded.length;
+  //@ ensures \result == getTotalVote();
   public /*@ pure */ int getOriginalVote() {
     return getTotalVote();
   }
@@ -229,9 +230,13 @@ public class Candidate extends CandidateStatus {
   // TODO ESC 2011.01.14 Postcondition possibly not established (Post)
 
   /**
-   * @param count
+   * Update the last count number for this Candidate
+   * 
+   * @param count The number of the most recent count
    */
+  //@ requires count < CountConfiguration.MAXCOUNT;
   //@ assignable lastCountNumber;
+  //@ ensures count <= lastCountNumber;
   protected void updateCountNumber(final int count) {
     if (lastCountNumber < count) {
       lastCountNumber = count;
@@ -369,9 +374,8 @@ public class Candidate extends CandidateStatus {
   //@ requires 0 <= lastCountNumber;
   //@ ensures \result == getTotalAtCount (lastCountNumber);
   public /*@ pure*/ int getFinalVote() {
-    
     return getTotalAtCount (lastCountNumber); //@ nowarn;
-    // TODO ESC 2001.01.14 Precondition possibility not established (Pre)
+    // TODO ESC 2011.01.14 Precondition possibility not established (Pre)
   }
   
   //@ ensures \result <==> (state == ELIMINATED);
@@ -379,13 +383,13 @@ public class Candidate extends CandidateStatus {
     return state == ELIMINATED;
   }
   
-  //@ ensures \result == lastCountNumber + 1;
+  //@ ensures \result == lastCountNumber;
   public/*@ pure*/ int getLastRound() {
     return lastCountNumber;
   }
   
   //@ ensures \result == getTotalAtCount(0);
-  public int getInitialVote() {
+  public /*@ pure @*/ int getInitialVote() {
     return getTotalAtCount(0);
   }
 }
