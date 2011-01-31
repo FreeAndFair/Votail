@@ -92,9 +92,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @           numberOfSeats - numberOfCandidatesElected;
     @*/
 
-  protected/*@ spec_public non_null @*/int[] electedCandidateIndex;
+  protected /*@ spec_public @*/ int[] electedCandidateIndex;
   
-  protected/*@ spec_public non_null @*/int[] excludedIndex;
+  protected /*@ spec_public @*/int[] excludedIndex;
   
   /**
    * Default Constructor.
@@ -275,6 +275,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   protected normal_behavior
     @     requires state == EMPTY;
     @     requires 0 <= constituency.getNumberOfCandidates();
+    @     requires 0 <= numberOfSeats;
     @     assignable status; 
     @     assignable totalNumberOfCandidates;
     @     assignable numberOfSeats, totalRemainingSeats;
@@ -293,16 +294,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.totalNumberOfSeats = constituency.getTotalNumberOfSeats();
     this.status = PRELOAD;
     this.candidates = new Candidate[this.totalNumberOfCandidates];
-    //@ assert 0 <= numberOfSeats;
     this.electedCandidateIndex = new int[numberOfSeats];
     this.excludedIndex = new int[totalNumberOfCandidates - numberOfSeats];
     for (int i = 0; i < candidates.length; i++) {
       // TODO 2009.10.14 ESC precondition
-      this.candidates[i] = constituency.getCandidate(i); //@ nowarn;
+      this.candidates[i] = constituency.getCandidate(i); //@  nowarn;
     }
     this.totalRemainingSeats = this.numberOfSeats;
     // TODO 2009.10.14 ESC postcondition
-  } //@ nowarn;
+  } // @ nowarn;
   
   /**
    * Open the ballot box for counting.
@@ -336,7 +336,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     // Number of first preferences for each candidate
     // TODO 2009.10.15 ESC precondition warning
-    calculateFirstPreferences(); //@ nowarn;
+    allocateFirstPreferences(); //@ nowarn;
     // TODO 2009.10.15 ESC postcondition warning
   } //@ nowarn;
   
@@ -356,13 +356,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ requires \nonnullelements (candidateList);
   //@ requires \nonnullelements (ballotsToCount);
   //@ requires 0 == countNumberValue;
+  //@ requires getNumberContinuing() == totalNumberOfCandidates;
   //@ assignable candidates[*];
-  protected void calculateFirstPreferences() {
+  protected void allocateFirstPreferences() {
     for (int c = 0; c < candidates.length; c++) {
       final int candidateID = candidates[c].getCandidateID();
       final int numberOfBallotsInPile = countFirstPreferences(candidateID);
-      if (0 < numberOfBallotsInPile) {
-        candidates[c].addVote(numberOfBallotsInPile, 0);
+      if (0 < numberOfBallotsInPile && 
+          this.isContinuingCandidateID(candidateID)) {
+        candidates[c].addVote(numberOfBallotsInPile, this.countNumberValue);
       }
       
     }
@@ -467,6 +469,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         <code>NONTRANSFERABLE</code>
    */
   //@ also requires \nonnullelements (candidateList);
+  //@ requires candidates != null;
   protected/*@ pure spec_public*/int getNextContinuingPreference(
       final/*@ non_null*/Ballot ballot) {
     
@@ -489,6 +492,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         candidate
    */
   /*@ also
+    @   requires candidates != null;
     @   requires \nonnullelements (candidateList);
     @   ensures \result == (\exists int i;
     @     0 <= i && i < candidateList.length;
@@ -503,7 +507,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
     return false; // not a candidate
     // TODO 2009.10.14 ESC postcondition
-  } //@ nowarn;
+  }
   
   /**
    * Determine actual number of votes to transfer to this candidate
@@ -944,6 +948,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires countNumber < CountConfiguration.MAXCOUNT;
     @ requires \nonnullelements (ballotsToCount);
     @ requires \nonnullelements (candidateList);
+    @ requires excludedIndex != null;
     @ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
     @ requires hasQuota (candidateList[loser]) == false;
     @ requires 0 <= numberOfCandidatesEliminated;
@@ -1034,6 +1039,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   || (getNumberContinuing() == totalRemainingSeats);
     @ requires candidates[winner].getCandidateID() != Candidate.NO_CANDIDATE;
     @*/
+  //@ requires electedCandidateIndex != null;
   //@ requires state == ElectionStatus.COUNTING;
   //@ requires 0 < candidateList[winner].getCandidateID();
   //@ requires numberOfCandidatesElected < electedCandidateIndex.length;
@@ -1060,7 +1066,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ also ensures \result == (totalNumberOfCandidates
     @   - (numberOfCandidatesElected + numberOfCandidatesEliminated));
     @*/
-  public/*@ pure @*/int getNumberContinuing() {
+  public/*@ pure @*/ int getNumberContinuing() {
     return totalNumberOfCandidates
         - (numberOfCandidatesElected + numberOfCandidatesEliminated);
   }

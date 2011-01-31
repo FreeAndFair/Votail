@@ -18,8 +18,9 @@ import election.tally.Constituency;
 
 public class VotailSystemTest {
   @Test
-  public void prstv(int numberOfSeats) {
+  public void prstv() {
     
+    final int numberOfSeats = 7;
     final int scope = numberOfSeats;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
@@ -84,7 +85,7 @@ public class VotailSystemTest {
    */
   protected void logFailure(final int scope, Logger logger,
       ElectoralScenario scenario, ElectionConfiguration electionConfiguration) {
-    logger.severe("Unexpected results for scenario " + scenario
+    Assert.fail("Unexpected results for scenario " + scenario
         + " using predicate " + scenario.toPredicate()
         + " with scope " + scope
         + " and ballot box " + electionConfiguration);
@@ -92,12 +93,14 @@ public class VotailSystemTest {
   
   public static void main(String [ ] args) {
     VotailSystemTest universalTest = new VotailSystemTest();
-    universalTest.plurality(12);
-    universalTest.prstv(7);
+    universalTest.plurality();
+    universalTest.prstv();
   }
 
-  protected void plurality(int numberOfCandidates) {
+  @Test
+  public void plurality() {
     
+    final int numberOfCandidates = 12;
     final int seats = 1;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
@@ -125,7 +128,6 @@ public class VotailSystemTest {
           logger.info(ballotCounting.getResults());
           if (!scenario.check(ballotCounting)) {
             logFailure(scope, logger, scenario, electionConfiguration);
-            numberOfFailures++;
           }
           total++;
         }

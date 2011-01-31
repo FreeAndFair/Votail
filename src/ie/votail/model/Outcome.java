@@ -32,41 +32,26 @@ public enum Outcome {
    * @param candidate The candidate to be verified
    * @return True if the results match the outcome
    */
-  //@ requires (0 <= threshold) && (threshold <= quota);
-  //@ requires 0 <= lastRound;
-  public boolean check(/*@ non_null*/Candidate candidate, int quota,
-      int threshold, int lastRound) {
+  public boolean check(/*@ non_null @*/ Candidate candidate, 
+      int threshold) {
     
-    if (this == Winner && quota <= candidate.getInitialVote()) {
-      return true;
+    // Winners
+    if (this == Winner || this == QuotaWinner || this == CompromiseWinner || 
+        this == TiedWinner) {
+      return candidate.isElected();
     }
-    else if (this == QuotaWinner && quota <= candidate.getTotalVote()
-        && candidate.getInitialVote() < quota) {
-      return true;
+    // Non-sore losers
+    else if (this == Loser || this == TiedLoser || this == EarlyLoser || 
+        this == TiedEarlyLoser) {
+        return !candidate.isElected() && threshold <= candidate.getTotalVote();
     }
-    else if ((this == CompromiseWinner || this == TiedWinner)
-        && candidate.isElected() && candidate.getTotalVote() < quota) {
-      return true;
-    }
-    else if ((this == Loser || this == TiedLoser) && !candidate.isElected()
-        && threshold <= candidate.getTotalVote()
-        && lastRound == candidate.getLastRound()) {
-      return true;
-    }
-    else if ((this == EarlyLoser || this == TiedEarlyLoser)
-        && !candidate.isElected() && threshold <= candidate.getTotalVote()
-        && candidate.getLastRound() < lastRound) {
-      return true;
-    }
-    else if ((this == SoreLoser || this == TiedSoreLoser)
-        && !candidate.isElected() && candidate.getTotalVote() < threshold) {
-      return true;
+    // Sore losers
+    else if (this == SoreLoser || this == TiedSoreLoser) {
+        return candidate.isEliminated() && candidate.getTotalVote() < threshold;
     }
     
     Logger.getAnonymousLogger().warning(
-        "Outcome " + this.toString() + " failed to match " + candidate
-            + " for quota of " + quota + ", threshold of " + threshold
-            + " and " + lastRound + " rounds of counting.");
+        "Outcome " + this.toString() + " failed to match " + candidate);
     return false;
   }
 }

@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4.ErrorSyntax;
+import edu.mit.csail.sdg.alloy4.Pair;
+import edu.mit.csail.sdg.alloy4.SafeList;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
@@ -81,13 +83,16 @@ public class BallotBoxFactory {
           if (sig.label.contains("Version")) {
             for (Field field : sig.getFields()) {
               if (field.label.contains("year")) {
-                logger.info(field.toString());
+                A4TupleSet tupleSet = solution.eval(field);
+                logger.info(tupleSet.toString());
               }
               else if (field.label.contains("month")) {
-                logger.info(field.toString());
+                A4TupleSet tupleSet = solution.eval(field);
+                logger.info(tupleSet.toString());
               }
               else if (field.label.contains("day")) {
-                logger.info(field.toString());
+                A4TupleSet tupleSet = solution.eval(field);
+                logger.info(tupleSet.toString());
               }
             }
           }
@@ -134,11 +139,12 @@ public class BallotBoxFactory {
     options.solver = A4Options.SatSolver.SAT4J;
     CompModule world = CompUtil.parseEverything_fromFile(reporter, null,
       modelName);
+    SafeList<Pair<String, Expr>> facts = world.getAllFacts();
     Expr predicate = CompUtil.parseOneExpression_fromString(world,
       scenario.toPredicate());
     logger.finest("Using this predicate: " + predicate.toString() + " " + 
       predicate.getDescription());
-    Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, -1, 
+    Command command = new Command(false, scope, DEFAULT_BIT_WIDTH, scope, 
       predicate);
     logger.info("using scope " + scope + " and bitwidth " + DEFAULT_BIT_WIDTH);
     A4Solution solution = TranslateAlloyToKodkod.execute_command(reporter,

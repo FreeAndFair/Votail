@@ -20,10 +20,10 @@ public class ElectoralScenario {
   /**
    * <Alloy>
    * fact validTieBreaker {
-   *   all l: Candidate | some w: Candidate | 
-   *   (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or 
-   *     l.outcome = TiedEarlyLoser) implies 
-   *   w.outcome = TiedWinner
+   * all l: Candidate | some w: Candidate |
+   * (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or
+   * l.outcome = TiedEarlyLoser) implies
+   * w.outcome = TiedWinner
    * }
    * </Alloy>
    */
@@ -34,15 +34,15 @@ public class ElectoralScenario {
         (\exists Outcome tw; outcomes.contains(tw) 
           && tw == Outcomes.TIED_WINNER));
    */
-  public static final boolean AXIOM_FOR_VALID_TIE_BREAKER  = true;
+  public static final boolean AXIOM_FOR_VALID_TIE_BREAKER = true;
   
   /**
    * <Alloy>
    * fact validTieBreaker {
-   *   all l: Candidate | some w: Candidate | 
-   *   (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or 
-   *     l.outcome = TiedEarlyLoser) implies 
-   *    w.outcome = TiedWinner
+   * all l: Candidate | some w: Candidate |
+   * (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or
+   * l.outcome = TiedEarlyLoser) implies
+   * w.outcome = TiedWinner
    * }
    * </Alloy>
    */
@@ -53,14 +53,14 @@ public class ElectoralScenario {
         (tl == Outcomes.TiedLoser || tl == outcomes.TiedEarlyLoser || 
         tl == outcomes.tiedSoreLoser)));
    */
-  public static final boolean AXIOM_FOR_TIE_BREAKER        = true;
+  public static final boolean AXIOM_FOR_TIE_BREAKER = true;
   
   /**
    * <Alloy>
    * fact typeOfTiedLoser {
-   *   no disj a,b: Candidate | a.outcome = TiedSoreLoser and 
-   *     (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or 
-   *      b.outcome=Loser or b.outcome=EarlyLoser)
+   * no disj a,b: Candidate | a.outcome = TiedSoreLoser and
+   * (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or
+   * b.outcome=Loser or b.outcome=EarlyLoser)
    * }
    * </Alloy>
    */
@@ -72,13 +72,14 @@ public class ElectoralScenario {
    */
   public static final boolean AXIOM_FOR_TYPE_OF_TIED_LOSER = true;
   
-  protected OutcomeList         listOfOutcomes;
-  protected int                 numberOfCandidates;
-  protected Method              method;
+  protected OutcomeList listOfOutcomes;
+  protected int numberOfCandidates;
+  protected Method method;
   
   /**
    * Create a new model scenario.
-   * @param method 
+   * 
+   * @param method
    */
   public ElectoralScenario(Method method) {
     listOfOutcomes = new OutcomeList();
@@ -106,7 +107,8 @@ public class ElectoralScenario {
   /**
    * Add a candidate outcome to this scenario.
    * 
-   * @param outcome The candidate outcome to be added to this scenario
+   * @param outcome
+   *          The candidate outcome to be added to this scenario
    */
   /*@ ensures 1 + \old(numberOfCandidates) == numberOfCandidates;
     @ ensures outcomes.contains(outcome);
@@ -117,20 +119,21 @@ public class ElectoralScenario {
   }
   
   /**
-   * Create an <a href="http://alloy.mit.edu">Alloy</a> predicate expression 
+   * Create an <a href="http://alloy.mit.edu">Alloy</a> predicate expression
    * for this scenario, for example:
-   * <p> 
-   *   some disj c0,c1,c2,c3,c4,c5,c6,c7,c8: Candidate |
-   *     <li>c0.outcome = Winner and</li>
-   *     <li>c1.outcome = QuotaWinner and</li>
-   *     <li>c2.outcome = CompromiseWinner and</li>
-   *     <li>c3.outcome = Loser and</li>
-   *     <li>c4.outcome = EarlyLoser and</li>
-   *     <li>c5.outcome = SoreLoser and</li>
-   *     <li>c6.outcome = TiedWinner and</li>
-   *     <li>c7.outcome = TiedLoser and</li>
-   *     <li>c8.outcome = TiedEarlyLoser</li>
+   * <p>
+   * some disj c0,c1,c2,c3,c4,c5,c6,c7,c8: Candidate |
+   * <li>c0.outcome = Winner and</li>
+   * <li>c1.outcome = QuotaWinner and</li>
+   * <li>c2.outcome = CompromiseWinner and</li>
+   * <li>c3.outcome = Loser and</li>
+   * <li>c4.outcome = EarlyLoser and</li>
+   * <li>c5.outcome = SoreLoser and</li>
+   * <li>c6.outcome = TiedWinner and</li>
+   * <li>c7.outcome = TiedLoser and</li>
+   * <li>c8.outcome = TiedEarlyLoser</li>
    * </p>
+   * 
    * @return The <code>Alloy</code> predicate as a string
    */
   //@ requires 0 < outcomes.size();
@@ -152,7 +155,8 @@ public class ElectoralScenario {
       stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
       i++;
     }
-    stringBuffer.append(" and Election.method = " + method + " and 1 < #Ballot");
+    stringBuffer
+        .append(" and Election.method = " + method + " and 1 < #Ballot");
     stringBuffer.append(" and #Election.candidates = "
         + this.numberOfCandidates);
     return stringBuffer.toString();
@@ -160,8 +164,9 @@ public class ElectoralScenario {
   
   /**
    * Sort the candidate outcomes events into a canonical order
-   *
-   * @return The equivalent scenario with the candidate outcomes in canonical order
+   * 
+   * @return The equivalent scenario with the candidate outcomes in canonical
+   *         order
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
   public ElectoralScenario canonical() {
@@ -181,9 +186,10 @@ public class ElectoralScenario {
   /**
    * Compare two scenarios for the same multiset of outcomes
    * 
-   * @param other The other scenario
+   * @param other
+   *          The other scenario
    * @return Two scenarios are equivalent of they contain the same quantity of
-   * each kind of outcome
+   *         each kind of outcome
    */
   /*@
    * ensures \result <==> this.canonical().equals(other.canonical());
@@ -208,7 +214,8 @@ public class ElectoralScenario {
   /**
    * Append an outcome to this scenario.
    * 
-   * @param outcome The outcome to be appened
+   * @param outcome
+   *          The outcome to be appened
    * @return The scenario with the outcome appended
    */
   /*@
@@ -304,8 +311,10 @@ public class ElectoralScenario {
    * of distinct scenarios when the number of winners and losers is known,
    * adjusted by restricting invalid combinations of tied outcomes
    * 
-   * @param winners The number of winners
-   * @param losers The number of losers
+   * @param winners
+   *          The number of winners
+   * @param losers
+   *          The number of losers
    * @return The number of distinct scenarios
    */
   /*@
@@ -329,7 +338,8 @@ public class ElectoralScenario {
    * Estimate the number of distinct scenarios when the number of candidates is
    * known.
    * 
-   * @param numberOfOutcomes The number of candidate outcomes
+   * @param numberOfOutcomes
+   *          The number of candidate outcomes
    * @return The total number of distinct outcomes
    */
   /*@
@@ -349,7 +359,7 @@ public class ElectoralScenario {
    * @deprecated
    */
   //@ ensures \result = numberOfWinners();
-  public /*@ pure */ int getNumberOfSeats() {
+  public/*@ pure */int getNumberOfSeats() {
     return numberOfWinners();
   }
   
@@ -357,7 +367,7 @@ public class ElectoralScenario {
     return this.numberOfCandidates;
   }
   
-  /** 
+  /**
    * Does this scenario match the election result?
    * 
    * @param ballotCounting The results of the election count
@@ -365,53 +375,26 @@ public class ElectoralScenario {
    */
   //@ requires ballotCounting.isFinished();
   public boolean check(BallotCounting ballotCounting) {
-    int quota = ballotCounting.getQuota();
-    int threshold = ballotCounting.getSavingThreshold();
-    int lastRound = ballotCounting.getNumberOfRounds();
-    
-    if (this.numberOfCandidates == ballotCounting.getTotalNumberOfCandidates()
-        && this.numberOfWinners() == ballotCounting.getTotalNumberOfSeats()) {
+
+    final int threshold = ballotCounting.getDepositSavingThreshold();
+    final int numberOfCandidates = ballotCounting.getTotalNumberOfCandidates();
+
+    for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
+      boolean matched = false;
       
-      Candidate[] candidateList = ballotCounting.getOrderedListCandidates();
-      //@ assert candidateList != null;
-      
-      // Match each candidate with an outcome and each outcome with a candidate
-      int index = 0;
-      for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
-        final Candidate candidate = candidateList[index];
-        if (!outcome.check(candidate, quota, threshold, lastRound)) {
-          return false;
-        }
+      for (int i = 0; i < numberOfCandidates; i++) {
         
-        // Match the tied candidates
-        if (outcome.isTied()) {
-          boolean foundTie = false;
-          for (int other=0; other < this.numberOfCandidates; other++) {
-            if (other != index) {
-              final Candidate otherCandidate = candidateList[other];
-              if (otherCandidate.getTotalVote() == 
-                candidate.getTotalVote()) {
-                    foundTie = true;
-                  }
-              else if (otherCandidate.getInitialVote() == 
-                candidate.getInitialVote()) {
-                foundTie = true;
-              }
-            }
-          }
-          if (!foundTie) {
-            return false;
-          }
-        }
-        index++;
-        
-        if (candidateList.length < index) {
-          return false;
+        final Candidate candidate = ballotCounting.getCandidate(i);
+        if (outcome.check(candidate, threshold)) {
+          matched = true;
+          break;
         }
       }
-      
-      return true;
+      if (!matched) {
+        return false;
+      }
     }
-    return false;
+
+    return true;
   }
 }

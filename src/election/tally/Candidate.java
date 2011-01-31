@@ -110,7 +110,7 @@ public class Candidate extends CandidateStatus {
    * @return Gross total of votes received
    */
   /*@ requires lastCountNumber < votesAdded.length;
-    @ ensures 0 <= \result && \result <= getFinalVote();
+    @ ensures 0 <= \result;
     @*/
   public/*@ pure @*/int getTotalVote() {
     int originalVote = 0;
@@ -365,6 +365,9 @@ public class Candidate extends CandidateStatus {
     StringBuffer stringBuffer = new StringBuffer("Candidate " + candidateID);
     if (isElected()) {
       stringBuffer.append(" elected");
+    }
+    else {
+      stringBuffer.append(" lost");
     }
     stringBuffer.append(" with "
         + getTotalVote() + " votes");
