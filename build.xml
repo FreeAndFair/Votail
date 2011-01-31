@@ -176,13 +176,7 @@
 	<taskdef resource="testngtasks" 
 			classpath="external_libraries/testng-5.14.6.jar"/>
 
-		<testng classpathref="run.cp"
-		        outputDir="${testng.report.dir}"
-		        sourcedir="${test.src.dir}"
-		        haltOnfailure="true">
 		  
-		   <xmlfileset dir="${test14.dir}" includes="testng.xml"/>
-		</testng>
 
   <!-- Targets start here. -->
 
