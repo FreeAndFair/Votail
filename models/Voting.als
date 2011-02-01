@@ -328,7 +328,7 @@ fact winnerHigherThanAllNonTiedLosers {
 }
 
 fact nonNegativeQuota {
-  0 <= Scenario.quota
+  Election.method = Plurality implies Scenario.quota = 1
 }
 
 -- Version Control for changes to model
@@ -336,7 +336,7 @@ one sig Version {
    year, month, day: Int
 } {
   year = 11
-  month = 01
-  day = 26
-  -- Dermot Cochran 2011-01-26
+  month = 02
+  day = 01
+  -- Dermot Cochran 2011-02-01
 }

@@ -394,13 +394,3 @@ pred LLLLTTw {
     #Election.candidates = 6
 }
 run LLLLTTw for 20 but 7 int
-
--- Version Control for changes to model
-one sig Version {
-   year, month, day: Int
-} {
-  year = 11
-  month = 01
-  day = 26
-  -- Dermot Cochran 2011-01-26
-}
