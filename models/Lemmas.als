@@ -4,10 +4,9 @@
 
 module Lemmas
 
-open util/integer
 open Voting
 
--- Basic Lemmas
+-- Voting Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
 }
