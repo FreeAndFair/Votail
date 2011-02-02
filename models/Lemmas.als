@@ -293,6 +293,13 @@ pred SW {
 }
 run SW for 2 but 7 int
 
+pred StWt {
+  some disj c0,c1: Candidate | c0.outcome = TiedSoreLoser and 
+  c1.outcome = TiedWinner and 
+  Election.method = Plurality
+}
+run StWt for 2 but 7 int
+
 pred LQ {
 	some disj a,b: Candidate | a.outcome = Loser and b.outcome = QuotaWinner
     #Election.candidates = 2

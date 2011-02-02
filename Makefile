@@ -275,14 +275,14 @@ universal-test:	universal.stamp
 
 universal.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	java ie.votail.model.factory.test.VotailSystemTest; \
+	java $(test_memory_use) ie.votail.model.factory.test.VotailSystemTest; \
 	touch universal.stamp
 
 universal-rac-test:	universal-rac.stamp
 
 universal-rac.stamp:	universal-test jml-junit-test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
-	java ie.votail.model.factory.test.VotailSystemTest; \
+	java $(test_memory_use) ie.votail.model.factory.test.VotailSystemTest; \
 	touch universal.stamp
 
 # generating source-based documentation

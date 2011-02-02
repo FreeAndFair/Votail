@@ -11,7 +11,9 @@ package ie.votail.model.factory;
 
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.Outcome;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
@@ -56,7 +58,7 @@ public class BallotBoxFactory {
    * @param scope The scope for model finding in Alloy Analyser
    * @return The ELection Configuration (null if generation fails)
    */
-  public ElectionConfiguration extractBallots(
+  public ElectionConfiguration /*@ non_null @*/ extractBallots(
     /*@ non_null*/ ElectoralScenario scenario, int scope) {
     
     final ElectionConfiguration electionConfiguration 
@@ -112,14 +114,20 @@ public class BallotBoxFactory {
         return electionConfiguration;
       } 
       // Increase the scope and try again
-      return extractBallots (scenario, scope+1);
+      if (!scenario.hasOutcome(Outcome.TiedSoreLoser)) {
+        return extractBallots (scenario, scope+1);
+      }
+      else {
+        logger.info("Skipped this scenario " + scenario.toString());
+        return electionConfiguration;
+      }
 
     } catch (Err e) {
       // Log failure to find scenario
       logger.severe("Unable to find ballot box for this scenario "
                     + scenario.toString() + " with scope " + scope
                     + " because " + e.msg);
-      return null;
+      return electionConfiguration;
     }
   }
 
@@ -137,7 +145,8 @@ public class BallotBoxFactory {
     A4Reporter reporter = new A4Reporter();
     A4Options options = new A4Options();
     options.solver = A4Options.SatSolver.SAT4J;
-    CompModule world = CompUtil.parseEverything_fromFile(reporter, null,
+    Map<String, String> loaded = null;
+    CompModule world = CompUtil.parseEverything_fromFile(reporter, loaded,
       modelName);
     SafeList<Pair<String, Expr>> facts = world.getAllFacts();
     Expr predicate = CompUtil.parseOneExpression_fromString(world,

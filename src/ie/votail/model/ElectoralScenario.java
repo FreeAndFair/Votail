@@ -156,9 +156,10 @@ public class ElectoralScenario {
       i++;
     }
     stringBuffer
-        .append(" and Election.method = " + method + " and 1 < #Ballot");
+        .append(" and Election.method = " + method);
     stringBuffer.append(" and #Election.candidates = "
         + this.numberOfCandidates);
+
     return stringBuffer.toString();
   }
   

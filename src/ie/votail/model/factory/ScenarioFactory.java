@@ -48,10 +48,12 @@ public class ScenarioFactory {
       scenarios.add(landslideScenario);
       
       // Winner by tie breaker, loser below threshold
-      ElectoralScenario unusualScenario = new ElectoralScenario(method);
-      unusualScenario.addOutcome(Outcome.TiedWinner);
-      unusualScenario.addOutcome(Outcome.TiedSoreLoser);
-      scenarios.add(unusualScenario);
+      if (method == Method.STV) {
+        ElectoralScenario unusualScenario = new ElectoralScenario(method);
+        unusualScenario.addOutcome(Outcome.TiedWinner);
+        unusualScenario.addOutcome(Outcome.TiedSoreLoser);
+        scenarios.add(unusualScenario);
+      }
     }
     else {
       // Extend the base scenario by adding one additional candidate outcome

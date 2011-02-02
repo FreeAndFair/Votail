@@ -138,7 +138,7 @@ one sig Election {
     method = Plurality implies Scenario.quota = 1
   all c: Candidate | method = Plurality implies
 		(c.outcome = Loser or c.outcome = SoreLoser or c.outcome = Winner or 
-		c.outcome = TiedWinner or c.outcome = TiedLoser)
+		c.outcome = TiedWinner or c.outcome = TiedLoser or c.outcome = TiedSoreLoser)
   --winnerSTV {
 	all c: Candidate | (method = STV and c.outcome = Winner) implies 
        Scenario.quota <= #c.votes
@@ -216,6 +216,6 @@ one sig Version {
 } {
   year = 11
   month = 02
-  day = 01
-  -- Dermot Cochran 2011-02-01
+  day = 02
+  -- Dermot Cochran 2011-02-02
 }
