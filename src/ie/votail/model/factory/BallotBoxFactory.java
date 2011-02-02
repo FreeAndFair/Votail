@@ -126,6 +126,7 @@ public class BallotBoxFactory {
       // Log failure to find scenario
       logger.severe("Unable to find ballot box for this scenario "
                     + scenario.toString() + " with scope " + scope
+                    + " and predicate " + scenario.toPredicate()
                     + " because " + e.msg);
       return electionConfiguration;
     }
