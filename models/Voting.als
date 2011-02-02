@@ -139,72 +139,65 @@ one sig Election {
   all c: Candidate | method = Plurality implies
 		(c.outcome = Loser or c.outcome = SoreLoser or c.outcome = Winner or 
 		c.outcome = TiedWinner or c.outcome = TiedLoser or c.outcome = TiedSoreLoser)
-  --winnerSTV {
+    // PR-STV Winner has at least a quota of first preference votes
 	all c: Candidate | (method = STV and c.outcome = Winner) implies 
        Scenario.quota <= #c.votes
-  --transferWinnerWithQuota {
+    // Quota Winner has a least a quota of votes after transfers
 	all c: Candidate | c.outcome = QuotaWinner implies
 	   Scenario.quota <= #c.votes + #c.transfers
-  --transferWinnerNotFirst {
+    // Quota Winner does not have a quota of first preference votes
 	all c: Candidate |  c.outcome = QuotaWinner implies
 		not Scenario.quota <= #c.votes
-  --closeWinner {
+    // Compromise winners do not have a quota of votes
 	all c: Candidate | c.outcome = CompromiseWinner  implies
 		not (Scenario.quota <= #c.votes + #c.transfers)
-  --tiedWinner {
+    // STV Tied Winners do not have a quota of votes
 	all c: Candidate | c.outcome = TiedWinner implies
 		not (Scenario.quota <= #c.votes + #c.transfers) or method = Plurality
-  --soreLoser {
+    // Sore Losers have less votes than the threshold
 	all c: Candidate | c.outcome = SoreLoser implies 
 		#c.votes + #c.transfers < Scenario.threshold
-  --tiedSoreLoser {
+    // Tied Sore Losers have less votes than the threshold
 	all c: Candidate | c.outcome = TiedSoreLoser implies 
 		#c.votes + #c.transfers < Scenario.threshold
-  --winners {
+    // Winning outcomes
 	all c: Candidate | c in Scenario.winners iff 
 		(c.outcome = Winner or c.outcome = QuotaWinner or c.outcome = CompromiseWinner or 
 		c.outcome = TiedWinner)
-  --losers {
+    // Losing outcomes
 	all c: Candidate | c in Scenario.losers iff
 		(c.outcome = Loser or c.outcome = EarlyLoser or c.outcome = SoreLoser or 
 		c.outcome = TiedLoser or c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser)
--- sizeOfSurplus {
+    // Size of surplus for each Winner with surplus
 	all c: Candidate | (c in Scenario.winners and method = STV and 0 < #c.surplus) implies 
 		(#c.surplus = #c.votes + #c.transfers - Scenario.quota)
--- pluralityWinner {
-	all disj a, b: Candidate | (method = Plurality and seats = 1 and
-		a.outcome = Winner) implies #b.votes <= #a.votes
-// All ties involve equality between at least one winner and at least one loser on either original votes or
-// on transfers plus original votes
+   /* All ties involve equality between at least one winner and at least one loser on either original votes or
+       on transfers plus original votes */
    all w: Candidate | some l: Candidate | w.outcome = TiedWinner and 
 	 	(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies
 		(#l.votes = #w.votes) or (#l.votes + #l.transfers = #w.votes + #w.transfers)
   all s: Candidate | some w: Candidate | w.outcome = TiedWinner and 
        (s.outcome = SoreLoser or s.outcome = TiedLoser or s.outcome = TiedEarlyLoser) implies
        (#s.votes = #w.votes) or (#s.votes + #s.transfers = #w.votes + #w.transfers)
-// When there is a tied sore loser then there are no non-sore losers
+   // When there is a tied sore loser then there are no non-sore losers
    no disj a,b: Candidate | a.outcome = TiedSoreLoser and 
         (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or 
          b.outcome=Loser or b.outcome=EarlyLoser)
--- tieBreaker {
+    // For each Tied Winner there is a Tied Loser
 	all w: Candidate | some l: Candidate | w.outcome = TiedWinner implies 
-		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser)
--- validTieBreaker {
-	all l: Candidate |
+		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) {
+	// For each Tied Loser there is a Tied Winner
+   all l: Candidate |
       (l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies 
       some w: Candidate |  w.outcome = TiedWinner
--- equalTieBreaker {
+    // Tied Winners and Tied Losers have an equal number of votes
 	all disj l,w: Candidate | 
     ((l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) and
     w.outcome = TiedWinner) implies #w.votes + #w.transfers = #l.votes + #l.transfers
-// Compromise winner must have more votes than any tied winners
+    // Compromise winner must have more votes than any tied winners
 	all disj c,t: Candidate | (c.outcome = CompromiseWinner and t.outcome = TiedWinner) implies
 		#t.votes + #t.transfers < #c.votes + #c.transfers
-// Tied Winners and Tied Losers have an equal number of votes
-	all disj a,b: Candidate | a.outcome = TiedWinner and 
-        (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or b.outcome = TiedSoreLoser) implies
-		#a.votes + #a.transfers = #b.votes + #b.transfers
-// Winners have more votes than non-tied losers
+    // Winners have more votes than non-tied losers
 	all w,l: Candidate | w.outcome = Winner and 
       (l.outcome = Loser or l.outcome = EarlyLoser or l.outcome = SoreLoser) implies 
      ((#l.votes < #w.votes) or (#l.votes + #l.transfers < #w.votes + #w.transfers))

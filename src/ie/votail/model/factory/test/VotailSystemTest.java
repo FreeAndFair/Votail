@@ -41,11 +41,14 @@ public class VotailSystemTest {
         for (ElectoralScenario scenario : scenarioList) {
           logger.info(scenario.toString());
           ElectionConfiguration electionConfiguration =
-              createElection(scope, ballotCounting, logger, scenario);
+              createElection(scenario);
+          Constituency constituency = electionConfiguration.getConstituency();
+          ballotCounting.setup(constituency);
+          ballotCounting.load(electionConfiguration);
           ballotCounting.count();
           logger.info(ballotCounting.getResults());
           if (!scenario.check(ballotCounting)) {
-            logFailure(scope, logger, scenario, electionConfiguration);
+            logFailure(logger, scenario, electionConfiguration);
             numberOfFailures++;
           }
           total++;
@@ -58,43 +61,40 @@ public class VotailSystemTest {
   }
   
   /**
-   * @param scope
-   * @param ballotCounting
-   * @param logger
-   * @param scenario
-   * @return
+   * Create an election configuration, including constituency and ballot box.
+   * 
+   * @param scenario The scenario for which to create this configuration
+   * 
+   * @return The election configuration
    */
-  protected ElectionConfiguration createElection(final int scope,
-      BallotCounting ballotCounting, Logger logger, ElectoralScenario scenario) {
+  protected /*@ non_null @*/ ElectionConfiguration createElection(
+      ElectoralScenario scenario) {
     BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
     ElectionConfiguration electionConfiguration =
-        ballotBoxFactory.extractBallots(scenario, scope);
-    //@ assert electionConfiguration != null;
-    //@ assert 0 < electionConfiguration.size();
-    Constituency constituency = electionConfiguration.getConstituency();
-    logger.info(electionConfiguration.toString());
-    ballotCounting.setup(constituency);
-    ballotCounting.load(electionConfiguration);
+        ballotBoxFactory.extractBallots(scenario, scenario.getNumberOfCandidates());
     return electionConfiguration;
   }
   
   /**
-   * @param scope
-   * @param logger
-   * @param scenario
-   * @param electionConfiguration
+   * Log information for failed or skipped scenarios.
+   * 
+   * @param logger The logging service to use
+   * @param scenario The scenario which failed or was skipped
+   * @param electionConfiguration The ballot box and candidates for this scenario
    */
-  protected void logFailure(final int scope, Logger logger,
+  protected void logFailure(Logger logger,
       ElectoralScenario scenario, ElectionConfiguration electionConfiguration) {
     
-    if (!scenario.hasOutcome(Outcome.TiedSoreLoser)) {
-    Assert.fail("Unexpected results for scenario " + scenario
-        + " using predicate " + scenario.toPredicate() + " with scope " + scope
-        + " and ballot box " + electionConfiguration);
-    }
-    else {
+    if (scenario.hasOutcome(Outcome.TiedSoreLoser) ||
+        electionConfiguration.size() == 0) {
       logger.info("Skipped this scenario " + scenario.toString());
     }
+    else
+    {
+    Assert.fail("Unexpected results for scenario " + scenario
+        + " using predicate " + scenario.toPredicate()
+        + " and ballot box " + electionConfiguration);
+    } 
   }
   
   public static void main(String[] args) {
@@ -124,12 +124,14 @@ public class VotailSystemTest {
       for (ElectoralScenario scenario : scenarioList) {
         logger.info(scenario.toString());
         ElectionConfiguration electionConfiguration =
-            createElection(scope, ballotCounting, logger, scenario);
-        ballotCounting.usePlurality();
+            createElection(scenario);
+        Constituency constituency = electionConfiguration.getConstituency();
+        ballotCounting.setup(constituency);
+        ballotCounting.load(electionConfiguration);
         ballotCounting.count();
         logger.info(ballotCounting.getResults());
         if (!scenario.check(ballotCounting)) {
-          logFailure(scope, logger, scenario, electionConfiguration);
+          logFailure(logger, scenario, electionConfiguration);
         }
       }
     }

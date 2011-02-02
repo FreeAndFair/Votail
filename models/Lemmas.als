@@ -122,6 +122,13 @@ assert pluralitySoreLoser {
 }
 check pluralitySoreLoser for 13 but 7 int
 
+// Plurality winner for a single seat constituency
+assert pluralityWinner {
+all disj a, b: Candidate | (method = Plurality and seats = 1 and
+		a.outcome = Winner) implies #b.votes <= #a.votes
+}
+checl pluralityWinner for 2 but 7 int
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
@@ -400,3 +407,30 @@ pred LLLLTTw {
     #Election.candidates = 6
 }
 run LLLLTTw for 20 but 7 int
+
+pred LLLLLLW {
+  some disj c3,c4,c5,c6,c7,c8,c9: Candidate | 
+    c3.outcome = Loser and 
+    c4.outcome = Loser and 
+    c5.outcome = Loser and 
+    c6.outcome = Loser and 
+    c7.outcome = Loser and 
+    c8.outcome = Loser and 
+    c9.outcome = Winner and 
+    Election.method = Plurality and 
+    #Election.candidates = 7
+}
+run LLLLLLW for 20 but 7 int
+
+pred LLLtLtWt {
+  some disj c5,c6,c7,c8,c9: Candidate | 
+    c5.outcome = TiedLoser and 
+    c6.outcome = TiedLoser and 
+    c7.outcome = Loser and 
+    c8.outcome = Loser and 
+    c9.outcome = Winner and 
+    Election.method = Plurality and 
+    #Election.candidates = 5
+}
+run LLLtLtWt for 20 but 7 int
+

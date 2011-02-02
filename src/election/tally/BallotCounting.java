@@ -38,7 +38,6 @@ public class BallotCounting extends AbstractBallotCounting {
    */
   public BallotCounting() {
     super();
-    plurality = false;
     // TODO 2009.10.14 ESC invariant warning
     countStatus = new CountStatus(); //@ nowarn;
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
@@ -109,9 +108,6 @@ public class BallotCounting extends AbstractBallotCounting {
   
   // Status of the ballot counting process
   public CountStatus countStatus;
-  
-  // Option to use plurality shortcut
-  protected /*@ spec_public @*/ boolean plurality = false;
   
   /**
    * Distribute the surplus of an elected candidate.
@@ -276,14 +272,6 @@ public class BallotCounting extends AbstractBallotCounting {
       startCounting(); //@ nowarn;
     }
     
-    if (this.plurality && 1 <= getNumberContinuing()) {
-      int winner = this.findHighestCandidate();
-      this.electCandidate(winner);
-      this.countNumberValue = 1;
-      this.excludeLowestCandidates();
-    }
-    else { // PR-STV by default
-    
       // TODO 2009.10.15 ESC invariant warning
       while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
           0 < totalRemainingSeats && // infinite loop detected 2011.01.20
@@ -310,13 +298,13 @@ public class BallotCounting extends AbstractBallotCounting {
         fillLastSeats(); //@ nowarn;
         
       }
-    }
     
     // TODO 2009.10.16 ESC assignable warning
     countStatus.changeState(AbstractCountStatus.END_OF_COUNT); //@ nowarn Modifies ;
     status = ElectionStatus.FINISHED;
     // TODO 2009.10.16 ESC postcondition warning
   } //@ nowarn;
+
   
   /*@ assignable candidateList, ballotsToCount, candidates,
     @   numberOfCandidatesElected, totalRemainingSeats;
@@ -517,15 +505,6 @@ public class BallotCounting extends AbstractBallotCounting {
   //@ ensures \result == this.countNumberValue;
   public/*@ pure @*/int getNumberOfRounds() {
     return this.countNumberValue;
-  }
-  
-  /**
-   * Treat all ballots as simple ballots of one preference.
-   */
-  //@ assignable this.plurality;
-  //@ ensures this.plurality;
-  public void usePlurality() {
-    this.plurality = true;
   }
 
   public Candidate getCandidate(int i) {
