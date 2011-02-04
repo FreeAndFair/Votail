@@ -261,7 +261,7 @@ public class BallotCounting extends AbstractBallotCounting {
     @		assignable numberOfCandidatesEliminated;
     @		assignable status, countStatus;
     @		assignable remainingSeats, totalRemainingSeats;
-    @   assignable candidateList, excludedIndex;
+    @   assignable candidateList;
     @   ensures state == ElectionStatus.FINISHED;
     @*/
   public void count() {
@@ -345,8 +345,7 @@ public class BallotCounting extends AbstractBallotCounting {
   
   /*@ requires \nonnullelements (candidateList);
     @ assignable countStatus, countNumberValue, candidates, candidateList;
-    @ assignable numberOfCandidatesEliminated, ballots,
-    @   ballotsToCount, excludedIndex;
+    @ assignable numberOfCandidatesEliminated, ballots, ballotsToCount;
     @*/
   protected void excludeLowestCandidates() {
     while (getTotalSumOfSurpluses() == 0
@@ -381,6 +380,7 @@ public class BallotCounting extends AbstractBallotCounting {
   /*@ requires candidateList != null;
     @ requires \nonnullelements (candidateList);
     @ requires getContinuingCandidates() == totalRemainingSeats;
+    @ requires countStatus != null;
     @ assignable candidateList[*], countNumber, countNumberValue;
     @ assignable numberOfCandidatesElected, totalRemainingSeats;
     @ assignable candidates;
@@ -454,9 +454,9 @@ public class BallotCounting extends AbstractBallotCounting {
     return countStatus;
   }
   
-  //@ requires countStatus != null;
+  //@ also requires countStatus != null;
   public /*@ non_null pure @*/ String toString() {
-    return "state " + getStateOfCount() + " results " + getResults();
+    return "state " + this.getStateOfCount() + " results " + getResults();
   }
 
   /**
@@ -464,7 +464,8 @@ public class BallotCounting extends AbstractBallotCounting {
    * 
    * @return The status of the count
    */
-  protected int getStateOfCount() {
+  //@ requires countStatus != null;
+  protected /*@ pure @*/ int getStateOfCount() {
     return countStatus.getState();
   }
   

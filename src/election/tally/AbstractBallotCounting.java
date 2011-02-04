@@ -90,11 +90,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected transient/*@ spec_public @*/int totalRemainingSeats;
   /*@ protected represents remainingSeats <- 
     @           numberOfSeats - numberOfCandidatesElected;
-    @*/
-
-  protected /*@ spec_public @*/ int[] electedCandidateIndex;
-  
-  protected /*@ spec_public @*/int[] excludedIndex;
+    @*/  
   
   /**
    * Default Constructor.
@@ -235,7 +231,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     requires index < totalNumberOfCandidates;
     @     requires index < candidateList.length;
     @     ensures \result <==> 
-    @       (candidateList[index].getOriginalVote() >= depositSavingThreshold) ||
+    @       (candidateList[index].getTotalVote() >= depositSavingThreshold) ||
     @       (isElected (candidateList[index]) == true);
     @*/
   public/*@ pure @*/boolean isDepositSaved(final int index) {
@@ -294,8 +290,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.totalNumberOfSeats = constituency.getTotalNumberOfSeats();
     this.status = PRELOAD;
     this.candidates = new Candidate[this.totalNumberOfCandidates];
-    this.electedCandidateIndex = new int[numberOfSeats];
-    this.excludedIndex = new int[totalNumberOfCandidates - numberOfSeats];
     for (int i = 0; i < candidates.length; i++) {
       // TODO 2009.10.14 ESC precondition
       this.candidates[i] = constituency.getCandidate(i); //@  nowarn;
@@ -315,7 +309,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   protected normal_behavior
     @     requires state == PRELOAD;
     @     assignable state, totalVotes, ballotsToCount, ballots;
-    @     assignable totalNumberOfVotes, electedCandidateIndex, excludedIndex;
+    @     assignable totalNumberOfVotes;
     @     ensures state == PRECOUNT;
     @     ensures totalVotes == ballotBox.numberOfBallots;
     @     ensures totalVotes == ballotsToCount.length;
@@ -948,16 +942,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ requires countNumber < CountConfiguration.MAXCOUNT;
     @ requires \nonnullelements (ballotsToCount);
     @ requires \nonnullelements (candidateList);
-    @ requires excludedIndex != null;
     @ requires candidateList[loser].getStatus() == Candidate.CONTINUING;
     @ requires hasQuota (candidateList[loser]) == false;
     @ requires 0 <= numberOfCandidatesEliminated;
-    @ requires numberOfCandidatesEliminated < excludedIndex.length;
     @ assignable candidateList;
     @ assignable candidateList[loser], candidateList[*];
     @ assignable numberOfCandidatesEliminated;
     @ assignable candidateList[loser].state, ballotsToCount, ballots;
-    @ assignable excludedIndex;
     @ ensures remainingSeats <= getNumberContinuing();
     @ ensures numberElected <= seats;
     @ ensures candidateList[loser].getStatus() == Candidate.ELIMINATED;
@@ -966,7 +957,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   candidateList[loser].getCandidateID());
     @*/
   public void eliminateCandidate(final int loser) {
-    excludedIndex[numberOfCandidatesEliminated] = loser;
     candidates[loser].declareEliminated(this.countNumberValue);
     redistributeBallots(candidates[loser].getCandidateID());
     numberOfCandidatesEliminated++;
@@ -1039,19 +1029,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   || (getNumberContinuing() == totalRemainingSeats);
     @ requires candidates[winner].getCandidateID() != Candidate.NO_CANDIDATE;
     @*/
-  //@ requires electedCandidateIndex != null;
   //@ requires state == ElectionStatus.COUNTING;
   //@ requires 0 < candidateList[winner].getCandidateID();
-  //@ requires numberOfCandidatesElected < electedCandidateIndex.length;
   //@ assignable candidates, numberOfCandidatesElected;
   //@ assignable totalRemainingSeats;
   //@ assignable candidates[winner], candidates[winner].state;
   //@ assignable candidates[winner].lastCountNumber;
-  //@ assignable electedCandidateIndex[*];
   //@ ensures isElected (candidateList[winner]);
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;
-    electedCandidateIndex[numberOfCandidatesElected] = winner;
     candidates[winner].declareElected(this.countNumberValue);
     numberOfCandidatesElected++;
     totalRemainingSeats--;

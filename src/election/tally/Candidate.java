@@ -123,15 +123,6 @@ public class Candidate extends CandidateStatus {
   }
   
   /**
-    @deprecated - use getTotalVote() instead
-  */
-  //@ requires lastCountNumber < votesAdded.length;
-  //@ ensures \result == getTotalVote();
-  public /*@ pure */ int getOriginalVote() {
-    return getTotalVote();
-  }
-  
-  /**
    * Get status at the current round of counting; {@link #ELECTED},
    * {@link #ELIMINATED} or {@link #CONTINUING}
    * 
