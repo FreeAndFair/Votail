@@ -23,7 +23,7 @@ public class Candidate extends CandidateStatus {
    *      of political parties in Ireland</a> The average number of candidates
    *      could be much less.
    */
-  public static final int                     MAX_CANDIDATES  = 20;
+  public static final int MAX_CANDIDATES = 20;
   
   /**
    * Identifier for the candidate. The data should be loaded in such a way that
@@ -33,7 +33,7 @@ public class Candidate extends CandidateStatus {
     @ public constraint \old(candidateID) != NO_CANDIDATE
     @   ==> candidateID == \old(candidateID);
     @*/
-  protected transient/*@ spec_public @*/int  candidateID;
+  protected transient/*@ spec_public @*/int candidateID;
   
   /** Number of votes added at each count */
   /*@ public invariant (\forall int i; 0 < i && i < votesAdded.length;
@@ -42,8 +42,8 @@ public class Candidate extends CandidateStatus {
     @   votesAdded[i] == 0);	
     @ public invariant votesAdded.length == CountConfiguration.MAXCOUNT;
     @*/
-  protected/*@ spec_public non_null @*/int[] votesAdded      =
-                                                                  new int[CountConfiguration.MAXCOUNT];
+  protected/*@ spec_public non_null @*/int[] votesAdded =
+      new int[CountConfiguration.MAXCOUNT];
   
   /** Number of votes removed at each count */
   /*@ public invariant (\forall int i; 0 < i && i < votesRemoved.length;
@@ -52,8 +52,8 @@ public class Candidate extends CandidateStatus {
     @                                  votesRemoved[i] == 0);
     @ public invariant votesRemoved.length == CountConfiguration.MAXCOUNT;
     @*/
-  protected/*@ spec_public non_null @*/int[] votesRemoved    =
-                                                                  new int[CountConfiguration.MAXCOUNT];
+  protected/*@ spec_public non_null @*/int[] votesRemoved =
+      new int[CountConfiguration.MAXCOUNT];
   
   //@ public invariant votesAdded != votesRemoved;
   //@ public invariant votesRemoved != votesAdded;
@@ -62,6 +62,8 @@ public class Candidate extends CandidateStatus {
   /*@ public invariant state == ELECTED || state == ELIMINATED ||
     @   state == CONTINUING;
     @ public initially state == CONTINUING;
+    @ public constraint \old(state) == ELECTED ==> state == ELECTED;
+    @ public constraint \old(state) == ELIMINATED ==> state == ELIMINATED;
     @*/
   protected transient/*@ spec_public @*/byte state;
   
@@ -70,24 +72,23 @@ public class Candidate extends CandidateStatus {
   //@ public initially lastCountNumber == 0;
   //@ public constraint \old(lastCountNumber) <= lastCountNumber;
   //@ public invariant lastCountNumber <= CountConfiguration.MAXCOUNT;
-  protected transient/*@ spec_public @*/int  lastCountNumber;
-
+  protected transient/*@ spec_public @*/int lastCountNumber;
+  
   private Logger logger;
   
-  public static final int                     NO_CANDIDATE    = 0;
+  public static final int NO_CANDIDATE = 0;
   
   /**
    * Next available value for candidate ID number.
    */
   //@ private constraint \old(nextCandidateID) <= nextCandidateID;
-  private static int                          nextCandidateID =
-                                                                  MAX_CANDIDATES + 1;
+  private static int nextCandidateID = MAX_CANDIDATES + 1;
   
   /**
    * Gets number of votes added or removed in this round of counting.
    * 
    * @param count
-   *        This count number
+   *          This count number
    * @return A positive number if the candidate received transfers or a negative
    *         number if the candidate's surplus was distributed or the candidate
    *         was eliminated and votes transfered to another.
@@ -113,13 +114,14 @@ public class Candidate extends CandidateStatus {
     @ ensures 0 <= \result;
     @*/
   public/*@ pure @*/int getTotalVote() {
-    int originalVote = 0;
+    int totalVote = 0;
     
     for (int i = 0; i <= lastCountNumber; i++) {
-      originalVote += votesAdded[i];
+      totalVote += votesAdded[i];
+      //@ assert 0 <= totalVote;
     }
     
-    return originalVote;
+    return totalVote;
   }
   
   /**
@@ -162,15 +164,18 @@ public class Candidate extends CandidateStatus {
   }
   
   /**
-  * 
-  */
+   * Creates an empty table of votes for a new candidate
+   */
+  /*@ ensures state == CONTINUING;
+    @ ensures lastCountNumber == 0;
+    @*/
   protected void initialiseVotes() {
     state = CONTINUING;
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
       votesAdded[i] = 0;
       votesRemoved[i] = 0;
     }
-    lastCountNumber = 1;
+    lastCountNumber = 0;
   }
   
   /**
@@ -178,6 +183,9 @@ public class Candidate extends CandidateStatus {
    * 
    * @param theCandidateID
    */
+  /*@ ensures state == CONTINUING;
+    @ ensures lastCountNumber == 0;
+    @*/
   public Candidate(int theCandidateID) {
     if (0 < theCandidateID) {
       this.candidateID = theCandidateID;
@@ -200,9 +208,9 @@ public class Candidate extends CandidateStatus {
    * @design This method cannot be called twice for the same candidate in the
    *         same round of counting.
    * @param numberOfVotes
-   *        Number of votes to add
+   *          Number of votes to add
    * @param count
-   *        The round of counting at which the votes were added
+   *          The round of counting at which the votes were added
    */
   /*@ public normal_behavior
     @   requires state == CONTINUING;
@@ -212,18 +220,18 @@ public class Candidate extends CandidateStatus {
     @   requires 0 <= numberOfVotes;
     @   assignable lastCountNumber, votesAdded[count];
     @   ensures numberOfVotes <= votesAdded[count];
-    @   ensures lastCountNumber == count;
+    @   ensures count <= lastCountNumber;
     @*/
   public void addVote(final int numberOfVotes, final int count) {
     votesAdded[count] += numberOfVotes;
     updateCountNumber(count);
-  } //@ nowarn;
-  // TODO ESC 2011.01.14 Postcondition possibly not established (Post)
-
+  }
+  
   /**
    * Update the last count number for this Candidate
    * 
-   * @param count The number of the most recent count
+   * @param count
+   *          The number of the most recent count
    */
   //@ requires count < CountConfiguration.MAXCOUNT;
   //@ assignable lastCountNumber;
@@ -240,9 +248,9 @@ public class Candidate extends CandidateStatus {
    * @design This method cannot be called twice for the same candidate in the
    *         same round of counting.
    * @param numberOfVotes
-   *        Number of votes to remove from this candidate
+   *          Number of votes to remove from this candidate
    * @param count
-   *        The round of counting at which the votes were removed
+   *          The round of counting at which the votes were removed
    */
   /*@ public normal_behavior
     @   requires state == ELIMINATED || state == ELECTED;
@@ -253,14 +261,13 @@ public class Candidate extends CandidateStatus {
     @   requires numberOfVotes <= getTotalAtCount(count);
     @   assignable lastCountNumber, votesRemoved[count];
     @   ensures numberOfVotes <= votesRemoved[count];
-    @   ensures lastCountNumber == count;
+    @   ensures count <= lastCountNumber;
     @*/
   public void removeVote(final int numberOfVotes, final int count) {
     votesRemoved[count] += numberOfVotes;
     updateCountNumber(count);
-  } //@ nowarn Post;
-  // TODO ESC 2011.01.14 Postcondition possibly not established (Post)
-  
+  }
+    
   /** Declares the candidate to be elected */
   /*@ public normal_behavior
     @   requires state == CONTINUING;
@@ -285,14 +292,14 @@ public class Candidate extends CandidateStatus {
     updateCountNumber(countNumber);
     logger.info("Candidate " + this.candidateID + " excluded on count number "
         + countNumber);
-   
+    
   }
   
   /**
    * Determines the relative ordering of the candidate in the event of a tie.
    * 
    * @param other
-   *        The other candidate to compare with this candidate
+   *          The other candidate to compare with this candidate
    * @return <code>true</true> if other candidate is not selected
    */
   /*@ 
@@ -307,7 +314,7 @@ public class Candidate extends CandidateStatus {
    * Is this the same candidate?
    * 
    * @param other
-   *        The candidate to be compared
+   *          The candidate to be compared
    * @return <code>true</code> if this is the same candidate
    */
   /*@ public normal_behavior
@@ -322,7 +329,7 @@ public class Candidate extends CandidateStatus {
    * How many votes have been received by this round of counting?
    * 
    * @param count
-   *        The round of counting
+   *          The round of counting
    * @return The total number of votes received so far
    */
   /*@ requires 0 <= count;
@@ -330,7 +337,7 @@ public class Candidate extends CandidateStatus {
     @ requires votesAdded.length == CountConfiguration.MAXCOUNT;
     @ requires votesRemoved.length == CountConfiguration.MAXCOUNT;
     @*/
-  public /*@ pure*/ int getTotalAtCount(final int count) {
+  public/*@ pure*/int getTotalAtCount(final int count) {
     int totalAtCount = 0;
     
     for (int i = 0; i <= count; i++) {
@@ -345,14 +352,14 @@ public class Candidate extends CandidateStatus {
    * 
    * @return <code>true</code> if elected
    */
-  public /*@ pure*/ boolean isElected() {
+  public/*@ pure*/boolean isElected() {
     return (getStatus() == ELECTED);
   }
   
   /**
    * Summary of candidate information, excluding transfers
    */
-  public /*@ non_null pure*/ String toString() {
+  public/*@ non_null pure*/String toString() {
     StringBuffer stringBuffer = new StringBuffer("Candidate " + candidateID);
     if (isElected()) {
       stringBuffer.append(" elected");
@@ -360,30 +367,29 @@ public class Candidate extends CandidateStatus {
     else {
       stringBuffer.append(" lost");
     }
-    stringBuffer.append(" with "
-        + getTotalVote() + " votes");
+    stringBuffer.append(" with " + getTotalVote() + " votes");
     return stringBuffer.toString();
   }
   
   //@ requires 0 <= lastCountNumber;
   //@ ensures \result == getTotalAtCount (lastCountNumber);
-  public /*@ pure*/ int getFinalVote() {
-    return getTotalAtCount (lastCountNumber); //@ nowarn;
+  public/*@ pure*/int getFinalVote() {
+    return getTotalAtCount(lastCountNumber); //@ nowarn;
     // TODO ESC 2011.01.14 Precondition possibility not established (Pre)
   }
   
   //@ ensures \result <==> (state == ELIMINATED);
-  public /*@ pure*/ boolean isEliminated() {
+  public/*@ pure*/boolean isEliminated() {
     return state == ELIMINATED;
   }
   
   //@ ensures \result == lastCountNumber;
-  public/*@ pure*/ int getLastRound() {
+  public/*@ pure*/int getLastRound() {
     return lastCountNumber;
   }
   
   //@ ensures \result == getTotalAtCount(0);
-  public /*@ pure @*/ int getInitialVote() {
+  public/*@ pure @*/int getInitialVote() {
     return getTotalAtCount(0);
   }
 }
