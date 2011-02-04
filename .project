@@ -15,6 +15,11 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>ch.ethz.inf.pm.jml.plugin.CheckerBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
@@ -29,5 +34,6 @@
 		<nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
 		<nature>ie.ucd.bon.beetlz.plugin.beetlznature</nature>
 		<nature>com.stateofflow.eclipse.metrics.MetricsNature</nature>
+		<nature>ch.ethz.inf.pm.jml.plugin.CheckerNature</nature>
 	</natures>
 </projectDescription>

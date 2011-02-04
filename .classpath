@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="external_libraries/jmlmodelsnonrac.jar"/>
 	<classpathentry kind="lib" path="external_libraries/jml-release.jar"/>
 	<classpathentry kind="lib" path="external_libraries/jmlruntime.jar"/>
+	<classpathentry kind="src" path="/jmlspecs"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
