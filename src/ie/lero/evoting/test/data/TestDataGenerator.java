@@ -94,38 +94,47 @@ public class TestDataGenerator {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(n, 5);
       constituency.setNumberOfCandidates(n + 1);
+      return constituency;
     } else if (n == 6) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(1, 4);
       constituency.setNumberOfCandidates(n);
+      return constituency;
     } else if (n == 7) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(2, 4);
       constituency.setNumberOfCandidates(n);
+      return constituency;
     } else if (n == 8) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(3, 4);
       constituency.setNumberOfCandidates(n);
+      return constituency;
     } else if (n == 9) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(4, 4);
       constituency.setNumberOfCandidates(n);
+      return constituency;
     } else if (n == 10) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(2, 5);
       constituency.setNumberOfCandidates(n);
+      return constituency;
     } else if (n == 11) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(3, 5);
       constituency.setNumberOfCandidates(n);
+      return constituency;
     } else if (n == 12) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(5, 5);
       constituency.setNumberOfCandidates(Candidate.MAX_CANDIDATES);
+      return constituency;
     } else if (n == 13) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(4, 4);
       constituency.setNumberOfCandidates(Candidate.MAX_CANDIDATES - 1);
+      return constituency;
     }
     throw new java.util.NoSuchElementException();
   }
@@ -136,14 +145,13 @@ public class TestDataGenerator {
       ballot_count++;
       int[] list = new int[0];
       return new Ballot(list);
-    } else if (n <= Candidate.MAX_CANDIDATES) {
+    } else if (n < Candidate.MAX_CANDIDATES) {
       int[] list = new int[n];
-      for (int preference = 0; preference < n; preference++) {
-        list[preference] = Candidate.getUniqueID();
+      for (int i=0; i<n; i++) {
+        list[i] = new Candidate().getCandidateID();
       }
       return new Ballot(list);
     }
-
     throw new java.util.NoSuchElementException();
   }
 

@@ -201,13 +201,15 @@ public class Ballot {
     /*@ requires 0 <= index;
       @ ensures (index < numberOfPreferences && index < preferenceList.length) 
       @   ==> preferenceList[index] == \result;
-      @ ensures (numberOfPreferences <= index || preferenceList.length <= index) 
+      @ ensures (numberOfPreferences <= index || 
+      @   preferenceList.length <= index) 
       @   ==> \result == Ballot.NONTRANSFERABLE;
       @*/
     protected final/*@ spec_public pure @*/int getPreference(final int index) {
         if (index < numberOfPreferences && index < preferenceList.length) {
             return preferenceList[index];
         }
+        
         return Ballot.NONTRANSFERABLE;
     }
 
@@ -219,6 +221,7 @@ public class Ballot {
      */
     public/*@ pure @*/boolean isFirstPreference(final int candidateID) {
         if (preferenceList.length == 0) {
+            
             return false;
         }
         return candidateID == preferenceList[0];

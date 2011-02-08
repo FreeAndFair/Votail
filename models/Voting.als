@@ -93,8 +93,8 @@ sig Ballot {
     not preferences.hasDups
 	preferences.elems in Election.candidates
 	preferences.first in assignees
-	Election.method = Plurality implies #preferences = 1
-    0 < #preferences
+	Election.method = Plurality implies #preferences <= 1
+    0 <= #preferences
     // First preference
     all c: Candidate | preferences.first = c iff this in c.votes
     // Second and subsequent preferences
@@ -208,6 +208,6 @@ one sig Version {
 } {
   year = 11
   month = 02
-  day = 03
-  -- Dermot Cochran 2011-02-03
+  day = 07
+  -- Dermot Cochran 2011-02-07
 }

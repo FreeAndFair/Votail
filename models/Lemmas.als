@@ -59,7 +59,8 @@ check equalityofTiedWinnersAndLosers for 13 but 7 int
 
 // No lost votes during counting
 assert accounting {
-	all b: Ballot | some c: Candidate | b in c.votes and c in b.assignees
+	all b: Ballot | some c: Candidate | 0 < #b.preferences implies 
+      b in c.votes and c in b.assignees
 }
 check accounting for 16 but 6 int
 
@@ -129,7 +130,12 @@ all disj a, b: Candidate | (Election.method = Plurality and Election.seats = 1 a
 }
 check pluralityWinner for 2 but 7 int
 
- 
+// Length of PR-STV ballot does not exceed number of candidates
+assert lengthOfBallot {
+  all b: Ballot | Election.method = STV implies
+    #b.preferences <= #Election.candidates
+}
+check lengthOfBallot for 7 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -408,7 +414,7 @@ pred LLLLTTw {
     Election.method = Plurality and 
     #Election.candidates = 6
 }
-run LLLLTTw for 20 but 7 int
+run LLLLTTw for 16 but 7 int
 
 pred LLLLLLW {
   some disj c3,c4,c5,c6,c7,c8,c9: Candidate | 
@@ -422,7 +428,7 @@ pred LLLLLLW {
     Election.method = Plurality and 
     #Election.candidates = 7
 }
-run LLLLLLW for 20 but 7 int
+run LLLLLLW for 16 but 7 int
 
 pred LLLtLtWt {
   some disj c5,c6,c7,c8,c9: Candidate | 
@@ -434,5 +440,5 @@ pred LLLtLtWt {
     Election.method = Plurality and 
     #Election.candidates = 5
 }
-run LLLtLtWt for 20 but 7 int
+run LLLtLtWt for 16 but 7 int
 

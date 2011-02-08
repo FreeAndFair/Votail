@@ -39,7 +39,7 @@ public class Candidate extends CandidateStatus {
   /*@ public invariant (\forall int i; 0 < i && i < votesAdded.length;
     @   0 <= votesAdded[i]);
     @ public initially (\forall int i; 0 < i && i < votesAdded.length;
-    @   votesAdded[i] == 0);	
+    @   votesAdded[i] == 0);
     @ public invariant votesAdded.length == CountConfiguration.MAXCOUNT;
     @*/
   protected/*@ spec_public non_null @*/int[] votesAdded =
@@ -65,16 +65,16 @@ public class Candidate extends CandidateStatus {
     @ public constraint \old(state) == ELECTED ==> state == ELECTED;
     @ public constraint \old(state) == ELIMINATED ==> state == ELIMINATED;
     @*/
-  protected transient/*@ spec_public @*/byte state;
+  protected /*@ spec_public @*/ byte state = CONTINUING;
   
   /** The number of rounds of counting so far */
   //@ public invariant 0 <= lastCountNumber;
   //@ public initially lastCountNumber == 0;
   //@ public constraint \old(lastCountNumber) <= lastCountNumber;
   //@ public invariant lastCountNumber <= CountConfiguration.MAXCOUNT;
-  protected transient/*@ spec_public @*/int lastCountNumber;
+  protected /*@ spec_public @*/ int lastCountNumber = 0;
   
-  private Logger logger;
+  protected/*@ spec_public @*/Logger logger;
   
   public static final int NO_CANDIDATE = 0;
   
@@ -117,6 +117,7 @@ public class Candidate extends CandidateStatus {
     int totalVote = 0;
     
     for (int i = 0; i <= lastCountNumber; i++) {
+      //@ assert 0 <= votesAdded[i];
       totalVote += votesAdded[i];
       //@ assert 0 <= totalVote;
     }
@@ -152,30 +153,13 @@ public class Candidate extends CandidateStatus {
   /**
    * This is the default constructor method for a <code>Candidate</code>
    */
-  /*@ ensures state == CONTINUING;
-    @ ensures lastCountNumber == 0;
-    @*/
   public Candidate() {
-    super();
-    candidateID = getUniqueID();
-    initialiseVotes(); //@ nowarn;
-    // TODO ESC 2011.01.14 Possible violation of object invariant (Invariant)
-    logger = Logger.getLogger("ie.votail.Candidate");
-  }
-  
-  /**
-   * Creates an empty table of votes for a new candidate
-   */
-  /*@ ensures state == CONTINUING;
-    @ ensures lastCountNumber == 0;
-    @*/
-  protected void initialiseVotes() {
-    state = CONTINUING;
+    candidateID = nextCandidateID++;
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
       votesAdded[i] = 0;
       votesRemoved[i] = 0;
-    }
-    lastCountNumber = 0;
+    }    
+    logger = Logger.getLogger("ie.votail.Candidate");
   }
   
   /**
@@ -183,23 +167,18 @@ public class Candidate extends CandidateStatus {
    * 
    * @param theCandidateID
    */
-  /*@ ensures state == CONTINUING;
-    @ ensures lastCountNumber == 0;
-    @*/
   public Candidate(int theCandidateID) {
     if (0 < theCandidateID) {
       this.candidateID = theCandidateID;
     }
     else {
-      this.candidateID = getUniqueID();
+      this.candidateID = nextCandidateID++;
     }
-    initialiseVotes(); //@ nowarn;
+    for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
+      votesAdded[i] = 0;
+      votesRemoved[i] = 0;
+    }
     logger = Logger.getLogger("ie.votail.Candidate");
-    // TODO ESC 2011.01.14 Possible violation of object invariant
-  }
-  
-  public static int getUniqueID() {
-    return nextCandidateID++;
   }
   
   /**
@@ -267,10 +246,11 @@ public class Candidate extends CandidateStatus {
     votesRemoved[count] += numberOfVotes;
     updateCountNumber(count);
   }
-    
+  
   /** Declares the candidate to be elected */
   /*@ public normal_behavior
     @   requires state == CONTINUING;
+    @   requires countNumber < CountConfiguration.MAXCOUNT;
     @   assignable state, lastCountNumber;
     @   ensures state == ELECTED;
     @*/
@@ -283,6 +263,7 @@ public class Candidate extends CandidateStatus {
   
   /** Declares the candidate to be eliminated */
   /*@ public normal_behavior
+    @   requires countNumber < CountConfiguration.MAXCOUNT;
     @   requires state == CONTINUING;
     @   assignable this.state, lastCountNumber;
     @   ensures state == ELIMINATED;
@@ -353,7 +334,7 @@ public class Candidate extends CandidateStatus {
    * @return <code>true</code> if elected
    */
   public/*@ pure*/boolean isElected() {
-    return (getStatus() == ELECTED);
+    return state == ELECTED;
   }
   
   /**

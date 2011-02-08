@@ -86,8 +86,7 @@ public class ElectionConfiguration extends BallotBox {
     this.accept (preferences); // add these preferences to the ballot box
   }
 
-  
-//@ ensures numberOfCandidateIDs <= numberOfCandidates;
+  //@ ensures numberOfCandidateIDs <= numberOfCandidates;
   protected void updateCandidateIDs(int candidateID) {
     for (int i=0; i < numberOfCandidateIDs; i++) {
       if (candidateID == candidateIDs[i]) {
@@ -97,17 +96,17 @@ public class ElectionConfiguration extends BallotBox {
     candidateIDs[numberOfCandidateIDs] = candidateID;
     numberOfCandidateIDs++;
   }
-  
-  
+
   /**
-   * Generate a constituency list of Candidates to match the Ballot Box for this scenario
+   * Generate a constituency list of Candidates to match the Ballot Box for 
+   * this scenario
    * 
    * @return The constituency with matching candidate ID numbers
    */
   public Constituency getConstituency() {
     Constituency constituency = new Constituency();
     constituency.setNumberOfSeats(this.numberOfWinners, this.numberOfSeats);
-    constituency.load(this.candidateIDs, this.numberOfCandidates);
+    constituency.load(this.candidateIDs);
     return constituency;
   }
 

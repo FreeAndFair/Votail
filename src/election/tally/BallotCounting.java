@@ -102,7 +102,9 @@ public class BallotCounting extends AbstractBallotCounting {
           || (LAST_SEAT_BEING_FILLED == value)
           || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
           || (ONE_OR_MORE_SEATS_REMAINING == value)
-          || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
+          || (ALL_SEATS_FILLED == value) 
+          || (END_OF_COUNT == value) 
+          || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
     }
   }
   
@@ -306,11 +308,14 @@ public class BallotCounting extends AbstractBallotCounting {
   } //@ nowarn;
 
   
+  /**
+   * Elect any candidate with a quota or more of votes.
+   */
   /*@ assignable candidateList, ballotsToCount, candidates,
     @   numberOfCandidatesElected, totalRemainingSeats;
     @*/
   protected void electCandidatesWithSurplus() {
-    while (getTotalSumOfSurpluses() > 0
+    while (candidatesWithQuota()
         && countNumberValue < CountConfiguration.MAXCOUNT
         && getNumberContinuing() > totalRemainingSeats) {
       
@@ -337,10 +342,26 @@ public class BallotCounting extends AbstractBallotCounting {
         @   || (getNumberContinuing() == totalRemainingSeats);
         @*/
       electCandidate(winner);
-      countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
-      distributeSurplus(winner);
+      if (0 < getSurplus(candidates[winner])) {
+        countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
+        distributeSurplus(winner);
+      }
       
     }
+  }
+
+  /**
+   * @return <code>true</code> if there is at least one continuing candidate 
+   * with a quota of votes
+   */
+  protected /*@ pure @*/ boolean candidatesWithQuota() {
+    for (int i = 0; i < totalNumberOfCandidates; i++) {
+      if ((candidates[i].getStatus() == CandidateStatus.CONTINUING) &&
+       hasQuota(candidates[i])) {
+          return true;
+      }
+    }
+    return false;
   }
   
   /*@ requires \nonnullelements (candidateList);
@@ -348,7 +369,7 @@ public class BallotCounting extends AbstractBallotCounting {
     @ assignable numberOfCandidatesEliminated, ballots, ballotsToCount;
     @*/
   protected void excludeLowestCandidates() {
-    while (getTotalSumOfSurpluses() == 0
+    while (!candidatesWithQuota()
         && getNumberContinuing() > totalRemainingSeats
         && countNumberValue < CountConfiguration.MAXCOUNT) {
       

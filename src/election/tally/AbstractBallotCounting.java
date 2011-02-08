@@ -180,16 +180,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public/*@ pure @*/int getSurplus(final/*@ non_null @*/Candidate candidate) {
     // TODO 2009.10.14 ESC precondition violation warning
-    final int surplus =
-        countBallotsFor(candidate.getCandidateID()) - getQuota(); //@ nowarn;
-    if (surplus < 0) {
+    if (hasQuota(candidate)) {
+        return countBallotsFor(candidate.getCandidateID()) - getQuota(); //@ nowarn;
+    }
       return 0;
-    }
-    // 2011.01.20 do not count non transferable surplus from an existing winner
-    if (candidate.isElected()) {
-      return 0; // Transferable votes have already been distributed
-    }
-    return surplus;
   }
   
   /**
@@ -201,10 +195,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     int sumOfSurpluses = 0;
     
     for (int c = 0; c < totalNumberOfCandidates; c++) {
-      final int surplus = getSurplus(candidates[c]);
-      if (surplus > 0) {
-        sumOfSurpluses += surplus;
-      }
+        sumOfSurpluses += getSurplus(candidates[c]);
     }
     return sumOfSurpluses;
   }
@@ -236,9 +227,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public/*@ pure @*/boolean isDepositSaved(final int index) {
     // TODO 2009.10.14 ESC negative index warning
-    final Candidate candidate = candidates[index]; //@ nowarn;
+    final Candidate candidate = candidates[index];
     // TODO 2009.10.14 ESC precondition warning
-    final int originalVote = candidate.getTotalVote(); //@ nowarn;
+    final int originalVote = candidate.getTotalVote();
     final boolean elected = isElected(candidate);
     return ((originalVote >= savingThreshold) || elected);
   }
@@ -935,7 +926,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ requires 0 <= loser && loser < candidates.length;
     @ requires remainingSeats < getNumberContinuing();
-    @ requires (state == COUNTING);
+    @ requires state == COUNTING;
     @ requires loser < totalCandidates;
     @ requires loser == findLowestCandidate();
     @ requires candidateList[loser].getCandidateID() != Ballot.NONTRANSFERABLE;
@@ -1112,21 +1103,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public/*@ pure*/int getSavingThreshold() {
     return savingThreshold;
   }
-  
-  /**
-   * @return the countNumberValue
-   */
-  //@ ensures \result == countNumberValue;
-  public/*@ pure*/int getCountNumberValue() {
-    return countNumberValue;
-  }
-  
-  /**
-   * @return the totalRemainingSeats
-   */
-  //@ ensures \result == totalRemainingSeats;
-  public/*@ pure*/int getTotalRemainingSeats() {
-    return totalRemainingSeats;
-  }
+ 
   
 }
