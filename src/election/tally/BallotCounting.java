@@ -505,16 +505,6 @@ public class BallotCounting extends AbstractBallotCounting {
     return buffer.toString();
   }
   
-  /*@ requires countStatus != null;
-    @ ensures \result <==>
-    @   (this.getCountStatus().getState() == CountStatus.END_OF_COUNT &&
-    @  this.status == FINISHED);
-    @*/
-  public/*@ pure*/boolean isFinished() {
-    return this.getCountStatus().getState() == CountStatus.END_OF_COUNT
-        && this.status == FINISHED;
-  }
-  
   /**
    * Get the number of rounds of counting so far.
    * <p>

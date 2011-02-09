@@ -120,7 +120,8 @@ one sig Scenario {
    	winners: 			set Candidate,
 	eliminated: 		set Candidate, 	-- Early and Sore Losers under STV rules
 	threshold: 		Int, 					-- Minimum number of votes for a Loser or Early Loser
-	quota: 				Int					-- Minimum number of votes for a STV Winner or Quota Winner
+	quota: 				Int,					-- Minimum number of votes for a STV Winner or Quota Winner
+    fullQuota:			Int					-- Quota if all constituency seats were vacant
 } {
  	winners + losers = Election.candidates
  	#winners = Election.seats
@@ -128,7 +129,7 @@ one sig Scenario {
  	0 < #losers
  	all w: Candidate | all l: Candidate | l in losers and w in winners implies 
 		(#l.votes + #l.transfers <= #w.votes + #w.transfers)
-    Election.method = STV implies threshold = 1 + quota.div[4]
+    Election.method = STV implies threshold = 1 + fullQuota.div[4]
 	eliminated in losers
     // All PR-STV losers have less votes than the quota
 	all c: Candidate | (c in losers and Election.method = STV) implies 
@@ -159,18 +160,22 @@ one sig Scenario {
 
 -- An Election Constituency
 one sig Election {
-  candidates: 		set Candidate,
-  seats: 				Int,
-  method: 			Method,
-  ballots:				Int -- number of ballots counted
+  candidates: 			set Candidate,
+  seats: 					Int,				-- number of seats vacant in this election
+  constituencySeats:	Int,				-- full number of seats in this constituency
+  method: 				Method,
+  spoiltBallots:			set Ballot,		-- empty ballots excluded from count
+  ballots:					Int 				-- number of ballots counted
 }
 {
- 	0 < seats
+ 	0 < seats and seats <= constituencySeats
  	seats < #candidates
  	all c: Candidate | c in candidates
-    ballots = #Ballot
-    method = STV implies Scenario.quota = 1 + ballots.div[seats+1]
-    method = Plurality implies Scenario.quota = 1
+    ballots = #Ballot - #spoiltBallots
+	all b: Ballot | b in spoiltBallots iff #b.preferences = 0
+    method = STV implies Scenario.quota = 1 + ballots.div[seats+1] and
+    	Scenario.fullQuota = 1 + ballots.div[constituencySeats + 1]
+    method = Plurality implies Scenario.quota = 1 and Scenario.fullQuota = 1
     // All ties involve equality between at least one winner and at least one loser
     all w: Candidate | some l: Candidate | w.outcome = TiedWinner and 
 	 	(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies
@@ -190,7 +195,8 @@ one sig Election {
     ((l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) and
     w.outcome = TiedWinner) implies #w.votes + #w.transfers = #l.votes + #l.transfers
     // Compromise winner must have more votes than any tied winners
-	all disj c,t: Candidate | (c.outcome = CompromiseWinner and t.outcome = TiedWinner) implies
+	all disj c,t: Candidate | (c.outcome = CompromiseWinner and t.outcome = TiedWinner) 
+		implies
 		#t.votes + #t.transfers < #c.votes + #c.transfers
     // Winners have more votes than non-tied losers
 	all w,l: Candidate | w.outcome = Winner and 
@@ -198,7 +204,8 @@ one sig Election {
      ((#l.votes < #w.votes) or (#l.votes + #l.transfers < #w.votes + #w.transfers))
     // For each Tied Loser there is at least one Tied Winner
    all c: Candidate | some w: Candidate |
-   (c.outcome = TiedLoser or c.outcome = TiedSoreLoser or c.outcome = TiedEarlyLoser) implies 
+   (c.outcome = TiedLoser or c.outcome = TiedSoreLoser or c.outcome = TiedEarlyLoser) 
+		implies 
         w.outcome = TiedWinner
 }
 
@@ -208,6 +215,6 @@ one sig Version {
 } {
   year = 11
   month = 02
-  day = 07
-  -- Dermot Cochran 2011-02-07
+  day = 09
+  -- Dermot Cochran 2011-02-09
 }

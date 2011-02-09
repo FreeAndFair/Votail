@@ -137,6 +137,12 @@ assert lengthOfBallot {
 }
 check lengthOfBallot for 7 int
 
+// Quota for a full election is less than for a by-election
+assert  fullQuota {
+	Scenario.fullQuota <= Scenario.quota
+}
+check fullQuota for 7 int
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
@@ -301,6 +307,13 @@ pred LW {
   Election.method = Plurality and 0 < #Ballot and #Election.candidates = 2
 }
 run LW for 5 but 6 int
+
+pred LLWstv {
+  some disj c0,c1,c2: Candidate | c0.outcome = Loser and c1.outcome = Winner and
+  c2.outcome = Loser and 
+  Election.method = STV and #Election.candidates = 3
+}
+run LLWstv for 6 but 6 int
 
 pred SW {
   some disj c0,c1: Candidate | c0.outcome = SoreLoser and c1.outcome = Winner and 

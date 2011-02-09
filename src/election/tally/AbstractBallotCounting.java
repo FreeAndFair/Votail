@@ -283,11 +283,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.candidates = new Candidate[this.totalNumberOfCandidates];
     for (int i = 0; i < candidates.length; i++) {
       // TODO 2009.10.14 ESC precondition
-      this.candidates[i] = constituency.getCandidate(i); //@  nowarn;
+      this.candidates[i] = constituency.getCandidate(i);
     }
     this.totalRemainingSeats = this.numberOfSeats;
     // TODO 2009.10.14 ESC postcondition
-  } // @ nowarn;
+  }
   
   /**
    * Open the ballot box for counting.
@@ -688,7 +688,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     while (0 <= count) {
       
       // TODO 2009.10.14 ESC precondition warning
-      firstNumberOfVotes = firstCandidate.getTotalAtCount(count); //@ nowarn;
+      firstNumberOfVotes = firstCandidate.getTotalAtCount(count);
       secondNumberOfVotes = secondCandidate.getTotalAtCount(count);
       if (firstNumberOfVotes > secondNumberOfVotes) {
         return true;
@@ -1057,43 +1057,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   }
   
   /**
-   * @return the numberOfCandidatesElected
-   */
-  //@ ensures \result == numberOfCandidatesElected;
-  public/*@ pure*/int getNumberOfCandidatesElected() {
-    return numberOfCandidatesElected;
-  }
-  
-  /**
-   * @return the numberOfCandidatesEliminated
-   */
-  //@ ensures \result == numberOfCandidatesEliminated;
-  public/*@ pure*/int getNumberOfCandidatesEliminated() {
-    return numberOfCandidatesEliminated;
-  }
-  
-  /**
    * @return the numberOfSeats
    */
   //@ ensures \result == numberOfSeats;
   public/*@ pure*/int getNumberOfSeats() {
     return numberOfSeats;
-  }
-  
-  /**
-   * @return the totalNumberOfSeats
-   */
-  //@ ensures \result == totalNumberOfSeats;
-  public/*@ pure*/int getTotalNumberOfSeats() {
-    return totalNumberOfSeats;
-  }
-  
-  /**
-   * @return the totalNumberOfVotes
-   */
-  //@ ensures \result == totalNumberOfVotes;
-  public/*@ pure*/int getTotalNumberOfVotes() {
-    return totalNumberOfVotes;
   }
   
   /**

@@ -37,17 +37,10 @@ public class Constituency {
   private static final int MIN_SEATS = 1;
   private static final int MIN_CONSTITUENCY_SIZE = 3;
   
-  public Constituency(int numberOfCandidates, int numberOfSeatsInThisElection,
-      int totalNumberOfSeats) {
-    this.numberOfCandidates = numberOfCandidates;
-    this.numberOfSeatsInThisElection = numberOfSeatsInThisElection;
-    this.totalNumberOfSeats = totalNumberOfSeats;
-  }
-  
   public Constituency() {
     this.numberOfCandidates = Constituency.MIN_CANDIDATES;
-    this.totalNumberOfSeats = MIN_CONSTITUENCY_SIZE;
-    this.numberOfSeatsInThisElection = MIN_SEATS;
+    this.totalNumberOfSeats = Constituency.MIN_CONSTITUENCY_SIZE;
+    this.numberOfSeatsInThisElection = Constituency.MIN_SEATS;
   }
   /** Number of candidates for election in this constituency */
   //@ public invariant numberOfSeatsInThisElection < numberOfCandidates;
@@ -92,22 +85,13 @@ public class Constituency {
   //@ ensures this.numberOfCandidates <= candidateList.length;
   public void setNumberOfCandidates(final int number) {
     this.numberOfCandidates = number;
-    makeListOfCandidates();
-    //@ set candidateDataInUse = true;
-  }
-  
-  /**
-   * Create the list of candidates.
-   */
-  //@ requires candidateDataInUse == false;
-  //@ ensures this.numberOfCandidates <= this.candidateList.length;
-  protected void makeListOfCandidates() {
     if (candidateList == null || candidateList.length < this.numberOfCandidates) {
       this.candidateList = new Candidate[this.numberOfCandidates];
       for (int index = 0; index < this.numberOfCandidates; index++) {
         this.candidateList[index] = new Candidate();
       }
     }
+    //@ set candidateDataInUse = true;
   }
   
   /**
@@ -130,16 +114,16 @@ public class Constituency {
     return totalNumberOfSeats;
   }
   
-  //@ requires theNumberOfSeatsInElection <= theTotalNumberOfSeats;
-  //@ requires 0 <= theNumberOfSeatsInElection;
+  //@ requires seatsInElection <= seatsInConstituency;
+  //@ requires 0 <= seatsInElection;
   //@ assignable this.numberOfSeatsInThisElection;
   //@ assignable this.totalNumberOfSeats;
-  //@ ensures this.numberOfSeatsInThisElection == theNumberOfSeatsInElection;
-  //@ ensures this.totalNumberOfSeats == theTotalNumberOfSeats;
-  public void setNumberOfSeats(final int theNumberOfSeatsInElection,
-      final int theTotalNumberOfSeats) {
-    this.totalNumberOfSeats = theTotalNumberOfSeats;
-    this.numberOfSeatsInThisElection = theNumberOfSeatsInElection;
+  //@ ensures this.numberOfSeatsInThisElection == seatsInElection;
+  //@ ensures this.totalNumberOfSeats == seatsInConstituency;
+  public void setNumberOfSeats(final int seatsInElection,
+      final int seatsInConstituency) {
+    this.totalNumberOfSeats = seatsInConstituency;
+    this.numberOfSeatsInThisElection = seatsInElection;
   }
   
   /**

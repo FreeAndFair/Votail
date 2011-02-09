@@ -71,7 +71,8 @@ public class VotailSystemTest {
       ElectoralScenario scenario) {
     BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
     ElectionConfiguration electionConfiguration =
-        ballotBoxFactory.extractBallots(scenario, scenario.getNumberOfCandidates());
+        ballotBoxFactory.extractBallots(scenario, 
+            scenario.getNumberOfCandidates(), scenario.isByeElection());
     return electionConfiguration;
   }
   

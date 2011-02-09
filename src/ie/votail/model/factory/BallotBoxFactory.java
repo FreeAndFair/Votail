@@ -50,22 +50,30 @@ public class BallotBoxFactory {
     modelName = MODELS_VOTING_ALS;
     logger.info("Using model " + modelName);
   }
-
+  
   /**
    * Generate Ballots for an Election Configuration from an Electoral Scenario
    * 
-   * @param scenario The scenario which will be tested by this ballot box
-   * @param scope The scope for model finding in Alloy Analyser
+   * @param scenario
+   *          The scenario which will be tested by this ballot box
+   * @param scope
+   *          The scope for model finding in Alloy Analyser
+   * @param byeElection
    * @return The ELection Configuration (null if generation fails)
    */
   public ElectionConfiguration /*@ non_null @*/ extractBallots(
-    /*@ non_null*/ ElectoralScenario scenario, int scope) {
+    /*@ non_null*/ ElectoralScenario scenario, int scope, boolean byeElection) {
     
     final ElectionConfiguration electionConfiguration 
       = new ElectionConfiguration();
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
     final int numberOfSeats = scenario.numberOfWinners();
-    electionConfiguration.setNumberOfSeats(numberOfSeats);
+    if (byeElection) {
+      electionConfiguration.setNumberOfSeats(1);
+    }
+    else {
+      electionConfiguration.setNumberOfSeats(numberOfSeats);
+    }
     final int numberOfCandidates = scenario.getNumberOfCandidates();
     electionConfiguration.setNumberOfCandidates(
       numberOfCandidates);
@@ -115,7 +123,7 @@ public class BallotBoxFactory {
       } 
       // Increase the scope and try again
       if (!scenario.hasOutcome(Outcome.TiedSoreLoser)) {
-        return extractBallots (scenario, scope+1);
+        return extractBallots (scenario, scope+1, byeElection);
       }
       else {
         logger.info("Skipped this scenario " + scenario.toString());

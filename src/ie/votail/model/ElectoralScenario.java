@@ -75,15 +75,19 @@ public class ElectoralScenario {
   protected OutcomeList listOfOutcomes;
   protected int numberOfCandidates;
   protected Method method;
+
+  private boolean byeElection;
   
   /**
    * Create a new model scenario.
    * 
    * @param method
+   * @param byeElection 
    */
-  public ElectoralScenario(Method method) {
+  public ElectoralScenario(Method method, boolean byeElection) {
     listOfOutcomes = new OutcomeList();
     this.method = method;
+    this.byeElection= byeElection;
   }
   
   /**
@@ -171,7 +175,7 @@ public class ElectoralScenario {
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
   public ElectoralScenario canonical() {
-    ElectoralScenario sorted = new ElectoralScenario(this.method);
+    ElectoralScenario sorted = new ElectoralScenario(this.method, this.byeElection);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
       Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
@@ -239,7 +243,7 @@ public class ElectoralScenario {
    * ensures \result.equals(this);
    */
   private/*@ pure*/ElectoralScenario copy() {
-    ElectoralScenario clone = new ElectoralScenario(this.method);
+    ElectoralScenario clone = new ElectoralScenario(this.method, this.byeElection);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());
@@ -397,5 +401,10 @@ public class ElectoralScenario {
     }
 
     return true;
+  }
+
+  //@ ensures \result == byeElection;
+  public /*@ pure @*/ boolean isByeElection() {
+    return byeElection;
   }
 }
