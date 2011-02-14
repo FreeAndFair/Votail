@@ -23,7 +23,7 @@ public class Candidate extends CandidateStatus {
    *      of political parties in Ireland</a> The average number of candidates
    *      could be much less.
    */
-  public static final int MAX_CANDIDATES = 20;
+  public static final int MAX_CANDIDATES = 50;
   
   /**
    * Identifier for the candidate. The data should be loaded in such a way that
@@ -249,8 +249,9 @@ public class Candidate extends CandidateStatus {
   
   /** Declares the candidate to be elected */
   /*@ public normal_behavior
-    @   requires state == CONTINUING;
-    @   requires countNumber < CountConfiguration.MAXCOUNT;
+    @   requires this.state == CONTINUING;
+    @   requires this.lastCountNumber <= countNumber;
+    @   requires 0 <= countNumber && countNumber < CountConfiguration.MAXCOUNT;
     @   assignable state, lastCountNumber;
     @   ensures state == ELECTED;
     @*/
@@ -263,9 +264,10 @@ public class Candidate extends CandidateStatus {
   
   /** Declares the candidate to be eliminated */
   /*@ public normal_behavior
-    @   requires countNumber < CountConfiguration.MAXCOUNT;
-    @   requires state == CONTINUING;
-    @   assignable this.state, lastCountNumber;
+    @   requires 0 <= countNumber && countNumber < CountConfiguration.MAXCOUNT;
+    @   requires this.lastCountNumber <= countNumber;
+    @   requires this.state == CONTINUING;
+    @   assignable state, lastCountNumber;
     @   ensures state == ELIMINATED;
     @*/
   public void declareEliminated(int countNumber) {

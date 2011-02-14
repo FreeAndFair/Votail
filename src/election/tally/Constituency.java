@@ -33,27 +33,24 @@ package election.tally;
  *         Dermot Cochran</a>
  */
 public class Constituency {
-  private static final int MIN_CANDIDATES = 2;
-  private static final int MIN_SEATS = 1;
-  private static final int MIN_CONSTITUENCY_SIZE = 3;
   
   public Constituency() {
-    this.numberOfCandidates = Constituency.MIN_CANDIDATES;
-    this.totalNumberOfSeats = Constituency.MIN_CONSTITUENCY_SIZE;
-    this.numberOfSeatsInThisElection = Constituency.MIN_SEATS;
+    this.numberOfCandidates = Candidate.MAX_CANDIDATES;
+    this.totalNumberOfSeatsInConstituency = 1;
+    this.numberOfSeatsInThisElection = 1;
   }
   /** Number of candidates for election in this constituency */
   //@ public invariant numberOfSeatsInThisElection < numberOfCandidates;
   //@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
-  protected/*@ spec_public @*/int numberOfCandidates = 0;
+  protected/*@ spec_public @*/int numberOfCandidates;
   
   /** Number of seats to be filled in this election */
-  //@ public invariant 0 <= numberOfSeatsInThisElection;
-  protected/*@ spec_public @*/int numberOfSeatsInThisElection = 0;
+  //@ public invariant 0 < numberOfSeatsInThisElection;
+  protected/*@ spec_public @*/int numberOfSeatsInThisElection;
   
   /** Number of seats in this constituency */
-  //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeats;
-  protected/*@ spec_public @*/int totalNumberOfSeats = 0;
+  //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeatsInConstituency;
+  protected/*@ spec_public @*/int totalNumberOfSeatsInConstituency;
   
   /** List of all candidates in this election */
   protected/*@ spec_public @*/Candidate[] candidateList;
@@ -76,13 +73,14 @@ public class Constituency {
    * Determine the number of candidates in this election.
    * 
    * @param number
-   *          The number of candidates in this election.
-   *          There must be at least two candidates or choices in any election.
+   *        The number of candidates in this election.
+   *        There must be at least two candidates or choices in any election.
    */
   //@ requires 2 <= number && number <= Candidate.MAX_CANDIDATES;
   //@ requires candidateDataInUse == false;
   //@ ensures number == this.numberOfCandidates;
   //@ ensures this.numberOfCandidates <= candidateList.length;
+  //@ ensures candidateDataInUse == true;
   public void setNumberOfCandidates(final int number) {
     this.numberOfCandidates = number;
     if (candidateList == null || candidateList.length < this.numberOfCandidates) {
@@ -109,20 +107,20 @@ public class Constituency {
    * 
    * @return The total number of seats
    */
-  //@ ensures \result == totalNumberOfSeats;
+  //@ ensures \result == totalNumberOfSeatsInConstituency;
   public/*@ pure @*/int getTotalNumberOfSeats() {
-    return totalNumberOfSeats;
+    return totalNumberOfSeatsInConstituency;
   }
   
   //@ requires seatsInElection <= seatsInConstituency;
-  //@ requires 0 <= seatsInElection;
+  //@ requires 0 < seatsInElection;
   //@ assignable this.numberOfSeatsInThisElection;
-  //@ assignable this.totalNumberOfSeats;
+  //@ assignable this.totalNumberOfSeatsInConstituency;
   //@ ensures this.numberOfSeatsInThisElection == seatsInElection;
-  //@ ensures this.totalNumberOfSeats == seatsInConstituency;
+  //@ ensures this.totalNumberOfSeatsInConstituency == seatsInConstituency;
   public void setNumberOfSeats(final int seatsInElection,
       final int seatsInConstituency) {
-    this.totalNumberOfSeats = seatsInConstituency;
+    this.totalNumberOfSeatsInConstituency = seatsInConstituency;
     this.numberOfSeatsInThisElection = seatsInElection;
   }
   
@@ -140,13 +138,17 @@ public class Constituency {
    * Load the list of candidates for this constituency.
    * 
    * @param candidateIDs
-   *          The list of candidates
+   *        The list of candidates
    * @param theNumberOfCandidates
-   *          The number of candidates
+   *        The number of candidates
    */
   //@ requires candidateDataInUse == false;
   //@ requires numberOfSeatsInThisElection < candidateIDs.length;
+  //@ assignable numberOfCandidates, candidateList, candidateDataInUse;
   //@ ensures \nonnullelements (candidateList);
+  //@ ensures candidateDataInUse == true;
+  //@ ensures candidateList.length == candidateIDs.length;
+  //@ ensures numberOfCandidates == candidateIDs.length;
   public void load(/*@ non_null @*/int[] candidateIDs) {
     this.numberOfCandidates = candidateIDs.length;
     //@ assert 0 <= this.numberOfCandidates;

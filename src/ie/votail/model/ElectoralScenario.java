@@ -161,7 +161,7 @@ public class ElectoralScenario {
     }
     stringBuffer
         .append(" and Election.method = " + method);
-    stringBuffer.append(" and #Election.candidates = "
+    stringBuffer.append(" and #Candidate = "
         + this.numberOfCandidates);
 
     return stringBuffer.toString();
