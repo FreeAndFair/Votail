@@ -133,7 +133,7 @@ check pluralityWinner for 2 but 7 int
 // Length of PR-STV ballot does not exceed number of candidates
 assert lengthOfBallot {
   all b: Ballot | Election.method = STV implies
-    #b.preferences <= #Election.candidates
+    #b.preferences <= #Candidate
 }
 check lengthOfBallot for 7 int
 
@@ -143,11 +143,32 @@ assert  fullQuota {
 }
 check fullQuota for 7 int
 
+// Spoilt votes are not allocated to any candidate
+assert spoiltVoteDiscarded {
+  no c : Candidate | no b : Ballot | b in c.votes and b in BallotBox.spoiltBallots
+}
+check spoiltVoteDiscarded for 7 int
+
+// All transfers have a source either from a winner with surplus or by early elimination
+// of a loser
+assert transfersHaveSource {
+  all b: Ballot | some disj donor, receiver : Candidate | b in receiver.transfers 
+   		implies b in donor.votes and 
+   		(donor in Scenario.winners or donor in Scenario.eliminated)
+}
+check transfersHaveSource for 7 int 
+
+// No missing candidates
+assert noMissingCandidates {
+  #Candidate = #Scenario.winners + #Scenario.losers
+  }
+check noMissingCandidates for 7 int
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
 	Election.seats = 1
-	#Election.candidates = 2
+	#Candidate = 2
 }
 run TwoCandidatePlurality for 10 but 2 Ballot, 6 int
 
@@ -161,28 +182,28 @@ run PluralityTiedWinner for 10 but 6 int
 pred ThreeCandidatePlurality {
 	Election.method = Plurality
 	Election.seats = 1
-	#Election.candidates = 3
+	#Candidate = 3
 }
 run ThreeCandidatePlurality for 6 int
 
 pred Plurality {
 	Election.method = Plurality
 	Election.seats = 1
-	3 < #Election.candidates
+	3 < #Candidate
 }
 run Plurality for 5 but 6 int
 
 pred TenCandidatePluralityWithTwoSeats {
 	Election.method = Plurality
 	Election.seats = 2
-	#Election.candidates = 10
+	#Candidate = 10
 }
 run TenCandidatePluralityWithTwoSeats for 10 but 6 int
 
 pred InstantRunoffVoting {
 	Election.method = STV
 	Election.seats = 1
-	3 < #Election.candidates
+	3 < #Candidate
 }
 run InstantRunoffVoting for 10 but 6 int
 
@@ -213,7 +234,7 @@ pred OneWinnerNineLosers {
 run OneWinnerNineLosers for 16 but 6 int
 
 pred ThreeWayTie {
-	#Election.candidates = 3
+	#Candidate = 3
     Election.method = Plurality
 	some disj a,b,c: Candidate | a.outcome = TiedWinner and 
 		b.outcome = TiedLoser and
@@ -231,7 +252,7 @@ run FiveWayTie for 7 but 6 int
 pred ScenarioLWW {
 	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = Winner and 
 		c.outcome = Winner
-    #Election.candidates = 3
+    #Candidate = 3
 	Election.method = STV
     0 < #Ballot
 }
@@ -260,14 +281,14 @@ run WinnerLoserEarlyLoser for 7 but 6 int
 pred TiedScenario { 
   some disj a,b: Candidate | a.outcome = TiedLoser and b.outcome = TiedWinner
      Election.method = STV
-     #Election.candidates = 2
+     #Candidate = 2
      #Election.seats = 1
 }
 run TiedScenario for 7 but 6 int
 
 pred NoTiesAndNoSoresScenarios {
   Election.method = STV
-  #Election.candidates > 3
+  #Candidate > 3
   #Ballot > 6
   no c: Candidate | c.outcome = TiedLoser or c.outcome = TiedWinner or
     c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser or c.outcome = SoreLoser
@@ -278,7 +299,7 @@ run NoTiesAndNoSoresScenarios for 10 but 6 int
 pred SLW {
   some disj c0,c1,d: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
   d.outcome = SoreLoser and
-  Election.method = Plurality and #Election.candidates = 3
+  Election.method = Plurality and #Candidate = 3
   Scenario.threshold = 1
 }
 run SLW for 6 but 6 int
@@ -288,7 +309,7 @@ pred SSSLW {
   d.outcome = SoreLoser and
   e.outcome = SoreLoser and
   f.outcome = SoreLoser and
-  Election.method = Plurality and #Election.candidates = 5
+  Election.method = Plurality and #Candidate = 5
 }
 run SSSLW for 6 but 6 int
 
@@ -298,26 +319,26 @@ pred SSSSLW {
   e.outcome = SoreLoser and
   f.outcome = SoreLoser and
   g.outcome = SoreLoser and
-  Election.method = Plurality and #Election.candidates = 6
+  Election.method = Plurality and #Candidate = 6
 }
 run SSSSLW for 6 but 6 int
 
 pred LW {
   some disj c0,c1: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
-  Election.method = Plurality and 0 < #Ballot and #Election.candidates = 2
+  Election.method = Plurality and 0 < #Ballot and #Candidate = 2
 }
 run LW for 5 but 6 int
 
 pred LLWstv {
   some disj c0,c1,c2: Candidate | c0.outcome = Loser and c1.outcome = Winner and
   c2.outcome = Loser and 
-  Election.method = STV and #Election.candidates = 3
+  Election.method = STV and #Candidate = 3
 }
 run LLWstv for 6 but 6 int
 
 pred SW {
   some disj c0,c1: Candidate | c0.outcome = SoreLoser and c1.outcome = Winner and 
-  Election.method = Plurality and 1 < #Ballot and #Election.candidates = 2
+  Election.method = Plurality and 1 < #Ballot and #Candidate = 2
 }
 run SW for 2 but 7 int
 
@@ -330,7 +351,7 @@ run StWt for 2 but 7 int
 
 pred LQ {
 	some disj a,b: Candidate | a.outcome = Loser and b.outcome = QuotaWinner
-    #Election.candidates = 2
+    #Candidate = 2
     0 < #Ballot
 }
 run LQ for 10 but 6 int
@@ -338,7 +359,7 @@ run LQ for 10 but 6 int
 pred LQQ {
 	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and
        c.outcome = QuotaWinner
-    #Election.candidates = 3
+    #Candidate = 3
     0 < #Ballot
 }
 run LQQ for 10 but 6 int
@@ -346,7 +367,7 @@ run LQQ for 10 but 6 int
 pred LQW {
 	some disj a,b,c: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
 		c.outcome = Winner
-    #Election.candidates = 3
+    #Candidate = 3
     0 < #Ballot
 }
 run LQW for 10 but 6 int
@@ -354,7 +375,7 @@ run LQW for 10 but 6 int
 pred LQQW {
 	some disj a,b,c,d: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
 		c.outcome = Winner and d.outcome = QuotaWinner
-    #Election.candidates = 4
+    #Candidate = 4
     0 < #Ballot
 }
 run LQQW for 10 but 6 int
@@ -362,7 +383,7 @@ run LQQW for 10 but 6 int
 pred SLQQW {
 	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
 		c.outcome = Winner and d.outcome = QuotaWinner and e.outcome = SoreLoser
-    #Election.candidates = 5
+    #Candidate = 5
     0 < #Ballot
 }
 
@@ -370,7 +391,7 @@ pred SLTT {
   some disj c1,c3,c8,c9: Candidate | 
     c1.outcome = SoreLoser and c3.outcome = Loser and 
     c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
-    Election.method = Plurality and #Election.candidates = 4
+    Election.method = Plurality and #Candidate = 4
 }
 run SLTT for 13 but 7 int
 
@@ -378,7 +399,7 @@ pred SLLTT {
   some disj c2,c3,c4,c8,c9: Candidate | 
     c2.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
-    Election.method = Plurality and #Election.candidates = 5
+    Election.method = Plurality and #Candidate = 5
 }
 run SLLTT for 13 but 7 int
 
@@ -386,7 +407,7 @@ pred SSLTT {
   some disj c1,c2,c4,c8,c9: Candidate | 
     c1.outcome = SoreLoser and c2.outcome = SoreLoser and 
     c4.outcome = Loser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
-    Election.method = Plurality and #Election.candidates = 5
+    Election.method = Plurality and #Candidate = 5
 }
 run SSLTT for 13 but 7 int
 
@@ -394,7 +415,7 @@ pred SSLLTT {
   some disj c1,c2,c3,c4,c8,c9: Candidate | 
     c1.outcome = SoreLoser and c2.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c8.outcome = TiedLoser and c9.outcome = TiedWinner and 
-    Election.method = Plurality and #Election.candidates = 6
+    Election.method = Plurality and #Candidate = 6
 }
 run SSLLTT for 13 but 7 int
 
@@ -403,7 +424,7 @@ pred SSLLLTTw {
     c1.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c5.outcome = Loser and 
     c7.outcome = TiedLoser and c8.outcome = TiedWinner and 
-    Election.method = Plurality and #Election.candidates = 7
+    Election.method = Plurality and #Candidate = 7
 }
 run SSLLLTTw for 13 but 7 int
 
@@ -412,7 +433,7 @@ pred SSSLLLTTw {
     c1.outcome = SoreLoser and s2.outcome = SoreLoser and c3.outcome = Loser and 
     c4.outcome = Loser and c5.outcome = Loser and 
     c7.outcome = TiedLoser and c8.outcome = TiedWinner and 
-    Election.method = Plurality and #Election.candidates = 8
+    Election.method = Plurality and #Candidate = 8
 }
 run SSSLLLTTw for 13 but 7 int
 
@@ -425,7 +446,7 @@ pred LLLLTTw {
     c7.outcome = TiedLoser and 
     c9.outcome = TiedWinner and 
     Election.method = Plurality and 
-    #Election.candidates = 6
+    #Candidate = 6
 }
 run LLLLTTw for 16 but 7 int
 
@@ -439,7 +460,7 @@ pred LLLLLLW {
     c8.outcome = Loser and 
     c9.outcome = Winner and 
     Election.method = Plurality and 
-    #Election.candidates = 7
+    #Candidate = 7
 }
 run LLLLLLW for 16 but 7 int
 
@@ -451,7 +472,7 @@ pred LLLtLtWt {
     c8.outcome = Loser and 
     c9.outcome = TiedWinner and 
     Election.method = Plurality and 
-    #Election.candidates = 5
+    #Candidate = 5
 }
 run LLLtLtWt for 16 but 7 int
 
