@@ -77,7 +77,7 @@ public class Constituency {
    *        There must be at least two candidates or choices in any election.
    */
   //@ requires 2 <= number && number <= Candidate.MAX_CANDIDATES;
-  //@ requires numberOfSeatsForElection < number;
+  //@ requires numberOfSeatsInThisElection < number;
   //@ requires candidateDataInUse == false;
   //@ ensures number == this.numberOfCandidates;
   //@ ensures this.numberOfCandidates <= candidateList.length;
