@@ -134,7 +134,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public/*@ pure @*/boolean hasQuota(final/*@ non_null @*/Candidate candidate) {
     // TODO 2009.10.14 ESC precondition violation warning
-    return (countBallotsFor(candidate.getCandidateID()) >= getQuota()); //@ nowarn;
+    return (countBallotsFor(candidate.getCandidateID()) >= getQuota());
   }
   
   /**
@@ -181,7 +181,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public/*@ pure @*/int getSurplus(final/*@ non_null @*/Candidate candidate) {
     // TODO 2009.10.14 ESC precondition violation warning
     if (hasQuota(candidate)) {
-        return countBallotsFor(candidate.getCandidateID()) - getQuota(); //@ nowarn;
+        final int votesReceived = countBallotsFor(candidate.getCandidateID());
+        return votesReceived - getQuota();
     }
       return 0;
   }
@@ -191,6 +192,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * 
    * @return The total number of surplus votes for all candidates.
    */
+  //@ requires \nonnullelements (candidates);
+  //@ ensures 0 <= \result;
   public final/*@ pure @*/int getTotalSumOfSurpluses() {
     int sumOfSurpluses = 0;
     
@@ -263,6 +266,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     requires state == EMPTY;
     @     requires 0 <= constituency.getNumberOfCandidates();
     @     requires 0 <= numberOfSeats;
+    @     requires \nonnullelements (constituency.candidateList);
     @     assignable status; 
     @     assignable totalNumberOfCandidates;
     @     assignable numberOfSeats, totalRemainingSeats;
