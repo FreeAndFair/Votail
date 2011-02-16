@@ -476,3 +476,15 @@ pred LLLtLtWt {
 }
 run LLLtLtWt for 16 but 7 int
 
+pred largeSurplus {
+  some c: Candidate | 0 < #c.surplus
+}
+run largeSurplus for 7 int
+
+pred LWW6 {
+some disj c0,c1,c2: Candidate | c0.outcome = Loser and c1.outcome = Winner 
+    and c2.outcome = Winner and Election.method = STV and #Candidate = 3
+}
+run LWW6 for 16 but 7 int
+
+
