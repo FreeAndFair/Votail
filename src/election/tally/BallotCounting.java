@@ -104,9 +104,7 @@ public class BallotCounting extends AbstractBallotCounting {
           || (LAST_SEAT_BEING_FILLED == value)
           || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
           || (ONE_OR_MORE_SEATS_REMAINING == value)
-          || (ALL_SEATS_FILLED == value) 
-          || (END_OF_COUNT == value) 
-          || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
+          || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
     }
   }
   
@@ -268,6 +266,7 @@ public class BallotCounting extends AbstractBallotCounting {
     @		assignable status, countStatus;
     @		assignable remainingSeats, totalRemainingSeats;
     @   assignable candidateList;
+    @   assignable logger;
     @   ensures state == ElectionStatus.FINISHED;
     @*/
   public void count() {
@@ -278,40 +277,39 @@ public class BallotCounting extends AbstractBallotCounting {
       startCounting(); //@ nowarn;
     }
     
-      // TODO 2009.10.15 ESC invariant warning
-      while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
-          0 < totalRemainingSeats && // infinite loop detected 2011.01.20
-          countNumberValue < CountConfiguration.MAXCOUNT) {
-        incrementCountNumber(); //@ nowarn;
-        
-        // TODO 2009.10.15 ESC assignable warning
-        countStatus.changeState( //@ nowarn;
-            AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
-        
-        // Transfer surplus votes from winning candidates
-        // TODO 2009.10.15 ESC precondition warning
-        logger.info("Total surplus votes: " + getTotalSumOfSurpluses());
-        electCandidatesWithSurplus(); //@ nowarn;
-        
-        // Exclusion of lowest continuing candidates if no surplus
-        // TODO 2009.10.15 ESC precondition warning
-        excludeLowestCandidates(); //@ nowarn;
-        // TODO 2009.10.15 ESC invariant warning
-      }
+    // TODO 2009.10.15 ESC invariant warning
+    while (getNumberContinuing() > totalRemainingSeats && //@ nowarn;
+        0 < totalRemainingSeats && // infinite loop detected 2011.01.20
+        countNumberValue < CountConfiguration.MAXCOUNT) {
+      incrementCountNumber(); //@ nowarn;
       
-      // Filling of last seats
-      // TODO 2009.10.15 ESC warnings
-      if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
-        fillLastSeats(); //@ nowarn;
-        
-      }
+      // TODO 2009.10.15 ESC assignable warning
+      countStatus.changeState( //@ nowarn;
+          AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
+      
+      // Transfer surplus votes from winning candidates
+      // TODO 2009.10.15 ESC precondition warning
+      logger.info("Total surplus votes: " + getTotalSumOfSurpluses());
+      electCandidatesWithSurplus(); //@ nowarn;
+      
+      // Exclusion of lowest continuing candidates if no surplus
+      // TODO 2009.10.15 ESC precondition warning
+      excludeLowestCandidates(); //@ nowarn;
+      // TODO 2009.10.15 ESC invariant warning
+    }
+    
+    // Filling of last seats
+    // TODO 2009.10.15 ESC warnings
+    if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
+      fillLastSeats(); //@ nowarn;
+      
+    }
     
     // TODO 2009.10.16 ESC assignable warning
     countStatus.changeState(AbstractCountStatus.END_OF_COUNT); //@ nowarn Modifies ;
     status = ElectionStatus.FINISHED;
     // TODO 2009.10.16 ESC postcondition warning
   } //@ nowarn;
-
   
   /**
    * Elect any candidate with a quota or more of votes.
@@ -354,16 +352,16 @@ public class BallotCounting extends AbstractBallotCounting {
       
     }
   }
-
+  
   /**
-   * @return <code>true</code> if there is at least one continuing candidate 
-   * with a quota of votes
+   * @return <code>true</code> if there is at least one continuing candidate
+   *         with a quota of votes
    */
-  protected /*@ pure @*/ boolean candidatesWithQuota() {
+  protected/*@ pure @*/boolean candidatesWithQuota() {
     for (int i = 0; i < totalNumberOfCandidates; i++) {
-      if ((candidates[i].getStatus() == CandidateStatus.CONTINUING) &&
-       hasQuota(candidates[i])) {
-          return true;
+      if ((candidates[i].getStatus() == CandidateStatus.CONTINUING)
+          && hasQuota(candidates[i])) {
+        return true;
       }
     }
     return false;
@@ -426,7 +424,9 @@ public class BallotCounting extends AbstractBallotCounting {
   /*@ requires state == PRECOUNT;
     @ assignable state, countStatus, countNumberValue, totalRemainingSeats,
     @   savingThreshold, numberOfCandidatesElected, numberOfCandidatesEliminated;
+    @ assignable logger;
     @ ensures state == COUNTING;
+    @ ensures logger != null;
     @*/
   public void startCounting() {
     logger = Logger.getLogger("election.tally.BallotCounting");
@@ -466,7 +466,7 @@ public class BallotCounting extends AbstractBallotCounting {
   }
   
   //@ ensures getNumberContinuing() == \result;
-  public/*@ pure @*/ int getContinuingCandidates() {
+  public/*@ pure @*/int getContinuingCandidates() {
     return getNumberContinuing();
   }
   
@@ -477,22 +477,22 @@ public class BallotCounting extends AbstractBallotCounting {
    */
   //@ requires countStatus != null;
   //@ ensures \result == countStatus;
-  public /*@ pure @*/ AbstractCountStatus getCountStatus() {
+  public/*@ pure @*/AbstractCountStatus getCountStatus() {
     return countStatus;
   }
   
   //@ also requires countStatus != null;
-  public /*@ non_null pure @*/ String toString() {
+  public/*@ non_null pure @*/String toString() {
     return "state " + this.getStateOfCount() + " results " + getResults();
   }
-
+  
   /**
    * Return the status of the count
    * 
    * @return The status of the count
    */
   //@ requires countStatus != null;
-  protected /*@ pure @*/ int getStateOfCount() {
+  protected/*@ pure @*/int getStateOfCount() {
     return countStatus.getState();
   }
   
@@ -528,7 +528,7 @@ public class BallotCounting extends AbstractBallotCounting {
   public/*@ pure @*/int getNumberOfRounds() {
     return this.countNumberValue;
   }
-
+  
   public Candidate getCandidate(int i) {
     return candidates[i];
   }
