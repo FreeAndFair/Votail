@@ -41,6 +41,7 @@ public class BallotBoxFactory {
   public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "./models/voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
+  private static final int MAX_SCOPE = 50;
   protected String modelName;
 
   /**
@@ -62,13 +63,13 @@ public class BallotBoxFactory {
    * @return The ELection Configuration (null if generation fails)
    */
   public ElectionConfiguration /*@ non_null @*/ extractBallots(
-    /*@ non_null*/ ElectoralScenario scenario, int scope, boolean byeElection) {
+    /*@ non_null*/ ElectoralScenario scenario, int scope) {
     
     final ElectionConfiguration electionConfiguration 
       = new ElectionConfiguration();
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
     final int numberOfSeats = scenario.numberOfWinners();
-    if (byeElection) {
+    if (scenario.isByeElection()) {
       electionConfiguration.setNumberOfSeats(1);
     }
     else {
@@ -122,8 +123,8 @@ public class BallotBoxFactory {
         return electionConfiguration;
       } 
       // Increase the scope and try again
-      if (!scenario.hasOutcome(Outcome.TiedSoreLoser)) {
-        return extractBallots (scenario, scope+1, byeElection);
+      if (!scenario.hasOutcome(Outcome.TiedSoreLoser) && scope < MAX_SCOPE) {
+        return extractBallots (scenario, scope+1);
       }
       else {
         logger.info("Skipped this scenario " + scenario.toString());

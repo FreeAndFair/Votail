@@ -1,5 +1,7 @@
 package election.tally;
 
+import java.util.logging.Logger;
+
 /**
  * Ballot counting for elections to Dail Eireann - the lower house of the Irish
  * Parliament.
@@ -42,7 +44,7 @@ public class BallotCounting extends AbstractBallotCounting {
     countStatus = new CountStatus(); //@ nowarn;
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
     // TODO 2009.10.14 ESC postcondition warning
-  } //@ nowarn;
+  }
   
   /**
    * Inner class for state machine
@@ -110,6 +112,8 @@ public class BallotCounting extends AbstractBallotCounting {
   
   // Status of the ballot counting process
   public CountStatus countStatus;
+  
+  protected/*@ spec_public @*/Logger logger;
   
   /**
    * Distribute the surplus of an elected candidate.
@@ -286,6 +290,7 @@ public class BallotCounting extends AbstractBallotCounting {
         
         // Transfer surplus votes from winning candidates
         // TODO 2009.10.15 ESC precondition warning
+        logger.info("Total surplus votes: " + getTotalSumOfSurpluses());
         electCandidatesWithSurplus(); //@ nowarn;
         
         // Exclusion of lowest continuing candidates if no surplus
@@ -424,6 +429,7 @@ public class BallotCounting extends AbstractBallotCounting {
     @ ensures state == COUNTING;
     @*/
   public void startCounting() {
+    logger = Logger.getLogger("election.tally.BallotCounting");
     status = ElectionStatus.COUNTING;
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
     countNumberValue = 0;
@@ -499,7 +505,11 @@ public class BallotCounting extends AbstractBallotCounting {
     buffer.append(this.totalNumberOfCandidates + " candidates\n");
     
     for (int index = 0; index < this.totalNumberOfCandidates; index++) {
-      buffer.append("(" + candidates[index].toString() + ") ");
+      final Candidate candidate = candidates[index];
+      buffer.append("(" + candidate.toString() + ") ");
+      if (isDepositSaved(index)) {
+        buffer.append(" saved deposit ");
+      }
     }
     
     return buffer.toString();
