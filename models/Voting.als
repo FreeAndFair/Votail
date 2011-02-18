@@ -193,12 +193,15 @@ one sig Scenario {
 
 -- The Ballot Box
 one sig BallotBox {
-  spoiltBallots:	set Ballot,		-- empty ballots excluded from count
-  size:				Int 				-- number of ballots counted
+  spoiltBallots:		  	set Ballot,		-- empty ballots excluded from count
+  nonTransferable: 	set Ballot,		-- surplus ballots for which preferences are exhausted
+  size:						Int 				-- number of ballots counted
 }
 {
     size = #Ballot - #spoiltBallots
 	all b: Ballot | b in spoiltBallots iff #b.preferences = 0
+    // All non-transferable ballots belong to an undistributed surplus
+    all b: Ballot | some c: Candidate | b in nonTransferable implies b in c.surplus
 }
 
 -- An Electoral Constituency
@@ -218,5 +221,5 @@ one sig Version {
 } {
   year = 11
   month = 02
-  day = 14
+  day = 18
 }
