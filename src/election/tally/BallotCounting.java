@@ -481,21 +481,6 @@ public class BallotCounting extends AbstractBallotCounting {
     return countStatus;
   }
   
-  //@ also requires countStatus != null;
-  public/*@ non_null pure @*/String toString() {
-    return "state " + this.getStateOfCount() + " results " + getResults();
-  }
-  
-  /**
-   * Return the status of the count
-   * 
-   * @return The status of the count
-   */
-  //@ requires countStatus != null;
-  protected/*@ pure @*/int getStateOfCount() {
-    return countStatus.getState();
-  }
-  
   public/*@ pure*/String getResults() {
     StringBuffer buffer = new StringBuffer();
     

@@ -6,7 +6,7 @@ module Lemmas
 
 open Voting
 
--- Voting Lemmas
+-- Basic Lemmas
 assert honestCount {
 	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
 }
@@ -143,12 +143,6 @@ assert  fullQuota {
 }
 check fullQuota for 7 int
 
-// Spoilt votes are not allocated to any candidate
-assert spoiltVoteDiscarded {
-  no c : Candidate | no b : Ballot | b in c.votes and b in BallotBox.spoiltBallots
-}
-check spoiltVoteDiscarded for 7 int
-
 // All transfers have a source either from a winner with surplus or by early elimination
 // of a loser
 assert transfersHaveSource {
@@ -163,6 +157,12 @@ assert noMissingCandidates {
   #Candidate = #Scenario.winners + #Scenario.losers
   }
 check noMissingCandidates for 7 int
+
+// Spoilt votes are not allocated to any candidate
+assert handleSpoiltBallots {
+    no c : Candidate | some b : Ballot | b in c.votes and b in BallotBox.spoiltBallots
+}
+check handleSpoiltBallots for 7 int
 
 -- Sample scenarios
 pred TwoCandidatePlurality { 
@@ -464,18 +464,6 @@ pred LLLLLLW {
 }
 run LLLLLLW for 16 but 7 int
 
-pred LLLtLtWt {
-  some disj c5,c6,c7,c8,c9: Candidate | 
-    c5.outcome = TiedLoser and 
-    c6.outcome = TiedLoser and 
-    c7.outcome = Loser and 
-    c8.outcome = Loser and 
-    c9.outcome = TiedWinner and 
-    Election.method = Plurality and 
-    #Candidate = 5
-}
-run LLLtLtWt for 16 but 7 int
-
 pred largeSurplus {
   some c: Candidate | 0 < #c.surplus
 }
@@ -486,5 +474,17 @@ some disj c0,c1,c2: Candidate | c0.outcome = Loser and c1.outcome = Winner
     and c2.outcome = Winner and Election.method = STV and #Candidate = 3
 }
 run LWW6 for 16 but 7 int
+
+pred LLLtLtWt {
+  some disj c5,c6,c7,c8,c9: Candidate | 
+    c5.outcome = TiedLoser and 
+    c6.outcome = TiedLoser and 
+    c7.outcome = Loser and 
+    c8.outcome = Loser and 
+    c9.outcome = TiedWinner and 
+    Election.method = Plurality and 
+    #Candidate = 5
+}
+run LLLtLtWt for 10 but 7 int
 
 

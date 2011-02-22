@@ -220,7 +220,7 @@ public class ElectoralScenario {
    * Append an outcome to this scenario.
    * 
    * @param outcome
-   *          The outcome to be appened
+   *          The outcome to be appended
    * @return The scenario with the outcome appended
    */
   /*@

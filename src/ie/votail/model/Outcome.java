@@ -11,7 +11,8 @@ import election.tally.Candidate;
 // The names of each outcome must be exactly the same as those in Voting.als
 public enum Outcome {
   SoreLoser, TiedSoreLoser, EarlyLoser, TiedEarlyLoser, Loser, TiedLoser,
-  TiedWinner, CompromiseWinner, QuotaWinner, Winner;
+  TiedWinner, CompromiseWinner, QuotaWinner, AboveQuotaWinner, Winner,
+  SurplusWinner;
   
   /**
    * Does this outcome require a tie-breaker?
@@ -37,7 +38,7 @@ public enum Outcome {
     
     // Winners
     if (this == Winner || this == QuotaWinner || this == CompromiseWinner || 
-        this == TiedWinner) {
+        this == TiedWinner || this == SurplusWinner || this == AboveQuotaWinner) {
       return candidate.isElected();
     }
     // Non-sore losers

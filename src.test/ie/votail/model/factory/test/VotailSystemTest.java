@@ -2,8 +2,6 @@
 
 package ie.votail.model.factory.test;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
@@ -13,6 +11,8 @@ import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
 import java.util.logging.Logger;
+
+import org.testng.annotations.Test;
 
 import election.tally.BallotCounting;
 import election.tally.Constituency;
@@ -29,7 +29,6 @@ public class VotailSystemTest {
     Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     logger.info("Using scope = " + scope);
     
-    int numberOfFailures = 0;
     int total = 0;
     
     for (int seats = 1; seats <= numberOfSeats; seats++) {
@@ -47,7 +46,8 @@ public class VotailSystemTest {
           ballotCounting.load(electionConfiguration);
           ballotCounting.count();
           logger.info(ballotCounting.getResults());
-          logger.info(ballotCounting.getNumberOfRounds() + " rounds of counting ");
+          logger.info(ballotCounting.getNumberOfRounds()
+              + " rounds of counting ");
           if (!scenario.check(ballotCounting)) {
             logFailure(logger, scenario, electionConfiguration);
           }
@@ -60,39 +60,42 @@ public class VotailSystemTest {
   /**
    * Create an election configuration, including constituency and ballot box.
    * 
-   * @param scenario The scenario for which to create this configuration
+   * @param scenario
+   *          The scenario for which to create this configuration
    * 
    * @return The election configuration
    */
-  protected /*@ non_null @*/ ElectionConfiguration createElection(
+  protected/*@ non_null @*/ElectionConfiguration createElection(
       ElectoralScenario scenario) {
     BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
     ElectionConfiguration electionConfiguration =
-        ballotBoxFactory.extractBallots(scenario, 
-            scenario.getNumberOfCandidates());
+        ballotBoxFactory.extractBallots(scenario, scenario
+            .getNumberOfCandidates());
     return electionConfiguration;
   }
   
   /**
    * Log information for failed or skipped scenarios.
    * 
-   * @param logger The logging service to use
-   * @param scenario The scenario which failed or was skipped
-   * @param electionConfiguration The ballot box and candidates for this scenario
+   * @param logger
+   *          The logging service to use
+   * @param scenario
+   *          The scenario which failed or was skipped
+   * @param electionConfiguration
+   *          The ballot box and candidates for this scenario
    */
-  protected void logFailure(Logger logger,
-      ElectoralScenario scenario, ElectionConfiguration electionConfiguration) {
+  protected void logFailure(Logger logger, ElectoralScenario scenario,
+      ElectionConfiguration electionConfiguration) {
     
-    if (scenario.hasOutcome(Outcome.TiedSoreLoser) ||
-        electionConfiguration.size() == 0) {
+    if (scenario.hasOutcome(Outcome.TiedSoreLoser)
+        || electionConfiguration.size() == 0) {
       logger.info("Skipped this scenario " + scenario.toString());
     }
-    else
-    {
-    logger.severe("Unexpected results for scenario " + scenario
-        + " using predicate " + scenario.toPredicate()
-        + " and ballot box " + electionConfiguration);
-    } 
+    else {
+      logger.severe("Unexpected results for scenario " + scenario
+          + " using predicate " + scenario.toPredicate() + " and ballot box "
+          + electionConfiguration);
+    }
   }
   
   public static void main(String[] args) {
@@ -121,8 +124,7 @@ public class VotailSystemTest {
       
       for (ElectoralScenario scenario : scenarioList) {
         logger.info(scenario.toString());
-        ElectionConfiguration electionConfiguration =
-            createElection(scenario);
+        ElectionConfiguration electionConfiguration = createElection(scenario);
         Constituency constituency = electionConfiguration.getConstituency();
         ballotCounting.setup(constituency);
         ballotCounting.load(electionConfiguration);

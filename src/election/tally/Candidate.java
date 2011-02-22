@@ -365,14 +365,4 @@ public class Candidate extends CandidateStatus {
   public/*@ pure*/boolean isEliminated() {
     return state == ELIMINATED;
   }
-  
-  //@ ensures \result == lastCountNumber;
-  public/*@ pure*/int getLastRound() {
-    return lastCountNumber;
-  }
-  
-  //@ ensures \result == getTotalAtCount(0);
-  public/*@ pure @*/int getInitialVote() {
-    return getTotalAtCount(0);
-  }
 }

@@ -46,8 +46,10 @@ public class ScenarioFactory {
         }
         scenarios.add(baseScenario.append(Outcome.SoreLoser));
         if (method == Method.STV) {
+          scenarios.add(baseScenario.append(Outcome.SurplusWinner));
           scenarios.add(baseScenario.append(Outcome.Winner));
           scenarios.add(baseScenario.append(Outcome.QuotaWinner));
+          scenarios.add(baseScenario.append(Outcome.AboveQuotaWinner));
           scenarios.add(baseScenario.append(Outcome.CompromiseWinner));
           if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
             // Cannot have an Early Loser with a Tied Sore Loser
