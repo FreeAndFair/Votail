@@ -360,14 +360,6 @@ public class ElectoralScenario {
     return result;
   }
   
-  /**
-   * @deprecated
-   */
-  //@ ensures \result = numberOfWinners();
-  public/*@ pure */int getNumberOfSeats() {
-    return numberOfWinners();
-  }
-  
   public int getNumberOfCandidates() {
     return this.numberOfCandidates;
   }

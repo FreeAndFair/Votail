@@ -619,9 +619,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        The second of the candidates to be selected from
    * @return The candidate ID of the chosen candidate
    */
-  public/*@ pure @*/int randomSelection(
-      final/*@ non_null @*/Candidate firstCandidate,
-      final/*@ non_null @*/Candidate secondCandidate) {
+  /*@ public model pure int randomSelection(
+      final non_null Candidate firstCandidate,
+      final non_null Candidate secondCandidate) {
     
     if (firstCandidate.isAfter(secondCandidate)
         || firstCandidate.sameAs(secondCandidate)) {
@@ -629,6 +629,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
     return secondCandidate.getCandidateID();
   }
+  @*/
   
   /**
    * Determine the individuals remainder after integer division by the transfer
@@ -1058,14 +1059,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ ensures \result == totalNumberOfCandidates;
   public/*@ pure*/int getTotalNumberOfCandidates() {
     return totalNumberOfCandidates;
-  }
-  
-  /**
-   * @return the numberOfSeats
-   */
-  //@ ensures \result == numberOfSeats;
-  public/*@ pure*/int getNumberOfSeats() {
-    return numberOfSeats;
   }
   
   /**

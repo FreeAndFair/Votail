@@ -589,11 +589,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures (\result == secondCandidate.candidateID) <==>
     @   (secondCandidate.isAfter(firstCandidate)
     @   || secondCandidate.sameAs(firstCandidate));
-    @*/
-  public /*@ pure @*/ int randomSelection (
-		  /*@ non_null @*/ Candidate firstCandidate,
-		  /*@ non_null @*/ Candidate secondCandidate);
-  
+    @
+  public model pure int randomSelection (
+		  non_null Candidate firstCandidate,
+		  non_null Candidate secondCandidate);
+  @*/
   
   
   

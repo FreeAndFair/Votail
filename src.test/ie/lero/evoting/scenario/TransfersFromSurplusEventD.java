@@ -58,9 +58,6 @@ public class TransfersFromSurplusEventD extends TestCase {
 	   assertTrue (NUM_CANDIDATES - 1 == numberContinuing);
      final int secondPlace = ballotCounting.findHighestCandidate();
      assertTrue (0 <= secondPlace);
-     assertTrue (ballotCounting.randomSelection(election.getCandidate(0), election.getCandidate(1)) ==
-     ballotCounting.randomSelection(election.getCandidate(1), election.getCandidate(0)));
-
 	   assertTrue (0 == winner);
 	   assertTrue (NUM_CANDIDATES - 1 == ballotCounting.getContinuingCandidates());
 	   assertTrue (2 == ballotCounting.getRemainingSeats());
