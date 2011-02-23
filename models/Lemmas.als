@@ -42,7 +42,9 @@ assert wellFormedTieBreaker {
 check wellFormedTieBreaker for 18 but 6 int
 
 assert validSurplus {
-	all c: Candidate | 0 < #c.surplus implies (c.outcome = Winner or c.outcome = QuotaWinner or 
+	all c: Candidate | 0 < #c.surplus implies (c.outcome = Winner or 
+		c.outcome = QuotaWinner or c.outcome = SurplusWinner or
+		c.outcome = AboveQuotaWinner or
 		c in Scenario.eliminated)
 }
 check validSurplus for 16 but 6 int
