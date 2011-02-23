@@ -12,12 +12,18 @@ import ie.votail.model.factory.ScenarioList;
 
 import java.util.logging.Logger;
 
+import junit.framework.TestCase;
+
 import org.testng.annotations.Test;
 
 import election.tally.BallotCounting;
 import election.tally.Constituency;
+import election.tally.ElectionStatus;
 
-public class VotailSystemTest {
+public class VotailSystemTest extends TestCase {
+  
+  final static int PARTIES = 3; // number of major parties
+  
   @Test
   public void prstv() {
     
@@ -32,7 +38,7 @@ public class VotailSystemTest {
     int total = 0;
     
     for (int seats = 1; seats <= numberOfSeats; seats++) {
-      for (int candidates = 1 + seats; candidates <= 1 + seats * seats; candidates++) {
+      for (int candidates = 1 + seats; candidates <= seats * PARTIES; candidates++) {
         
         ScenarioList scenarioList =
             scenarioFactory.find(candidates, seats, Method.STV);
@@ -45,6 +51,7 @@ public class VotailSystemTest {
           ballotCounting.setup(constituency);
           ballotCounting.load(electionConfiguration);
           ballotCounting.count();
+          assert (ballotCounting.getStatus() == ElectionStatus.FINISHED);
           logger.info(ballotCounting.getResults());
           logger.info(ballotCounting.getNumberOfRounds()
               + " rounds of counting ");
@@ -107,7 +114,7 @@ public class VotailSystemTest {
   @Test
   public void plurality() {
     
-    final int numberOfCandidates = 7;
+    final int numberOfCandidates = 1 + PARTIES;
     final int seats = 1;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();

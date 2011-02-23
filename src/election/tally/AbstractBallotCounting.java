@@ -786,7 +786,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     else if (secondTransferRemainder == firstTransferRemainder
         && transfersToSecond == transfersToFirst
         // TODO 2009.10.14 ESC precondition warning
-        && isHigherThan(secondCandidate, firstCandidate)) { //@ nowarn;
+        && isHigherThan(secondCandidate, firstCandidate)) {
       return 1;
     }
     

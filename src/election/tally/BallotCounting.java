@@ -325,15 +325,6 @@ public class BallotCounting extends AbstractBallotCounting {
       countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
       final int winner = findHighestCandidate();
       
-      if (winner == NONE_FOUND_YET) {
-        // No more continuing candidates with surpluses to distribute
-        break;
-        /* This break was added to fix an infinite loop detected on 2011.01.20 
-         * for a scenario with 5 ballots of length one with first preference 
-         * for the same candidate, with 1 seat for election and 2 candidates.
-         */
-      }
-      
       // Elect highest continuing candidate
       updateCountStatus(AbstractCountStatus.CANDIDATE_ELECTED);
       //@ assert 0 <= winner && winner < totalCandidates;

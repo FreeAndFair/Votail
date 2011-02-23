@@ -1,14 +1,14 @@
 /**
  * Find all PR-STV scenarios that match a fixed number of candidate outcomes.
  * 
- * @author Dermot Cochran, 2010, IT University of Copenhagen
+ * @author Dermot Cochran, 2010-2011, IT University of Copenhagen
  */
 
 package ie.votail.model.factory;
 
+import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
 import ie.votail.model.Outcome;
-import ie.votail.model.ElectoralScenario;
 
 import java.util.Iterator;
 
