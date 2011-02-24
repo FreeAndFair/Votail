@@ -10,7 +10,7 @@ FIGSCALE = 0.5
 # CLASSPATH components
 
 LIB = external_libraries
-CORECP	= src:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar
+CORECP	= src:src.test:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar
 SPECS = external_tools/JML/specs
 JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
 JUNITCP = $(LIB)/junit.jar
@@ -43,14 +43,14 @@ export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx
 BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
-JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(BASE_CLASSPATH):src/ie/votail/model/test:src/ie/votail/model/factory/test
+JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(BASE_CLASSPATH):src.test/ie/votail/model/test:src.test/ie/votail/model/factory/test
 ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(ESCJAVA2CP)
 UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
 javapat	=	$(srcpath)/election/tally/*.java
-javapat5	= $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java $(srcpath)/ie/votail/model/factory/test/VotailSystemTest.java
-javafiles =	$(wildcard $(srcpath)/election/tally/*.java $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java $(srcpath)/ie/votail/model/factory/test/VotailSystemTest.java)
+javapat5	= $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java src.test/ie/votail/model/factory/test/VotailSystemTest.java
+javafiles =	$(wildcard $(srcpath)/election/tally/*.java $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java src.test/ie/votail/model/factory/test/VotailSystemTest.java)
 jmlunitpat =	$(jmlunit_path)/election/tally/*.java
 jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
@@ -195,7 +195,7 @@ jmlunit.stamp:	$(javafiles)
 	@mkdir -p $(jmlunit_path)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
 	$(jmlunit) --destination $(jmlunit_path) \
-		--sourcepath $(specpath):$(srcpath):$(testpath) \
+		--sourcepath $(specpath):$(srcpath):$(testpath):src.test \
 		--package --source $(version) \
 		--testLevel=2 $(srcpath)/election/tally && \
 	touch jmlunit.stamp
