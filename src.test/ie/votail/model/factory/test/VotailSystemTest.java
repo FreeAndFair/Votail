@@ -22,21 +22,18 @@ import election.tally.ElectionStatus;
 
 public class VotailSystemTest extends TestCase {
   
-  final static int PARTIES = 3; // number of major parties
+  final static int PARTIES = 3; // number of major parties for each seat
   
   @Test
-  public void prstv() {
+  public void testPRSTV() {
     
     final int numberOfSeats = 5;
     final int scope = numberOfSeats;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    BallotCounting ballotCounting = new BallotCounting();
     Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     logger.info("Using scope = " + scope);
-    
-    int total = 0;
-    
+
     for (int seats = 1; seats <= numberOfSeats; seats++) {
       for (int candidates = 1 + seats; candidates <= seats * PARTIES; candidates++) {
         
@@ -48,6 +45,8 @@ public class VotailSystemTest extends TestCase {
           ElectionConfiguration electionConfiguration =
               createElection(scenario);
           Constituency constituency = electionConfiguration.getConstituency();
+          BallotCounting ballotCounting = new BallotCounting();
+
           ballotCounting.setup(constituency);
           ballotCounting.load(electionConfiguration);
           ballotCounting.count();
@@ -58,7 +57,6 @@ public class VotailSystemTest extends TestCase {
           if (!scenario.check(ballotCounting)) {
             logFailure(logger, scenario, electionConfiguration);
           }
-          total++;
         }
       }
     }
@@ -107,18 +105,17 @@ public class VotailSystemTest extends TestCase {
   
   public static void main(String[] args) {
     VotailSystemTest universalTest = new VotailSystemTest();
-    universalTest.plurality();
-    universalTest.prstv();
+    universalTest.testPlurality();
+    universalTest.testPRSTV();
   }
   
   @Test
-  public void plurality() {
+  public void testPlurality() {
     
     final int numberOfCandidates = 1 + PARTIES;
     final int seats = 1;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    BallotCounting ballotCounting = new BallotCounting();
     Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     
     for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
@@ -133,6 +130,8 @@ public class VotailSystemTest extends TestCase {
         logger.info(scenario.toString());
         ElectionConfiguration electionConfiguration = createElection(scenario);
         Constituency constituency = electionConfiguration.getConstituency();
+        BallotCounting ballotCounting = new BallotCounting();
+
         ballotCounting.setup(constituency);
         ballotCounting.load(electionConfiguration);
         ballotCounting.count();
