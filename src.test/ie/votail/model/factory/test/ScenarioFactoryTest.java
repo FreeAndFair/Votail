@@ -23,8 +23,8 @@ public class ScenarioFactoryTest extends TestCase {
     final int numberOfOutcomes = 3;
     ScenarioList threeCandidateScenarios =
         scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
-    assertEquals(26, threeCandidateScenarios.size());
-    assertEquals(12, threeCandidateScenarios.getNumberOfScenarios(1));
+    assertEquals(34, threeCandidateScenarios.size());
+    assertEquals(20, threeCandidateScenarios.getNumberOfScenarios(1));
     assertEquals(14, threeCandidateScenarios.getNumberOfScenarios(2));
   }
   
@@ -34,7 +34,7 @@ public class ScenarioFactoryTest extends TestCase {
     final int numberOfOutcomes = 4;
     ScenarioList candidateScenarios =
         scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
-    assertEquals(102, candidateScenarios.size());
+    assertEquals(166, candidateScenarios.size());
   }
   
   @Test
@@ -43,7 +43,7 @@ public class ScenarioFactoryTest extends TestCase {
     final int numberOfOutcomes = 5;
     ScenarioList candidateScenarios =
         scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
-    assertEquals(312, candidateScenarios.size());
+    assertEquals(610, candidateScenarios.size());
   }
   
   @Test
@@ -52,7 +52,7 @@ public class ScenarioFactoryTest extends TestCase {
     final int numberOfOutcomes = ScenarioList.MAX_PARTITIONS + 1;
     ScenarioList candidateScenarios =
         scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
-    assertEquals(1917, candidateScenarios.size());
+    assertEquals(5049, candidateScenarios.size());
     assertEquals(154, candidateScenarios.getNumberOfScenarios(numberOfOutcomes));
   }
 }

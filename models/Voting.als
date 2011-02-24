@@ -10,20 +10,20 @@ open util/integer
 -- Standalone facts will be ignored by the API, but not by the analyser
 
 /* 
-	There are six winner-outcomes and six loser-outcomes:
+	There are eight winner-outcomes and six loser-outcomes:
 
-	SurplusWinner:				(W1) elected on first round with at least one surplus vote (STV)
-	Winner: 						(W2) elected in the first round of counting either by quota or plurality,
-	AboveQuotaWinner:     (W3) elected with surplus votes after receipt of transfers (STV)
-    QuotaWinner: 				(W4) elected with transfers from another candidate (STV only),
-	CompromiseWinner: 	(W5) elected on the last round of counting without quota (STV only),
-	TiedWinner:					(W6) elected by tie breaker,
-	TiedLoser:					(L1) loses only by tie breaker but reaches the threshold,
-	Loser:			 				(L2) defeated on last round but reaches the minimum threshold of votes,
-    TiedEarlyLoser:			(L3) reaches threshold but eliminated by tie breaker (STV only),
-	EarlyLoser:					(L4) reaches threshold but is eliminated before last round (STV only),
-	TiedSoreLoser:				(L5) loses only by tie breaker but does not reach threshold,
-	SoreLoser: 					(L6) does not even reach the mimimum threshold of votes.
+	SurplusWinner:		    elected on first round with at least one surplus vote (STV)
+	Winner: 				    elected in the first round of counting either by quota or plurality,
+     AboveQuotaWinner:     elected with surplus votes after receipt of transfers (STV)
+     QuotaWinner: 		    elected with transfers from another candidate (STV only),
+	CompromiseWinner:     elected on the last round of counting without quota (STV only),
+	TiedWinner:			    elected by tie breaker,
+	TiedLoser:			    loses only by tie breaker but reaches the threshold,
+	Loser:			 		    defeated on last round but reaches the minimum threshold of votes,
+     TiedEarlyLoser:	         reaches threshold but eliminated by tie breaker (STV only),
+	EarlyLoser:		         reaches threshold but is eliminated before last round (STV only),
+	TiedSoreLoser:		    loses only by tie breaker but does not reach threshold,
+	SoreLoser: 			    does not even reach the mimimum threshold of votes.
 */
 enum Event {SurplusWinner,Winner, AboveQuotaWinner,QuotaWinner, CompromiseWinner, TiedWinner, 
 	TiedLoser, Loser, TiedEarlyLoser, EarlyLoser, TiedSoreLoser, SoreLoser}
@@ -35,8 +35,10 @@ sig Candidate {
     votes: 			  set Ballot, 	-- First preference ballots assigned to this candidate
 	transfers: 	      set Ballot,   -- Ballots received by transfer from another candidate
 	surplus: 		  set Ballot, 	-- Ballots given to another candidate (on election or elimination)
+    wasted:		  set Ballot, -- Surplus ballots non-transferable not effective
 	outcome: 		  Event	
 } {
+    wasted in surplus
 	no b: Ballot | b in votes & transfers
 	all b: Ballot | b in votes + transfers implies this in b.assignees
 	surplus in votes + transfers
@@ -203,7 +205,7 @@ one sig Scenario {
 -- The Ballot Box
 one sig BallotBox {
   spoiltBallots:		  	set Ballot,		-- empty ballots excluded from count
-  nonTransferable: 	set Ballot,		-- surplus ballots for which preferences are exhausted
+  nonTransferables: 	set Ballot,		-- surplus ballots for which preferences are exhausted
   size:						Int 				-- number of ballots counted
 }
 {
@@ -211,7 +213,8 @@ one sig BallotBox {
     size = #Ballot - #spoiltBallots
 	all b: Ballot | b in spoiltBallots iff #b.preferences = 0
     // All non-transferable ballots belong to an undistributed surplus
-    all b: Ballot | some c: Candidate | b in nonTransferable implies b in c.surplus
+    all b: Ballot | some c: Candidate | b in nonTransferables implies b in c.wasted
+	all b: Ballot | no c: Candidate | b in nonTransferables and b in c.transfers
 }
 
 -- An Electoral Constituency
@@ -231,5 +234,5 @@ one sig Version {
 } {
   year = 11
   month = 02
-  day = 22
+  day = 24
 }

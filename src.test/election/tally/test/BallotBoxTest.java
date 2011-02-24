@@ -11,8 +11,7 @@ public class BallotBoxTest {
     int [] preferences = {1,2,3};
     BallotBox box = new BallotBox();
     box.accept(preferences);
-    Assert.assertEquals(box.toString(),"(1 2 3)");
     box.accept(preferences);
-    Assert.assertEquals(box.toString(),"(1 2 3)(1 2 3)");
+    Assert.assertEquals(box.toString(),"[2 ballots ](1 2 3)(1 2 3)");
   }
 }

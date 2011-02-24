@@ -76,7 +76,8 @@ public class ElectoralScenario {
   protected int numberOfCandidates;
   protected Method method;
 
-  private boolean byeElection;
+  protected boolean byeElection;
+  protected boolean wastedVotes;
   
   /**
    * Create a new model scenario.
@@ -163,6 +164,10 @@ public class ElectoralScenario {
         .append(" and Election.method = " + method);
     stringBuffer.append(" and #Candidate = "
         + this.numberOfCandidates);
+    
+    if (wastedVotes) {
+      stringBuffer.append(" and 0 < #BallotBox.nonTransferables");
+    }
 
     return stringBuffer.toString();
   }

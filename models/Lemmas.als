@@ -382,12 +382,14 @@ pred LQQW {
 }
 run LQQW for 10 but 6 int
 
-pred SLQQW {
-	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = QuotaWinner and 
-		c.outcome = Winner and d.outcome = QuotaWinner and e.outcome = SoreLoser
+pred SLAQW {
+	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = AboveQuotaWinner and 
+		c.outcome = SurplusWinner and d.outcome = QuotaWinner and e.outcome = SoreLoser
     #Candidate = 5
     0 < #Ballot
+    0 < #BallotBox.nonTransferables
 }
+run SLAQW for 7 int
 
 pred SLTT {
   some disj c1,c3,c8,c9: Candidate | 
