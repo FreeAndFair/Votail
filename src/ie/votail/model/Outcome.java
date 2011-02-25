@@ -10,19 +10,18 @@ import election.tally.Candidate;
 
 // The names of each outcome must be exactly the same as those in Voting.als
 public enum Outcome {
-  SoreLoser, TiedSoreLoser, EarlyLoser, TiedEarlyLoser, Loser, TiedLoser,
-  TiedWinner, CompromiseWinner, QuotaWinner, AboveQuotaWinner, Winner,
-  SurplusWinner;
+  SoreLoser, SoreLoserNonTransferable, TiedSoreLoser, EarlyLoser,
+  EarlyLoserNonTransferable, TiedEarlyLoser, Loser, TiedLoser,
+  TiedWinner, CompromiseWinner, QuotaWinner, AboveQuotaWinner,
+  QuotaWinnerNonTransferable, Winner,
+  SurplusWinner, WinnerNonTransferable;
   
   /**
    * Does this outcome require a tie-breaker?
    * 
    * @return <code>True>/code> if it does
    */
-  /*@ ensures \result <==> (this == TIED_SORE_LOSER || this == TIED_WINNER ||
-   *    this == TIED_LOSER || this == TIED_EARLY_LOSER) 
-   */
-  public/*@ pure */boolean isTied() {
+  public/*@ pure @*/ boolean isTied() {
     return this == TiedSoreLoser || this == TiedWinner || this == TiedLoser
         || this == TiedEarlyLoser;
   }
@@ -34,20 +33,29 @@ public enum Outcome {
    * @return True if the results match the outcome
    */
   public boolean check(/*@ non_null @*/ Candidate candidate, 
-      int threshold) {
+      int threshold, int quota) {
     
-    // Winners
-    if (this == Winner || this == QuotaWinner || this == CompromiseWinner || 
-        this == TiedWinner || this == SurplusWinner || this == AboveQuotaWinner) {
-      return candidate.isElected();
+    // Winners above quota, with our without transfers
+    if (this == SurplusWinner || this == AboveQuotaWinner ||
+        this == WinnerNonTransferable || this == QuotaWinnerNonTransferable) {
+      return candidate.isElected() && quota < candidate.getTotalVote();
     }
-    // Non-sore losers
+    // Winner at quota, with or without transfers
+    if (this == Winner || this == QuotaWinner) {
+      return candidate.isElected() && quota == candidate.getTotalVote();
+    }
+    // Winners below quota, with or without ties
+    if (this == CompromiseWinner || this == TiedWinner) {
+      return candidate.isElected() && candidate.getTotalVote() < quota;
+    }
+    // Losers at or above threshold, with or without elimination
     else if (this == Loser || this == TiedLoser || this == EarlyLoser || 
-        this == TiedEarlyLoser) {
+        this == TiedEarlyLoser || this == EarlyLoserNonTransferable) {
         return !candidate.isElected() && threshold <= candidate.getTotalVote();
     }
-    // Sore losers
-    else if (this == SoreLoser || this == TiedSoreLoser) {
+    // Losers below threshold, with or without ties
+    else if (this == SoreLoser || this == TiedSoreLoser ||
+        this == SoreLoserNonTransferable) {
         return candidate.isEliminated() && candidate.getTotalVote() < threshold;
     }
     

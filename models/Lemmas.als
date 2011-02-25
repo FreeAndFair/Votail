@@ -384,7 +384,7 @@ run LQQW for 10 but 6 int
 
 pred SLAQW {
 	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = AboveQuotaWinner and 
-		c.outcome = SurplusWinner and d.outcome = QuotaWinner and e.outcome = SoreLoser
+		c.outcome = SurplusWinner and d.outcome = Winner and e.outcome = SoreLoser
     #Candidate = 5
     0 < #Ballot
     0 < #BallotBox.nonTransferables
@@ -490,5 +490,11 @@ pred LLLtLtWt {
     #Candidate = 5
 }
 run LLLtLtWt for 10 but 7 int
+
+// TODO
+
+/* Proportionality of transfers */
+
+/* Rounding of fractional transfers */
 
 

@@ -77,8 +77,6 @@ public class ElectoralScenario {
   protected Method method;
 
   protected boolean byeElection;
-  protected boolean wastedVotes;
-  
   /**
    * Create a new model scenario.
    * 
@@ -164,10 +162,6 @@ public class ElectoralScenario {
         .append(" and Election.method = " + method);
     stringBuffer.append(" and #Candidate = "
         + this.numberOfCandidates);
-    
-    if (wastedVotes) {
-      stringBuffer.append(" and 0 < #BallotBox.nonTransferables");
-    }
 
     return stringBuffer.toString();
   }
@@ -380,6 +374,7 @@ public class ElectoralScenario {
 
     final int threshold = ballotCounting.getDepositSavingThreshold();
     final int numberOfCandidates = ballotCounting.getTotalNumberOfCandidates();
+    final int quota = ballotCounting.getQuota();
 
     for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
       boolean matched = false;
@@ -387,7 +382,7 @@ public class ElectoralScenario {
       for (int i = 0; i < numberOfCandidates; i++) {
         
         final Candidate candidate = ballotCounting.getCandidate(i);
-        if (outcome.check(candidate, threshold)) {
+        if (outcome.check(candidate, threshold, quota)) {
           matched = true;
           break;
         }

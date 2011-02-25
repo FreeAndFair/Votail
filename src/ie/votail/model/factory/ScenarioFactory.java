@@ -21,10 +21,6 @@ public class ScenarioFactory {
    *          The number of candidate outcomes
    * @return All election scenarios with this number of outcomes
    */
-  /*@ requires 1 < numberOfOutcomes;
-    @ ensures (numberOfOutcomes == 2) ==> (4 == \result.size());
-    @ ensures (numberOfOutcomes == 3) ==> (26 == \result.size());
-    @*/
   public/*@ pure @*/ScenarioList find(int numberOfOutcomes, int numberOfSeats,
       Method method) {
     ScenarioList scenarios = new ScenarioList(method);
@@ -49,11 +45,15 @@ public class ScenarioFactory {
           scenarios.add(baseScenario.append(Outcome.SurplusWinner));
           scenarios.add(baseScenario.append(Outcome.Winner));
           scenarios.add(baseScenario.append(Outcome.QuotaWinner));
+          scenarios.add(baseScenario.append(Outcome.WinnerNonTransferable));
+          scenarios.add(baseScenario.append(Outcome.QuotaWinnerNonTransferable));
           scenarios.add(baseScenario.append(Outcome.AboveQuotaWinner));
           scenarios.add(baseScenario.append(Outcome.CompromiseWinner));
+          scenarios.add(baseScenario.append(Outcome.SoreLoserNonTransferable));
           if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
             // Cannot have an Early Loser with a Tied Sore Loser
             scenarios.add(baseScenario.append(Outcome.EarlyLoser));
+            scenarios.add(baseScenario.append(Outcome.EarlyLoserNonTransferable));
           }
         }
         // Additional ties are only possible when base scenario has tie breaks
