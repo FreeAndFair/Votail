@@ -66,7 +66,7 @@ sig Candidate {
      0 < #distributions implies (0 < #surplus and #wasted < #surplus)
      0 < #wasted implies (outcome = WinnerNonTransferable or 
                           outcome = QuotaWinnerNonTransferable or
-                          outcome = EarlyWinnerNonTransferable or
+                          outcome = EarlyLoserNonTransferable or
 	                         outcome = SoreLoserNonTransferable)
      wasted in surplus
 	    no b: Ballot | b in votes & transfers
@@ -101,7 +101,7 @@ sig Candidate {
     	// PR-STV Winner has at least a quota of first preference votes
     	(Election.method = STV and outcome = Winner) implies 
        Scenario.quota = #votes
-     (outcome = SurplusWinner or outcome = SurplusWinnerNonTransferable) implies 
+     (outcome = SurplusWinner or outcome = WinnerNonTransferable) implies 
        Scenario.quota < #votes
      // Quota Winner has a least a quota of votes after transfers
 	    outcome = QuotaWinner implies
@@ -131,7 +131,7 @@ sig Candidate {
     // Fair distribution of transfers
     all d: Distribution | all b: Ballot | d in distributions and b in d.ballots implies
       (b in surplus and (not b in wasted))
-    sum distributions.ballots = #surplus - #wasted
+    sum #distributions.ballots = #surplus - #wasted
 				all d: Distribution | not this = d.receiver
 }
 
