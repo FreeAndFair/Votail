@@ -106,7 +106,8 @@ sig Candidate {
      // Quota Winner has a least a quota of votes after transfers
 	    outcome = QuotaWinner implies
 	      Scenario.quota = #votes + #transfers
-     (outcome = AboveQuotaWinner or outcome = QuotaWinnerNonTransferable) implies
+     (outcome = AboveQuotaWinner or outcome = QuotaWinnerNonTransferable) 
+       implies
 	      Scenario.quota < #votes + #transfers
      // Quota Winner does not have a quota of first preference votes
 	    (outcome = QuotaWinner or outcome = AboveQuotaWinner or 
@@ -125,14 +126,15 @@ sig Candidate {
 	   outcome = TiedSoreLoser implies 
 		    #votes + #transfers < Scenario.threshold
     // Size of surplus for each STV Winner and Quota Winner
-	   (outcome = AboveQuotaWinner or outcome = SurplusWinner or
-      outcome = WinnerNonTransferable or outcome = QuotaWinnerNonTransferable) 
+	   (outcome = SurplusWinner or outcome = WinnerNonTransferable) 
+      implies ((#surplus = #votes - Scenario.quota) and #transfers = 0)
+    (outcome = AboveQuotaWinner or outcome = QuotaWinnerNonTransferable) 
       implies (#surplus = #votes + #transfers - Scenario.quota)
     // Fair distribution of transfers
-    all d: Distribution | all b: Ballot | d in distributions and b in d.ballots implies
+    all d: Distribution | all b: Ballot | 
+      d in distributions and b in d.ballots implies
       (b in surplus and (not b in wasted))
     sum #distributions.ballots = #surplus - #wasted
-				all d: Distribution | not this = d.receiver
 }
 
 /* Proportional distribution of transfers:
@@ -271,7 +273,7 @@ one sig BallotBox {
   size:					Int 			-- number of unspolit ballots
 }
 {
-    	0 <= size
+    0 <= size
     	size = #Ballot - #spoiltBallots
 	all b: Ballot | b in spoiltBallots iff #b.preferences = 0
     	// All non-transferable ballots belong to an undistributed surplus or eliminated candidate
@@ -281,9 +283,9 @@ one sig BallotBox {
 
 -- An Electoral Constituency
 one sig Election {
-  seats: 				Int,		-- number of seats to be filled in this election
-  constituencySeats:	Int,		-- full number of seats in this constituency
-  method: 				Method	-- type of election; PR-STV or plurality
+  seats: 				        Int,		 -- number of seats to be filled in this election
+  constituencySeats:	Int,		 -- full number of seats in this constituency
+  method: 				       Method	-- type of election; PR-STV or plurality
 }
 {
  	0 < seats and seats <= constituencySeats
