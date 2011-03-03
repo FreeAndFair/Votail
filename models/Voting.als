@@ -56,24 +56,28 @@ enum Method {Plurality, STV}
 sig Candidate {
   votes: 			  set Ballot, 	-- First preference ballots assigned to this candidate
 	 transfers: 	set Ballot,  -- Second and subsequent preferences received
-	 surplus: 		 set Ballot, 	-- Ballots tranferred to another candidate 
-														             -- after election or elimination
-  wasted:		 	 set Ballot,	 -- Surplus ballots non-transferable 
-														             -- due to exhaustion of preferences
-	 outcome: 		 Event,		     -- Path through which the candidate either won or lost
-  distributions: set Distribution, -- allocation of surplus votes
+	 surplus: 		 set Ballot, 	-- Ballots tranferred to another candidate election
+  wasted:		 	 set Ballot,	 -- Ballots non-transferable due to exhaustion of preferences
+	 outcome: 		 Event		      -- Election result for candidate and associated ballots
 } {
-     0 < #distributions implies (0 < #surplus and #wasted < #surplus)
+     // Non-transferable ballots
      0 < #wasted implies (outcome = WinnerNonTransferable or 
                           outcome = QuotaWinnerNonTransferable or
                           outcome = EarlyLoserNonTransferable or
 	                         outcome = SoreLoserNonTransferable)
-     wasted in surplus
+     (outcome = WinnerNonTransferable or outcome = QuotaWinnerNonTransferable)
+       implies wasted in surplus
+     (outcome = EarlyLoserNonTransferable or outcome = SoreLoserNonTransferable)
+       implies wasted in votes + transfers
+     // Division of ballots into first preferences and transfers
 	    no b: Ballot | b in votes & transfers
+     // Division of ballots into piles for each candidate
 	    all b: Ballot | b in votes + transfers implies this in b.assignees
+     // Selection of surplus ballots for re-distribution
 	    surplus in votes + transfers
 	    Election.method = Plurality implies #surplus = 0 and #transfers = 0
     	0 < #transfers implies Election.method = STV
+     // Calculation of surplus for PR-STV election
      ((outcome = Winner and Election.method = STV) or (
        outcome = SurplusWinner or outcome = WinnerNonTransferable)) implies
        Scenario.quota + #surplus = #votes
@@ -84,15 +88,18 @@ sig Candidate {
     	(outcome = QuotaWinner or outcome = AboveQuotaWinner or
       outcome = QuotaWinnerNonTransferable) implies 
 		    Scenario.quota + #surplus = #votes + #transfers
-    	all b: Ballot | b in votes implies this in b.assignees
-    	0 < #surplus iff (outcome = SurplusWinner or outcome = AboveQuotaWinner)
-    	(outcome = EarlyLoser or outcome = TiedEarlyLoser) iff 
-		     (this in Scenario.eliminated and not (#votes + #transfers < Scenario.threshold))
+    	0 < #surplus implies (outcome = SurplusWinner or outcome = AboveQuotaWinner or
+						outcome = WinnerNonTransferable or outcome = QuotaWinnerNonTransferable)
+    	(outcome = EarlyLoser or outcome = TiedEarlyLoser or 
+      outcome = EarlyLoserNonTransferable) iff 
+		     (this in Scenario.eliminated and 
+       not (#votes + #transfers < Scenario.threshold))
     	// All non-sore losers are at or above the threshold
      outcome = TiedLoser implies Scenario.threshold <= #votes + #transfers
      outcome = Loser implies Scenario.threshold <= #votes + #transfers
      outcome = EarlyLoser implies Scenario.threshold <= #votes + #transfers
-     outcome = EarlyLoserNonTransferable implies Scenario.threshold <= #votes + #transfers
+     outcome = EarlyLoserNonTransferable implies 
+       Scenario.threshold <= #votes + #transfers
      outcome = TiedEarlyLoser implies Scenario.threshold <= #votes + #transfers
     	// Plurality outcomes
     	Election.method = Plurality implies
@@ -130,28 +137,6 @@ sig Candidate {
       implies ((#surplus = #votes - Scenario.quota) and #transfers = 0)
     (outcome = AboveQuotaWinner or outcome = QuotaWinnerNonTransferable) 
       implies (#surplus = #votes + #transfers - Scenario.quota)
-    // Fair distribution of transfers
-    all d: Distribution | all b: Ballot | 
-      d in distributions and b in d.ballots implies
-      (b in surplus and (not b in wasted))
-    sum #distributions.ballots = #surplus - #wasted
-}
-
-/* Proportional distribution of transfers:
- * The surplus is a representative sample of the available transferable votes,
- * taken from the last set received in the case of an AboveQuotaWinner and from
-	* the full set of ballots in the case of a SurplusWinner
- */
-sig Distribution {
-  receiver: Candidate,
-  ballots: set Ballot
-}
-{
-  not receiver.outcome = Winner
-  not receiver.outcome = SurplusWinner
-  not receiver.outcome = WinnerNonTransferable
-  all b: Ballot | b in ballots implies receiver in b.assignees
-		receiver in Scenario.winners or receiver in Scenario.losers
 }
 
 -- A digital or paper artifact which accurately records the intentions of the voter
@@ -180,7 +165,9 @@ sig Ballot {
 		  preferences.idxOf[skipped] < preferences.idxOf[receiving] and
 		  receiving in assignees and (not skipped in assignees) implies
 		  (skipped in Scenario.eliminated or skipped.outcome = SurplusWinner or 
-		  skipped.outcome = AboveQuotaWinner)
+		  skipped.outcome = AboveQuotaWinner or skipped.outcome = WinnerNonTransferable or
+    skipped.outcome = QuotaWinnerNonTransferable or skipped.outcome = Winner or
+    skipped.outcome = QuotaWinner)
 }
 
 -- An election result
@@ -258,7 +245,9 @@ one sig Scenario {
 		#t.votes + #t.transfers < #c.votes + #c.transfers
     // Winners have more votes than non-tied losers
 	all w,l: Candidate | w.outcome = Winner and 
-      (l.outcome = Loser or l.outcome = EarlyLoser or l.outcome = SoreLoser) implies 
+      (l.outcome = Loser or l.outcome = EarlyLoser or l.outcome = SoreLoser or
+       l.outcome = EarlyLoserNonTransferable or l.outcome = SoreLoserNonTransferable) 
+       implies 
      ((#l.votes < #w.votes) or (#l.votes + #l.transfers < #w.votes + #w.transfers))
     // For each Tied Loser there is at least one Tied Winner
    all c: Candidate | some w: Candidate |
@@ -268,17 +257,17 @@ one sig Scenario {
 
 -- The Ballot Box
 one sig BallotBox {
-  spoiltBallots:		set Ballot,		-- empty ballots excluded from count
-  nonTransferables: 	set Ballot,		-- surplus ballots for which preferences are exhausted
-  size:					Int 			-- number of unspolit ballots
+  spoiltBallots:		  set Ballot,		-- empty ballots excluded from count
+  nonTransferables: set Ballot,		-- ballots for which preferences are exhausted
+  size:					        Int 			      -- number of unspolit ballots
 }
 {
-    0 <= size
-    	size = #Ballot - #spoiltBallots
-	all b: Ballot | b in spoiltBallots iff #b.preferences = 0
-    	// All non-transferable ballots belong to an undistributed surplus or eliminated candidate
-    	all b: Ballot | some c: Candidate | b in nonTransferables implies b in c.wasted
-	all b: Ballot | no c: Candidate | b in nonTransferables and b in c.transfers
+  no b: Ballot | b in spoiltBallots and b in nonTransferables
+  size = #Ballot - #spoiltBallots
+	 all b: Ballot | b in spoiltBallots iff #b.preferences = 0
+  // All non-transferable ballots belong to an non-transferable surplus
+  all b: Ballot | some c: Candidate | b in nonTransferables implies 
+    b in c.wasted
 }
 
 -- An Electoral Constituency
@@ -297,6 +286,6 @@ one sig Version {
    year, month, day: Int
 } {
   year = 11
-  month = 02
-  day = 25
+  month = 03
+  day = 03
 }
