@@ -216,7 +216,8 @@ one sig Scenario {
     // Losing outcomes
 	all c: Candidate | c in losers iff
 		(c.outcome = Loser or c.outcome = EarlyLoser or c.outcome = SoreLoser or 
-		c.outcome = TiedLoser or c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser)
+		c.outcome = TiedLoser or c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser or
+  c.outcome = EarlyLoserNonTransferable or c.outcome = SoreLoserNonTransferable)
     // STV election quotas
     Election.method = STV implies quota = 1 + BallotBox.size.div[Election.seats+1] and
     	fullQuota = 1 + BallotBox.size.div[Election.constituencySeats + 1]
@@ -287,5 +288,5 @@ one sig Version {
 } {
   year = 11
   month = 03
-  day = 03
+  day = 04
 }
