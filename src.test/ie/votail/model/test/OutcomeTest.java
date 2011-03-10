@@ -10,7 +10,6 @@ public class OutcomeTest extends TestCase {
   @Test
   public void testIsTied() {
     
-    assertTrue (Outcome.TiedEarlyLoser.isTied());
     assertTrue (Outcome.TiedSoreLoser.isTied());
     assertTrue (Outcome.TiedLoser.isTied());
     assertTrue (Outcome.TiedWinner.isTied());
