@@ -21,21 +21,20 @@ import election.tally.Constituency;
 import election.tally.ElectionStatus;
 
 public class VotailSystemTest extends TestCase {
-  
-  final static int PARTIES = 3; // number of major parties for each seat
-  
+    
   @Test
   public void testPRSTV() {
     
     final int numberOfSeats = 5;
     final int scope = numberOfSeats;
+    final int numberOfCandidates = 20;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     logger.info("Using scope = " + scope);
 
     for (int seats = 1; seats <= numberOfSeats; seats++) {
-      for (int candidates = 1 + seats; candidates <= seats * PARTIES; candidates++) {
+      for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
         
         ScenarioList scenarioList =
             scenarioFactory.find(candidates, seats, Method.STV);
@@ -112,7 +111,7 @@ public class VotailSystemTest extends TestCase {
   @Test
   public void testPlurality() {
     
-    final int numberOfCandidates = 1 + PARTIES;
+    final int numberOfCandidates = 12;
     final int seats = 1;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();

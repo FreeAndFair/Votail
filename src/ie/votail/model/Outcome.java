@@ -10,8 +10,8 @@ import election.tally.Candidate;
 
 // The names of each outcome must be exactly the same as those in Voting.als
 public enum Outcome {
-  SoreLoser, SoreLoserNonTransferable, TiedSoreLoser, EarlyLoser,
-  EarlyLoserNonTransferable, TiedEarlyLoser, Loser, TiedLoser,
+  SoreLoser, EarlySoreLoserNonTransferable, TiedSoreLoser, EarlyLoser,
+  EarlyLoserNonTransferable, EarlySoreLoser, Loser, TiedLoser,
   TiedWinner, CompromiseWinner, QuotaWinner, AboveQuotaWinner,
   QuotaWinnerNonTransferable, Winner,
   SurplusWinner, WinnerNonTransferable;
@@ -22,8 +22,7 @@ public enum Outcome {
    * @return <code>True>/code> if it does
    */
   public/*@ pure @*/ boolean isTied() {
-    return this == TiedSoreLoser || this == TiedWinner || this == TiedLoser
-        || this == TiedEarlyLoser;
+    return this == TiedSoreLoser || this == TiedWinner || this == TiedLoser;
   }
   
   /**
@@ -48,15 +47,22 @@ public enum Outcome {
     if (this == CompromiseWinner || this == TiedWinner) {
       return candidate.isElected() && candidate.getTotalVote() < quota;
     }
-    // Losers at or above threshold, with or without elimination
-    else if (this == Loser || this == TiedLoser || this == EarlyLoser || 
-        this == TiedEarlyLoser || this == EarlyLoserNonTransferable) {
+    // Losers at or above threshold, without elimination
+    else if (this == Loser || this == TiedLoser) {
         return !candidate.isElected() && threshold <= candidate.getTotalVote();
     }
-    // Losers below threshold, with or without ties
-    else if (this == SoreLoser || this == TiedSoreLoser ||
-        this == SoreLoserNonTransferable) {
+    // Losers at or above threshold, with elimination
+    else if (this == EarlyLoser || 
+        this == EarlyLoserNonTransferable) {
+        return candidate.isEliminated() && threshold <= candidate.getTotalVote();
+    }
+    // Early Losers below threshold, with or without ties
+    else if (this == EarlySoreLoserNonTransferable || this == EarlySoreLoser) {
         return candidate.isEliminated() && candidate.getTotalVote() < threshold;
+    }
+    // Late Losers below threshold, with or without ties
+    else if (this == SoreLoser || this == TiedSoreLoser) {
+        return !candidate.isElected() && candidate.getTotalVote() < threshold;
     }
     
     Logger.getAnonymousLogger().warning(
