@@ -37,27 +37,31 @@ assert wellFormedTieBreaker {
 	some w,l : Candidate | (w in Scenario.winners and l in Scenario.losers and 
 		#w.votes = #l.votes and #w.transfers = #l.transfers) implies 
 		w.outcome = TiedWinner and 
-		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome=TiedEarlyLoser)
+		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser)
 }
 check wellFormedTieBreaker for 18 but 6 int
 
 assert validSurplus {
-	all c: Candidate | 0 < #c.surplus implies (c.outcome = Winner or 
-		c.outcome = QuotaWinner or c.outcome = SurplusWinner or
+	all c: Candidate | 0 < #c.surplus implies (c.outcome = WinnerNonTransferable or 
+		c.outcome = QuotaWinnerNonTransferable or c.outcome = SurplusWinner or
 		c.outcome = AboveQuotaWinner or
 		c in Scenario.eliminated)
 }
 check validSurplus for 16 but 6 int
 
 -- Advanced Lemmas
-// Equal losers are tied
+// Equal losers are tied or excluded early before last round
 assert equalityofTiedWinnersAndLosers {
 	all disj w,l: Candidate | w in Scenario.winners and l in Scenario.losers and 
 		#w.votes + #w.transfers = #l.votes + #l.transfers implies
 			w.outcome = TiedWinner and 
-			(l.outcome = TiedLoser or l.outcome = TiedEarlyLoser or l.outcome = TiedSoreLoser)
+			(l.outcome = TiedLoser or 
+    l.outcome = TiedSoreLoser or
+    l.outcome = EarlyLoserNonTransferable or
+    l.outcome = EarlySoreLoserNonTransferable or
+    l.outcome = EarlyLoser)
 }
-check equalityofTiedWinnersAndLosers for 13 but 7 int
+check equalityofTiedWinnersAndLosers for 16 but 7 int
 
 // No lost votes during counting
 assert accounting {
@@ -95,6 +99,7 @@ check soreLoserBelowThreshold for 10 but 6 int
 assert underThresholdOutcomes {
   all c: Candidate | (#c.votes + #c.transfers < Scenario.threshold) implies
      (c.outcome = SoreLoser or c.outcome = TiedSoreLoser or c.outcome = TiedWinner or
+     c.outcome = EarlySoreLoserNonTransferable or c.outcome = EarlySoreLoser or
      c.outcome = CompromiseWinner or (Election.method = Plurality and c.outcome = Winner))
 }
 check underThresholdOutcomes for 10 but 6 int
@@ -293,7 +298,7 @@ pred NoTiesAndNoSoresScenarios {
   #Candidate > 3
   #Ballot > 6
   no c: Candidate | c.outcome = TiedLoser or c.outcome = TiedWinner or
-    c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser or c.outcome = SoreLoser
+    c.outcome = TiedSoreLoser or c.outcome = SoreLoser
 }
 run NoTiesAndNoSoresScenarios for 10 but 6 int
 
@@ -386,10 +391,38 @@ pred SLAQW {
 	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = AboveQuotaWinner and 
 		c.outcome = SurplusWinner and d.outcome = Winner and e.outcome = SoreLoser
     #Candidate = 5
-    0 < #Ballot
-    0 < #BallotBox.nonTransferables
 }
-run SLAQW for 7 int
+run SLAQW for 16 but 7 int
+
+pred SurplusWinner {
+ some c: Candidate | c.outcome = SurplusWinner
+}
+run SurplusWinner for 10 but 7 int
+
+pred AboveQuotaWinner {
+ some c: Candidate | c.outcome = AboveQuotaWinner
+}
+run AboveQuotaWinner for 10 but 7 int
+
+pred WinnerNonTransferable {
+	some c: Candidate | c.outcome = WinnerNonTransferable
+}
+run WinnerNonTransferable for 16 but 7 int
+
+pred QuotaWinnerNonTransferable {
+ some c: Candidate | c.outcome = QuotaWinnerNonTransferable
+}
+run QuotaWinnerNonTransferable for 16 but 7 int
+
+pred SoreLoserNonTransferable {
+	some c: Candidate | c.outcome = EarlySoreLoserNonTransferable
+}
+run SoreLoserNonTransferable for 16 but 7 int
+
+pred EarlyLoserNonTransferable {
+ some c: Candidate | c.outcome = EarlyLoserNonTransferable
+}
+run EarlyLoserNonTransferable for 16 but 7 int
 
 pred SLTT {
   some disj c1,c3,c8,c9: Candidate | 
@@ -471,7 +504,7 @@ run LLLLLLW for 16 but 7 int
 pred largeSurplus {
   some c: Candidate | 0 < #c.surplus
 }
-run largeSurplus for 7 int
+run largeSurplus for 10 but 7 int
 
 pred LWW6 {
 some disj c0,c1,c2: Candidate | c0.outcome = Loser and c1.outcome = Winner 
@@ -490,11 +523,5 @@ pred LLLtLtWt {
     #Candidate = 5
 }
 run LLLtLtWt for 10 but 7 int
-
-// TODO
-
-/* Proportionality of transfers */
-
-/* Rounding of fractional transfers */
 
 

@@ -10,28 +10,34 @@ open util/integer
 -- Standalone facts will be ignored by the API, but not by the analyser
 
 /* 
-	There are 8 winner-outcomes and 8 loser-outcomes:
+	 There are 8 winning-outcomes and 8 losing-outcomes, 
+  of which 2 winning-outcomes and 4 losing-outcomes are for Plurality
 
   WinnerNonTransferable: 
-                    elected on first round with at least one non-transferable surplus vote (STV)
+                    elected on first round with at least one non-transferable surplus vote (STV),
 	 SurplusWinner:		  elected on first round with at least one surplus vote (STV),
 	 Winner: 				      elected in the first round of counting either by quota or plurality,
+
   AboveQuotaWinner: elected with surplus votes after receipt of transfers (STV),
   QuotaWinnerNonTransferable:
-				                elected with at least one non-transferable surplus vote,
-  QuotaWinner: 		   elected with quota after transfers from another candidate (STV only),
-	 CompromiseWinner: elected on the last round of counting without quota (STV only),
+				                elected with at least one non-transferable surplus vote (STV),
+  QuotaWinner: 		   elected with quota after transfers from another candidate (STV),
+
+	 CompromiseWinner: elected on the last round of counting without quota (STV),
 	 TiedWinner:			    elected by tie breaker,
-	 TiedLoser:			     loses only by tie breaker but reaches the threshold,
+
+	 TiedLoser:			     defeated only by tie breaker but reaches the threshold,
+  TiedSoreLoser:		  defeated only by tie breaker but does not reach threshold,
 	 Loser:			 		      defeated on last round but reaches the minimum threshold of votes,
-  TiedEarlyLoser:	  reaches threshold but eliminated by tie breaker (STV only),
+  SoreLoser: 			    defeated, but does not even reach the mimimum threshold of votes
+
   EarlyLoserNonTransferable:
-                    reaches threshold bit is eliminated with some non-transferable votes,
-	 EarlyLoser:		     reaches threshold but is eliminated before last round (STV only),
-	 TiedSoreLoser:		  loses only by tie breaker but does not reach threshold,
-  SoreLoserNonTransferable:
-																				below threshold and eliminated with some non-transferable votes
-	 SoreLoser: 			    does not even reach the mimimum threshold of votes.
+                    reaches threshold bit is eliminated with some non-transferable votes (STV),
+	 EarlyLoser:		     reaches threshold but is eliminated before last round (STV),
+  EarlySoreLoser:   eliminated before last round, and below threshold (STV),
+  EarlySoreLoserNonTransferable:
+																				below threshold and eliminated with some non-transferable votes (STV)
+
 */
 enum Event {SurplusWinner, 
             WinnerNonTransferable, 
@@ -43,12 +49,12 @@ enum Event {SurplusWinner,
 	           TiedWinner, 
             TiedLoser, 
             Loser, 
-            TiedEarlyLoser, 
             EarlyLoser, 
+            EarlyLoserNonTransferable,
             TiedSoreLoser, 
             SoreLoser,
-	           EarlyLoserNonTransferable, 
-            SoreLoserNonTransferable}
+            EarlySoreLoser,
+            EarlySoreLoserNonTransferable}
 
 enum Method {Plurality, STV}
 
@@ -58,85 +64,102 @@ sig Candidate {
 	 transfers: 	set Ballot,  -- Second and subsequent preferences received
 	 surplus: 		 set Ballot, 	-- Ballots tranferred to another candidate election
   wasted:		 	 set Ballot,	 -- Ballots non-transferable due to exhaustion of preferences
-	 outcome: 		 Event		      -- Election result for candidate and associated ballots
+	 outcome: 		 Event		      -- Path to election result for each candidate
 } {
-     // Non-transferable ballots
-     0 < #wasted implies (outcome = WinnerNonTransferable or 
-                          outcome = QuotaWinnerNonTransferable or
-                          outcome = EarlyLoserNonTransferable or
-	                         outcome = SoreLoserNonTransferable)
+     // Ballots available for transfers but without further preferences
+     0 < #wasted iff (outcome = WinnerNonTransferable or 
+                      outcome = QuotaWinnerNonTransferable or
+                      outcome = EarlyLoserNonTransferable or
+	                     outcome = EarlySoreLoserNonTransferable)
+
+     // Ballots are only counted as wasted in they belong to the surplus, or
      (outcome = WinnerNonTransferable or outcome = QuotaWinnerNonTransferable)
        implies wasted in surplus
-     (outcome = EarlyLoserNonTransferable or outcome = SoreLoserNonTransferable)
+
+     // ... if the ballots are from an excluded candidate
+     (outcome = EarlyLoserNonTransferable or outcome = EarlySoreLoserNonTransferable)
        implies wasted in votes + transfers
+
      // Division of ballots into first preferences and transfers
 	    no b: Ballot | b in votes & transfers
+
      // Division of ballots into piles for each candidate
 	    all b: Ballot | b in votes + transfers implies this in b.assignees
+
      // Selection of surplus ballots for re-distribution
 	    surplus in votes + transfers
 	    Election.method = Plurality implies #surplus = 0 and #transfers = 0
     	0 < #transfers implies Election.method = STV
-     // Calculation of surplus for PR-STV election
-     ((outcome = Winner and Election.method = STV) or (
-       outcome = SurplusWinner or outcome = WinnerNonTransferable)) implies
-       Scenario.quota + #surplus = #votes
-    	(outcome = Winner or outcome = SurplusWinner or 
-      outcome = WinnerNonTransferable) implies #transfers = 0
-    	(outcome = QuotaWinner or outcome = AboveQuotaWinner or
-      outcome = QuotaWinnerNonTransferable) implies surplus in transfers 
-    	(outcome = QuotaWinner or outcome = AboveQuotaWinner or
-      outcome = QuotaWinnerNonTransferable) implies 
-		    Scenario.quota + #surplus = #votes + #transfers
-    	0 < #surplus implies (outcome = SurplusWinner or outcome = AboveQuotaWinner or
-						outcome = WinnerNonTransferable or outcome = QuotaWinnerNonTransferable)
-    	(outcome = EarlyLoser or outcome = TiedEarlyLoser or 
+
+     // Losers excluded but above threshold
+    	(outcome = EarlyLoser or  
       outcome = EarlyLoserNonTransferable) iff 
 		     (this in Scenario.eliminated and 
        not (#votes + #transfers < Scenario.threshold))
+
     	// All non-sore losers are at or above the threshold
      outcome = TiedLoser implies Scenario.threshold <= #votes + #transfers
      outcome = Loser implies Scenario.threshold <= #votes + #transfers
      outcome = EarlyLoser implies Scenario.threshold <= #votes + #transfers
      outcome = EarlyLoserNonTransferable implies 
        Scenario.threshold <= #votes + #transfers
-     outcome = TiedEarlyLoser implies Scenario.threshold <= #votes + #transfers
-    	// Plurality outcomes
+     
+    	// Plurality outcomes; 2 winning-outcomes and 4 losing-outcomes
     	Election.method = Plurality implies
 		   (outcome = Loser or outcome = SoreLoser or outcome = Winner or 
 		    outcome = TiedWinner or outcome = TiedLoser or outcome = TiedSoreLoser)
+
     	// PR-STV Winner has at least a quota of first preference votes
     	(Election.method = STV and outcome = Winner) implies 
        Scenario.quota = #votes
      (outcome = SurplusWinner or outcome = WinnerNonTransferable) implies 
        Scenario.quota < #votes
+
      // Quota Winner has a least a quota of votes after transfers
 	    outcome = QuotaWinner implies
 	      Scenario.quota = #votes + #transfers
      (outcome = AboveQuotaWinner or outcome = QuotaWinnerNonTransferable) 
        implies
 	      Scenario.quota < #votes + #transfers
+
      // Quota Winner does not have a quota of first preference votes
 	    (outcome = QuotaWinner or outcome = AboveQuotaWinner or 
        outcome = QuotaWinnerNonTransferable) implies
 		     not Scenario.quota <= #votes
+
      // Compromise winners do not have a quota of votes
 	    outcome = CompromiseWinner  implies
 		     not (Scenario.quota <= #votes + #transfers)
+
     // STV Tied Winners have less than a quota of votes
 	   (Election.method = STV and outcome = TiedWinner) implies
 		     not (Scenario.quota <= #votes + #transfers)
+
     // Sore Losers have less votes than the threshold
-	   (outcome = SoreLoser or outcome = SoreLoserNonTransferable) implies 
+	   (outcome = SoreLoser or outcome = EarlySoreLoserNonTransferable or
+     outcome = EarlySoreLoser or outcome = EarlySoreLoserNonTransferable) implies 
 		    #votes + #transfers < Scenario.threshold
+
     // Tied Sore Losers have less votes than the threshold
 	   outcome = TiedSoreLoser implies 
 		    #votes + #transfers < Scenario.threshold
+
     // Size of surplus for each STV Winner and Quota Winner
 	   (outcome = SurplusWinner or outcome = WinnerNonTransferable) 
       implies ((#surplus = #votes - Scenario.quota) and #transfers = 0)
     (outcome = AboveQuotaWinner or outcome = QuotaWinnerNonTransferable) 
       implies (#surplus = #votes + #transfers - Scenario.quota)
+    (outcome = Winner and Election.method = STV) implies
+       (Scenario.quota + #surplus = #votes) and #transfers = 0
+    	(outcome = QuotaWinner or outcome = AboveQuotaWinner or
+      outcome = QuotaWinnerNonTransferable) implies surplus in transfers 
+    	(outcome = QuotaWinner or outcome = AboveQuotaWinner or
+      outcome = QuotaWinnerNonTransferable) implies 
+		    Scenario.quota + #surplus = #votes + #transfers
+
+     // Existance of surplus ballots
+    	0 < #surplus implies (outcome = SurplusWinner or outcome = AboveQuotaWinner or
+						outcome = WinnerNonTransferable or outcome = QuotaWinnerNonTransferable)
 }
 
 -- A digital or paper artifact which accurately records the intentions of the voter
@@ -192,67 +215,82 @@ one sig Scenario {
        #c.votes + #c.transfers < quota
     // Winners have more votes than all non-tied losers
     all disj c,d: Candidate | c in winners and 
-       (d.outcome = SoreLoser or d.outcome = EarlyLoser or d.outcome = Loser) implies
+       (d.outcome = SoreLoser or d.outcome = EarlyLoser or d.outcome = Loser or 
+        d.outcome = EarlySoreLoser) implies
 	   (#d.votes + #d.transfers) < (#c.votes + #c.transfers)
+
    // Losers have less votes than all non-tied winners
    all disj c,d: Candidate | 
 	  (c.outcome = CompromiseWinner or c.outcome = QuotaWinner or c.outcome = Winner
-		or c.outcome = SurplusWinner or c.outcome = AboveQuotaWinner) and 
+		or c.outcome = SurplusWinner or c.outcome = AboveQuotaWinner or 
+     c.outcome = WinnerNonTransferable or c.outcome = QuotaWinnerNonTransferable) and 
 	  d in losers implies
 	  #d.votes + #d.transfers < #c.votes + #c.transfers
+
    // Lowest candidate is eliminated first
 	all disj c,d: Candidate | c in eliminated and d not in eliminated implies
 		#c.votes + #c.transfers <= #d.votes + #d.transfers
+
     // A non-sore plurality loser must have received at least five percent of the total vote
 	Election.method = Plurality implies threshold = 1 + BallotBox.size.div[20]
-    // Winning outcomes
-	all c: Candidate | c in winners iff 
-		(c.outcome = Winner or c.outcome = QuotaWinner or 
-		c.outcome = CompromiseWinner or 
-		c.outcome = TiedWinner or c.outcome = SurplusWinner or 
-		c.outcome = AboveQuotaWinner or
-  c.outcome = WinnerNonTransferable or
-  c.outcome = QuotaWinnerNonTransferable)
-    // Losing outcomes
-	all c: Candidate | c in losers iff
-		(c.outcome = Loser or c.outcome = EarlyLoser or c.outcome = SoreLoser or 
-		c.outcome = TiedLoser or c.outcome = TiedEarlyLoser or c.outcome = TiedSoreLoser or
-  c.outcome = EarlyLoserNonTransferable or c.outcome = SoreLoserNonTransferable)
+
+   // Winning outcomes
+	  all c: Candidate | c in winners iff 
+		   (c.outcome = Winner or c.outcome = QuotaWinner or 
+		   c.outcome = CompromiseWinner or 
+		   c.outcome = TiedWinner or c.outcome = SurplusWinner or 
+		   c.outcome = AboveQuotaWinner or
+     c.outcome = WinnerNonTransferable or
+     c.outcome = QuotaWinnerNonTransferable)
+
+  // Losing outcomes
+	 all c: Candidate | c in losers iff
+		  (c.outcome = Loser or c.outcome = EarlyLoser or c.outcome = SoreLoser or 
+		  c.outcome = TiedLoser or c.outcome = EarlySoreLoser or 
+    c.outcome = TiedSoreLoser or
+    c.outcome = EarlySoreLoserNonTransferable or 
+    c.outcome = EarlyLoserNonTransferable)
+
     // STV election quotas
     Election.method = STV implies quota = 1 + BallotBox.size.div[Election.seats+1] and
     	fullQuota = 1 + BallotBox.size.div[Election.constituencySeats + 1]
     Election.method = Plurality implies quota = 1 and fullQuota = 1
- // All ties involve equality between at least one winner and at least one loser
+
+   // All ties involve equality between at least one winner and at least one loser
     all w: Candidate | some l: Candidate | w.outcome = TiedWinner and 
-	 	(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) implies
-		(#l.votes + #l.transfers = #w.votes + #w.transfers)
-  all s: Candidate | some w: Candidate | w.outcome = TiedWinner and 
-       (s.outcome = SoreLoser or s.outcome = TiedLoser or s.outcome = TiedEarlyLoser) implies
+	 	 (l.outcome = TiedLoser or l.outcome = TiedSoreLoser) implies
+		  (#l.votes + #l.transfers = #w.votes + #w.transfers)
+    all s: Candidate | some w: Candidate | w.outcome = TiedWinner and 
+       (s.outcome = SoreLoser or s.outcome = TiedLoser) implies
        (#s.votes = #w.votes) or (#s.votes + #s.transfers = #w.votes + #w.transfers)
+
    // When there is a tied sore loser then there are no non-sore losers
    no disj a,b: Candidate | a.outcome = TiedSoreLoser and 
-        (b.outcome = TiedLoser or b.outcome = TiedEarlyLoser or 
-         b.outcome=Loser or b.outcome=EarlyLoser)
+        (b.outcome = TiedLoser or 
+         b.outcome=Loser or b.outcome=EarlyLoser or b.outcome = EarlyLoserNonTransferable)
     // For each Tied Winner there is a Tied Loser
 	all w: Candidate | some l: Candidate | w.outcome = TiedWinner implies 
-		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser)
+		(l.outcome = TiedLoser or l.outcome = TiedSoreLoser)
     // Tied Winners and Tied Losers have an equal number of votes
 	all disj l,w: Candidate | 
-    ((l.outcome = TiedLoser or l.outcome = TiedSoreLoser or l.outcome = TiedEarlyLoser) and
-    w.outcome = TiedWinner) implies #w.votes + #w.transfers = #l.votes + #l.transfers
+    ((l.outcome = TiedLoser or l.outcome = TiedSoreLoser) and
+    w.outcome = TiedWinner) implies 
+    #w.votes + #w.transfers = #l.votes + #l.transfers
     // Compromise winner must have more votes than any tied winners
-	all disj c,t: Candidate | (c.outcome = CompromiseWinner and t.outcome = TiedWinner) 
+	all disj c,t: Candidate | (c.outcome = CompromiseWinner and 
+  t.outcome = TiedWinner) 
 		implies
 		#t.votes + #t.transfers < #c.votes + #c.transfers
     // Winners have more votes than non-tied losers
 	all w,l: Candidate | w.outcome = Winner and 
       (l.outcome = Loser or l.outcome = EarlyLoser or l.outcome = SoreLoser or
-       l.outcome = EarlyLoserNonTransferable or l.outcome = SoreLoserNonTransferable) 
+       l.outcome = EarlyLoserNonTransferable or l.outcome = EarlySoreLoser or
+       l.outcome = EarlySoreLoserNonTransferable) 
        implies 
      ((#l.votes < #w.votes) or (#l.votes + #l.transfers < #w.votes + #w.transfers))
     // For each Tied Loser there is at least one Tied Winner
    all c: Candidate | some w: Candidate |
-   (c.outcome = TiedLoser or c.outcome = TiedSoreLoser or c.outcome = TiedEarlyLoser) 
+   (c.outcome = TiedLoser or c.outcome = TiedSoreLoser) 
 		implies w.outcome = TiedWinner
 }
 
@@ -288,5 +326,5 @@ one sig Version {
 } {
   year = 11
   month = 03
-  day = 04
+  day = 10
 }
