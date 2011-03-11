@@ -455,11 +455,11 @@ public class BallotCounting extends AbstractBallotCounting {
   public/*@ pure @*/int getRemainingSeats() {
     return totalRemainingSeats;
   }
-  
-  //@ ensures getNumberContinuing() == \result;
-  public/*@ pure @*/int getContinuingCandidates() {
-    return getNumberContinuing();
-  }
+  /*@ ensures getNumberContinuing() == \result;
+    @ public model pure int getContinuingCandidates() {
+    @   return getNumberContinuing();
+    @ }
+    @*/
   
   /**
    * Return the status of the count

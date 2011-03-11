@@ -444,10 +444,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ also
     @   protected normal_behavior
     @   ensures \result == state;
+    @ public model pure byte getStatus() {
+    @   return status;
+    @}
     @*/
-  public/*@ pure @*/byte getStatus() {
-    return status;
-  }
   
   /**
    * Gets the next preference continuing candidate.

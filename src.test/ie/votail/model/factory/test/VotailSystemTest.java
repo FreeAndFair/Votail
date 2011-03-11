@@ -49,7 +49,7 @@ public class VotailSystemTest extends TestCase {
           ballotCounting.setup(constituency);
           ballotCounting.load(electionConfiguration);
           ballotCounting.count();
-          assert (ballotCounting.getStatus() == ElectionStatus.FINISHED);
+          //@ assert (ballotCounting.getStatus() == ElectionStatus.FINISHED);
           logger.info(ballotCounting.getResults());
           logger.info(ballotCounting.getNumberOfRounds()
               + " rounds of counting ");

@@ -49,20 +49,28 @@ public enum Outcome {
     }
     // Losers at or above threshold, without elimination
     else if (this == Loser || this == TiedLoser) {
-        return !candidate.isElected() && threshold <= candidate.getTotalVote();
+        return !candidate.isElected() && 
+               !candidate.isEliminated() &&
+               threshold <= candidate.getTotalVote();
     }
     // Losers at or above threshold, with elimination
     else if (this == EarlyLoser || 
         this == EarlyLoserNonTransferable) {
-        return candidate.isEliminated() && threshold <= candidate.getTotalVote();
+        return !candidate.isElected() && 
+               candidate.isEliminated() && 
+               threshold <= candidate.getTotalVote();
     }
     // Early Losers below threshold, with or without ties
     else if (this == EarlySoreLoserNonTransferable || this == EarlySoreLoser) {
-        return candidate.isEliminated() && candidate.getTotalVote() < threshold;
+        return !candidate.isElected() && 
+               candidate.isEliminated() && 
+               candidate.getTotalVote() < threshold;
     }
     // Late Losers below threshold, with or without ties
     else if (this == SoreLoser || this == TiedSoreLoser) {
-        return !candidate.isElected() && candidate.getTotalVote() < threshold;
+        return !candidate.isElected() && 
+               !candidate.isEliminated() && 
+               candidate.getTotalVote() < threshold;
     }
     
     Logger.getAnonymousLogger().warning(

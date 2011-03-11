@@ -310,8 +310,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Get the status of the algorithm in progress
    */
   /*@ ensures \result == state;
+    @
+    @ public model pure byte getStatus();
     @*/
-  public /*@ pure @*/ byte getStatus();
   
   /**
    * Gets the potential number of transfers from one candidate to another.
