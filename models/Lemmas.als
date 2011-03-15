@@ -388,7 +388,8 @@ pred LQQW {
 run LQQW for 10 but 6 int
 
 pred SLAQW {
-	some disj a,b,c,d,e: Candidate | a.outcome = Loser and b.outcome = AboveQuotaWinner and 
+	some disj a,b,c,d,e: Candidate | a.outcome = Loser and 
+  b.outcome = AboveQuotaWinner and 
 		c.outcome = SurplusWinner and d.outcome = Winner and e.outcome = SoreLoser
     #Candidate = 5
 }

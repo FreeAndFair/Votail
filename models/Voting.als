@@ -56,7 +56,39 @@ enum Event {SurplusWinner,
             EarlySoreLoser,
             EarlySoreLoserNonTransferable}
 
-enum Method {Plurality, STV}
+/* 
+	Two existing real-world voting methods,
+	and one experimental method chosen for being hard to
+	manipulate and for other ideal properties.
+*/
+enum Method {Plurality, STV, Ideal}
+
+/*
+	Ideal method does not rely on randomisation either for tie breakers, or
+ for redistribution of transfers. So the ordering of ballots does not matter.
+
+	Joint preferences and fractional transfers are allowed.
+	Ties are resolved with a mini-election as if all other candidates were excluded.
+
+	No wasted votes; a non-preference for a candidate indicates non-approval, 
+ used when mini-elections are tied. An unresolvable tie leads to a fresh 
+ bye-election for the remaining seats.
+	
+ None of these steps are possible with paper-based counting; since there is only
+	one copy of the paper ballot, so fractional transfers and pairwise comparisons
+	are impossible unless digital counting of ballots is allowed.
+
+	Approvals are used to determine thresholds for funding and deposits, so that each
+	candidate needs a full quota of approvals. 
+
+ Optionaly, pre-elimination could be used for candidates without a half-quota of
+ approvals since by definition, those candidates would never reach a full
+	quota of ballots under any combination of transfers, although such a candidate 
+ might still be elected without quota in the last round.
+
+ Pre-elimination of too many candidates would also lead to a bye-election. A blank
+	spoilt vote would count as disapproval of all candidates.
+*/
 
 -- An individual person standing for election
 sig Candidate {
@@ -318,6 +350,7 @@ one sig Election {
 {
  	0 < seats and seats <= constituencySeats
  	seats < #Candidate
+  method = Plurality or method = STV -- disallow experiental methods for now
 }
    
 -- Version Control for changes to model 
@@ -326,5 +359,5 @@ one sig Version {
 } {
   year = 11
   month = 03
-  day = 10
+  day = 14
 }
