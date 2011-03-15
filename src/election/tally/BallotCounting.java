@@ -433,6 +433,12 @@ public class BallotCounting extends AbstractBallotCounting {
     // TODO 2009.10.14 ESC postcondition warning
   } // @ nowarn;
   
+  /**
+   * Get the number of votes required in order to recoup election expenses or
+   * qualify for funding in future elections.
+   * 
+   * @return
+   */
   public/*@ pure @*/int getDepositSavingThreshold() {
     return 1 + (getQuota() / 4);
   }

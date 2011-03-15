@@ -28,7 +28,7 @@ public class BallotBoxFactoryTest extends TestCase {
     BallotCounting counter = new BallotCounting();
     counter.load(ballotBox);
     counter.count();
-    assertTrue(counter.getStatus() == AbstractBallotCounting.FINISHED);
+    //@ assert (counter.getStatus() == AbstractBallotCounting.FINISHED);
   }
   
   @Test
@@ -45,7 +45,7 @@ public class BallotBoxFactoryTest extends TestCase {
     counter.setup(electionConfiguration.getConstituency());
     counter.load(electionConfiguration);
     counter.count();
-    assertTrue(counter.getStatus() == AbstractBallotCounting.FINISHED);
+    //@ assert (counter.getStatus() == AbstractBallotCounting.FINISHED);
   }
   
   @Test
@@ -82,6 +82,6 @@ public class BallotBoxFactoryTest extends TestCase {
     counter.setup(constituency);
     counter.load(electionConfiguration);
     counter.count();
-    assertTrue(counter.getStatus() == AbstractBallotCounting.FINISHED);
+    //@ assert (counter.getStatus() == AbstractBallotCounting.FINISHED);
   }
 }
