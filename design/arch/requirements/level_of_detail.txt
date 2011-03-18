@@ -1,0 +1,3 @@
+0: all diagrams
+1: diagrams with interesting details
+2: fully detailed diagrams
