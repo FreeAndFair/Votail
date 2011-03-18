@@ -107,3 +107,11 @@ explanation
 command
   "Add a candidate outcome to this scenario"
 end
+
+class_chart SCENARIO_LIST
+explanation
+  "The complete set of all scenarios"
+command
+  "Replay from a stored file"
+  "Write to a stored file"
+end

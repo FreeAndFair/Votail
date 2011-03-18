@@ -38,4 +38,5 @@ cluster_chart TESTING
 explanation
   "The design and generation of test data"
 class SCENARIO description "A set of candidate outcomes"
+class SCENARIO_LIST description "The complete set of possible scenarios"
 end
