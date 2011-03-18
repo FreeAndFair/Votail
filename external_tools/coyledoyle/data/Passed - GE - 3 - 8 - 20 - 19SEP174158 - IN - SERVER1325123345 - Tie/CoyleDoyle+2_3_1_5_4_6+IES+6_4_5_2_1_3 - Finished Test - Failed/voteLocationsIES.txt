@@ -1,0 +1,73 @@
+Location of all votes after the Fifth Count Page 1
+Poll: Dáil general election
+Constituency: Carlow-Kilkenny
+Date of poll:
+Count number:
+Number of seats:
+Number of candidates:
+Electorate:
+Votes cast:
+Quota:
+Required to recoup election expenses:
+5
+20
+6
+2
+3
+8
+0
+Thursday 17 May 2007
+Conor, Hayes, G.P./C.G. is credited with 4 votes as follows:
+1 votes received in the Fifth Count:
+Vote numbers: 13
+1 votes received in the Third Count:
+Vote numbers: 8
+2 votes received in the First Count:
+Vote numbers: 4, 20
+Conor, Nugent, W.P. is credited with 5 votes as follows:
+1 votes received in the Fifth Count:
+Vote numbers: 15
+1 votes received in the Fourth Count:
+Vote numbers: 18
+3 votes received in the First Count:
+Vote numbers: 1, 2, 7
+Donal, Doyle, F.F. is credited with 0 votes as follows:
+John, Loughrey, F.F. is credited with 3 votes as follows:
+1 votes received in the Third Count:
+Vote numbers: 9
+2 votes received in the First Count:
+Vote numbers: 14, 19
+Lorcan, Coyle, D.P.P. is credited with 0 votes as follows:
+Marco, Grimaldi, S.F. is credited with 0 votes as follows:
+Mike, Carney, W.P. is credited with 6 votes as follows:
+1 votes received in the Second Count:
+Vote numbers: 6
+5 votes received in the First Count:
+Vote numbers: 5, 11, 12, 16, 17
+Pádraig, Cunningham, CD is credited with 0 votes as follows:
+Source: Integrated Election Software Version I-1.00 Printed on 20/11/2005 19:05:42
+Location of all votes after the Fifth Count Page 2
+Poll: Dáil general election
+Constituency: Carlow-Kilkenny
+Date of poll:
+Count number:
+Number of seats:
+Number of candidates:
+Electorate:
+Votes cast:
+Quota:
+Required to recoup election expenses:
+5
+20
+6
+2
+3
+8
+0
+Thursday 17 May 2007
+2 votes are non-transferable not effective as follows:
+1 votes became non-transferable not effective in the Fifth Count:
+Vote numbers: 10
+1 votes became non-transferable not effective in the Fourth Count:
+Vote numbers: 3
+Source: Integrated Election Software Version I-1.00 Printed on 20/11/2005 19:05:42
