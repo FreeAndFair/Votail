@@ -14,16 +14,16 @@ public class CheckRemainingSeatsEventM extends TestCase {
     constituency.setNumberOfCandidates(4);
     // TODO precondition not established
     ballotCounting.setup(constituency); //@ nowarn;
-    assertTrue(constituency.getNumberOfSeatsInThisElection() 
-               == ballotCounting.getRemainingSeats()); //@ nowarn;
+    /*@ assert (constituency.getNumberOfSeatsInThisElection() 
+        == ballotCounting.getRemainingSeats()); @*/
     final BallotBox ballotBox = new BallotBox();
     final int[] preferences = new int[1];
     preferences[0] = constituency.getCandidate(0).getCandidateID();
     ballotBox.accept(preferences);
     ballotCounting.load(ballotBox);
-    assertTrue(constituency.getNumberOfSeatsInThisElection() 
-               == ballotCounting.getRemainingSeats());
+    /*@ assert (constituency.getNumberOfSeatsInThisElection() 
+        == ballotCounting.getRemainingSeats()); @*/
     ballotCounting.count();
-    assertTrue(0 == ballotCounting.getRemainingSeats());
+    //@ assert 0 == ballotCounting.getRemainingSeats());
   }
 }

@@ -21,10 +21,8 @@ import java.util.Iterator;
  */
 public class ScenarioList extends ArrayList<ElectoralScenario> {
   
-  private static final long serialVersionUID = 7705389889600073583L;
-
   // Maximum number of winners to keep track of
-  public static int MAX_PARTITIONS = 6;
+  public static int MAX_PARTITIONS = 11; // Ten possible outcomes, plus one
   
   // Sublists of scenarios for each fixed number of winners
   protected ArrayList<ElectoralScenario>[] partitions;
@@ -53,6 +51,15 @@ public class ScenarioList extends ArrayList<ElectoralScenario> {
       partitions[i] = new ArrayList<ElectoralScenario>();
     }
     bucket = new ArrayList<ElectoralScenario>();
+  }
+
+  /**
+   * Replay scenario list from a stored file.
+   * 
+   * @param scenarioListFilename
+   */
+  public ScenarioList(String scenarioListFilename) {
+    // TODO Auto-generated constructor stub
   }
 
   /**
@@ -118,5 +125,10 @@ public class ScenarioList extends ArrayList<ElectoralScenario> {
       return partitions[numberOfWinners].size();
     }
     return bucket.size();
+  }
+
+  public void writeToFile(String scenarioListFilename) {
+    // TODO Auto-generated method stub
+    
   }
 }

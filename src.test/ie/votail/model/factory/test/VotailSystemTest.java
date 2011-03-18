@@ -22,12 +22,14 @@ import election.tally.ElectionStatus;
 
 public class VotailSystemTest extends TestCase {
     
+  public static final String SCENARIO_LIST_FILENAME = null;
+
   @Test
   public void testPRSTV() {
     
     final int numberOfSeats = 5;
-    final int scope = numberOfSeats;
-    final int numberOfCandidates = 20;
+    final int numberOfCandidates = 11; // Ten possible outcomes plus one
+    final int scope = numberOfCandidates;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
@@ -38,6 +40,9 @@ public class VotailSystemTest extends TestCase {
         
         ScenarioList scenarioList =
             scenarioFactory.find(candidates, seats, Method.STV);
+        
+        // TODO save and replay the scenario list for use in other tests
+        scenarioList.writeToFile (SCENARIO_LIST_FILENAME);
         
         for (ElectoralScenario scenario : scenarioList) {
           logger.info(scenario.toString());
@@ -104,14 +109,14 @@ public class VotailSystemTest extends TestCase {
   
   public static void main(String[] args) {
     VotailSystemTest universalTest = new VotailSystemTest();
-    universalTest.testPlurality();
     universalTest.testPRSTV();
+    universalTest.testPlurality();
   }
   
   @Test
   public void testPlurality() {
     
-    final int numberOfCandidates = 12;
+    final int numberOfCandidates = 7; // Six possible outcomes, plus one
     final int seats = 1;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();

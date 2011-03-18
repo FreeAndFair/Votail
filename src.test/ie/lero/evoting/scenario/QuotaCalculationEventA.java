@@ -43,7 +43,7 @@ public class QuotaCalculationEventA extends TestCase {
     int countState = ballotCounting.countStatus.getState();
     assertTrue(ballotCounting.countStatus.isPossibleState(countState));
     
-    assertTrue(ballotCounting.getRemainingSeats() == 1);
+    //@ assert (ballotCounting.getRemainingSeats() == 1);
     
     assertTrue(ballotBox.size() == 100);
     

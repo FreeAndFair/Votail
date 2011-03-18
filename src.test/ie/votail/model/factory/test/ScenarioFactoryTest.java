@@ -20,39 +20,39 @@ public class ScenarioFactoryTest extends TestCase {
   @Test
   public void testThreeCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    final int numberOfOutcomes = 3;
+    final int numberOfCandidates = 3;
     ScenarioList threeCandidateScenarios =
-        scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
-    assertEquals(34, threeCandidateScenarios.size());
-    assertEquals(20, threeCandidateScenarios.getNumberOfScenarios(1));
+        scenarioFactory.find(numberOfCandidates, 1, Method.STV);
+    assertEquals(52, threeCandidateScenarios.size());
+    assertEquals(38, threeCandidateScenarios.getNumberOfScenarios(1));
     assertEquals(14, threeCandidateScenarios.getNumberOfScenarios(2));
   }
   
   @Test
   public void testFourCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    final int numberOfOutcomes = 4;
+    final int numberOfCandidates = 4;
     ScenarioList candidateScenarios =
-        scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
-    assertEquals(166, candidateScenarios.size());
+        scenarioFactory.find(numberOfCandidates, 1, Method.STV);
+    assertEquals(367, candidateScenarios.size());
   }
   
   @Test
   public void testFiveCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    final int numberOfOutcomes = 5;
+    final int numberOfCandidates = 5;
     ScenarioList candidateScenarios =
-        scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
-    assertEquals(610, candidateScenarios.size());
+        scenarioFactory.find(numberOfCandidates, 1, Method.STV);
+    assertEquals(1863, candidateScenarios.size());
   }
   
   @Test
   public void testManyCandidateScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    final int numberOfOutcomes = ScenarioList.MAX_PARTITIONS + 1;
+    final int numberOfCandidates = ScenarioList.MAX_PARTITIONS + 1;
     ScenarioList candidateScenarios =
-        scenarioFactory.find(numberOfOutcomes, 1, Method.STV);
+        scenarioFactory.find(numberOfCandidates, 1, Method.STV);
     assertEquals(5049, candidateScenarios.size());
-    assertEquals(154, candidateScenarios.getNumberOfScenarios(numberOfOutcomes));
+    assertEquals(154, candidateScenarios.getNumberOfScenarios(numberOfCandidates));
   }
 }

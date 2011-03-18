@@ -192,13 +192,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * 
    * @return The total number of surplus votes for all candidates.
    */
-  //@ requires \nonnullelements (candidates);
-  //@ ensures 0 <= \result;
-  public final/*@ pure @*/int getTotalSumOfSurpluses() {
+  /*@ requires \nonnullelements (candidates);
+    @ ensures 0 <= \result;
+    @ ensures \result == 
+    @   (\sum int c; 0 <= c && c < totalNumberOfCandidates;
+    @     getSurplus(candidates[c]));
+    @*/
+  public final /*@ pure @*/ int getTotalSumOfSurpluses() {
     int sumOfSurpluses = 0;
     
     for (int c = 0; c < totalNumberOfCandidates; c++) {
-        sumOfSurpluses += getSurplus(candidates[c]);
+      //@ assert 0 <= getSurplus(candidates[c]);
+      sumOfSurpluses += getSurplus(candidates[c]);
+      //@ assert 0 <= sumOfSurpluses;
     }
     return sumOfSurpluses;
   }
@@ -229,7 +235,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (isElected (candidateList[index]) == true);
     @*/
   public/*@ pure @*/boolean isDepositSaved(final int index) {
-    // TODO 2009.10.14 ESC negative index warning
+    // TODO 2009.10.14 ESC negative index warning; see line 224 above
     final Candidate candidate = candidates[index];
     // TODO 2009.10.14 ESC precondition warning
     final int originalVote = candidate.getTotalVote();
@@ -489,6 +495,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     candidateList[i].getStatus() == CandidateStatus.CONTINUING);
     @*/
   public/*@ pure @*/boolean isContinuingCandidateID(final int candidateID) {
+    //@ assert candidates != null;
     for (int i = 0; i < candidates.length; i++) {
       if (candidateID == candidates[i].getCandidateID()) {
         return candidates[i].getStatus() == CandidateStatus.CONTINUING;
@@ -1034,6 +1041,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ ensures isElected (candidateList[winner]);
   public void electCandidate(final int winner) {
     //@ assert candidates != null && candidates[winner] != null;
+    //@ assert 0 <= this.countNumberValue;
     candidates[winner].declareElected(this.countNumberValue);
     numberOfCandidatesElected++;
     totalRemainingSeats--;
