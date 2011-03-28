@@ -23,7 +23,7 @@ public class ScenarioFactory {
    */
   public/*@ pure @*/ScenarioList find(int numberOfOutcomes, int numberOfSeats,
       Method method) {
-    ScenarioList scenarios = new ScenarioList(method);
+    ScenarioList scenarios = new ScenarioList();
     if (numberOfOutcomes == 2) {
       findBaseScenarios(method, scenarios, false); // full election
       findBaseScenarios(method, scenarios, true); // special election
@@ -45,28 +45,31 @@ public class ScenarioFactory {
           scenarios.add(baseScenario.append(Outcome.SurplusWinner));
           scenarios.add(baseScenario.append(Outcome.QuotaWinner));
           scenarios.add(baseScenario.append(Outcome.WinnerNonTransferable));
-          scenarios.add(baseScenario.append(Outcome.QuotaWinnerNonTransferable));
+          scenarios
+              .add(baseScenario.append(Outcome.QuotaWinnerNonTransferable));
           scenarios.add(baseScenario.append(Outcome.AboveQuotaWinner));
           scenarios.add(baseScenario.append(Outcome.CompromiseWinner));
           scenarios.add(baseScenario.append(Outcome.EarlySoreLoser));
-          scenarios.add(baseScenario.append(Outcome.EarlySoreLoserNonTransferable));
+          scenarios.add(baseScenario
+              .append(Outcome.EarlySoreLoserNonTransferable));
           if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
             // Cannot have an Early Loser with a Tied Sore Loser
             scenarios.add(baseScenario.append(Outcome.EarlyLoser));
-            scenarios.add(baseScenario.append(Outcome.EarlyLoserNonTransferable));
+            scenarios.add(baseScenario
+                .append(Outcome.EarlyLoserNonTransferable));
           }
         }
         // Additional ties are only possible when base scenario has tie breaks
         if (baseScenario.isTied()) {
-            scenarios.add(baseScenario.append(Outcome.TiedWinner));
+          scenarios.add(baseScenario.append(Outcome.TiedWinner));
           // Cannot have a tie-breaker involving both a sore and non-sore loser
           if (baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
             scenarios.add(baseScenario.append(Outcome.TiedSoreLoser));
           }
           else {
             if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
-                // Cannot have a Tied Loser with a Tied Sore Loser
-                scenarios.add(baseScenario.append(Outcome.TiedLoser));
+              // Cannot have a Tied Loser with a Tied Sore Loser
+              scenarios.add(baseScenario.append(Outcome.TiedLoser));
               
             }
           }

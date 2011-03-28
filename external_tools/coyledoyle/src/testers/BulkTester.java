@@ -21,13 +21,14 @@ import java.util.StringTokenizer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import election.CandidateStats;
-import election.Election;
-import election.ElectionTypes;
-import election.FileUtils;
-import election.ParseIESASC;
-import election.ParseIESVotes;
-import election.TieIterator;
+import coyle_doyle_election.CandidateStats;
+import coyle_doyle_election.Election;
+import coyle_doyle_election.ElectionTypes;
+import coyle_doyle_election.FileUtils;
+import coyle_doyle_election.ParseIESASC;
+import coyle_doyle_election.ParseIESVotes;
+import coyle_doyle_election.TieIterator;
+
 
 public class BulkTester {
     

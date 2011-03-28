@@ -7,7 +7,7 @@
  * File: VoteGenerator.java
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package election;
+package coyle_doyle_election;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

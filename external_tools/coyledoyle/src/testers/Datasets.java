@@ -9,7 +9,7 @@
  */
 package testers;
 
-import election.ElectionTypes;
+import coyle_doyle_election.ElectionTypes;
 
 /**
  * @author Lorcan Coyle and Dónal Doyle

@@ -1,4 +1,4 @@
-package election;
+package coyle_doyle_election;
 
 import java.util.ArrayList;
 import java.util.List;

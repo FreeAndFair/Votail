@@ -7,7 +7,7 @@
  * File: ElectionTypes.java
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package election;
+package coyle_doyle_election;
 
 /**
  * A holder class for election types

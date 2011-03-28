@@ -12,8 +12,9 @@ import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-import election.FileUtils;
-import election.TieIterator;
+import coyle_doyle_election.FileUtils;
+import coyle_doyle_election.TieIterator;
+
 
 public class StatsCollector {
 

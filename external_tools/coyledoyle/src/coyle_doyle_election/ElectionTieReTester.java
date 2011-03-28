@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package election;
+package coyle_doyle_election;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -1,4 +1,4 @@
-package election;
+package coyle_doyle_election;
 
 public class Tools {
 

@@ -16,12 +16,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import election.CandidateStats;
-import election.Election;
-import election.ElectionTypes;
-import election.FileUtils;
-import election.ParseIESASC;
-import election.ParseIESVotes;
+import coyle_doyle_election.CandidateStats;
+import coyle_doyle_election.Election;
+import coyle_doyle_election.ElectionTypes;
+import coyle_doyle_election.FileUtils;
+import coyle_doyle_election.ParseIESASC;
+import coyle_doyle_election.ParseIESVotes;
+
 
 public class BulkTieTester {
     
