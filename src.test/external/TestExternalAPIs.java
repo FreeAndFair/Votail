@@ -1,41 +1,59 @@
 package external;
 
-import java.util.List;
-import java.util.logging.Logger;
-
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+import junit.framework.TestCase;
+
+import coyle_doyle_election.BallotPaper;
+import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 
-public class TestExternalAPIs {
+public class TestExternalAPIs extends TestCase {
   
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
   
-  void testScenarios() {
+  public void testScenarios() {
     Logger logger = Logger.getLogger(LOG_NAME);
     
     // replay PR-STV scenario list from stored file
-    ScenarioList scenarioList =
-        new ScenarioList(
-            ie.votail.model.factory.test.VotailSystemTest.SCENARIO_LIST_FILENAME);
-    
-    for (ElectoralScenario scenario : scenarioList) {
-      ElectionConfiguration ballotBox = extractBallotBox(scenario);
+    ScenarioList scenarioList;
+    try {
+      scenarioList =
+          new ScenarioList(
+              ie.votail.model.factory.test.VotailSystemTest.SCENARIO_LIST_FILENAME);
       
-      ElectionResult result1 = testHexMedia(ballotBox, scenario);
-      ElectionResult result2 = testCoyleDoyle(ballotBox, scenario);
-      ElectionResult result3 = testMacCarthyBallotBox(ballotBox, scenario);
-      ElectionResult result4 = testVotail(ballotBox, scenario);
+      for (ElectoralScenario scenario : scenarioList) {
+        ElectionConfiguration ballotBox = extractBallotBox(scenario);
+        
+        ElectionResult result1 = testHexMedia(ballotBox, scenario);
+        ElectionResult result2 = testCoyleDoyle(ballotBox, scenario);
+        ElectionResult result4 = testVotail(ballotBox, scenario);
+        
+        TestReport report4_1 = result4.compare(result1, scenario);
+        TestReport report4_2 = result4.compare(result2, scenario);
+        TestReport report1_2 = result1.compare(result2, scenario);
+        
+        logger.info(scenario + ":" + report4_1 + report4_2 + report1_2);
+      }
       
-      TestReport report41 = result4.compare(result1, scenario);
-      TestReport report42 = result4.compare(result2, scenario);
-      TestReport report43 = result4.compare(result3, scenario);
-      
-      logger.info(scenario + ":" + report41 + report42 + report43);
+    }
+    catch (IOException e) {
+      logger.severe("Failed to read scenarios from file because"
+          + e.getMessage());
+    }
+    catch (ClassNotFoundException e) {
+      logger.severe("Failed to load scenarios from file because"
+          + e.getMessage());
     }
   }
   
@@ -45,7 +63,7 @@ public class TestExternalAPIs {
     bc.setup(ballotBox.getConstituency());
     bc.load(ballotBox);
     bc.count();
-
+    
     ElectionResult result = new ElectionResult();
     result.setTitle("Votail");
     result.setQuota(bc.getQuota());
@@ -57,40 +75,66 @@ public class TestExternalAPIs {
     return factory.extractBallots(scenario, INITIAL_SCOPE);
   }
   
-  private ElectionResult testMacCarthyBallotBox(BallotBox ballotBox,
-      ElectoralScenario scenario) {
-    return null;
-    // TODO Auto-generated method stub
-    
-  }
-  
-  private ElectionResult testCoyleDoyle(BallotBox ballotBox,
+  public ElectionResult testCoyleDoyle(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     
-    ElectionResult result = new ElectionResult(); 
+    ElectionResult result = new ElectionResult();
     String[] candidates = null;
-    int numberOfSeats= scenario.numberOfWinners();
+    int numberOfSeats = scenario.numberOfWinners();
     int electionType = 0; // General election
-    election.Election election = new election.Election(candidates, 
-        numberOfSeats, electionType);
+    coyle_doyle_election.Election election =
+        new coyle_doyle_election.Election(candidates, numberOfSeats,
+            electionType);
     
-    List ballotPapers = convertBallotsIntoCoyleDoyleFormat(ballotBox);
-    election.election(ballotPapers);
-    
+    List<BallotPaper> ballotPapers =
+        convertBallotsIntoCoyleDoyleFormat(ballotBox);
+    int[] outcome = election.election(ballotPapers);
+    result.addOutcome (outcome);
     
     return result;
   }
   
-  private List convertBallotsIntoCoyleDoyleFormat(BallotBox ballotBox) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  private ElectionResult testHexMedia(BallotBox ballotBox,
-      ElectoralScenario scenario) {
-    return null;
-    // TODO Auto-generated method stub
+  /**
+   * Convert ballot box test data into a format readable by the
+   * Coyle-Doyle election algorithm.
+   * 
+   * @param ballotBox
+   *          The test data in Votail format.
+   * @return The test data in Coyle-Doyle format.
+   */
+  public List<BallotPaper> convertBallotsIntoCoyleDoyleFormat(
+      ElectionConfiguration ballotBox) {
     
+    List<BallotPaper> votes = new ArrayList<BallotPaper>();
+    
+    int voteNumber = 0;
+    while (ballotBox.isNextBallot()) {
+      Ballot ballot = ballotBox.getNextBallot();
+      int numberOfPreferences = ballot.remainingPreferences();
+      int[] preferences = new int[numberOfPreferences];
+      for (int i = 0; i < numberOfPreferences; i++) {
+        preferences[i] = ballot.getNextPreference(i);
+      }
+      BallotPaper bp = new BallotPaper(voteNumber, preferences);
+      votes.add(bp);
+      voteNumber++;
+    }
+    return votes;
   }
   
+  /**
+   * Test the HexMedia algorithm for PR-STV
+   * 
+   * @param ballotBox Test data in Votail format
+   * @param scenario Expected results
+   * @return Actual results
+   */
+  public ElectionResult testHexMedia(BallotBox ballotBox,
+      ElectoralScenario scenario) {
+    ElectionResult electionResult = new ElectionResult();
+    
+    // TODO convert ballot data and run election
+    
+    return electionResult;
+  }
 }

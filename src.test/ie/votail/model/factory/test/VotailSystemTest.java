@@ -10,6 +10,7 @@ import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
@@ -22,7 +23,7 @@ import election.tally.ElectionStatus;
 
 public class VotailSystemTest extends TestCase {
     
-  public static final String SCENARIO_LIST_FILENAME = null;
+  public static final String SCENARIO_LIST_FILENAME = "testdata/scenarios";
 
   @Test
   public void testPRSTV() {
@@ -41,8 +42,13 @@ public class VotailSystemTest extends TestCase {
         ScenarioList scenarioList =
             scenarioFactory.find(candidates, seats, Method.STV);
         
-        // TODO save and replay the scenario list for use in other tests
-        scenarioList.writeToFile (SCENARIO_LIST_FILENAME);
+        // Save and replay the scenario list for use in other tests
+        try {
+          scenarioList.writeToFile (SCENARIO_LIST_FILENAME + ".PR-STV");
+        }
+        catch (IOException e) {
+          logger.severe("Unable to store scenario list, because " + e.getMessage());
+        }
         
         for (ElectoralScenario scenario : scenarioList) {
           logger.info(scenario.toString());
@@ -129,6 +135,14 @@ public class VotailSystemTest extends TestCase {
       
       ScenarioList scenarioList =
           scenarioFactory.find(candidates, seats, Method.Plurality);
+      
+      // Save and replay the scenario list for use in other tests
+      try {
+        scenarioList.writeToFile (SCENARIO_LIST_FILENAME + ".plurality");
+      }
+      catch (IOException e) {
+        logger.severe("Unable to store scenario list, because " + e.getMessage());
+      }
       
       for (ElectoralScenario scenario : scenarioList) {
         logger.info(scenario.toString());

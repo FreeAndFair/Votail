@@ -6,6 +6,7 @@ public class ElectionResult {
   
   protected String title;
   private int quota;
+  private int[] orderOfCandidates;
 
   public TestReport compare(ElectionResult other, ElectoralScenario scenario) {
     
@@ -39,6 +40,15 @@ public class ElectionResult {
 
   public void setTitle(String string) {
     this.title = string;
+  }
+
+  /**
+   * Record election results
+   * 
+   * @param outcome Ordering of candidates
+   */
+  public void addOutcome(int[] outcome) {
+    this.orderOfCandidates = outcome;
   }
   
 }

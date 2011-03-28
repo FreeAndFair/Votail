@@ -14,7 +14,7 @@ public class ScenarioListTest {
   
   @Test
   public void testAddScenario() {
-    ScenarioList scenarioList = new ScenarioList(Method.STV);
+    ScenarioList scenarioList = new ScenarioList();
     ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenarioList.add(scenario);
     scenarioList.add(scenario.canonical());
@@ -26,7 +26,7 @@ public class ScenarioListTest {
   
   @Test
   public void testGetNumberOfScenarios() {
-    ScenarioList scenarioList = new ScenarioList(Method.STV);
+    ScenarioList scenarioList = new ScenarioList();
     ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenario.addOutcome(Outcome.Winner);
     scenarioList.add(scenario);
@@ -35,7 +35,7 @@ public class ScenarioListTest {
   
   @Test
   public void testHasScenario() {
-    ScenarioList scenarioList = new ScenarioList(Method.STV);
+    ScenarioList scenarioList = new ScenarioList();
     ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     assertFalse(scenarioList.hasScenario(scenario));
   }
