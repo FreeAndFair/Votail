@@ -7,7 +7,7 @@
  * File: ParseIESVotes.java
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package coyle_doyle_election;
+package coyle_doyle.election;
 
 import java.io.BufferedReader;
 import java.io.File;

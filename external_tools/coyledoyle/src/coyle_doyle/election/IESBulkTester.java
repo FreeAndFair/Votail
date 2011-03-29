@@ -7,7 +7,7 @@
  * File: IESBulkTester.java
  * Author: Administrator
  */
-package coyle_doyle_election;
+package coyle_doyle.election;
 import java.io.File;
 import java.util.Properties;
 import java.util.StringTokenizer;

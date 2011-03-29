@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package testers;
+package coyle_doyle.testers;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -12,8 +12,8 @@ import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-import coyle_doyle_election.FileUtils;
-import coyle_doyle_election.TieIterator;
+import coyle_doyle.election.FileUtils;
+import coyle_doyle.election.TieIterator;
 
 
 public class StatsCollector {

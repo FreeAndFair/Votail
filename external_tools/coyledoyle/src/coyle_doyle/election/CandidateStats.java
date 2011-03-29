@@ -7,7 +7,7 @@
  * File: CandidateStats.java 
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package coyle_doyle_election;
+package coyle_doyle.election;
 
 /**
  * This class represents the count number that each ballot paper was (finally) allocated to this candidate. It is used for statistical,

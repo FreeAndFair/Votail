@@ -7,9 +7,9 @@
  * File: Datasets.java
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package testers;
+package coyle_doyle.testers;
 
-import coyle_doyle_election.ElectionTypes;
+import coyle_doyle.election.ElectionTypes;
 
 /**
  * @author Lorcan Coyle and Dónal Doyle

@@ -7,14 +7,13 @@
  * File: Election.java
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package coyle_doyle_election;
+package coyle_doyle.election;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import tools.Tools;
 
 /**
  * This is the main class that implements Irish Elections

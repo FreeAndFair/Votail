@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package testers;
+package coyle_doyle.testers;
 
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -16,12 +16,12 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import coyle_doyle_election.CandidateStats;
-import coyle_doyle_election.Election;
-import coyle_doyle_election.ElectionTypes;
-import coyle_doyle_election.FileUtils;
-import coyle_doyle_election.ParseIESASC;
-import coyle_doyle_election.ParseIESVotes;
+import coyle_doyle.election.CandidateStats;
+import coyle_doyle.election.Election;
+import coyle_doyle.election.ElectionTypes;
+import coyle_doyle.election.FileUtils;
+import coyle_doyle.election.ParseIESASC;
+import coyle_doyle.election.ParseIESVotes;
 
 
 public class BulkTieTester {

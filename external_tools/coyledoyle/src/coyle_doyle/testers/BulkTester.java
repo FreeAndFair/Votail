@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package testers;
+package coyle_doyle.testers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,13 +21,13 @@ import java.util.StringTokenizer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import coyle_doyle_election.CandidateStats;
-import coyle_doyle_election.Election;
-import coyle_doyle_election.ElectionTypes;
-import coyle_doyle_election.FileUtils;
-import coyle_doyle_election.ParseIESASC;
-import coyle_doyle_election.ParseIESVotes;
-import coyle_doyle_election.TieIterator;
+import coyle_doyle.election.CandidateStats;
+import coyle_doyle.election.Election;
+import coyle_doyle.election.ElectionTypes;
+import coyle_doyle.election.FileUtils;
+import coyle_doyle.election.ParseIESASC;
+import coyle_doyle.election.ParseIESVotes;
+import coyle_doyle.election.TieIterator;
 
 
 public class BulkTester {

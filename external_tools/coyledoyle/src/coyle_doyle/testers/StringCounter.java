@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-package testers;
+package coyle_doyle.testers;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import coyle_doyle_election.FileUtils;
+import coyle_doyle.election.FileUtils;
 
 
 public class StringCounter {

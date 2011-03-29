@@ -7,7 +7,7 @@
  * File: BallotStacks.java
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package coyle_doyle_election;
+package coyle_doyle.election;
 import java.util.ArrayList;
 import java.util.List;
 /**

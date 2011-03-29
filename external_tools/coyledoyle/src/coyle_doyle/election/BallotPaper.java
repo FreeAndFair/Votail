@@ -7,7 +7,7 @@
  * File: BallotPaper.java 
  * Author: Lorcan Coyle and Dónal Doyle
  */
-package coyle_doyle_election;
+package coyle_doyle.election;
 
 /**
  * The BallotPaper class represents a single ballot paper in an election. It contains a number identifying it (and used in surplus

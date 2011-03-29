@@ -7,7 +7,7 @@
  * File: Tester.java
  * Author: Administrator
  */
-package coyle_doyle_election;
+package coyle_doyle.election;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
