@@ -16,7 +16,7 @@ import com.hexmedia.prstv.CandidatePreference;
 
 import junit.framework.TestCase;
 
-import coyle_doyle_election.BallotPaper;
+import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
@@ -87,8 +87,8 @@ public class TestExternalAPIs extends TestCase {
     String[] candidates = null;
     int numberOfSeats = scenario.numberOfWinners();
     int electionType = 0; // General election
-    coyle_doyle_election.Election election =
-        new coyle_doyle_election.Election(candidates, numberOfSeats,
+    coyle_doyle.election.Election election =
+        new coyle_doyle.election.Election(candidates, numberOfSeats,
             electionType);
     
     List<BallotPaper> ballotPapers =
