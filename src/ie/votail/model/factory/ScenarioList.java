@@ -72,6 +72,8 @@ public class ScenarioList extends ArrayList<ElectoralScenario> {
     }
     finally {
       input.close();
+      buffer.close();
+      file.close();
     }
     
     // Recreate the full list from the bucket and partitions
@@ -172,7 +174,22 @@ public class ScenarioList extends ArrayList<ElectoralScenario> {
     }
     finally {
       output.close();
+      buffer.close();
+      file.close();
     }
     
+    // Also write to a text file, for debugging and diagnostics
+    OutputStream textFile = new FileOutputStream(filename + ".toString");
+    OutputStream textBuffer = new BufferedOutputStream(textFile);
+    ObjectOutput textOutput = new ObjectOutputStream(textBuffer);
+    try {
+      textOutput.writeChars(bucket.toString());
+      textOutput.writeChars(partitions.toString());
+    }
+    finally {
+      textOutput.close();
+      textBuffer.close();
+      textFile.close();
+    }
   }
 }
