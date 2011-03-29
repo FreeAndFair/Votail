@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.hexmedia.prstv.BallotList;
+import com.hexmedia.prstv.Candidate;
+import com.hexmedia.prstv.CandidatePreference;
+
 import junit.framework.TestCase;
 
 import coyle_doyle_election.BallotPaper;
@@ -30,7 +34,8 @@ public class TestExternalAPIs extends TestCase {
     try {
       scenarioList =
           new ScenarioList(
-              ie.votail.model.factory.test.VotailSystemTest.SCENARIO_LIST_FILENAME);
+              ie.votail.model.factory.test.VotailSystemTest.SCENARIO_LIST_FILENAME
+                  + ie.votail.model.factory.test.VotailSystemTest.PR_STV);
       
       for (ElectoralScenario scenario : scenarioList) {
         ElectionConfiguration ballotBox = extractBallotBox(scenario);
@@ -48,7 +53,7 @@ public class TestExternalAPIs extends TestCase {
       
     }
     catch (IOException e) {
-      logger.severe("Failed to read scenarios from file because"
+      logger.severe("Failed to read scenarios from file because "
           + e.getMessage());
     }
     catch (ClassNotFoundException e) {
@@ -89,7 +94,7 @@ public class TestExternalAPIs extends TestCase {
     List<BallotPaper> ballotPapers =
         convertBallotsIntoCoyleDoyleFormat(ballotBox);
     int[] outcome = election.election(ballotPapers);
-    result.addOutcome (outcome);
+    result.addOutcome(outcome);
     
     return result;
   }
@@ -125,8 +130,10 @@ public class TestExternalAPIs extends TestCase {
   /**
    * Test the HexMedia algorithm for PR-STV
    * 
-   * @param ballotBox Test data in Votail format
-   * @param scenario Expected results
+   * @param ballotBox
+   *          Test data in Votail format
+   * @param scenario
+   *          Expected results
    * @return Actual results
    */
   public ElectionResult testHexMedia(BallotBox ballotBox,
@@ -134,7 +141,41 @@ public class TestExternalAPIs extends TestCase {
     ElectionResult electionResult = new ElectionResult();
     
     // TODO convert ballot data and run election
+    com.hexmedia.prstv.BallotList ballotList =
+        convertBallotsToHexMediaFormat(ballotBox);
+    
+    // TODO count ballots
+    
+    // TODO store results
     
     return electionResult;
+  }
+  
+  /**
+   * Convert Votail ballot box into hexmedia format.
+   * 
+   * @param ballotBox
+   * @return
+   */
+  public BallotList convertBallotsToHexMediaFormat(BallotBox ballotBox) {
+    BallotList ballotList = new BallotList();
+    
+    int voteNumber = 0;
+    while (ballotBox.isNextBallot()) {
+      Ballot ballot = ballotBox.getNextBallot();
+      int numberOfPreferences = ballot.remainingPreferences();
+      List<CandidatePreference> candidateList = new ArrayList<CandidatePreference>();
+      for (int i = 0; i < numberOfPreferences; i++) {
+        Candidate candidate = null; // TODO
+        CandidatePreference preference = new CandidatePreference(candidate, i);
+        candidateList.add(preference);
+      }
+      com.hexmedia.prstv.Ballot hexMediaBallot =
+          new com.hexmedia.prstv.Ballot(voteNumber, candidateList, false,
+              numberOfPreferences, false);
+      ballotList.add(hexMediaBallot);
+      voteNumber++;
+    }
+    return ballotList;
   }
 }

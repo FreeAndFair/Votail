@@ -23,6 +23,7 @@ import election.tally.ElectionStatus;
 
 public class VotailSystemTest extends TestCase {
     
+  public static final String PR_STV = ".prstv";
   public static final String SCENARIO_LIST_FILENAME = "testdata/scenarios";
 
   @Test
@@ -44,7 +45,7 @@ public class VotailSystemTest extends TestCase {
         
         // Save and replay the scenario list for use in other tests
         try {
-          scenarioList.writeToFile (SCENARIO_LIST_FILENAME + ".PR-STV");
+          scenarioList.writeToFile (SCENARIO_LIST_FILENAME + VotailSystemTest.PR_STV);
         }
         catch (IOException e) {
           logger.severe("Unable to store scenario list, because " + e.getMessage());
