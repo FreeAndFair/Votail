@@ -19,12 +19,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-@SuppressWarnings("serial")
-public class ScenarioList extends ArrayList<ElectoralScenario> {
+public class ScenarioList extends ArrayList<ElectoralScenario> implements Serializable {
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 7207848959544184536L;
+
   // Maximum number of partitions within the list
   public static int MAX_PARTITIONS = 11; // Ten possible outcomes, plus one
   
