@@ -1,5 +1,7 @@
 package election.tally;
 
+import ie.votail.model.Outcome;
+
 import java.util.logging.Logger;
 
 /**

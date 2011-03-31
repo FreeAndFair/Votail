@@ -47,7 +47,6 @@ public class ScenarioListTest extends TestCase {
       scenarioList.writeToFile(filename);
     }
     catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     try {
@@ -55,11 +54,9 @@ public class ScenarioListTest extends TestCase {
       assert scenarioList.equals(emptyScenarioList);
     }
     catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     catch (ClassNotFoundException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

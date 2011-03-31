@@ -1,6 +1,11 @@
 package election.tally;
 
+import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.Method;
+
 import java.util.logging.Logger;
+
+import external.ElectionResult;
 
 /**
  * Ballot counting for elections to Dail Eireann - the lower house of the Irish
@@ -518,5 +523,22 @@ public class BallotCounting extends AbstractBallotCounting {
   
   public Candidate getCandidate(int i) {
     return candidates[i];
+  }
+
+  /**
+   * Run the whole election
+   * 
+   * @param ballotBox Ballot box and election configuration
+   * @param byeElection 
+   * @param method 
+   * @return The election results
+   */
+  public ElectionResult run(ElectionConfiguration ballotBox, boolean byeElection, Method method) {
+    this.setup (ballotBox.getConstituency());
+    this.load (ballotBox);
+    this.count();
+    ElectionResult electionResult = new ElectionResult(this.getQuota(), 
+        this.getSavingThreshold(), this.getNumberOfRounds(), this.candidates);
+    return electionResult;
   }
 }

@@ -182,19 +182,5 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
       buffer.close();
       file.close();
     }
-    
-    // Also write to a text file, for debugging and diagnostics
-    OutputStream textFile = new FileOutputStream(filename + ".toString");
-    OutputStream textBuffer = new BufferedOutputStream(textFile);
-    ObjectOutput textOutput = new ObjectOutputStream(textBuffer);
-    try {
-      textOutput.writeChars(bucket.toString());
-      textOutput.writeChars(partitions.toString());
-    }
-    finally {
-      textOutput.close();
-      textBuffer.close();
-      textFile.close();
-    }
   }
 }

@@ -1,54 +1,151 @@
 package external;
 
-import ie.votail.model.ElectoralScenario;
+import election.tally.Candidate;
 
+/**
+ * Generic record of PR-STV election results
+ * 
+ * @author Dermot Cochran
+ * 
+ */
 public class ElectionResult {
   
-  protected String title;
-  private int quota;
-  private int[] orderOfCandidates;
-
-  public TestReport compare(ElectionResult other, ElectoralScenario scenario) {
+  public static class CandidateResults {
+    private byte[] status;
+    private int[][] votes;
+    private int[] finalVotes;
+    private int[] identifiers;
     
-    TestReport report = new TestReport();
-    
-    report.setTitle (this.title + " compared with " + other.title);
-    
-    // Check quota
-    if (this.getQuota() != other.getQuota()) {
-      report.add ("Quota calculations are not in agreement");
+    public CandidateResults() {
     }
     
+    public byte[] getStatus() {
+      return status;
+    }
     
-    // Check number of rounds of counting
+    public void setStatus(byte[] status) {
+      this.status = status;
+    }
     
-    // Check Winners
+    public int[][] getVotes() {
+      return votes;
+    }
     
+    public void setVotes(int[][] votes) {
+      this.votes = votes;
+    }
     
-    // Check Losers
+    public int[] getFinalVotes() {
+      return finalVotes;
+    }
     
-    return report;
+    public void setFinalVotes(int[] finalVotes) {
+      this.finalVotes = finalVotes;
+    }
+    
+    public int[] getIdentifiers() {
+      return identifiers;
+    }
+    
+    public void setIdentifiers(int[] identifiers) {
+      this.identifiers = identifiers;
+    }
+    
+    /**
+     * The candidate results, ordered by candidate identifier
+     * 
+     * @return
+     */
+    public CandidateResults canonical() {
+      CandidateResults result = new CandidateResults ();
+      
+      // TODO
+      
+      return result;
+      
+    }
+    
+    public boolean equals (CandidateResults other) {
+      // TODO
+      
+      return false;
+    }
   }
 
-  private Object getQuota() {
-    return this.quota;
-  }
+  protected int quota;
+  protected int threshold;
+  protected CandidateResults candidateResults = new CandidateResults();
 
-  public void setQuota(int quota) {
+  public ElectionResult(int quota, int threshold) {
+    
     this.quota = quota;
+    this.threshold = threshold;
   }
-
-  public void setTitle(String string) {
-    this.title = string;
+  
+  public ElectionResult(int quota, int threshold, int rounds,
+      Candidate[] candidates) {
+    
+    this.quota = quota;
+    this.threshold = threshold;
+    
+    extractCandidateResults(rounds, candidates);
   }
 
   /**
-   * Record election results
-   * 
-   * @param outcome Ordering of candidates
+   * @param rounds
+   * @param candidates
    */
-  public void addOutcome(int[] outcome) {
-    this.orderOfCandidates = outcome;
+  protected void extractCandidateResults(int rounds, Candidate[] candidates) {
+    int numberOfCandidates = candidates.length;
+    candidateResults.setStatus(new byte [numberOfCandidates]);
+    candidateResults.setVotes(new int[numberOfCandidates][rounds]);
+    candidateResults.setFinalVotes(new int[numberOfCandidates]);
+    candidateResults.setIdentifiers(new int[numberOfCandidates]);
+    
+    for (int i = 0; i < numberOfCandidates; i++) {
+      for (int r = 0; r < rounds; r++) {
+        candidateResults.getVotes()[i][r] = candidates[i].getTotalAtCount(r);
+      }
+     candidateResults.getStatus()[i] = candidates[i].getStatus();
+     candidateResults.getFinalVotes()[i] = candidates[i].getFinalVote();
+     candidateResults.getIdentifiers()[i] = candidates[i].getCandidateID();
+    }
   }
+  
+  /**
+   * @return the quota
+   */
+  public int getQuota() {
+    return quota;
+  }
+  
+  /**
+   * @return the threshold
+   */
+  public int getThreshold() {
+    return threshold;
+  }
+  
+  /**
+   * Compare with another election result
+   * 
+   * @param other The other sets of results
+   * 
+   * @return True if all values agree, when sorted by identifier
+   */
+  public boolean equals (ElectionResult other) {
+    
+    if (this.quota != other.quota) {
+      return false;
+    }
+    
+    if (this.threshold != other.threshold) {
+      return false;
+    }
+    
+    return this.candidateResults.equals(
+      other.candidateResults);
+  }
+  
   
 }

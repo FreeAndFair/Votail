@@ -31,11 +31,12 @@ public class TestExternalAPIs extends TestCase {
     
     // replay PR-STV scenario list from stored file
     ScenarioList scenarioList;
+    final String filename =
+        ie.votail.model.factory.test.VotailSystemTest.SCENARIO_LIST_FILENAME
+            + ie.votail.model.factory.test.VotailSystemTest.PR_STV;
     try {
-      scenarioList =
-          new ScenarioList(
-              ie.votail.model.factory.test.VotailSystemTest.SCENARIO_LIST_FILENAME
-                  + ie.votail.model.factory.test.VotailSystemTest.PR_STV);
+      
+      scenarioList = new ScenarioList(filename);
       
       for (ElectoralScenario scenario : scenarioList) {
         ElectionConfiguration ballotBox = extractBallotBox(scenario);
@@ -53,25 +54,20 @@ public class TestExternalAPIs extends TestCase {
       
     }
     catch (IOException e) {
-      logger.severe("Failed to read scenarios from file because "
+      logger.severe("Failed to read scenarios from file " + filename + " because "
           + e.getMessage());
     }
     catch (ClassNotFoundException e) {
-      logger.severe("Failed to load scenarios from file because"
-          + e.getMessage());
+      logger.severe("Failed to load scenarios from file " + filename
+          + " because " + e.getMessage());
     }
   }
   
   protected ElectionResult testVotail(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     BallotCounting bc = new BallotCounting();
-    bc.setup(ballotBox.getConstituency());
-    bc.load(ballotBox);
-    bc.count();
+    ElectionResult result = bc.run(ballotBox);
     
-    ElectionResult result = new ElectionResult();
-    result.setTitle("Votail");
-    result.setQuota(bc.getQuota());
     return result;
   }
   
@@ -142,9 +138,10 @@ public class TestExternalAPIs extends TestCase {
     
     String filename = convertBallotsToHexMediaFormat(ballotBox);
     
-    int numberOfSeats = ballotBox.getConstituency().getNumberOfSeatsInThisElection();
-    com.hexmedia.prstv.Election election = 
-      new com.hexmedia.prstv.Election (numberOfSeats, filename);
+    int numberOfSeats =
+        ballotBox.getConstituency().getNumberOfSeatsInThisElection();
+    com.hexmedia.prstv.Election election =
+        new com.hexmedia.prstv.Election(numberOfSeats, filename);
     
     election.initialize();
     election.runCount();
@@ -162,19 +159,20 @@ public class TestExternalAPIs extends TestCase {
    * @return
    */
   public String convertBallotsToHexMediaFormat(BallotBox ballotBox) {
-
+    
     String filename = TESTDATA_PREFIX + ballotBox.hashCode() + SUFFIX;
     
     int voteNumber = 0;
     FileWriter fileWriter;
     BufferedWriter writer;
     try {
-      fileWriter = new FileWriter (filename);
-      writer = new BufferedWriter (fileWriter);
+      fileWriter = new FileWriter(filename);
+      writer = new BufferedWriter(fileWriter);
       while (ballotBox.isNextBallot()) {
         Ballot ballot = ballotBox.getNextBallot();
         int numberOfPreferences = ballot.remainingPreferences();
-        StringBuffer BallotCSV = new StringBuffer(" " + ballot.getNextPreference(0));
+        StringBuffer BallotCSV =
+            new StringBuffer(" " + ballot.getNextPreference(0));
         for (int i = 1; i < numberOfPreferences; i++) {
           BallotCSV.append("," + ballot.getNextPreference(i));
         }
@@ -185,8 +183,9 @@ public class TestExternalAPIs extends TestCase {
       }
     }
     catch (IOException e) {
-      logger.severe("Unable to create CSV file because " + e.getLocalizedMessage());
-    
+      logger.severe("Unable to create CSV file because "
+          + e.getLocalizedMessage());
+      
     }
     
     return filename;
