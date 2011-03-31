@@ -11,6 +11,8 @@ import election.tally.Candidate;
 public class ElectionResult {
   
   public static class CandidateResults {
+    protected int roundsOfCounting;
+    protected int numberOfCandidates;
     private byte[] status;
     private int[][] votes;
     private int[] finalVotes;
@@ -51,24 +53,69 @@ public class ElectionResult {
       this.identifiers = identifiers;
     }
     
-    /**
-     * The candidate results, ordered by candidate identifier
-     * 
-     * @return
-     */
-    public CandidateResults canonical() {
-      CandidateResults result = new CandidateResults ();
-      
-      // TODO
-      
-      return result;
-      
-    }
-    
     public boolean equals (CandidateResults other) {
-      // TODO
+      if (this.numberOfCandidates != other.numberOfCandidates) {
+        return false;
+      }
       
-      return false;
+      if (this.roundsOfCounting != other.roundsOfCounting) {
+        return false;
+      }
+      
+      for (int i=0; i<numberOfCandidates;i++) {
+        
+        // Find matching candidate ID
+        boolean matchedID = false;
+        for (int j=0; j<numberOfCandidates; j++) {
+          if (this.identifiers[i] == other.identifiers[j]) {
+            matchedID = true;
+            if (this.status[i] != other.status[j]) {
+              return false;
+            }
+            
+            // TODO
+            // TODO
+            // TODO
+            
+            for (int round=0; round<this.roundsOfCounting; rounds++) {
+              
+            }
+          }
+          if (!matchedID) {
+            return false;
+          }
+        }
+      }
+      
+      return true;
+    }
+
+    /**
+     * @return the roundsOfCounting
+     */
+    public int getRoundsOfCounting() {
+      return roundsOfCounting;
+    }
+
+    /**
+     * @return the numberOfCandidates
+     */
+    public int getNumberOfCandidates() {
+      return numberOfCandidates;
+    }
+
+    /**
+     * @param roundsOfCounting the roundsOfCounting to set
+     */
+    public void setRoundsOfCounting(int roundsOfCounting) {
+      this.roundsOfCounting = roundsOfCounting;
+    }
+
+    /**
+     * @param numberOfCandidates the numberOfCandidates to set
+     */
+    public void setNumberOfCandidates(int numberOfCandidates) {
+      this.numberOfCandidates = numberOfCandidates;
     }
   }
 

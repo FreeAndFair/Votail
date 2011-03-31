@@ -8,6 +8,7 @@ import java.util.Iterator;
 
 import election.tally.BallotCounting;
 import election.tally.Candidate;
+import external.ElectionResult;
 
 /**
  * A combination of possible election outcomes for each candidate.
@@ -398,5 +399,14 @@ public class ElectoralScenario {
   //@ ensures \result == byeElection;
   public /*@ pure @*/ boolean isByeElection() {
     return byeElection;
+  }
+  
+  /**
+   * Does the expected scenario match the actual election result?
+   * 
+   * @return
+   */
+  public boolean matchesResult (ElectionResult result) {
+    return false;
   }
 }
