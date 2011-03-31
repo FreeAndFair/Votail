@@ -5,17 +5,14 @@ import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioList;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.hexmedia.prstv.BallotList;
-import com.hexmedia.prstv.Candidate;
-import com.hexmedia.prstv.CandidatePreference;
-
 import junit.framework.TestCase;
-
 import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
 import election.tally.BallotBox;
@@ -25,9 +22,12 @@ public class TestExternalAPIs extends TestCase {
   
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
+  public static final String SUFFIX = ".csv";
+  public static final String TESTDATA_PREFIX = "testdata/BallotBox";
+  private Logger logger;
   
   public void testScenarios() {
-    Logger logger = Logger.getLogger(LOG_NAME);
+    logger = Logger.getLogger(LOG_NAME);
     
     // replay PR-STV scenario list from stored file
     ScenarioList scenarioList;
@@ -136,17 +136,21 @@ public class TestExternalAPIs extends TestCase {
    *          Expected results
    * @return Actual results
    */
-  public ElectionResult testHexMedia(BallotBox ballotBox,
+  public ElectionResult testHexMedia(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     ElectionResult electionResult = new ElectionResult();
     
-    // TODO convert ballot data and run election
-    com.hexmedia.prstv.BallotList ballotList =
-        convertBallotsToHexMediaFormat(ballotBox);
+    String filename = convertBallotsToHexMediaFormat(ballotBox);
     
-    // TODO count ballots
+    int numberOfSeats = ballotBox.getConstituency().getNumberOfSeatsInThisElection();
+    com.hexmedia.prstv.Election election = 
+      new com.hexmedia.prstv.Election (numberOfSeats, filename);
     
-    // TODO store results
+    election.initialize();
+    election.runCount();
+    
+    // TODO examine modified CSV file
+    // TODO compare election results with expected scenario
     
     return electionResult;
   }
@@ -157,25 +161,34 @@ public class TestExternalAPIs extends TestCase {
    * @param ballotBox
    * @return
    */
-  public BallotList convertBallotsToHexMediaFormat(BallotBox ballotBox) {
-    BallotList ballotList = new BallotList();
+  public String convertBallotsToHexMediaFormat(BallotBox ballotBox) {
+
+    String filename = TESTDATA_PREFIX + ballotBox.hashCode() + SUFFIX;
     
     int voteNumber = 0;
-    while (ballotBox.isNextBallot()) {
-      Ballot ballot = ballotBox.getNextBallot();
-      int numberOfPreferences = ballot.remainingPreferences();
-      List<CandidatePreference> candidateList = new ArrayList<CandidatePreference>();
-      for (int i = 0; i < numberOfPreferences; i++) {
-        Candidate candidate = null; // TODO
-        CandidatePreference preference = new CandidatePreference(candidate, i);
-        candidateList.add(preference);
+    FileWriter fileWriter;
+    BufferedWriter writer;
+    try {
+      fileWriter = new FileWriter (filename);
+      writer = new BufferedWriter (fileWriter);
+      while (ballotBox.isNextBallot()) {
+        Ballot ballot = ballotBox.getNextBallot();
+        int numberOfPreferences = ballot.remainingPreferences();
+        StringBuffer BallotCSV = new StringBuffer(" " + ballot.getNextPreference(0));
+        for (int i = 1; i < numberOfPreferences; i++) {
+          BallotCSV.append("," + ballot.getNextPreference(i));
+        }
+        voteNumber++;
+        CharSequence csq;
+        csq = BallotCSV;
+        writer.append(csq);
       }
-      com.hexmedia.prstv.Ballot hexMediaBallot =
-          new com.hexmedia.prstv.Ballot(voteNumber, candidateList, false,
-              numberOfPreferences, false);
-      ballotList.add(hexMediaBallot);
-      voteNumber++;
     }
-    return ballotList;
+    catch (IOException e) {
+      logger.severe("Unable to create CSV file because " + e.getLocalizedMessage());
+    
+    }
+    
+    return filename;
   }
 }

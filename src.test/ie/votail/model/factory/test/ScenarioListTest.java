@@ -1,16 +1,16 @@
 package ie.votail.model.factory.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.io.IOException;
+
+import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
 import ie.votail.model.Outcome;
-import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.ScenarioList;
+import junit.framework.TestCase;
 
 import org.junit.Test;
 
-public class ScenarioListTest {
+public class ScenarioListTest extends TestCase {
   
   @Test
   public void testAddScenario() {
@@ -38,6 +38,30 @@ public class ScenarioListTest {
     ScenarioList scenarioList = new ScenarioList();
     ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     assertFalse(scenarioList.hasScenario(scenario));
+  }
+  
+  public void testSerialisation() {
+    ScenarioList scenarioList = new ScenarioList();
+    final String filename = "testdata/empty.scenario";
+    try {
+      scenarioList.writeToFile(filename);
+    }
+    catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    try {
+      ScenarioList emptyScenarioList = new ScenarioList(filename);
+      assert scenarioList.equals(emptyScenarioList);
+    }
+    catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    catch (ClassNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   
 }
