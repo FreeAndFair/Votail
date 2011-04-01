@@ -126,11 +126,14 @@ public class ElectionConfiguration extends BallotBox {
     this.numberOfCandidates = theNumberOfCandidates;
   }
   
-  public void writeBallotBoxToFile (String filename) {
-    // TODO
-  }
+ 
   
   public void loadBallotBoxFromFile (String filename) {
     // TODO
+  }
+
+  public void writeToFile(String ballotboxFilename) {
+    // TODO Auto-generated method stub
+    
   }
 }

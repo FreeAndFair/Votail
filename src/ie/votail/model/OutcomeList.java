@@ -1,12 +1,17 @@
 package ie.votail.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * @author Dermot Cochran
  *
  */
-public class OutcomeList {
+public class OutcomeList implements Serializable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
   private ArrayList<Outcome> outcomes;
 
   /**

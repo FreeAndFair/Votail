@@ -4,6 +4,7 @@
 
 package ie.votail.model;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import election.tally.BallotCounting;
@@ -14,10 +15,15 @@ import external.ElectionResult;
  * A combination of possible election outcomes for each candidate.
  */
 
-public class ElectoralScenario {
+public class ElectoralScenario implements Serializable {
   
   // Refinement from Alloy Analyser axioms to JML invariants
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -5582137662901839518L;
+
   /**
    * <Alloy>
    * fact validTieBreaker {
