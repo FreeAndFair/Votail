@@ -17,6 +17,7 @@ import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
+import election.tally.Constituency;
 
 public class TestExternalAPIs extends TestCase {
   
@@ -24,6 +25,7 @@ public class TestExternalAPIs extends TestCase {
   public static final String LOG_NAME = "Cross Testing and Validation";
   public static final String SUFFIX = ".csv";
   public static final String TESTDATA_PREFIX = "testdata/BallotBox";
+  public static final int GENERAL_ELECTION = 0;
   private Logger logger;
   
   public void testScenarios() {
@@ -32,8 +34,7 @@ public class TestExternalAPIs extends TestCase {
     // replay PR-STV scenario list from stored file
     ScenarioList scenarioList;
     final String filename =
-        ie.votail.model.factory.test.VotailSystemTest.SCENARIO_LIST_FILENAME
-            + ie.votail.model.factory.test.VotailSystemTest.PR_STV;
+        ie.votail.model.factory.test.CreateSystemTestData.SCENARIO_LIST_FILENAME;
     try {
       
       scenarioList = new ScenarioList(filename);
@@ -41,15 +42,13 @@ public class TestExternalAPIs extends TestCase {
       for (ElectoralScenario scenario : scenarioList) {
         ElectionConfiguration ballotBox = extractBallotBox(scenario);
         
-        ElectionResult result1 = testHexMedia(ballotBox, scenario);
-        ElectionResult result2 = testCoyleDoyle(ballotBox, scenario);
-        ElectionResult result4 = testVotail(ballotBox, scenario);
+        ElectionResult hexMediaResult = testHexMedia(ballotBox, scenario);
+        ElectionResult coyleDoyleResult = testCoyleDoyle(ballotBox, scenario);
+        ElectionResult votailResult = testVotail(ballotBox, scenario);
         
-        TestReport report4_1 = result4.compare(result1, scenario);
-        TestReport report4_2 = result4.compare(result2, scenario);
-        TestReport report1_2 = result1.compare(result2, scenario);
-        
-        logger.info(scenario + ":" + report4_1 + report4_2 + report1_2);
+        assert hexMediaResult.equals(coyleDoyleResult);
+        assert coyleDoyleResult.equals(votailResult);
+        assert votailResult.equals(hexMediaResult);
       }
       
     }
@@ -63,10 +62,23 @@ public class TestExternalAPIs extends TestCase {
     }
   }
   
+  /**
+   * Run Votail with test data and match results with expected scenario
+   * 
+   * @param ballotBox The test data
+   * @param scenario The expected result
+   * @return The actual result
+   */
   protected ElectionResult testVotail(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
-    BallotCounting bc = new BallotCounting();
-    ElectionResult result = bc.run(ballotBox);
+    BallotCounting votail = new BallotCounting();
+    ElectionResult result = votail.run(ballotBox);
+    
+    if (!scenario.check(votail)) {
+      logger.severe("Unexpected results for scenario " + scenario
+          + " using predicate " + scenario.toPredicate() + " and ballot box "
+          + ballotBox);
+    }
     
     return result;
   }
@@ -79,18 +91,26 @@ public class TestExternalAPIs extends TestCase {
   public ElectionResult testCoyleDoyle(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     
-    ElectionResult result = new ElectionResult();
-    String[] candidates = null;
+    Constituency constituency = ballotBox.getConstituency();
+    int numberOfCandidates= scenario.getNumberOfCandidates();
+    String[] candidates = new String[numberOfCandidates];
+    
+    for (int i=0; i<numberOfCandidates; i++) {
+      candidates[i] = "" + constituency.getCandidate(i).getCandidateID();
+    }
+    
     int numberOfSeats = scenario.numberOfWinners();
-    int electionType = 0; // General election
+    int electionType = GENERAL_ELECTION;
+    
     coyle_doyle.election.Election election =
         new coyle_doyle.election.Election(candidates, numberOfSeats,
             electionType);
     
     List<BallotPaper> ballotPapers =
         convertBallotsIntoCoyleDoyleFormat(ballotBox);
+    
     int[] outcome = election.election(ballotPapers);
-    result.addOutcome(outcome);
+    ElectionResult result = new ElectionResult(outcome, numberOfSeats);
     
     return result;
   }
@@ -134,20 +154,19 @@ public class TestExternalAPIs extends TestCase {
    */
   public ElectionResult testHexMedia(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
-    ElectionResult electionResult = new ElectionResult();
     
-    String filename = convertBallotsToHexMediaFormat(ballotBox);
+    String ballotBox_filename = convertBallotsToHexMediaFormat(ballotBox);
     
     int numberOfSeats =
         ballotBox.getConstituency().getNumberOfSeatsInThisElection();
     com.hexmedia.prstv.Election election =
-        new com.hexmedia.prstv.Election(numberOfSeats, filename);
+        new com.hexmedia.prstv.Election(numberOfSeats, ballotBox_filename);
     
     election.initialize();
     election.runCount();
-    
-    // TODO examine modified CSV file
-    // TODO compare election results with expected scenario
+        
+    String results_filename = "results.html";
+    ElectionResult electionResult = new ElectionResult(results_filename);
     
     return electionResult;
   }

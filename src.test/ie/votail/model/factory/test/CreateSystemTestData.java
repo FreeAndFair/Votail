@@ -21,13 +21,13 @@ import election.tally.BallotCounting;
 import election.tally.Constituency;
 import election.tally.ElectionStatus;
 
-public class VotailSystemTest extends TestCase {
+public class CreateSystemTestData extends TestCase {
     
-  public static final String PR_STV = ".prstv";
-  public static final String SCENARIO_LIST_FILENAME = "testdata/scenarios";
+  public static final String BALLOTBOX_FILENAME = "testdata/ballotboxes.prstv";
+  public static final String SCENARIO_LIST_FILENAME = "testdata/scenarios.prstv";
 
   @Test
-  public void testPRSTV() {
+  public void makeDataForPRSTV() {
     
     final int numberOfSeats = 5;
     final int numberOfCandidates = 11; // Ten possible outcomes plus one
@@ -45,7 +45,7 @@ public class VotailSystemTest extends TestCase {
         
         // Save and replay the scenario list for use in other tests
         try {
-          scenarioList.writeToFile (SCENARIO_LIST_FILENAME + VotailSystemTest.PR_STV);
+          scenarioList.writeToFile (SCENARIO_LIST_FILENAME);
         }
         catch (IOException e) {
           logger.severe("Unable to store scenario list, because " + e.getMessage());
@@ -55,19 +55,9 @@ public class VotailSystemTest extends TestCase {
           logger.info(scenario.toString());
           ElectionConfiguration electionConfiguration =
               createElection(scenario);
-          Constituency constituency = electionConfiguration.getConstituency();
-          BallotCounting ballotCounting = new BallotCounting();
-
-          ballotCounting.setup(constituency);
-          ballotCounting.load(electionConfiguration);
-          ballotCounting.count();
-          //@ assert (ballotCounting.getStatus() == ElectionStatus.FINISHED);
-          logger.info(ballotCounting.getResults());
-          logger.info(ballotCounting.getNumberOfRounds()
-              + " rounds of counting ");
-          if (!scenario.check(ballotCounting)) {
-            logFailure(logger, scenario, electionConfiguration);
-          }
+          
+          electionConfiguration.writeToFile(BALLOTBOX_FILENAME);
+          
         }
       }
     }
@@ -90,38 +80,14 @@ public class VotailSystemTest extends TestCase {
     return electionConfiguration;
   }
   
-  /**
-   * Log information for failed or skipped scenarios.
-   * 
-   * @param logger
-   *          The logging service to use
-   * @param scenario
-   *          The scenario which failed or was skipped
-   * @param electionConfiguration
-   *          The ballot box and candidates for this scenario
-   */
-  protected void logFailure(Logger logger, ElectoralScenario scenario,
-      ElectionConfiguration electionConfiguration) {
-    
-    if (scenario.hasOutcome(Outcome.TiedSoreLoser)
-        || electionConfiguration.size() == 0) {
-      logger.info("Skipped this scenario " + scenario.toString());
-    }
-    else {
-      logger.severe("Unexpected results for scenario " + scenario
-          + " using predicate " + scenario.toPredicate() + " and ballot box "
-          + electionConfiguration);
-    }
-  }
-  
   public static void main(String[] args) {
-    VotailSystemTest universalTest = new VotailSystemTest();
-    universalTest.testPRSTV();
-    universalTest.testPlurality();
+    CreateSystemTestData universalTest = new CreateSystemTestData();
+    universalTest.makeDataForPRSTV();
+    universalTest.makeDataForPlurality();
   }
   
   @Test
-  public void testPlurality() {
+  public void makeDataForPlurality() {
     
     final int numberOfCandidates = 7; // Six possible outcomes, plus one
     final int seats = 1;
@@ -139,7 +105,7 @@ public class VotailSystemTest extends TestCase {
       
       // Save and replay the scenario list for use in other tests
       try {
-        scenarioList.writeToFile (SCENARIO_LIST_FILENAME + ".plurality");
+        scenarioList.writeToFile (SCENARIO_LIST_FILENAME);
       }
       catch (IOException e) {
         logger.severe("Unable to store scenario list, because " + e.getMessage());
@@ -148,16 +114,9 @@ public class VotailSystemTest extends TestCase {
       for (ElectoralScenario scenario : scenarioList) {
         logger.info(scenario.toString());
         ElectionConfiguration electionConfiguration = createElection(scenario);
-        Constituency constituency = electionConfiguration.getConstituency();
-        BallotCounting ballotCounting = new BallotCounting();
+        
+        electionConfiguration.writeToFile(BALLOTBOX_FILENAME);
 
-        ballotCounting.setup(constituency);
-        ballotCounting.load(electionConfiguration);
-        ballotCounting.count();
-        logger.info(ballotCounting.getResults());
-        if (!scenario.check(ballotCounting)) {
-          logFailure(logger, scenario, electionConfiguration);
-        }
       }
     }
   }
