@@ -2,8 +2,10 @@ package external;
 
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
+import ie.votail.model.RankedBallot;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioList;
+import ie.votail.model.factory.test.UniversalTest;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -11,6 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import com.hexmedia.prstv.Candidate;
 
 import junit.framework.TestCase;
 import coyle_doyle.election.BallotPaper;
@@ -33,13 +37,13 @@ public class TestExternalAPIs extends TestCase {
     
     // replay PR-STV scenario list from stored file
     ScenarioList scenarioList;
-    final String filename =
-        ie.votail.model.factory.test.CreateSystemTestData.SCENARIO_LIST_FILENAME;
+    final String filename = UniversalTest.PRSTV_SCENARIO_LIST_FILENAME;
     try {
       
       scenarioList = new ScenarioList(filename);
       
       for (ElectoralScenario scenario : scenarioList) {
+        // TODO read Ballot Box test data from pre-generated file of Ballot Boxes
         ElectionConfiguration ballotBox = extractBallotBox(scenario);
         
         ElectionResult hexMediaResult = testHexMedia(ballotBox, scenario);
@@ -53,8 +57,8 @@ public class TestExternalAPIs extends TestCase {
       
     }
     catch (IOException e) {
-      logger.severe("Failed to read scenarios from file " + filename + " because "
-          + e.getMessage());
+      logger.severe("Failed to read scenarios from file " + filename
+          + " because " + e.getMessage());
     }
     catch (ClassNotFoundException e) {
       logger.severe("Failed to load scenarios from file " + filename
@@ -65,8 +69,10 @@ public class TestExternalAPIs extends TestCase {
   /**
    * Run Votail with test data and match results with expected scenario
    * 
-   * @param ballotBox The test data
-   * @param scenario The expected result
+   * @param ballotBox
+   *          The test data
+   * @param scenario
+   *          The expected result
    * @return The actual result
    */
   protected ElectionResult testVotail(ElectionConfiguration ballotBox,
@@ -92,10 +98,10 @@ public class TestExternalAPIs extends TestCase {
       ElectoralScenario scenario) {
     
     Constituency constituency = ballotBox.getConstituency();
-    int numberOfCandidates= scenario.getNumberOfCandidates();
+    int numberOfCandidates = scenario.getNumberOfCandidates();
     String[] candidates = new String[numberOfCandidates];
     
-    for (int i=0; i<numberOfCandidates; i++) {
+    for (int i = 0; i < numberOfCandidates; i++) {
       candidates[i] = "" + constituency.getCandidate(i).getCandidateID();
     }
     
@@ -123,7 +129,7 @@ public class TestExternalAPIs extends TestCase {
    *          The test data in Votail format.
    * @return The test data in Coyle-Doyle format.
    */
-  public List<BallotPaper> convertBallotsIntoCoyleDoyleFormat(
+  protected List<BallotPaper> convertBallotsIntoCoyleDoyleFormat(
       ElectionConfiguration ballotBox) {
     
     List<BallotPaper> votes = new ArrayList<BallotPaper>();
@@ -164,7 +170,7 @@ public class TestExternalAPIs extends TestCase {
     
     election.initialize();
     election.runCount();
-        
+    
     String results_filename = "results.html";
     ElectionResult electionResult = new ElectionResult(results_filename);
     
@@ -172,12 +178,13 @@ public class TestExternalAPIs extends TestCase {
   }
   
   /**
-   * Convert Votail ballot box into hexmedia format.
+   * Convert test ballot box into hexmedia format.
    * 
    * @param ballotBox
    * @return
    */
-  public String convertBallotsToHexMediaFormat(BallotBox ballotBox) {
+  protected String convertBallotsToHexMediaFormat(
+      ElectionConfiguration ballotBox) {
     
     String filename = TESTDATA_PREFIX + ballotBox.hashCode() + SUFFIX;
     
@@ -187,18 +194,37 @@ public class TestExternalAPIs extends TestCase {
     try {
       fileWriter = new FileWriter(filename);
       writer = new BufferedWriter(fileWriter);
+      
+      Constituency candidateList = ballotBox.getConstituency();
+      int numberOfCandidates = candidateList.getNumberOfCandidates();
+      
+      writer.append("\"Mixed Vote No.\"");
+      for (int c = 0; c < numberOfCandidates; c++) {
+        election.tally.Candidate candidate = candidateList.getCandidate(c);
+        // TODO     w.print (";\""+c.name()+"\"");
+        writer.append(";\"" + candidate.getCandidateID() + "\"");
+        
+      }
+      
+      int index = 1;
       while (ballotBox.isNextBallot()) {
         Ballot ballot = ballotBox.getNextBallot();
+        writer.append("\"" + index + "\"");
+        
         int numberOfPreferences = ballot.remainingPreferences();
-        StringBuffer BallotCSV =
-            new StringBuffer(" " + ballot.getNextPreference(0));
-        for (int i = 1; i < numberOfPreferences; i++) {
-          BallotCSV.append("," + ballot.getNextPreference(i));
+        
+        for (int i = 0; i < numberOfCandidates; i++) {
+          election.tally.Candidate candidate = candidateList.getCandidate(i);
+          int candidateID = candidate.getCandidateID();
+          
+          if (!ballot.isApproved(candidateID)) {
+            writer.append(";\"" + " " + "\"");
+          }
+          
+          writer.append(";\"" + Integer.toString(ballot.getRank(candidateID))
+              + "\"");
         }
-        voteNumber++;
-        CharSequence csq;
-        csq = BallotCSV;
-        writer.append(csq);
+        index++;
       }
     }
     catch (IOException e) {

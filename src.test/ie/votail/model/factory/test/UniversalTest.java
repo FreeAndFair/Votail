@@ -5,7 +5,6 @@ package ie.votail.model.factory.test;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
-import ie.votail.model.Outcome;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
@@ -17,20 +16,20 @@ import junit.framework.TestCase;
 
 import org.testng.annotations.Test;
 
-import election.tally.BallotCounting;
-import election.tally.Constituency;
-import election.tally.ElectionStatus;
-
-public class CreateSystemTestData extends TestCase {
+public class UniversalTest extends TestCase {
     
-  public static final String BALLOTBOX_FILENAME = "testdata/ballotboxes.prstv";
-  public static final String SCENARIO_LIST_FILENAME = "testdata/scenarios.prstv";
+  public static final String PSRTV_BALLOTBOX_FILENAME = 
+    "testdata/ballotboxes.prstv";
+  public static final String PRSTV_SCENARIO_LIST_FILENAME = 
+    "testdata/scenarios.prstv";
+  public static final String PLURALITY_SCENARIO_LIST_FILENAME = 
+    "testdata/scenarios.plurality";
+  public static final String PLURALITY_BALLOTBOX_FILENAME = 
+    "testdata/ballotboxes.plurality";
 
   @Test
-  public void makeDataForPRSTV() {
+  public void makeDataForPRSTV(int numberOfSeats, int numberOfCandidates) {
     
-    final int numberOfSeats = 5;
-    final int numberOfCandidates = 11; // Ten possible outcomes plus one
     final int scope = numberOfCandidates;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
@@ -45,7 +44,7 @@ public class CreateSystemTestData extends TestCase {
         
         // Save and replay the scenario list for use in other tests
         try {
-          scenarioList.writeToFile (SCENARIO_LIST_FILENAME);
+          scenarioList.writeToFile (PRSTV_SCENARIO_LIST_FILENAME);
         }
         catch (IOException e) {
           logger.severe("Unable to store scenario list, because " + e.getMessage());
@@ -56,7 +55,7 @@ public class CreateSystemTestData extends TestCase {
           ElectionConfiguration electionConfiguration =
               createElection(scenario);
           
-          electionConfiguration.writeToFile(BALLOTBOX_FILENAME);
+          electionConfiguration.writeToFile(PSRTV_BALLOTBOX_FILENAME);
           
         }
       }
@@ -81,16 +80,16 @@ public class CreateSystemTestData extends TestCase {
   }
   
   public static void main(String[] args) {
-    CreateSystemTestData universalTest = new CreateSystemTestData();
-    universalTest.makeDataForPRSTV();
-    universalTest.makeDataForPlurality();
+    UniversalTest universalTest = new UniversalTest();
+    universalTest.makeDataForPRSTV(5, 11);
+    universalTest.makeDataForPlurality(1, 7);
   }
   
   @Test
-  public void makeDataForPlurality() {
+  //@ requires 0 < numberOfSeats && numberOfSeats < numberOfCandidates;
+  public void makeDataForPlurality(int numberOfSeats, int numberOfCandidates) {
     
-    final int numberOfCandidates = 7; // Six possible outcomes, plus one
-    final int seats = 1;
+    final int seats = numberOfSeats;
     
     ScenarioFactory scenarioFactory = new ScenarioFactory();
     Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
@@ -105,7 +104,7 @@ public class CreateSystemTestData extends TestCase {
       
       // Save and replay the scenario list for use in other tests
       try {
-        scenarioList.writeToFile (SCENARIO_LIST_FILENAME);
+        scenarioList.writeToFile (PLURALITY_SCENARIO_LIST_FILENAME);
       }
       catch (IOException e) {
         logger.severe("Unable to store scenario list, because " + e.getMessage());
@@ -115,7 +114,7 @@ public class CreateSystemTestData extends TestCase {
         logger.info(scenario.toString());
         ElectionConfiguration electionConfiguration = createElection(scenario);
         
-        electionConfiguration.writeToFile(BALLOTBOX_FILENAME);
+        electionConfiguration.writeToFile(PLURALITY_BALLOTBOX_FILENAME);
 
       }
     }
