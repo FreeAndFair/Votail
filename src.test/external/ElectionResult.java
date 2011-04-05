@@ -127,6 +127,10 @@ public class ElectionResult {
     // TODO Auto-generated constructor stub
   }
 
+  public ElectionResult() {
+    // TODO Auto-generated constructor stub
+  }
+
   /**
    * Extract candidate results from Votail format
    * 

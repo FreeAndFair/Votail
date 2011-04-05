@@ -90,9 +90,17 @@ public class TestExternalAPIs extends TestCase {
     return factory.extractBallots(scenario, INITIAL_SCOPE);
   }
   
+  /**
+   * Run the coyle doyle election algorithm.
+   * 
+   * @param ballotBox
+   * @param scenario
+   * @return
+   */
   public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     
+    ElectionResult result;
     Constituency constituency = ballotBox.getConstituency();
     int numberOfCandidates = scenario.getNumberOfCandidates();
     String[] candidates = new String[numberOfCandidates];
@@ -104,15 +112,24 @@ public class TestExternalAPIs extends TestCase {
     int numberOfSeats = scenario.numberOfWinners();
     int electionType = GENERAL_ELECTION;
     
-    coyle_doyle.election.Election election =
-        new coyle_doyle.election.Election(candidates, numberOfSeats,
-            electionType);
+    int[] outcome;
+    try {
+      coyle_doyle.election.Election election =
+          new coyle_doyle.election.Election(candidates, numberOfSeats,
+              electionType);
+      
+      List<BallotPaper> ballotPapers =
+          convertBallotsIntoCoyleDoyleFormat(ballotBox);
+      
+      outcome = election.election(ballotPapers);
+      
+      result = new ElectionResult(outcome, numberOfSeats);
+    }
+    catch (Exception e) {
+      logger.severe("Runtime error in Coyle-Doyle " + e.getLocalizedMessage());
+      result = new ElectionResult();
+    }
     
-    List<BallotPaper> ballotPapers =
-        convertBallotsIntoCoyleDoyleFormat(ballotBox);
-    
-    int[] outcome = election.election(ballotPapers);
-    ElectionResult result = new ElectionResult(outcome, numberOfSeats);
     
     return result;
   }
@@ -141,7 +158,9 @@ public class TestExternalAPIs extends TestCase {
       BallotPaper bp = new BallotPaper(voteNumber, preferences);
       votes.add(bp);
       voteNumber++;
+      logger.info(bp.toString());
     }
+    
     return votes;
   }
   
@@ -206,7 +225,7 @@ public class TestExternalAPIs extends TestCase {
       while (ballotBox.isNextBallot()) {
         Ballot ballot = ballotBox.getNextBallot();
         writer.append("\"" + index + "\"");
-
+        
         for (int i = 0; i < numberOfCandidates; i++) {
           election.tally.Candidate candidate = candidateList.getCandidate(i);
           int candidateID = candidate.getCandidateID();
@@ -214,9 +233,10 @@ public class TestExternalAPIs extends TestCase {
           if (!ballot.isApproved(candidateID)) {
             writer.append(";\"" + " " + "\"");
           }
-          
-          writer.append(";\"" + Integer.toString(ballot.getRank(candidateID))
-              + "\"");
+          else {
+            writer.append(";\"" + Integer.toString(ballot.getRank(candidateID))
+                + "\"");
+          }
         }
         index++;
       }
