@@ -42,9 +42,9 @@ public class TestExternalAPIs extends TestCase {
         // TODO read Ballot Box test data from pre-generated file of Ballot Boxes
         ElectionConfiguration ballotBox = extractBallotBox(scenario);
         
-        ElectionResult hexMediaResult = testHexMedia(ballotBox, scenario);
-        ElectionResult coyleDoyleResult = testCoyleDoyle(ballotBox, scenario);
-        ElectionResult votailResult = testVotail(ballotBox, scenario);
+        ElectionResult hexMediaResult = runHexMedia(ballotBox, scenario);
+        ElectionResult coyleDoyleResult = runCoyleDoyle(ballotBox, scenario);
+        ElectionResult votailResult = runVotail(ballotBox, scenario);
         
         assert hexMediaResult.equals(coyleDoyleResult);
         assert coyleDoyleResult.equals(votailResult);
@@ -71,7 +71,7 @@ public class TestExternalAPIs extends TestCase {
    *          The expected result
    * @return The actual result
    */
-  protected ElectionResult testVotail(ElectionConfiguration ballotBox,
+  protected ElectionResult runVotail(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     BallotCounting votail = new BallotCounting();
     ElectionResult result = votail.run(ballotBox);
@@ -90,7 +90,7 @@ public class TestExternalAPIs extends TestCase {
     return factory.extractBallots(scenario, INITIAL_SCOPE);
   }
   
-  public ElectionResult testCoyleDoyle(ElectionConfiguration ballotBox,
+  public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     
     Constituency constituency = ballotBox.getConstituency();
@@ -154,7 +154,7 @@ public class TestExternalAPIs extends TestCase {
    *          Expected results
    * @return Actual results
    */
-  public ElectionResult testHexMedia(ElectionConfiguration ballotBox,
+  public ElectionResult runHexMedia(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     
     String ballotBox_filename = convertBallotsToHexMediaFormat(ballotBox);
@@ -186,7 +186,6 @@ public class TestExternalAPIs extends TestCase {
     
     String filename = TESTDATA_PREFIX + ballotBox.hashCode() + SUFFIX;
     
-    int voteNumber = 0;
     FileWriter fileWriter;
     BufferedWriter writer;
     try {
@@ -207,9 +206,7 @@ public class TestExternalAPIs extends TestCase {
       while (ballotBox.isNextBallot()) {
         Ballot ballot = ballotBox.getNextBallot();
         writer.append("\"" + index + "\"");
-        
-        int numberOfPreferences = ballot.remainingPreferences();
-        
+
         for (int i = 0; i < numberOfCandidates; i++) {
           election.tally.Candidate candidate = candidateList.getCandidate(i);
           int candidateID = candidate.getCandidateID();
@@ -223,6 +220,8 @@ public class TestExternalAPIs extends TestCase {
         }
         index++;
       }
+      writer.flush();
+      writer.close();
     }
     catch (IOException e) {
       logger.severe("Unable to create CSV file because "
