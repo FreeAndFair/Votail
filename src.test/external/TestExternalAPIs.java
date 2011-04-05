@@ -2,7 +2,6 @@ package external;
 
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
-import ie.votail.model.RankedBallot;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioList;
 import ie.votail.model.factory.test.UniversalTest;
@@ -14,12 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.hexmedia.prstv.Candidate;
-
 import junit.framework.TestCase;
 import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
-import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
 
@@ -27,7 +23,7 @@ public class TestExternalAPIs extends TestCase {
   
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
-  public static final String SUFFIX = ".csv";
+  public static final String SUFFIX = ".txt";
   public static final String TESTDATA_PREFIX = "testdata/BallotBox";
   public static final int GENERAL_ELECTION = 0;
   private Logger logger;
@@ -168,6 +164,8 @@ public class TestExternalAPIs extends TestCase {
     com.hexmedia.prstv.Election election =
         new com.hexmedia.prstv.Election(numberOfSeats, ballotBox_filename);
     
+    com.hexmedia.prstv.Display.create();
+    com.hexmedia.prstv.Display.setElection(election);
     election.initialize();
     election.runCount();
     
@@ -201,7 +199,6 @@ public class TestExternalAPIs extends TestCase {
       writer.append("\"Mixed Vote No.\"");
       for (int c = 0; c < numberOfCandidates; c++) {
         election.tally.Candidate candidate = candidateList.getCandidate(c);
-        // TODO     w.print (";\""+c.name()+"\"");
         writer.append(";\"" + candidate.getCandidateID() + "\"");
         
       }

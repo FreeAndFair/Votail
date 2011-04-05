@@ -119,7 +119,7 @@ public class ElectionResult {
   }
   
   /**
-   * Extract election results from HexMedia output file
+   * Extract election results from HexMedia HTML output file
    * 
    * @param resultsFilename
    */

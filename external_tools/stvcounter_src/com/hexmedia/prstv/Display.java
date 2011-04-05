@@ -190,7 +190,7 @@ public class Display implements ActionListener {
 
     static final String initString = "PR-STV counter V0.3";
 
-    static void create () {
+    public static void create () {
 	display = new Display ();
 	head1 (initString);
 	log ("(c) Michael McMahon 2005");
