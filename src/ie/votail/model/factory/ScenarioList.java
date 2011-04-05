@@ -83,12 +83,12 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
     
     // Recreate the full list from the bucket and partitions
     for (ElectoralScenario scenario : bucket) {
-      this.add(scenario);
+      super.add(scenario);
     }
     
     for (int i = 0; i < partitions.length; i++) {
       for (ElectoralScenario scenario : partitions[i]) {
-        this.add(scenario);
+        super.add(scenario);
       }
       
     }
