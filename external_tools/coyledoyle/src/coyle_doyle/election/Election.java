@@ -272,9 +272,11 @@ public class Election {
 	 */
 	private void channelOneStart(BallotStacks ballotStacks, int potential) {
 		int[] order = getOrdering(ballotStacks);
-		if (numberOfRemainingSeats == 1 && numberOfContinuingCandidates == 2) {
+		if (numberOfRemainingSeats <= 1 && numberOfContinuingCandidates <= 2) {
 			endElection(ballotStacks);
 		}
+		
+    // FIXME 2011.04.06 possible array index out of bounds
 		int lastCandidate = order[numberOfContinuingCandidates - 1];
 		int lastCandidateNumberOfVotes = ballotStacks.getCandidateNumberOfBallotPapers(lastCandidate);
 		int secondLowestCandidate = order[numberOfContinuingCandidates - 2];
@@ -1169,6 +1171,7 @@ public class Election {
 			// candidate is tied with the first
 			// eliminatable candidate...
 			int lastElectableIndex = result.length - resultIndex - 1;
+			// FIXME 2011.04.06 possible array index out of bounds exception
 			int lastElectableNumberOfVotes = ballotStacks.getCandidateNumberOfBallotPapers(order[lastElectableIndex]);
 			int firstEliminatableNumberOfVotes = ballotStacks.getCandidateNumberOfBallotPapers(order[lastElectableIndex + 1]);
 			if (lastElectableNumberOfVotes == firstEliminatableNumberOfVotes) {

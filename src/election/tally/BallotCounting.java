@@ -1,10 +1,10 @@
 package election.tally;
 
 import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.ElectionResult;
 
 import java.util.logging.Logger;
 
-import external.ElectionResult;
 
 /**
  * Ballot counting for elections to Dail Eireann - the lower house of the Irish

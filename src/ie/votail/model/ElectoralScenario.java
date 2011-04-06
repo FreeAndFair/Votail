@@ -9,7 +9,6 @@ import java.util.Iterator;
 
 import election.tally.BallotCounting;
 import election.tally.Candidate;
-import external.ElectionResult;
 
 /**
  * A combination of possible election outcomes for each candidate.
