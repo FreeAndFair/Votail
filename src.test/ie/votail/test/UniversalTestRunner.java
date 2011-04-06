@@ -1,11 +1,10 @@
-package ie.votail.model.test;
+package ie.votail.test;
 
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioList;
-import ie.votail.model.factory.test.UniversalTest;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -20,7 +19,7 @@ import election.tally.Ballot;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
 
-public class ElectionResultTest extends TestCase {
+public class UniversalTestRunner extends TestCase {
   
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
@@ -34,7 +33,7 @@ public class ElectionResultTest extends TestCase {
     
     // replay PR-STV scenario list from stored file
     ScenarioList scenarioList;
-    final String filename = UniversalTest.PRSTV_SCENARIO_LIST_FILENAME;
+    final String filename = UniversalTestGenerator.PRSTV_SCENARIO_LIST_FILENAME;
     try {
       
       scenarioList = new ScenarioList(filename);

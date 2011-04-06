@@ -1,6 +1,6 @@
 // 2010-2011, Dermot Cochran, IT University of Copenhagen
 
-package ie.votail.model.factory.test;
+package ie.votail.test;
 
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 
 import org.testng.annotations.Test;
 
-public class UniversalTest extends TestCase {
+public class UniversalTestGenerator extends TestCase {
     
   public static final String PSRTV_BALLOTBOX_FILENAME = 
     "testdata/ballotboxes.prstv";
@@ -80,7 +80,7 @@ public class UniversalTest extends TestCase {
   }
   
   public static void main(String[] args) {
-    UniversalTest universalTest = new UniversalTest();
+    UniversalTestGenerator universalTest = new UniversalTestGenerator();
     universalTest.makeDataForPRSTV(5, 11);
     universalTest.makeDataForPlurality(1, 7);
   }
