@@ -1,4 +1,4 @@
-package external;
+package ie.votail.model;
 
 import election.tally.Candidate;
 import election.tally.CandidateStatus;

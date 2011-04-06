@@ -1,6 +1,7 @@
-package external;
+package ie.votail.model.test;
 
 import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioList;
@@ -19,7 +20,7 @@ import election.tally.Ballot;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
 
-public class TestExternalAPIs extends TestCase {
+public class ElectionResultTest extends TestCase {
   
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
@@ -42,9 +43,9 @@ public class TestExternalAPIs extends TestCase {
         // TODO read Ballot Box test data from pre-generated file of Ballot Boxes
         ElectionConfiguration ballotBox = extractBallotBox(scenario);
         
+        ElectionResult votailResult = runVotail(ballotBox, scenario);
         ElectionResult hexMediaResult = runHexMedia(ballotBox, scenario);
         ElectionResult coyleDoyleResult = runCoyleDoyle(ballotBox, scenario);
-        ElectionResult votailResult = runVotail(ballotBox, scenario);
         
         assert hexMediaResult.equals(coyleDoyleResult);
         assert coyleDoyleResult.equals(votailResult);
@@ -91,11 +92,11 @@ public class TestExternalAPIs extends TestCase {
   }
   
   /**
-   * Run the coyle doyle election algorithm.
+   * Run the Coyle-Doyle election algorithm.
    * 
-   * @param ballotBox
-   * @param scenario
-   * @return
+   * @param ballotBox The set of test data
+   * @param scenario The expected result
+   * @return The actual result
    */
   public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
@@ -113,23 +114,19 @@ public class TestExternalAPIs extends TestCase {
     int electionType = GENERAL_ELECTION;
     
     int[] outcome;
-    try {
       coyle_doyle.election.Election election =
           new coyle_doyle.election.Election(candidates, numberOfSeats,
               electionType);
       
       List<BallotPaper> ballotPapers =
           convertBallotsIntoCoyleDoyleFormat(ballotBox);
+      logger.info(ballotPapers.toString());
       
       outcome = election.election(ballotPapers);
       
       result = new ElectionResult(outcome, numberOfSeats);
-    }
-    catch (Exception e) {
-      logger.severe("Runtime error in Coyle-Doyle " + e.getLocalizedMessage());
-      result = new ElectionResult();
-    }
     
+    // TODO check actual results against expected scenario
     
     return result;
   }
