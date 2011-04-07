@@ -19,15 +19,10 @@
 
 package com.hexmedia.prstv;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.*;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import javax.swing.SwingUtilities;
 
 public class Election {
 
@@ -46,7 +41,7 @@ public class Election {
     List<Candidate> candidates; /* doesn't change */
     List<Surplus> surpluses;
     
-    public Election (int nseats, String file) {
+    Election (int nseats, String file) {
 	this.votes = votes;
 	this.nseats = nseats;
 	this.file = file;
@@ -55,7 +50,7 @@ public class Election {
 	surpluses = new LinkedList<Surplus>();
     }
 
-    public void initialize() {
+    void initialize() {
 	Display.nextPage();
 	Display.log ("Reading candidate and ballot data from <b>" + 
 			file + " </b>");

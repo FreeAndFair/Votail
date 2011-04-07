@@ -525,4 +525,16 @@ pred LLLtLtWt {
 }
 run LLLtLtWt for 10 but 7 int
 
+pred LLLLWstv {
+  some disj a,b,c,d,e: Candidate | 
+    e.outcome = Loser and 
+    d.outcome = Loser and 
+    c.outcome = Loser and 
+    b.outcome = Loser and 
+    a.outcome = Winner and 
+    Election.method = STV and 
+    #Candidate = 5
+}
+run LLLLWstv for 16 but 7 int
+
 

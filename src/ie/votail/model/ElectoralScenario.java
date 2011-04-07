@@ -365,7 +365,7 @@ public class ElectoralScenario implements Serializable {
     return result;
   }
   
-  public int getNumberOfCandidates() {
+  public /*@ pure @*/ int getNumberOfCandidates() {
     return this.numberOfCandidates;
   }
   
@@ -412,6 +412,9 @@ public class ElectoralScenario implements Serializable {
    * @return
    */
   public boolean matchesResult (ElectionResult result) {
+    
+    // TODO
+    
     return false;
   }
 }

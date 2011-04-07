@@ -49,8 +49,7 @@ public enum Outcome {
     }
     // Losers at or above threshold, without elimination
     else if (this == Loser || this == TiedLoser) {
-        return !candidate.isElected() && 
-               !candidate.isEliminated() &&
+        return !candidate.isElected() &&
                threshold <= candidate.getTotalVote();
     }
     // Losers at or above threshold, with elimination

@@ -9,9 +9,17 @@ import ie.votail.model.factory.ScenarioList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.objenesis.Objenesis;
+import org.objenesis.ObjenesisStd;
+import org.objenesis.instantiator.ObjectInstantiator;
+
+import com.hexmedia.prstv.Display;
+import com.hexmedia.prstv.Election;
 
 import junit.framework.TestCase;
 import coyle_doyle.election.BallotPaper;
@@ -26,10 +34,12 @@ public class UniversalTestRunner extends TestCase {
   public static final String SUFFIX = ".txt";
   public static final String TESTDATA_PREFIX = "testdata/BallotBox";
   public static final int GENERAL_ELECTION = 0;
-  private Logger logger;
+  protected Logger logger;
+  protected Objenesis objenesis;
   
   public void testScenarios() {
     logger = Logger.getLogger(LOG_NAME);
+    objenesis = new ObjenesisStd();
     
     // replay PR-STV scenario list from stored file
     ScenarioList scenarioList;
@@ -176,30 +186,99 @@ public class UniversalTestRunner extends TestCase {
     
     int numberOfSeats =
         ballotBox.getConstituency().getNumberOfSeatsInThisElection();
-    com.hexmedia.prstv.Election election =
-        new com.hexmedia.prstv.Election(numberOfSeats, ballotBox_filename);
     
-    com.hexmedia.prstv.Display.create();
-    com.hexmedia.prstv.Display.setElection(election);
-    election.initialize();
+    ObjectInstantiator electionInstantiator = 
+      objenesis.getInstantiatorOf(com.hexmedia.prstv.Election.class);
+    
+    com.hexmedia.prstv.Election election =
+        (Election) electionInstantiator.newInstance();
+    
+    ObjectInstantiator displayInstantiator =
+        objenesis.getInstantiatorOf(com.hexmedia.prstv.Display.class);
+    
+    com.hexmedia.prstv.Display display =
+      (Display) displayInstantiator.newInstance();
+    
+    //  new com.hexmedia.prstv.Election(numberOfSeats, ballotBox_filename);
+    setNumberOfSeats(numberOfSeats, election);
+    setFilename(ballotBox_filename, election);
+    
+    
+    display.setElection(election);
+
     election.runCount();
+    display.enableNextButton();
     
     String results_filename = "results.html";
     ElectionResult electionResult = new ElectionResult(results_filename);
     
     return electionResult;
   }
+
+  /**
+   * @param numberOfSeats
+   * @param election
+   */
+  protected void setNumberOfSeats(int numberOfSeats,
+      com.hexmedia.prstv.Election election) {
+    final Class<? extends Election> electionClass = election.getClass();
+    
+    try {
+      Field nseats = electionClass.getDeclaredField("nseats");
+      nseats.setAccessible(true);
+      nseats.setInt(election, numberOfSeats);
+    }
+    catch (IllegalArgumentException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IllegalAccessException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (SecurityException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (NoSuchFieldException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+  }
+
+  /**
+   * @param ballotBox_filename
+   * @param election
+   */
+  protected void setFilename(String ballotBox_filename,
+      com.hexmedia.prstv.Election election) {
+    try {
+      Field filename;
+      filename = election.getClass().getDeclaredField("file");
+      filename.setAccessible(true);
+      filename.set(election, ballotBox_filename);
+    }
+    catch (SecurityException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (NoSuchFieldException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IllegalArgumentException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IllegalAccessException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+  }
   
   /**
    * Convert test ballot box into hexmedia format.
    * 
-   * @param ballotBox
-   * @return
+   * @param ballotBox The test data representing a ballot box
+   * @return The name of the file into which testdata was written
    */
   protected String convertBallotsToHexMediaFormat(
       ElectionConfiguration ballotBox) {
     
-    String filename = TESTDATA_PREFIX + ballotBox.hashCode() + SUFFIX;
+    String filename = TESTDATA_PREFIX + ballotBox.hashCode() +  
+      System.currentTimeMillis() + SUFFIX;
     
     FileWriter fileWriter;
     BufferedWriter writer;

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import tools.Tools;
 
 /**
  * This is the main class that implements Irish Elections
@@ -272,10 +273,9 @@ public class Election {
 	 */
 	private void channelOneStart(BallotStacks ballotStacks, int potential) {
 		int[] order = getOrdering(ballotStacks);
-		if (numberOfRemainingSeats <= 1 && numberOfContinuingCandidates <= 2) {
+		if (numberOfRemainingSeats == 1 && numberOfContinuingCandidates == 2) {
 			endElection(ballotStacks);
 		}
-		
     // FIXME 2011.04.06 possible array index out of bounds
 		int lastCandidate = order[numberOfContinuingCandidates - 1];
 		int lastCandidateNumberOfVotes = ballotStacks.getCandidateNumberOfBallotPapers(lastCandidate);
