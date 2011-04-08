@@ -61,8 +61,8 @@ public class UniversalTestRunner extends TestCase {
         ElectionConfiguration ballotBox = extractBallotBox(scenario);
         
         ElectionResult votailResult = runVotail(ballotBox, scenario);
-        ElectionResult hexMediaResult = runHexMedia(ballotBox, scenario);
         ElectionResult coyleDoyleResult = runCoyleDoyle(ballotBox, scenario);
+        ElectionResult hexMediaResult = runHexMedia(ballotBox, scenario);
         
         assert hexMediaResult.equals(coyleDoyleResult);
         assert coyleDoyleResult.equals(votailResult);
