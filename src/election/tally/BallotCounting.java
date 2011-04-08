@@ -1,6 +1,5 @@
 package election.tally;
 
-import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
 
 import java.util.logging.Logger;
@@ -532,8 +531,8 @@ public class BallotCounting extends AbstractBallotCounting {
    */
   //@ requires state == EMPTY;
   //@ ensures state == FINISHED;
-  public /*@ non_null @*/ ElectionResult run(ElectionConfiguration ballotBox) {
-    this.setup (ballotBox.getConstituency());
+  public /*@ non_null @*/ ElectionResult run(Constituency constituency, BallotBox ballotBox) {
+    this.setup (constituency);
     this.load (ballotBox);
     this.count();
     ElectionResult electionResult = new ElectionResult(this.candidates);

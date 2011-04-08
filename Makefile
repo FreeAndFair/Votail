@@ -10,7 +10,7 @@ FIGSCALE = 0.5
 # CLASSPATH components
 
 LIB = external_libraries
-CORECP	= src:src.test:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar
+CORECP	= src:src.test:external_tools/coyledoyle/src:external_tools/stvcounter_src:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar:$(LIB)/objenesis-1.2.jar
 SPECS = external_tools/JML/specs
 JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
 JUNITCP = $(LIB)/junit.jar
@@ -49,8 +49,8 @@ UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(F
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
 javapat	=	$(srcpath)/election/tally/*.java
-javapat5	= $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java src.test/ie/votail/model/factory/test/VotailSystemTest.java
-javafiles =	$(wildcard $(srcpath)/election/tally/*.java $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java src.test/ie/votail/model/factory/test/VotailSystemTest.java)
+javapat5	= $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java src.test/ie/votail/uilioch//UniversalTestRunner.java
+javafiles =	$(wildcard $(srcpath)/election/tally/*.java $(srcpath)/ie/votail/model/*.java $(srcpath)/ie/votail/model/factory/*.java src.test/ie/votail/uilioch/UniversalTestRunner.java)
 jmlunitpat =	$(jmlunit_path)/election/tally/*.java
 jmlunitfiles =	$(wildcard $(jmlunit_path)/election/tally/*.java)
 generated_jmlunitfiles	=	$(wildcard $(jmlunit_path)/election/tally/*_JML_Test.java)
@@ -275,14 +275,14 @@ universal-test:	universal.stamp
 
 universal.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	java $(test_memory_use) ie.votail.model.factory.test.VotailSystemTest; \
+	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
 universal-rac-test:	universal-rac.stamp
 
 universal-rac.stamp:	universal-test jml-junit-test
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
-	java $(test_memory_use) ie.votail.model.factory.test.VotailSystemTest; \
+	java $(test_memory_use) ie.votail.model.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
 # generating source-based documentation

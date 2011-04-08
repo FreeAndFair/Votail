@@ -1,6 +1,6 @@
 // 2010-2011, Dermot Cochran, IT University of Copenhagen
 
-package ie.votail.test;
+package ie.votail.uilioch;
 
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;

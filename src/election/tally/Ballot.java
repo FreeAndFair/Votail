@@ -274,12 +274,10 @@ public class Ballot {
     return false;
   }
   
-  //@ public normal_behavior
-  //@   requires isApproved(candidateID);
-  //@   ensures 0 <= \result && \result <= numberOfPreferences;
-  //@ public normal_behavior
-  //@   requires !isApproved(candidateID);
-  //@   ensures NOT_APROVED == \result;
+  //@   ensures isApproved(candidateID) ==>
+  //@     (0 <= \result && \result <= numberOfPreferences);
+  //@   ensures !isApproved(candidateID) ==>
+  //@     (NOT_APPROVED == \result);
   public/*@ pure @*/int getRank(int candidateID) {
     for (int i = 0; i < numberOfPreferences; i++) {
       if (candidateID == preferenceList[i]) {
@@ -287,7 +285,6 @@ public class Ballot {
       }
     }
     
-    //@ assert false;
     return NOT_APPROVED;
   }
 }

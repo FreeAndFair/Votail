@@ -1,4 +1,4 @@
-package ie.votail.test;
+package ie.votail.uilioch;
 
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
@@ -10,18 +10,23 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import junit.framework.TestCase;
 
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 import org.objenesis.instantiator.ObjectInstantiator;
 
-import com.hexmedia.prstv.Display;
+import com.hexmedia.prstv.Candidate;
 import com.hexmedia.prstv.Election;
+import com.hexmedia.prstv.Surplus;
 
-import junit.framework.TestCase;
 import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
 import election.tally.BallotCounting;
@@ -37,6 +42,9 @@ public class UniversalTestRunner extends TestCase {
   protected Logger logger;
   protected Objenesis objenesis;
   
+  /**
+   * Test all scenarios for all known implementations
+   */
   public void testScenarios() {
     logger = Logger.getLogger(LOG_NAME);
     objenesis = new ObjenesisStd();
@@ -84,7 +92,7 @@ public class UniversalTestRunner extends TestCase {
   protected ElectionResult runVotail(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     BallotCounting votail = new BallotCounting();
-    ElectionResult result = votail.run(ballotBox);
+    ElectionResult result = votail.run(ballotBox.getConstituency(),ballotBox);
     
     if (!scenario.check(votail)) {
       logger.severe("Unexpected results for scenario " + scenario
@@ -193,21 +201,13 @@ public class UniversalTestRunner extends TestCase {
     com.hexmedia.prstv.Election election =
         (Election) electionInstantiator.newInstance();
     
-    ObjectInstantiator displayInstantiator =
-        objenesis.getInstantiatorOf(com.hexmedia.prstv.Display.class);
-    
-    com.hexmedia.prstv.Display display =
-      (Display) displayInstantiator.newInstance();
-    
-    //  new com.hexmedia.prstv.Election(numberOfSeats, ballotBox_filename);
     setNumberOfSeats(numberOfSeats, election);
     setFilename(ballotBox_filename, election);
-    
-    
-    display.setElection(election);
-
+   
+    initialise(election);
+    com.hexmedia.prstv.Display.setElection(election);
+    com.hexmedia.prstv.Display.enableNextButton();
     election.runCount();
-    display.enableNextButton();
     
     String results_filename = "results.html";
     ElectionResult electionResult = new ElectionResult(results_filename);
@@ -216,8 +216,40 @@ public class UniversalTestRunner extends TestCase {
   }
 
   /**
-   * @param numberOfSeats
+   * Initialise a HexMedia election object
+   * 
    * @param election
+   */
+  protected void initialise(com.hexmedia.prstv.Election election) {
+    try {
+      Class<?> parameterTypes = null;
+
+      Method initialiseElection = election.getClass().getDeclaredMethod("initialise", parameterTypes);
+      initialiseElection.setAccessible(true);
+      initialiseElection.invoke(election, (Object[]) null);
+    }
+    catch (SecurityException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IllegalArgumentException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (NoSuchMethodException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IllegalAccessException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (InvocationTargetException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+  }
+
+  /**
+   * Construct the Hexmedia Election object through reflection
+   * 
+   * @param numberOfSeats The number of seats
+   * @param election The election object to be constructed
    */
   protected void setNumberOfSeats(int numberOfSeats,
       com.hexmedia.prstv.Election election) {
@@ -225,8 +257,20 @@ public class UniversalTestRunner extends TestCase {
     
     try {
       Field nseats = electionClass.getDeclaredField("nseats");
+      Field elected = electionClass.getDeclaredField("elected");
+      Field eliminated = electionClass.getDeclaredField("eliminated");
+      Field surpluses = electionClass.getDeclaredField("surpluses");
+      
       nseats.setAccessible(true);
       nseats.setInt(election, numberOfSeats);
+      
+      elected.setAccessible(true);
+      eliminated.setAccessible(true);
+      surpluses.setAccessible(true);
+      
+      elected.set(election, new LinkedList<Candidate>());
+      eliminated.set(election, new LinkedList<Candidate>());
+      surpluses.set(election, new LinkedList<Surplus>());
     }
     catch (IllegalArgumentException e) {
       logger.severe(e.getLocalizedMessage());
@@ -325,5 +369,10 @@ public class UniversalTestRunner extends TestCase {
     }
     
     return filename;
+  }
+  
+  public static void main(String[] args) {
+    UniversalTestRunner uilioch = new UniversalTestRunner();
+    uilioch.testScenarios();
   }
 }

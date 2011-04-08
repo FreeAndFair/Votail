@@ -101,7 +101,7 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
    *          The scenario to look for
    * @return <code>true</code> if the scenario is in the list
    */
-  public boolean hasScenario(/*@ non_null*/ElectoralScenario scenario) {
+  public boolean hasScenario(/*@ non_null @*/ ElectoralScenario scenario) {
     Iterator<ElectoralScenario> it = this.iterator();
     while (it.hasNext()) {
       if (it.next().equivalentTo(scenario)) {
