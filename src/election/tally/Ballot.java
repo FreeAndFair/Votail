@@ -25,6 +25,8 @@
 
 package election.tally;
 
+import java.io.Serializable;
+
 // @ refine "Ballot.jml";
 
 /*
@@ -59,7 +61,12 @@ package election.tally;
  *         Dermot Cochran</a>
  */
 
-public class Ballot {
+public class Ballot implements Serializable {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -2377214384195511416L;
+
   private static final char WHITE_SPACE = ' ';
   
   /**

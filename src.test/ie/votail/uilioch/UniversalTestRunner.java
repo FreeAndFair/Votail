@@ -3,7 +3,6 @@ package ie.votail.uilioch;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
-import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioList;
 
 import java.io.BufferedWriter;
@@ -57,12 +56,16 @@ public class UniversalTestRunner extends TestCase {
       scenarioList = new ScenarioList(filename);
       
       for (ElectoralScenario scenario : scenarioList) {
-        // TODO read Ballot Box test data from pre-generated file of Ballot Boxes
-        ElectionConfiguration ballotBox = extractBallotBox(scenario);
         
-        ElectionResult votailResult = runVotail(ballotBox, scenario);
-        ElectionResult coyleDoyleResult = runCoyleDoyle(ballotBox, scenario);
-        ElectionResult hexMediaResult = runHexMedia(ballotBox, scenario);
+        ElectionConfiguration electionConfiguration =
+            new ElectionConfiguration(scenario.getBallotBoxFilename());
+        
+        ElectionResult votailResult =
+            runVotail(electionConfiguration.copy(), scenario);
+        ElectionResult coyleDoyleResult =
+            runCoyleDoyle(electionConfiguration.copy(), scenario);
+        ElectionResult hexMediaResult =
+            runHexMedia(electionConfiguration.copy(), scenario);
         
         assert hexMediaResult.equals(coyleDoyleResult);
         assert coyleDoyleResult.equals(votailResult);
@@ -92,7 +95,7 @@ public class UniversalTestRunner extends TestCase {
   protected ElectionResult runVotail(ElectionConfiguration ballotBox,
       ElectoralScenario scenario) {
     BallotCounting votail = new BallotCounting();
-    ElectionResult result = votail.run(ballotBox.getConstituency(),ballotBox);
+    ElectionResult result = votail.run(ballotBox.getConstituency(), ballotBox);
     
     if (!scenario.check(votail)) {
       logger.severe("Unexpected results for scenario " + scenario
@@ -103,16 +106,13 @@ public class UniversalTestRunner extends TestCase {
     return result;
   }
   
-  public ElectionConfiguration extractBallotBox(ElectoralScenario scenario) {
-    BallotBoxFactory factory = new BallotBoxFactory();
-    return factory.extractBallots(scenario, INITIAL_SCOPE);
-  }
-  
   /**
    * Run the Coyle-Doyle election algorithm.
    * 
-   * @param ballotBox The set of test data
-   * @param scenario The expected result
+   * @param ballotBox
+   *          The set of test data
+   * @param scenario
+   *          The expected result
    * @return The actual result
    */
   public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox,
@@ -131,21 +131,32 @@ public class UniversalTestRunner extends TestCase {
     int electionType = GENERAL_ELECTION;
     
     int[] outcome;
-      coyle_doyle.election.Election election =
-          new coyle_doyle.election.Election(candidates, numberOfSeats,
-              electionType);
-      
-      List<BallotPaper> ballotPapers =
-          convertBallotsIntoCoyleDoyleFormat(ballotBox);
-      logger.info(ballotPapers.toString());
-      
-      outcome = election.election(ballotPapers);
-      
-      result = new ElectionResult(outcome, numberOfSeats);
+    coyle_doyle.election.Election election =
+        new coyle_doyle.election.Election(candidates, numberOfSeats,
+            electionType);
     
-    // TODO check actual results against expected scenario
+    List<BallotPaper> ballotPapers =
+        convertBallotsIntoCoyleDoyleFormat(ballotBox);
+    logger.info("CoyleDoyle ballot papers: " + ballotPapers.toString());
+    
+    outcome = election.election(ballotPapers);
+    
+    result = new ElectionResult(outcome, numberOfSeats);
+    
+    checkResult(scenario, result);
     
     return result;
+  }
+  
+  /**
+   * @param scenario
+   * @param result
+   */
+  protected void checkResult(ElectoralScenario scenario, ElectionResult result) {
+    if (!scenario.matchesResult(result)) {
+      logger.severe("Expected result: " + scenario.toString()
+          + " but actual result " + result.toString());
+    }
   }
   
   /**
@@ -195,26 +206,82 @@ public class UniversalTestRunner extends TestCase {
     int numberOfSeats =
         ballotBox.getConstituency().getNumberOfSeatsInThisElection();
     
-    ObjectInstantiator electionInstantiator = 
-      objenesis.getInstantiatorOf(com.hexmedia.prstv.Election.class);
+    ObjectInstantiator electionInstantiator =
+        objenesis.getInstantiatorOf(com.hexmedia.prstv.Election.class);
     
     com.hexmedia.prstv.Election election =
         (Election) electionInstantiator.newInstance();
     
     setNumberOfSeats(numberOfSeats, election);
     setFilename(ballotBox_filename, election);
-   
+    
     initialise(election);
     com.hexmedia.prstv.Display.setElection(election);
     com.hexmedia.prstv.Display.enableNextButton();
     election.runCount();
     
-    String results_filename = "results.html";
-    ElectionResult electionResult = new ElectionResult(results_filename);
+    ElectionResult electionResult = getResult(election);
+    
+    checkResult(scenario, electionResult);
     
     return electionResult;
   }
-
+  
+  /**
+   * Use reflection to get HexMedia election result.
+   * 
+   * @param election The HexMedia API
+   * @return The election result
+   */
+  @SuppressWarnings("unchecked")
+  protected ElectionResult getResult(Election election) {
+    
+    ElectionResult result = new ElectionResult();
+    
+    try {
+      Field elected = election.getClass().getDeclaredField("elected");
+      elected.setAccessible(true);
+      List<Candidate> electedCandidates =
+          (List<Candidate>) elected.get(election);
+      
+      Field eliminated = election.getClass().getDeclaredField("eliminated");
+      eliminated.setAccessible(true);
+      List<Candidate> eliminatedCandidates =
+          (List<Candidate>) eliminated.get(election);
+      
+      final int numberOfWinners = electedCandidates.size();
+      int numberOfCandidates = numberOfWinners + eliminatedCandidates.size();
+      
+      int[] outcomes = new int[numberOfCandidates];
+      int index = 0;
+      for (Candidate candidate : electedCandidates) {
+        outcomes[index] = Integer.valueOf(candidate.name());
+        index++;
+      }
+      for (Candidate candidate : eliminatedCandidates) {
+        outcomes[index] = Integer.valueOf(candidate.name());
+        index++;
+      }
+      
+      result.load(outcomes, numberOfWinners);
+      
+    }
+    catch (SecurityException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (NoSuchFieldException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IllegalArgumentException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IllegalAccessException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    
+    return result;
+  }
+  
   /**
    * Initialise a HexMedia election object
    * 
@@ -223,8 +290,9 @@ public class UniversalTestRunner extends TestCase {
   protected void initialise(com.hexmedia.prstv.Election election) {
     try {
       Class<?> parameterTypes = null;
-
-      Method initialiseElection = election.getClass().getDeclaredMethod("initialise", parameterTypes);
+      
+      Method initialiseElection =
+          election.getClass().getDeclaredMethod("initialise", parameterTypes);
       initialiseElection.setAccessible(true);
       initialiseElection.invoke(election, (Object[]) null);
     }
@@ -244,12 +312,14 @@ public class UniversalTestRunner extends TestCase {
       logger.severe(e.getLocalizedMessage());
     }
   }
-
+  
   /**
    * Construct the Hexmedia Election object through reflection
    * 
-   * @param numberOfSeats The number of seats
-   * @param election The election object to be constructed
+   * @param numberOfSeats
+   *          The number of seats
+   * @param election
+   *          The election object to be constructed
    */
   protected void setNumberOfSeats(int numberOfSeats,
       com.hexmedia.prstv.Election election) {
@@ -285,7 +355,7 @@ public class UniversalTestRunner extends TestCase {
       logger.severe(e.getLocalizedMessage());
     }
   }
-
+  
   /**
    * @param ballotBox_filename
    * @param election
@@ -315,14 +385,16 @@ public class UniversalTestRunner extends TestCase {
   /**
    * Convert test ballot box into hexmedia format.
    * 
-   * @param ballotBox The test data representing a ballot box
+   * @param ballotBox
+   *          The test data representing a ballot box
    * @return The name of the file into which testdata was written
    */
   protected String convertBallotsToHexMediaFormat(
       ElectionConfiguration ballotBox) {
     
-    String filename = TESTDATA_PREFIX + ballotBox.hashCode() +  
-      System.currentTimeMillis() + SUFFIX;
+    String filename =
+        TESTDATA_PREFIX + ballotBox.hashCode() + System.currentTimeMillis()
+            + SUFFIX;
     
     FileWriter fileWriter;
     BufferedWriter writer;

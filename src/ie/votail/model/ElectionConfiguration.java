@@ -2,6 +2,19 @@ package ie.votail.model;
 
 import ie.votail.model.factory.BallotBoxFactory;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
@@ -17,8 +30,13 @@ import election.tally.Constituency;
  * 
  * @author Dermot Cochran
  */
-public class ElectionConfiguration extends BallotBox {
+public class ElectionConfiguration extends BallotBox implements Serializable {
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
   /** The null value for a candidate ID */
   public static final int NO_CANDIDATE_ID = 0;
   
@@ -40,7 +58,57 @@ public class ElectionConfiguration extends BallotBox {
 
   private int currentBallotID;
 
+  /**
+   * Load election configuration from a file.
+   * 
+   * @param filename
+   */
+  public ElectionConfiguration(String filename) {
+    setup();
+    
+    InputStream file;
+    InputStream buffer;
+    ObjectInput input;
+    
+    try {
+    file = new FileInputStream(filename);
+    buffer = new BufferedInputStream(file);
+    input = new ObjectInputStream(buffer);
+    
+      try {
+        this.ballots = (Ballot[]) input.readObject();
+        this.candidateIDs = (int[]) input.readObject();
+      }
+      catch (Exception e) {
+        logger.severe(e.getLocalizedMessage());
+      }
+      finally {
+        input.close();
+        buffer.close();
+        file.close();
+      }
+    }
+    catch (FileNotFoundException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IOException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    
+  }
+
+  /**
+   * Create an empty election configuration, with no data yet.
+   * 
+   */
   public ElectionConfiguration() {
+    setup();
+  }
+
+  /**
+   * 
+   */
+  protected void setup() {
     logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     candidateIDs = new int [Candidate.MAX_CANDIDATES];
     for (int i=0; i < candidateIDs.length; i++) {
@@ -126,14 +194,52 @@ public class ElectionConfiguration extends BallotBox {
     this.numberOfCandidates = theNumberOfCandidates;
   }
   
- 
-  
-  public void loadBallotBoxFromFile (String filename) {
-    // TODO
+
+  /**
+   * Save the Election Configuration data
+   * 
+   * @param ballotboxFilename
+   */
+  public void writeToFile(String ballotboxFilename) {
+    try {
+      OutputStream file = new FileOutputStream(ballotboxFilename);
+      OutputStream buffer = new BufferedOutputStream(file);
+      ObjectOutput output = new ObjectOutputStream(buffer);
+      try {
+        output.writeObject(this.ballots);
+        output.writeObject(this.candidateIDs);
+      }
+      finally {
+        output.close();
+        buffer.close();
+        file.close();
+      }
+    }
+    catch (FileNotFoundException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    catch (IOException e) {
+      logger.severe(e.getLocalizedMessage());
+    }
+    
   }
 
-  public void writeToFile(String ballotboxFilename) {
-    // TODO Auto-generated method stub
+  /**
+   * Create a new election configuration with the same ballot box and
+   * constituency data.
+   * 
+   * @return
+   */
+  //@ ensures this.equals(\result);
+  public ElectionConfiguration copy() {
+    ElectionConfiguration copy = new ElectionConfiguration();
     
+    copy.ballots = this.ballots;
+    copy.candidateIDs = this.candidateIDs;
+    copy.numberOfSeats = this.numberOfSeats;
+    copy.numberOfCandidates = this.numberOfCandidates;
+    copy.numberOfWinners = this.numberOfWinners;
+    
+    return copy;
   }
 }

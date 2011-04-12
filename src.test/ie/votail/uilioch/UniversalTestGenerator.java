@@ -18,15 +18,10 @@ import org.testng.annotations.Test;
 
 public class UniversalTestGenerator extends TestCase {
     
-  public static final String PSRTV_BALLOTBOX_FILENAME = 
-    "testdata/ballotboxes.prstv";
   public static final String PRSTV_SCENARIO_LIST_FILENAME = 
     "testdata/scenarios.prstv";
   public static final String PLURALITY_SCENARIO_LIST_FILENAME = 
     "testdata/scenarios.plurality";
-  public static final String PLURALITY_BALLOTBOX_FILENAME = 
-    "testdata/ballotboxes.plurality";
-
   @Test
   public void makeDataForPRSTV(int numberOfSeats, int numberOfCandidates) {
     
@@ -55,7 +50,7 @@ public class UniversalTestGenerator extends TestCase {
           ElectionConfiguration electionConfiguration =
               createElection(scenario);
           
-          electionConfiguration.writeToFile(PSRTV_BALLOTBOX_FILENAME);
+          electionConfiguration.writeToFile(scenario.getBallotBoxFilename());
           
         }
       }
@@ -76,6 +71,8 @@ public class UniversalTestGenerator extends TestCase {
     ElectionConfiguration electionConfiguration =
         ballotBoxFactory.extractBallots(scenario, scenario
             .getNumberOfCandidates());
+    
+    
     return electionConfiguration;
   }
   
@@ -114,7 +111,7 @@ public class UniversalTestGenerator extends TestCase {
         logger.info(scenario.toString());
         ElectionConfiguration electionConfiguration = createElection(scenario);
         
-        electionConfiguration.writeToFile(PLURALITY_BALLOTBOX_FILENAME);
+        electionConfiguration.writeToFile(scenario.getBallotBoxFilename());
 
       }
     }

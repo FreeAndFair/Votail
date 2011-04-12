@@ -11,6 +11,12 @@ import election.tally.CandidateStatus;
  */
 public class ElectionResult {
   
+  /**
+   * Results for each candidate.
+   * 
+   * @author Dermot Cochran
+   */
+  
   public static class CandidateResults {
     protected int numberOfCandidates;
     private byte[] status;
@@ -100,15 +106,23 @@ public class ElectionResult {
   }
   
   /**
-   * Extract election results from Coyle Doyle format
-   * 
-   * @param outcome The order list of winners and losers
+   * @deprecated
    */
   public ElectionResult(int[] outcome, int numberOfWinners) {
+    load(outcome, numberOfWinners);
+  }
+  
+  /**
+   * Extract election results from Coyle Doyle format
+   * 
+   * @param outcome The ordered list of winners and losers
+   * @param numberOfWinners The number of winners
+   */
+  public void load(int[] outcome, int numberOfWinners) {
     candidateResults.numberOfCandidates = outcome.length;
-
+    
     candidateResults.setIdentifiers(outcome);
-    for (int i=0; i<candidateResults.numberOfCandidates;i++) {
+    for (int i = 0; i < candidateResults.numberOfCandidates; i++) {
       if (i < numberOfWinners) {
         candidateResults.status[i] = CandidateStatus.ELECTED;
       }
@@ -119,18 +133,11 @@ public class ElectionResult {
   }
   
   /**
-   * Extract election results from HexMedia HTML output file
-   * 
-   * @param resultsFilename
+   * Create an empty Election Result.
    */
-  public ElectionResult(String resultsFilename) {
-    // TODO Auto-generated constructor stub
-  }
-
   public ElectionResult() {
-    // TODO Auto-generated constructor stub
   }
-
+  
   /**
    * Extract candidate results from Votail format
    * 
@@ -139,7 +146,8 @@ public class ElectionResult {
   protected void extractCandidateResults(Candidate[] candidates) {
     candidateResults.numberOfCandidates = candidates.length;
     candidateResults.setStatus(new byte[candidateResults.numberOfCandidates]);
-    candidateResults.setIdentifiers(new int[candidateResults.numberOfCandidates]);
+    candidateResults
+        .setIdentifiers(new int[candidateResults.numberOfCandidates]);
   }
   
   /**

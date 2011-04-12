@@ -77,12 +77,20 @@ public class ElectoralScenario implements Serializable {
          b != Outcome.Loser && b != Outcome.EarlyLoser));
    */
   public static final boolean AXIOM_FOR_TYPE_OF_TIED_LOSER = true;
+
+  // Location of generated test data
+  public static final String TESTDATA_LOCATION = "testdata/";
+  public static final String PREFIX = "BallotBox";
+  public static final String SUFFIX = ".data";
   
   protected OutcomeList listOfOutcomes;
   protected int numberOfCandidates;
   protected Method method;
 
   protected boolean byeElection;
+
+  private String ballotBoxFilename;
+  
   /**
    * Create a new model scenario.
    * 
@@ -93,6 +101,9 @@ public class ElectoralScenario implements Serializable {
     listOfOutcomes = new OutcomeList();
     this.method = method;
     this.byeElection= byeElection;
+    
+    this.ballotBoxFilename = TESTDATA_LOCATION + PREFIX + method.toString() + 
+      this.hashCode() + SUFFIX;
   }
   
   /**
@@ -413,8 +424,18 @@ public class ElectoralScenario implements Serializable {
    */
   public boolean matchesResult (ElectionResult result) {
     
-    // TODO
+    for (Outcome outcome : listOfOutcomes.getOutcomes()) {
+      // Find a result to match each expected outcome
+      
+      // TODO
+      
+    }
     
-    return false;
+    return true;
+  }
+
+  //@ ensures this.ballotBoxFilename == \result;
+  public /*@ pure @*/ String getBallotBoxFilename() {
+    return this.ballotBoxFilename;
   }
 }
