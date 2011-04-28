@@ -2,6 +2,7 @@
 
 package ie.votail.uilioch;
 
+import flexjson.JSONSerializer;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
@@ -9,111 +10,103 @@ import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import junit.framework.TestCase;
-
-import org.testng.annotations.Test;
-
-public class UniversalTestGenerator extends TestCase {
+public class UniversalTestGenerator {
+  
+  protected static final String FILENAME_PREFIX = "testdata/";
+  protected static final String FILENAME_SUFFIX = "_election.data";
+  
+  protected BallotBoxFactory ballotBoxFactory;
+  protected ScenarioFactory scenarioFactory;
+  protected Logger logger;
+  protected JSONSerializer serializer;
+  
+  public UniversalTestGenerator() {
+    ballotBoxFactory = new BallotBoxFactory();
+    scenarioFactory = new ScenarioFactory();
+    logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
+    serializer = new JSONSerializer();
+  }
+  
+  /**
+   * @param numberOfSeats
+   * @param numberOfCandidates
+   * @param method
+   */
+  public void generateTests(final int numberOfSeats,
+      final int numberOfCandidates, final Method method) {
     
-  public static final String PRSTV_SCENARIO_LIST_FILENAME = 
-    "testdata/scenarios.prstv";
-  public static final String PLURALITY_SCENARIO_LIST_FILENAME = 
-    "testdata/scenarios.plurality";
-  @Test
-  public void makeDataForPRSTV(int numberOfSeats, int numberOfCandidates) {
-    
-    final int scope = numberOfCandidates;
-    
-    ScenarioFactory scenarioFactory = new ScenarioFactory();
-    Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
-    logger.info("Using scope = " + scope);
-
-    for (int seats = 1; seats <= numberOfSeats; seats++) {
-      for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
-        
-        ScenarioList scenarioList =
-            scenarioFactory.find(candidates, seats, Method.STV);
-        
-        // Save and replay the scenario list for use in other tests
-        try {
-          scenarioList.writeToFile (PRSTV_SCENARIO_LIST_FILENAME);
-        }
-        catch (IOException e) {
-          logger.severe("Unable to store scenario list, because " + e.getMessage());
-        }
-        
-        for (ElectoralScenario scenario : scenarioList) {
-          logger.info(scenario.toString());
-          ElectionConfiguration electionConfiguration =
-              createElection(scenario);
+    try {
+      FileWriter writer = new FileWriter(getFilename(method));
+      
+      for (int seats = 1; seats <= numberOfSeats; seats++) {
+        for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
           
-          electionConfiguration.writeToFile(scenario.getBallotBoxFilename());
-          
+          createBallotBoxes(seats, candidates, method, writer);
         }
       }
+      
+      writer.close();
+    }
+    catch (FileNotFoundException e) {
+      logger.severe("Generation failed because " + e.getMessage());
+    }
+    catch (IOException e) {
+      logger.severe("Generation failed because " + e.getMessage());
+    }
+    finally {
+      logger.info("Finished!");
     }
   }
   
   /**
-   * Create an election configuration, including constituency and ballot box.
-   * 
-   * @param scenario
-   *          The scenario for which to create this configuration
-   * 
-   * @return The election configuration
+   * @param seats
+   * @param candidates
+   * @param method
+   * @param writer
    */
-  protected/*@ non_null @*/ElectionConfiguration createElection(
-      ElectoralScenario scenario) {
-    BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
-    ElectionConfiguration electionConfiguration =
-        ballotBoxFactory.extractBallots(scenario, scenario
-            .getNumberOfCandidates());
+  protected void createBallotBoxes(int seats, int candidates,
+      final Method method, FileWriter writer) {
     
+    ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
+    logger.fine("Scenarios: " + scenarioList.toString());
     
-    return electionConfiguration;
+    int count = 0;
+    
+    for (ElectoralScenario scenario : scenarioList) {
+      logger.info(scenario.toString());
+      ElectionConfiguration electionData =
+          ballotBoxFactory.extractBallots(scenario, candidates);
+      
+      try {
+        serializer.include("ballots.preferences","candidateIDs").serialize(electionData, writer);
+      }
+      catch (Exception e) {
+        logger.severe("Failed to save generated test data because "
+            + e.getCause());
+      }
+      count++;
+    }
+    
+    logger.info("Generated " + count + " scenarios for " + method.toString()
+        + " with " + candidates + " for " + seats + "seats.");
+  }
+  
+  /**
+   * @param method
+   * @return
+   */
+  protected static String getFilename(final Method method) {
+    return FILENAME_PREFIX + method.toString() + FILENAME_SUFFIX;
   }
   
   public static void main(String[] args) {
-    UniversalTestGenerator universalTest = new UniversalTestGenerator();
-    universalTest.makeDataForPRSTV(5, 11);
-    universalTest.makeDataForPlurality(1, 7);
-  }
-  
-  @Test
-  //@ requires 0 < numberOfSeats && numberOfSeats < numberOfCandidates;
-  public void makeDataForPlurality(int numberOfSeats, int numberOfCandidates) {
-    
-    final int seats = numberOfSeats;
-    
-    ScenarioFactory scenarioFactory = new ScenarioFactory();
-    Logger logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
-    
-    for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
-      
-      final int scope = candidates;
-      logger.info("Using scope = " + scope);
-      
-      ScenarioList scenarioList =
-          scenarioFactory.find(candidates, seats, Method.Plurality);
-      
-      // Save and replay the scenario list for use in other tests
-      try {
-        scenarioList.writeToFile (PLURALITY_SCENARIO_LIST_FILENAME);
-      }
-      catch (IOException e) {
-        logger.severe("Unable to store scenario list, because " + e.getMessage());
-      }
-      
-      for (ElectoralScenario scenario : scenarioList) {
-        logger.info(scenario.toString());
-        ElectionConfiguration electionConfiguration = createElection(scenario);
-        
-        electionConfiguration.writeToFile(scenario.getBallotBoxFilename());
-
-      }
-    }
+    UniversalTestGenerator uilioch = new UniversalTestGenerator();
+    uilioch.generateTests(5, 11, Method.STV);
+    uilioch.generateTests(1, 7, Method.Plurality);
   }
 }

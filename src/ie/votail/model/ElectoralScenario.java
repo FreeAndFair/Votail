@@ -102,8 +102,7 @@ public class ElectoralScenario implements Serializable {
     this.method = method;
     this.byeElection= byeElection;
     
-    this.ballotBoxFilename = TESTDATA_LOCATION + PREFIX + method.toString() + 
-      this.hashCode() + SUFFIX;
+    this.ballotBoxFilename = TESTDATA_LOCATION + PREFIX + method.toString() + SUFFIX;
   }
   
   /**

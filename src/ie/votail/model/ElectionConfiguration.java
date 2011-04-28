@@ -3,17 +3,12 @@ package ie.votail.model;
 import ie.votail.model.factory.BallotBoxFactory;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
@@ -35,9 +30,11 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   /**
    * 
    */
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 2644255293869580385L;
 
-  /** The null value for a candidate ID */
+  protected ElectoralScenario scenario;
+
+  /* The null value for a candidate ID */
   public static final int NO_CANDIDATE_ID = 0;
   
   public static final int MAX_VOTES = Ballot.MAX_BALLOTS;
@@ -48,54 +45,15 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
 
   protected int numberOfCandidates;
 
-  private Logger logger;
+  protected transient Logger logger;
 
   //@ invariant numberOfCandidateIDs <= numberOfCandidates;
-  private int numberOfCandidateIDs;
+  protected int numberOfCandidateIDs;
 
   //@ invariant numberOfCandidateIDs <= candidateIDs.length;
-  private int[] candidateIDs;
+  protected int[] candidateIDs;
 
-  private int currentBallotID;
-
-  /**
-   * Load election configuration from a file.
-   * 
-   * @param filename
-   */
-  public ElectionConfiguration(String filename) {
-    setup();
-    
-    InputStream file;
-    InputStream buffer;
-    ObjectInput input;
-    
-    try {
-    file = new FileInputStream(filename);
-    buffer = new BufferedInputStream(file);
-    input = new ObjectInputStream(buffer);
-    
-      try {
-        this.ballots = (Ballot[]) input.readObject();
-        this.candidateIDs = (int[]) input.readObject();
-      }
-      catch (Exception e) {
-        logger.severe(e.getLocalizedMessage());
-      }
-      finally {
-        input.close();
-        buffer.close();
-        file.close();
-      }
-    }
-    catch (FileNotFoundException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    catch (IOException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    
-  }
+  protected int currentBallotID;
 
   /**
    * Create an empty election configuration, with no data yet.
@@ -104,6 +62,16 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   public ElectionConfiguration() {
     setup();
   }
+
+  /**
+   * Create an empty Election configuration for a given Scenario
+   * 
+   * @param canonical
+   */
+  public ElectionConfiguration(ElectoralScenario canonical) {
+    setup();
+    this.scenario = canonical;
+   }
 
   /**
    * 
@@ -193,36 +161,6 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   public void setNumberOfCandidates(int theNumberOfCandidates) {
     this.numberOfCandidates = theNumberOfCandidates;
   }
-  
-
-  /**
-   * Save the Election Configuration data
-   * 
-   * @param ballotboxFilename
-   */
-  public void writeToFile(String ballotboxFilename) {
-    try {
-      OutputStream file = new FileOutputStream(ballotboxFilename);
-      OutputStream buffer = new BufferedOutputStream(file);
-      ObjectOutput output = new ObjectOutputStream(buffer);
-      try {
-        output.writeObject(this.ballots);
-        output.writeObject(this.candidateIDs);
-      }
-      finally {
-        output.close();
-        buffer.close();
-        file.close();
-      }
-    }
-    catch (FileNotFoundException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    catch (IOException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    
-  }
 
   /**
    * Create a new election configuration with the same ballot box and
@@ -241,5 +179,89 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     copy.numberOfWinners = this.numberOfWinners;
     
     return copy;
+  }
+
+  //@ ensures \result == this.scenario;
+  public /*@ pure @*/ ElectoralScenario getScenario() {
+    return this.scenario;
+  }
+
+  /**
+   * @return the numberOfWinners
+   */
+  public int getNumberOfWinners() {
+    return numberOfWinners;
+  }
+
+  /**
+   * @return the numberOfSeats
+   */
+  public int getNumberOfSeats() {
+    return numberOfSeats;
+  }
+
+  /**
+   * @return the numberOfCandidates
+   */
+  public int getNumberOfCandidates() {
+    return numberOfCandidates;
+  }
+
+  /**
+   * @return the numberOfCandidateIDs
+   */
+  public int getNumberOfCandidateIDs() {
+    return numberOfCandidateIDs;
+  }
+
+  /**
+   * @return the candidateIDs
+   */
+  public int[] getCandidateIDs() {
+    return candidateIDs;
+  }
+
+  /**
+   * @return the currentBallotID
+   */
+  public int getCurrentBallotID() {
+    return currentBallotID;
+  }
+
+  /**
+   * @param scenario the scenario to set
+   */
+  public void setScenario(ElectoralScenario scenario) {
+    this.scenario = scenario;
+  }
+
+  /**
+   * @param numberOfCandidateIDs the numberOfCandidateIDs to set
+   */
+  public void setNumberOfCandidateIDs(int numberOfCandidateIDs) {
+    this.numberOfCandidateIDs = numberOfCandidateIDs;
+  }
+
+  /**
+   * @param candidateIDs the candidateIDs to set
+   */
+  public void setCandidateIDs(int[] candidateIDs) {
+    this.candidateIDs = candidateIDs;
+  }
+
+  /**
+   * @param currentBallotID the currentBallotID to set
+   */
+  public void setCurrentBallotID(int currentBallotID) {
+    this.currentBallotID = currentBallotID;
+  }
+  
+  /**
+   * Get the contents of the ballot box
+   * 
+   * @return The ballots
+   */
+  public Ballot[] getBallots() {
+    return ballots;
   }
 }

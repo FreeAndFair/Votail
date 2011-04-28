@@ -66,7 +66,7 @@ public class BallotBoxFactory {
     /*@ non_null*/ ElectoralScenario scenario, int scope) {
     
     final ElectionConfiguration electionConfiguration 
-      = new ElectionConfiguration();
+      = new ElectionConfiguration(scenario.canonical());
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
     final int numberOfSeats = scenario.numberOfWinners();
     if (scenario.isByeElection()) {

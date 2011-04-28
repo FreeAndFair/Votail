@@ -350,7 +350,7 @@ one sig Election {
 {
  	0 < seats and seats <= constituencySeats
  	seats < #Candidate
-  method = Plurality or method = STV -- disallow experiental methods for now
+  method = Plurality or method = STV
 }
    
 -- Version Control for changes to model 

@@ -11,7 +11,10 @@ public class OutcomeList implements Serializable {
   /**
    * 
    */
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 163963999839665650L;
+  /**
+   * 
+   */
   private ArrayList<Outcome> outcomes;
 
   /**

@@ -1,13 +1,20 @@
 package ie.votail.uilioch;
 
+import org.testng.annotations.Test;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.factory.ScenarioList;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,8 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import junit.framework.TestCase;
 
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
@@ -30,8 +35,9 @@ import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
+import flexjson.JSONDeserializer;
 
-public class UniversalTestRunner extends TestCase {
+public class UniversalTestRunner {
   
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
@@ -44,43 +50,56 @@ public class UniversalTestRunner extends TestCase {
   /**
    * Test all scenarios for all known implementations
    */
+  @Test()
   public void testScenarios() {
     logger = Logger.getLogger(LOG_NAME);
     objenesis = new ObjenesisStd();
     
-    // replay PR-STV scenario list from stored file
-    ScenarioList scenarioList;
-    final String filename = UniversalTestGenerator.PRSTV_SCENARIO_LIST_FILENAME;
+    final String filename = getFilename(ie.votail.model.Method.STV);
     try {
       
-      scenarioList = new ScenarioList(filename);
+      FileReader reader = new FileReader (filename);
       
-      for (ElectoralScenario scenario : scenarioList) {
+      while (reader.ready()) {
         
         ElectionConfiguration electionConfiguration =
-            new ElectionConfiguration(scenario.getBallotBoxFilename());
+          new JSONDeserializer<ElectionConfiguration>().deserialize(reader);
         
-        ElectionResult votailResult =
-            runVotail(electionConfiguration.copy(), scenario);
-        ElectionResult coyleDoyleResult =
-            runCoyleDoyle(electionConfiguration.copy(), scenario);
-        ElectionResult hexMediaResult =
-            runHexMedia(electionConfiguration.copy(), scenario);
+        logger.info(electionConfiguration.toString());
         
-        assert hexMediaResult.equals(coyleDoyleResult);
-        assert coyleDoyleResult.equals(votailResult);
-        assert votailResult.equals(hexMediaResult);
+        if (0 < electionConfiguration.size()) {
+          
+          ElectionResult votailResult = runVotail(electionConfiguration.copy());
+          ElectionResult coyleDoyleResult =
+              runCoyleDoyle(electionConfiguration.copy());
+          ElectionResult hexMediaResult =
+              runHexMedia(electionConfiguration.copy());
+          
+          assert hexMediaResult.equals(coyleDoyleResult);
+          assert coyleDoyleResult.equals(votailResult);
+          assert votailResult.equals(hexMediaResult);
+        }
+        else {
+          logger.severe("Empty ballot box data");
+        }
       }
-      
+      reader.close();
     }
     catch (IOException e) {
       logger.severe("Failed to read scenarios from file " + filename
           + " because " + e.getMessage());
     }
-    catch (ClassNotFoundException e) {
-      logger.severe("Failed to load scenarios from file " + filename
-          + " because " + e.getMessage());
+    finally {
+      logger.info("Finished!");
     }
+  }
+  
+  /**
+   * @param method The voting scheme
+   * @return The filename containing the test input data
+   */
+  protected String getFilename(ie.votail.model.Method method) {
+    return UniversalTestGenerator.getFilename(method);
   }
   
   /**
@@ -88,14 +107,13 @@ public class UniversalTestRunner extends TestCase {
    * 
    * @param ballotBox
    *          The test data
-   * @param scenario
-   *          The expected result
    * @return The actual result
    */
-  protected ElectionResult runVotail(ElectionConfiguration ballotBox,
-      ElectoralScenario scenario) {
+  protected ElectionResult runVotail(ElectionConfiguration ballotBox) {
     BallotCounting votail = new BallotCounting();
     ElectionResult result = votail.run(ballotBox.getConstituency(), ballotBox);
+    
+    ElectoralScenario scenario = ballotBox.getScenario();
     
     if (!scenario.check(votail)) {
       logger.severe("Unexpected results for scenario " + scenario
@@ -111,15 +129,14 @@ public class UniversalTestRunner extends TestCase {
    * 
    * @param ballotBox
    *          The set of test data
-   * @param scenario
-   *          The expected result
    * @return The actual result
    */
-  public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox,
-      ElectoralScenario scenario) {
+  public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox) {
     
     ElectionResult result;
     Constituency constituency = ballotBox.getConstituency();
+    ElectoralScenario scenario = ballotBox.getScenario();
+
     int numberOfCandidates = scenario.getNumberOfCandidates();
     String[] candidates = new String[numberOfCandidates];
     
@@ -194,12 +211,9 @@ public class UniversalTestRunner extends TestCase {
    * 
    * @param ballotBox
    *          Test data in Votail format
-   * @param scenario
-   *          Expected results
    * @return Actual results
    */
-  public ElectionResult runHexMedia(ElectionConfiguration ballotBox,
-      ElectoralScenario scenario) {
+  public ElectionResult runHexMedia(ElectionConfiguration ballotBox) {
     
     String ballotBox_filename = convertBallotsToHexMediaFormat(ballotBox);
     
@@ -222,6 +236,7 @@ public class UniversalTestRunner extends TestCase {
     
     ElectionResult electionResult = getResult(election);
     
+    ElectoralScenario scenario = ballotBox.getScenario();
     checkResult(scenario, electionResult);
     
     return electionResult;
@@ -230,7 +245,8 @@ public class UniversalTestRunner extends TestCase {
   /**
    * Use reflection to get HexMedia election result.
    * 
-   * @param election The HexMedia API
+   * @param election
+   *          The HexMedia API
    * @return The election result
    */
   @SuppressWarnings("unchecked")
