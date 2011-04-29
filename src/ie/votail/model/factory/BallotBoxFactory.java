@@ -120,7 +120,7 @@ public class BallotBoxFactory {
         }
         logger.info("Scenario for " + scenario + " has " + 
           electionConfiguration);
-        return electionConfiguration;
+        return electionConfiguration.trim();
       } 
       // Increase the scope and try again
       if (!scenario.hasOutcome(Outcome.TiedSoreLoser) && scope < MAX_SCOPE) {
@@ -128,7 +128,7 @@ public class BallotBoxFactory {
       }
       else {
         logger.info("Skipped this scenario " + scenario.toString());
-        return electionConfiguration;
+        return electionConfiguration.trim();
       }
 
     } catch (Err e) {
@@ -137,7 +137,7 @@ public class BallotBoxFactory {
                     + scenario.toString() + " with scope " + scope
                     + " and predicate " + scenario.toPredicate()
                     + " because " + e.msg);
-      return electionConfiguration;
+      return electionConfiguration.trim();
     }
   }
 
