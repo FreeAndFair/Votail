@@ -1,7 +1,5 @@
 package ie.votail.model.factory.test;
 
-import java.io.IOException;
-
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
 import ie.votail.model.Outcome;
@@ -38,27 +36,6 @@ public class ScenarioListTest extends TestCase {
     ScenarioList scenarioList = new ScenarioList();
     ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     assertFalse(scenarioList.hasScenario(scenario));
-  }
-  
-  public void testSerialisation() {
-    ScenarioList scenarioList = new ScenarioList();
-    final String filename = "testdata/empty.scenario";
-    try {
-      scenarioList.writeToFile(filename);
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-    try {
-      ScenarioList emptyScenarioList = new ScenarioList(filename);
-      assert scenarioList.equals(emptyScenarioList);
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-    catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
   }
   
 }

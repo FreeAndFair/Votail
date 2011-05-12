@@ -89,8 +89,6 @@ public class ElectoralScenario implements Serializable {
 
   protected boolean byeElection;
 
-  private String ballotBoxFilename;
-  
   /**
    * Create a new model scenario.
    * 
@@ -101,8 +99,6 @@ public class ElectoralScenario implements Serializable {
     listOfOutcomes = new OutcomeList();
     this.method = method;
     this.byeElection= byeElection;
-    
-    this.ballotBoxFilename = TESTDATA_LOCATION + PREFIX + method.toString() + SUFFIX;
   }
   
   /**
@@ -431,10 +427,5 @@ public class ElectoralScenario implements Serializable {
     }
     
     return true;
-  }
-
-  //@ ensures this.ballotBoxFilename == \result;
-  public /*@ pure @*/ String getBallotBoxFilename() {
-    return this.ballotBoxFilename;
   }
 }

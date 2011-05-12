@@ -294,4 +294,18 @@ public class Ballot implements Serializable {
     
     return NOT_APPROVED;
   }
+
+  /**
+   * @return the preferenceList
+   */
+  public int[] getPreferenceList() {
+    return preferenceList;
+  }
+
+  /**
+   * @return the numberOfPreferences
+   */
+  public int getNumberOfPreferences() {
+    return numberOfPreferences;
+  }
 }

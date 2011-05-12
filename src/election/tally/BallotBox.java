@@ -27,8 +27,15 @@
 
 package election.tally;
 
+import java.io.Serializable;
+
 /** Data transfer structure for set of all valid ballots */
-public class BallotBox {
+public class BallotBox implements Serializable {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 6555654720546373358L;
 
   /**
    * List of valid ballot papers, already shuffled and mixed by the data loader

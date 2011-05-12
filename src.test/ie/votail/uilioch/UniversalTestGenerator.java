@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class UniversalTestGenerator {
   
   protected static final String FILENAME_PREFIX = "testdata/";
-  protected static final String FILENAME_SUFFIX = "_election.data";
+  protected static final String FILENAME_SUFFIX = "_election.json";
   
   protected BallotBoxFactory ballotBoxFactory;
   protected ScenarioFactory scenarioFactory;
@@ -45,6 +45,8 @@ public class UniversalTestGenerator {
       
       for (int seats = 1; seats <= numberOfSeats; seats++) {
         for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
+          
+          // TODO check if ballot box already generated
           
           createBallotBoxes(seats, candidates, method, writer);
         }
@@ -83,7 +85,10 @@ public class UniversalTestGenerator {
           ballotBoxFactory.extractBallots(scenario, candidates);
       
       try {
-        serializer.include("ballots.preferences","candidateIDs").serialize(electionData, writer);
+        
+        // FIXME also include preferenceList
+        serializer.include("ballots.preferenceList", "candidateIDs").serialize(
+            electionData, writer);
       }
       catch (Exception e) {
         logger.severe("Failed to save generated test data because "
@@ -97,10 +102,12 @@ public class UniversalTestGenerator {
   }
   
   /**
-   * @param method
+   * Get name of the file which contains testdata for this method.
+   * 
+   * @param method The type of voting scheme
    * @return
    */
-  protected static String getFilename(final Method method) {
+  protected /*@ pure @*/ static String getFilename(final Method method) {
     return FILENAME_PREFIX + method.toString() + FILENAME_SUFFIX;
   }
   

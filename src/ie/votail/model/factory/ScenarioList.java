@@ -9,16 +9,11 @@ package ie.votail.model.factory;
 import ie.votail.model.ElectoralScenario;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,44 +49,6 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
       partitions[i] = new ArrayList<ElectoralScenario>();
     }
     bucket = new ArrayList<ElectoralScenario>();
-  }
-  
-  /**
-   * Replay scenario list from a stored file.
-   * 
-   * @param filename
-   *          The name of the file
-   * @throws IOException
-   * @throws ClassNotFoundException
-   */
-  @SuppressWarnings("unchecked")
-  public ScenarioList(String filename) throws IOException,
-      ClassNotFoundException {
-    InputStream file = new FileInputStream(filename);
-    InputStream buffer = new BufferedInputStream(file);
-    ObjectInput input = new ObjectInputStream(buffer);
-    
-    try {
-      bucket = (ArrayList<ElectoralScenario>) input.readObject();
-      partitions = (ArrayList<ElectoralScenario>[]) input.readObject();
-    }
-    finally {
-      input.close();
-      buffer.close();
-      file.close();
-    }
-    
-    // Recreate the full list from the bucket and partitions
-    for (ElectoralScenario scenario : bucket) {
-      super.add(scenario);
-    }
-    
-    for (int i = 0; i < partitions.length; i++) {
-      for (ElectoralScenario scenario : partitions[i]) {
-        super.add(scenario);
-      }
-      
-    }
   }
   
   /**
@@ -160,27 +117,5 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
       return partitions[numberOfWinners].size();
     }
     return bucket.size();
-  }
-  
-  /**
-   * Store this scenario list in a file.
-   * 
-   * @param filename
-   * @throws IOException
-   */
-  public void writeToFile(String filename) throws IOException {
-    
-    OutputStream file = new FileOutputStream(filename);
-    OutputStream buffer = new BufferedOutputStream(file);
-    ObjectOutput output = new ObjectOutputStream(buffer);
-    try {
-      output.writeObject(bucket);
-      output.writeObject(partitions);
-    }
-    finally {
-      output.close();
-      buffer.close();
-      file.close();
-    }
   }
 }

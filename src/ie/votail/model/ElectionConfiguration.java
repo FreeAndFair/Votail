@@ -273,10 +273,11 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   /**
    * Prune empty ballots and candidate IDs from data
    * 
-   * @return The trimmed down ballot configuration
+   * @return The minimal ballot configuration
    */
   public ElectionConfiguration trim() {
     ElectionConfiguration copy = new ElectionConfiguration();
+    
     copy.ballots = new Ballot[this.numberOfBallots];
     for (int i = 0; i < this.numberOfBallots; i++) {
       copy.ballots[i] = this.ballots[i];
