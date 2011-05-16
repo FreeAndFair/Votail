@@ -16,13 +16,12 @@ import election.tally.Candidate;
 
 public class ElectoralScenario implements Serializable {
   
-  // Refinement from Alloy Analyser axioms to JML invariants
-  
   /**
    * 
    */
   private static final long serialVersionUID = -5582137662901839518L;
 
+  // Refinement from Alloy Analyser axioms to JML invariants
   /**
    * <Alloy>
    * fact validTieBreaker {
@@ -88,6 +87,15 @@ public class ElectoralScenario implements Serializable {
   protected Method method;
 
   protected boolean byeElection;
+  
+  /**
+   * 
+   */
+  public ElectoralScenario() {
+    setUp();
+    this.method = Method.STV;
+    this.byeElection = false;
+  }
 
   /**
    * Create a new model scenario.
@@ -96,9 +104,16 @@ public class ElectoralScenario implements Serializable {
    * @param byeElection 
    */
   public ElectoralScenario(Method method, boolean byeElection) {
-    listOfOutcomes = new OutcomeList();
+    setUp();
     this.method = method;
     this.byeElection= byeElection;
+  }
+
+  /**
+   * 
+   */
+  protected void setUp() {
+    listOfOutcomes = new OutcomeList();
   }
   
   /**
@@ -427,5 +442,14 @@ public class ElectoralScenario implements Serializable {
     }
     
     return true;
+  }
+
+  /**
+   * Get the Voting Scheme used in this Electoral Scenario.
+   * 
+   * @return The Voting Scheme
+   */
+  public /*@ pure @*/ Method getMethod() {
+    return method;
   }
 }
