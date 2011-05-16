@@ -17,6 +17,7 @@
 	<classpathentry kind="lib" path="external_libraries/emma-2.0.5312-patched.jar"/>
 	<classpathentry kind="lib" path="external_libraries/objenesis-1.2.jar"/>
 	<classpathentry kind="lib" path="external_libraries/objenesis-1.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="external_libraries/flexjson-2.1/flexjson-2.1.jar"/>
 	<classpathentry kind="src" path="/jmlspecs"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
