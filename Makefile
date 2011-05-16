@@ -10,7 +10,7 @@ FIGSCALE = 0.5
 # CLASSPATH components
 
 LIB = external_libraries
-CORECP	= src:src.test:external_tools/coyledoyle/src:external_tools/stvcounter_src:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar:$(LIB)/objenesis-1.2.jar
+CORECP	= src:src.test:external_tools/coyledoyle/src:external_tools/stvcounter_src:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar:$(LIB)/objenesis-1.2.jar:$(LIB)/flexjson-2.1/flexjson-2.1.jar
 SPECS = external_tools/JML/specs
 JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
 JUNITCP = $(LIB)/junit.jar
