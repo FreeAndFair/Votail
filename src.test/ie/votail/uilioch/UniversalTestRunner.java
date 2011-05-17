@@ -62,25 +62,34 @@ public class UniversalTestRunner {
       
       while (reader.ready()) {
         
-        ElectionConfiguration electionConfiguration =
+        Object objectRead =
           new JSONDeserializer<ElectionConfiguration>().deserialize(reader);
         
-        logger.info(electionConfiguration.toString());
-        
-        if (0 < electionConfiguration.size()) {
+        if (objectRead.getClass().equals(ElectionConfiguration.class)) {
           
-          ElectionResult votailResult = runVotail(electionConfiguration.copy());
-          ElectionResult coyleDoyleResult =
+          ElectionConfiguration electionConfiguration = 
+            (ElectionConfiguration) objectRead;
+          logger.info(electionConfiguration.toString());
+
+          if (0 < electionConfiguration.size()) {
+          
+            ElectionResult votailResult = runVotail(electionConfiguration.copy());
+            ElectionResult coyleDoyleResult =
               runCoyleDoyle(electionConfiguration.copy());
-          ElectionResult hexMediaResult =
+            ElectionResult hexMediaResult =
               runHexMedia(electionConfiguration.copy());
           
-          assert hexMediaResult.equals(coyleDoyleResult);
-          assert coyleDoyleResult.equals(votailResult);
-          assert votailResult.equals(hexMediaResult);
+            assert hexMediaResult.equals(coyleDoyleResult);
+            assert coyleDoyleResult.equals(votailResult);
+            assert votailResult.equals(hexMediaResult);
+          }
+          else {
+            logger.warning("Empty ballot box data");
+          }
         }
         else {
-          logger.severe("Empty ballot box data");
+          logger.severe("Unexpected object: " + 
+            objectRead.getClass().getSimpleName());
         }
       }
       reader.close();

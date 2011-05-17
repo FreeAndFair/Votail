@@ -43,27 +43,13 @@ public class UniversalTestGenerator {
       final int numberOfCandidates, final Method method,
       final boolean appendToFile) {
     
-    try {
-      FileWriter writer = new FileWriter(getFilename(method),appendToFile);
-      
-      for (int seats = 1; seats <= numberOfSeats; seats++) {
-        for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
-          
-          createBallotBoxes(seats, candidates, method, writer);
-        }
+    for (int seats = 1; seats <= numberOfSeats; seats++) {
+      for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
+        
+        createBallotBoxes(seats, candidates, method);
       }
-      
-      writer.close();
     }
-    catch (FileNotFoundException e) {
-      logger.severe("Generation failed because " + e.getMessage());
-    }
-    catch (IOException e) {
-      logger.severe("Generation failed because " + e.getMessage());
-    }
-    finally {
-      logger.info("Finished!");
-    }
+    logger.info("Finished.");
   }
   
   /**
@@ -73,7 +59,9 @@ public class UniversalTestGenerator {
    * @param writer
    */
   protected void createBallotBoxes(int seats, int candidates,
-      final Method method, FileWriter writer) {
+      final Method method) {
+    
+    final String filename = getFilename(method);
     
     ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
     logger.fine("Scenarios: " + scenarioList.toString());
@@ -83,22 +71,27 @@ public class UniversalTestGenerator {
     for (ElectoralScenario scenario : scenarioList) {
       logger.info(scenario.toString());
       
-      // TODO check if ballot box already generated
-      if (notAlreadyGenerated(scenario)) {
-      
-      ElectionConfiguration electionData =
-          ballotBoxFactory.extractBallots(scenario, candidates);
-      
-      try {
+      if (notAlreadyGenerated(scenario, filename)) {
         
-        serializer.include("ballots.preferenceList", "candidateIDs").serialize(
-            electionData, writer);
-      }
-      catch (Exception e) {
-        logger.severe("Failed to save generated test data because "
-            + e.getCause());
-      }
-      count++;
+        ElectionConfiguration electionData =
+            ballotBoxFactory.extractBallots(scenario, candidates);
+        
+        logger.info(electionData.getScenario().toPredicate());
+        
+        try {
+          
+          FileWriter writer = new FileWriter(filename, true);
+          
+          serializer.include("ballots.preferenceList", "candidateIDs")
+              .serialize(electionData, writer);
+          
+          writer.close();
+        }
+        catch (Exception e) {
+          logger.severe("Failed to save generated test data because "
+              + e.getCause());
+        }
+        count++;
       }
     }
     
@@ -112,54 +105,54 @@ public class UniversalTestGenerator {
    * @param scenario
    * @return
    */
- protected boolean notAlreadyGenerated(ElectoralScenario scenario) {
-   final String filename = getFilename(scenario.getMethod());
-   try {
-     
-     FileReader reader = new FileReader (filename);
-     
-     while (reader.ready()) {
-       
-       ElectionConfiguration electionConfiguration =
-         new JSONDeserializer<ElectionConfiguration>().deserialize(reader);
-       
-       if (scenario.equivalentTo(electionConfiguration.getScenario())) {
-         return false;
-       }
-     }
-     reader.close();
-   }
-   catch (IOException e) {
-     logger.severe("Failed to read scenarios from file " + filename
-         + " because " + e.getMessage());
-   }
-   finally {
-     logger.info("Finished!");
-   }
+  protected boolean notAlreadyGenerated(ElectoralScenario scenario,
+      String filename) {
+    
+    try {
+      FileReader reader = new FileReader(filename);
+      
+      while (reader.ready()) {
+        
+        ElectionConfiguration electionConfiguration =
+            new JSONDeserializer<ElectionConfiguration>().deserialize(reader);
+        
+        if (scenario.equivalentTo(electionConfiguration.getScenario())) {
+          reader.close();
+          return false;
+        }
+      }
+      reader.close();
+    }
+    catch (IOException e) {
+      logger.severe("Failed to read scenarios from file " + filename
+          + " because " + e.getMessage());
+    }
+    
     return true;
   }
-
- /**
+  
+  /**
    * Get name of the file which contains testdata for this method.
    * 
-   * @param method The type of voting scheme
+   * @param method
+   *          The type of voting scheme
    * @return The filename
    */
-  protected /*@ pure @*/ static String getFilename(final Method method) {
+  protected/*@ pure @*/static String getFilename(final Method method) {
     return FILENAME_PREFIX + method.toString() + FILENAME_SUFFIX;
   }
   
   /**
    * Generate enough test data for 100% coverage
    * 
-   * @param args Command line arguments (not used)
+   * @param args
+   *          Command line arguments (not used)
    */
   public static void main(String[] args) {
     UniversalTestGenerator uilioch = new UniversalTestGenerator();
     // TODO Command Line Interface
-    if (1 <= args.length) {
-      uilioch.generateTests(5, 11, Method.STV, true);
-      uilioch.generateTests(1, 7, Method.Plurality, true);
-    }
+    
+    uilioch.generateTests(5, 11, Method.STV, true);
+    uilioch.generateTests(1, 7, Method.Plurality, true);
   }
 }
