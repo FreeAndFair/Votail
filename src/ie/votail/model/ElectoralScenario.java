@@ -92,9 +92,6 @@ public class ElectoralScenario implements Serializable {
    * 
    */
   public ElectoralScenario() {
-    setUp();
-    this.method = Method.STV;
-    this.byeElection = false;
   }
 
   /**
@@ -104,16 +101,9 @@ public class ElectoralScenario implements Serializable {
    * @param byeElection 
    */
   public ElectoralScenario(Method method, boolean byeElection) {
-    setUp();
+    listOfOutcomes = new OutcomeList();
     this.method = method;
     this.byeElection= byeElection;
-  }
-
-  /**
-   * 
-   */
-  protected void setUp() {
-    listOfOutcomes = new OutcomeList();
   }
   
   /**

@@ -62,13 +62,10 @@ public class UniversalTestRunner {
       
       while (reader.ready()) {
         
-        Object objectRead =
+        ElectionConfiguration electionConfiguration =
           new JSONDeserializer<ElectionConfiguration>().deserialize(reader);
         
-        if (objectRead.getClass().equals(ElectionConfiguration.class)) {
-          
-          ElectionConfiguration electionConfiguration = 
-            (ElectionConfiguration) objectRead;
+        
           logger.info(electionConfiguration.toString());
 
           if (0 < electionConfiguration.size()) {
@@ -86,11 +83,6 @@ public class UniversalTestRunner {
           else {
             logger.warning("Empty ballot box data");
           }
-        }
-        else {
-          logger.severe("Unexpected object: " + 
-            objectRead.getClass().getSimpleName());
-        }
       }
       reader.close();
     }

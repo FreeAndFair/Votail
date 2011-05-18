@@ -53,14 +53,15 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   //@ invariant numberOfCandidateIDs <= candidateIDs.length;
   protected int[] candidateIDs;
   
-  protected int currentBallotID;
+  protected transient int currentBallotID;
   
   /**
-   * Create an empty election configuration, with no data yet.
+   * Create an Election Configuration
    * 
    */
   public ElectionConfiguration() {
-    setup();
+    currentBallotID = 0;
+    logger = Logger.getAnonymousLogger();
   }
   
   /**
@@ -69,15 +70,8 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * @param canonical
    */
   public ElectionConfiguration(ElectoralScenario canonical) {
-    setup();
     this.scenario = canonical;
-  }
-  
-  /**
-   * 
-   */
-  protected void setup() {
-    logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
+    logger = Logger.getAnonymousLogger();
     candidateIDs = new int[Candidate.MAX_CANDIDATES];
     for (int i = 0; i < candidateIDs.length; i++) {
       candidateIDs[i] = Candidate.NO_CANDIDATE;

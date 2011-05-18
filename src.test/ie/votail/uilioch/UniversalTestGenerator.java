@@ -11,7 +11,7 @@ import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,12 +26,14 @@ public class UniversalTestGenerator {
   protected ScenarioFactory scenarioFactory;
   protected Logger logger;
   protected JSONSerializer serializer;
+  protected boolean regenerateAll;
   
   public UniversalTestGenerator() {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     serializer = new JSONSerializer();
+    regenerateAll = false;
   }
   
   /**
@@ -71,7 +73,7 @@ public class UniversalTestGenerator {
     for (ElectoralScenario scenario : scenarioList) {
       logger.info(scenario.toString());
       
-      if (notAlreadyGenerated(scenario, filename)) {
+      if (regenerateAll || notAlreadyGenerated(scenario, filename)) {
         
         ElectionConfiguration electionData =
             ballotBoxFactory.extractBallots(scenario, candidates);
@@ -82,8 +84,8 @@ public class UniversalTestGenerator {
           
           FileWriter writer = new FileWriter(filename, true);
           
-          serializer.include("ballots.preferenceList", "candidateIDs")
-              .serialize(electionData, writer);
+          serializer.include("*.class", "ballots.preferenceList", "candidateIDs",
+              "scenario.listOfOutcomes").deepSerialize(electionData, writer);
           
           writer.close();
         }
@@ -108,24 +110,42 @@ public class UniversalTestGenerator {
   protected boolean notAlreadyGenerated(ElectoralScenario scenario,
       String filename) {
     
+    if (regenerateAll) {
+      return true;
+    }
+    
     try {
+      File file = new File (filename);
+      if (file.exists()) {
+        
       FileReader reader = new FileReader(filename);
-      
+      final JSONDeserializer<ElectionConfiguration> jsonDeserializer = 
+        new JSONDeserializer<ElectionConfiguration>();
+
       while (reader.ready()) {
         
-        ElectionConfiguration electionConfiguration =
-            new JSONDeserializer<ElectionConfiguration>().deserialize(reader);
+        ElectionConfiguration electionConfiguration = (ElectionConfiguration)
+          jsonDeserializer.deserialize(reader);
+          
+          if (scenario.equivalentTo(electionConfiguration.getScenario())) {
+            reader.close();
+            return false;
+          }
         
-        if (scenario.equivalentTo(electionConfiguration.getScenario())) {
-          reader.close();
-          return false;
-        }
       }
       reader.close();
+        }
+      else {
+        logger.fine("No pre-existing data found.");
+        regenerateAll = true;
+        return true;
+      }
+      
     }
     catch (IOException e) {
-      logger.severe("Failed to read scenarios from file " + filename
-          + " because " + e.getMessage());
+      logger.info("Failed to reopen existing test data from " + filename
+          + " : " + e.getMessage());
+      regenerateAll = true;
     }
     
     return true;
@@ -150,9 +170,23 @@ public class UniversalTestGenerator {
    */
   public static void main(String[] args) {
     UniversalTestGenerator uilioch = new UniversalTestGenerator();
-    // TODO Command Line Interface
+    uilioch.setRegenerateAll(true);
     
+    uilioch.generateTests(1, 7, Method.Plurality, false);
     uilioch.generateTests(5, 11, Method.STV, true);
-    uilioch.generateTests(1, 7, Method.Plurality, true);
+  }
+
+  /**
+   * @return the regenerateAll
+   */
+  public boolean isRegenerateAll() {
+    return regenerateAll;
+  }
+
+  /**
+   * @param regenerateAll the regenerateAll to set
+   */
+  public void setRegenerateAll(boolean regenerateAll) {
+    this.regenerateAll = regenerateAll;
   }
 }
