@@ -53,14 +53,13 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   //@ invariant numberOfCandidateIDs <= candidateIDs.length;
   protected int[] candidateIDs;
   
-  protected transient int currentBallotID;
+  protected transient int currentBallotID = 0;
   
   /**
-   * Create an Election Configuration
+   * Create an Election Configuration by deserialisation
    * 
    */
-  public ElectionConfiguration() {
-    currentBallotID = 0;
+  protected ElectionConfiguration() {
     logger = Logger.getAnonymousLogger();
   }
   
@@ -76,7 +75,6 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     for (int i = 0; i < candidateIDs.length; i++) {
       candidateIDs[i] = Candidate.NO_CANDIDATE;
     }
-    currentBallotID = 0;
   }
   
   /**

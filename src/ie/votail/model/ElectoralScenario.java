@@ -5,6 +5,7 @@
 package ie.votail.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import election.tally.BallotCounting;
@@ -88,9 +89,6 @@ public class ElectoralScenario implements Serializable {
 
   protected boolean byeElection;
   
-  /**
-   * 
-   */
   public ElectoralScenario() {
   }
 
@@ -194,7 +192,7 @@ public class ElectoralScenario implements Serializable {
     ElectoralScenario sorted = new ElectoralScenario(this.method, this.byeElection);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
-      Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
+      Iterator<Outcome> iterator = this.getOutcomes().iterator();
       while (iterator.hasNext()) {
         if (outcome.equals(iterator.next())) {
           sorted.addOutcome(outcome);
@@ -212,18 +210,19 @@ public class ElectoralScenario implements Serializable {
    * @return Two scenarios are equivalent of they contain the same quantity of
    *         each kind of outcome
    */
-  /*@
-   * ensures \result <==> this.canonical().equals(other.canonical());
-   */
-  public/*@ pure*/boolean equivalentTo(/*@ non_null*/ElectoralScenario other) {
-    if (this.listOfOutcomes.getOutcomes().size() != other.listOfOutcomes
-        .getOutcomes().size()) {
+  //@ ensures \result <==> this.canonical().equals(other.canonical());
+  public/*@ pure*/boolean equivalentTo(ElectoralScenario other) {
+    if (other == null) {
+      return false;
+    }
+    
+    if (this.getNumberOfCandidates() != other.getNumberOfCandidates()) {
       return false;
     }
     Iterator<Outcome> it1 =
-        this.canonical().listOfOutcomes.getOutcomes().iterator();
+        this.canonical().getOutcomes().iterator();
     Iterator<Outcome> it2 =
-        other.canonical().listOfOutcomes.getOutcomes().iterator();
+        other.canonical().getOutcomes().iterator();
     while (it1.hasNext() && it2.hasNext()) {
       if (!it1.next().equals(it2.next())) {
         return false;
@@ -232,6 +231,13 @@ public class ElectoralScenario implements Serializable {
     return true;
   }
   
+  protected /*@ pure @*/ ArrayList<Outcome> getOutcomes() {
+    if (listOfOutcomes == null) {
+      listOfOutcomes = new OutcomeList();
+    }
+    return listOfOutcomes.getOutcomes();
+  }
+
   /**
    * Append an outcome to this scenario.
    * 

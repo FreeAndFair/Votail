@@ -63,7 +63,8 @@ public class UniversalTestRunner {
       while (reader.ready()) {
         
         ElectionConfiguration electionConfiguration =
-          new JSONDeserializer<ElectionConfiguration>().deserialize(reader);
+          new JSONDeserializer<ElectionConfiguration>().
+          use(null,ElectionConfiguration.class).deserialize(reader);
         
         
           logger.info(electionConfiguration.toString());

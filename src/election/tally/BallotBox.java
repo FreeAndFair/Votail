@@ -1,5 +1,5 @@
 /**
- * Votail Cuntais - Irish PR-STV ballot counting system
+ * Votail - Irish PR-STV ballot counting system
  * 
  * Copyright (c) 2005 Dermot Cochran and Joseph R. Kiniry
  * Copyright (c) 2006,2007 Dermot Cochran, Joseph R. Kiniry and Patrick E. Tierney
@@ -32,9 +32,6 @@ import java.io.Serializable;
 /** Data transfer structure for set of all valid ballots */
 public class BallotBox implements Serializable {
 
-  /**
-   * 
-   */
   private static final long serialVersionUID = 6555654720546373358L;
 
   /**
