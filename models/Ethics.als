@@ -1,38 +1,12 @@
--- Copyright, Dermot Cochran, 2010-2011, IT University of Copenhagen
+-- Copyright (c) Dermot Cochran, 2010-2011, IT University of Copenhagen
 
--- Note that all axioms should be expressed as facts appended to signatures
--- Standalone facts will be ignored by the API
+module Ethics
 
-module Trust
+open Risk
 
-open Risk, Voting
+abstract sig Actor {}
 
-abstract sig Threat {
-  liklihood: Natural,
-  severity: Natural
-}
-
--- Differnt Kinds of Threat
-sig Defect extends Threat {}
-sig MisCount extends Defect{}
-sig DenialOfService extends Defect{}
-
-sig Attack extends Threat {
-		cost: Natural,
-	 attacker: Actor
-}
-
--- Falsification Threats
-sig Falsification extends Attack {}
-sig VoteTampering extends Falsification{}
-sig DisenfrancismentOfVotrers extends Falsification{}
-
--- Coercion Threats
-sig Coercion extends Attack {}
-sig Bribery extends Coercion {}
-sig Intimidation extends Coercion {}
-
-abstract sig Auditee {}
+abstract sig Auditee {} extends Actor
 abstract sig Supplier extends Auditee {
   customer: lone Distributor,
   approval: Boolean,
@@ -43,7 +17,7 @@ sig Inspector extends Auditee{}
 sig Farmer, Distributor extends Supplier {}
 sig Auditor{}
 
--- Foreman/boss is a potential coercer/abuser
+-- Foreman/boss/employer is a potential coercer/abuser
 sig Foreman{
   employer: one Farmer,
   ethical: Boolean}

@@ -1,10 +1,10 @@
--- (c) 2010-2011, Dermot Cochran, IT University of Copenhagen
+-- Copyright (c) 2010-2011, Dermot Cochran, IT University of Copenhagen
 -- http://www.kindsoftware.com/about/people/dc
 -- http://www.itu.dk/people/dero
 
 module Lemmas
 
-open Voting
+open Voting, Election, Trust, Risk, Ethics
 
 -- Basic Lemmas
 assert honestCount {
