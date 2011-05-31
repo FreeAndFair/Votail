@@ -87,6 +87,10 @@ public class UniversalTestRunner {
       }
       reader.close();
     }
+    catch (flexjson.JSONException je) {
+      logger.info("Failed to deserialize existing test data from " + filename
+          + " : " + je.getMessage());
+    }
     catch (IOException e) {
       logger.severe("Failed to read scenarios from file " + filename
           + " because " + e.getMessage());

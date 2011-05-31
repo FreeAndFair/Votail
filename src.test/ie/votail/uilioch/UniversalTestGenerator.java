@@ -128,6 +128,7 @@ public class UniversalTestGenerator {
           
           ElectionConfiguration electionConfiguration =
               jsonDeserializer.use(null, ElectionConfiguration.class).
+              use("scenario", ElectoralScenario.class).
               deserialize(reader);
           
           if (scenario.equivalentTo(electionConfiguration.getScenario())) {
@@ -143,6 +144,10 @@ public class UniversalTestGenerator {
         return true;
       }
       
+    }
+    catch (flexjson.JSONException je) {
+      logger.info("Failed to deserialize existing test data from " + filename
+          + " : " + je.getMessage());
     }
     catch (IOException e) {
       logger.info("Failed to reopen existing test data from " + filename
