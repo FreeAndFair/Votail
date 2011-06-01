@@ -4,9 +4,14 @@
 
 module Election
 
-open Voting, Risk, Ethics, Trust, Privacy, Secrecy
+open Voting
+open Trust
+open Ethics
 
-abstract sig Agent {} extends Actor
+abstract sig Agent extends Actor {
+}
+{
+}
 
 sig Process {
 }

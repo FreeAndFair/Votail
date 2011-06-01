@@ -7,28 +7,96 @@ module Trust
 
 open Risk, Voting
 
-abstract sig Threat {
-  liklihood: Natural,
-  severity: Natural
+/* A Trusted System contains solutions for all known threats */
+sig TrustedSystem {
+	 solves: set Solution,
+		avoids: set Threats
+} {
+	all t: Thread | some s: Solution | t in avoids implies 
+   s in solves & t.antidotes
+ no f.feature | some a,b: Solution | (a in solves and b in solves) implies 
+		 f in a.requires and f in b.conflicts
 }
 
--- Differnt Kinds of Threat
-sig Defect extends Threat {}
-sig MisCount extends Defect{}
+/* A Verified Trusted System contains Verifiable Solutions */
+sig VerifiedElection extends Trusted System {
+  election: Election
+}
+{
+	all f feature | all s: Solution | (s in solves and f in s.requires) implies
+			f.verifiable and f.feasible
+}
+
+sig Solution {
+ 	requires: set Feature,
+		conflicts:	set Feature 
+}
+{
+		no f: Feature | f in requires & conflicts
+}
+
+abstract sig Feature {
+  verifiable: boolean,
+  feasible: boolean
+}
+{
+}
+
+one sig BallotTraceability extends Feature {
+}
+{} 
+
+one sig IndependantAudit extends Feature {
+}
+
+abstract sig Threat {
+  liklihood: Natural,
+  severity: Natural,
+	 detectable: boolean,
+  antidote: Solution
+}
+
+-- Different Kinds of Threats: Defects, Falsification, Coercion and Failure
+
+sig Failure extends Threat {}
+sig SystemFailure extends Failure {}
+sig UsabilityFailure extends Failure {}
+
+
+sig Defect extends Threat {
+	preventable: boolean,
+	testable: boolean,
+ provable: boolean
+}{
+	provable and testable implies detectable
+}
+sig MisCount extends Defect{} {
+	-- To Do: independant auditabity (software independence)
+
+}
+
 sig DenialOfService extends Defect{}
+sig LostBallot extends Defect{}{
+  BallotTraceability in this.antodotes
+}
 
 sig Attack extends Threat {
 		cost: Natural,
-	 attacker: Actor
+	 attacker: Actor,
+		feasability: Natural
 }
 
 -- Falsification Threats
 sig Falsification extends Attack {}
 sig VoteTampering extends Falsification{}
-sig DisenfrancismentOfVotrers extends Falsification{}
+sig DisenfrancismentOfVoters extends Falsification{}
+sig AlterationOfResults extends Falsification{}
+sig Impersonation extends Falsification{}
 
 -- Coercion Threats
-sig Coercion extends Attack {}
+sig Coercion extends Attack {
+ // TODO axiom: feasibility of Coercion requires lack of privacy
+}
 sig Bribery extends Coercion {}
 sig Intimidation extends Coercion {}
 

@@ -2,6 +2,6 @@
 
 module Privacy
 
-open Risk, Ethics, Trust
+open Trust
 
 -- Lemmas for Voter Privacy

@@ -4,7 +4,7 @@
 
 module Lemmas
 
-open Voting, Election, Trust, Risk, Ethics
+open Voting
 
 -- Basic Lemmas
 assert honestCount {

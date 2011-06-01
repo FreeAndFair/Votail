@@ -16,5 +16,5 @@ sig DoubleBlind extends DigitalSignature {
 
 -- Axioms for Homomorphic Encryption
 
-sig Homomorphic extends Encryption {
+sig Homomorphic extends Encryption {
 }

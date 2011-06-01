@@ -2,6 +2,7 @@
 
 module Secrecy
 
-open Risk, Ethics, Trust, Privacy, Encryption
+open Risk
+open Trust
 
 -- Lemmas for Ballot Secrecy

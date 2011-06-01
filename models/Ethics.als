@@ -4,13 +4,20 @@ module Ethics
 
 open Risk
 
-abstract sig Actor {}
+abstract sig Actor {
+  trustworthy: boolean,
+  trusted: boolean
+}
 
-abstract sig Auditee {} extends Actor
+abstract sig Auditee extends Actor {
+}
+{
+}
+
+/* Supplier of any component within the Election System */
 abstract sig Supplier extends Auditee {
   customer: lone Distributor,
   approval: Boolean,
-  trusted: Risk,
   ethics: Risk
   }
 sig Inspector extends Auditee{}
