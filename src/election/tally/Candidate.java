@@ -1,5 +1,6 @@
 package election.tally;
 
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 /**
@@ -13,8 +14,13 @@ import java.util.logging.Logger;
  * @author Dermot Cochran
  */
 
-public class Candidate extends CandidateStatus {
+public class Candidate extends CandidateStatus implements Serializable {
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 3435036225909047966L;
+
   /**
    * Maximum expected number of candidates in any one constituency.
    * 

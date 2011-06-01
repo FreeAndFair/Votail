@@ -7,6 +7,7 @@ import flexjson.JSONSerializer;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
+import ie.votail.model.Outcome;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
@@ -26,14 +27,14 @@ public class UniversalTestGenerator {
   protected ScenarioFactory scenarioFactory;
   protected Logger logger;
   protected JSONSerializer serializer;
-  protected final JSONDeserializer<ElectionConfiguration> jsonDeserializer;
+  protected final JSONDeserializer<TestData> jsonDeserializer;
   
   public UniversalTestGenerator() {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     serializer = new JSONSerializer();
-    jsonDeserializer = new JSONDeserializer<ElectionConfiguration>();
+    jsonDeserializer = new JSONDeserializer<TestData>();
   }
   
   /**
@@ -79,8 +80,8 @@ public class UniversalTestGenerator {
       
       if (notAlreadyGenerated(scenario, filename)) {
         
-        ElectionConfiguration electionData =
-            ballotBoxFactory.extractBallots(scenario, candidates);
+        TestData electionData =
+            ballotBoxFactory.extractBallots(scenario, candidates).export();
         
         logger.info(electionData.getScenario().toPredicate());
         
@@ -88,9 +89,9 @@ public class UniversalTestGenerator {
           
           FileWriter writer = new FileWriter(filename, true);
           
-          serializer.include("ballots.preferenceList",
+          serializer.include("ballotBox",
               "candidateIDs", "scenario.listOfOutcomes").
-              exclude("class").serialize(
+              exclude("class").deepSerialize(
               electionData, writer);
           
           writer.flush();
@@ -112,8 +113,9 @@ public class UniversalTestGenerator {
   /**
    * Ensure that a ballot box has not already been generated for this scenario
    * 
-   * @param scenario
-   * @return
+   * @param scenario The scenario that we are looking for
+   * 
+   * @return <code>True></code> if a ballot box exists for this scenario
    */
   protected boolean notAlreadyGenerated(ElectoralScenario scenario,
       String filename) {
@@ -126,12 +128,9 @@ public class UniversalTestGenerator {
         
         while (reader.ready()) {
           
-          ElectionConfiguration electionConfiguration =
-              jsonDeserializer.use(null, ElectionConfiguration.class).
-              use("scenario", ElectoralScenario.class).
-              deserialize(reader);
+          TestData electionData = getTestData(reader);
           
-          if (scenario.equivalentTo(electionConfiguration.getScenario())) {
+          if (scenario.equivalentTo(electionData.getScenario())) {
             reader.close();
             return false;
           }
@@ -155,6 +154,28 @@ public class UniversalTestGenerator {
     }
     
     return true;
+  }
+
+  /**
+   * Deserialization of Test Data
+   * 
+   * @param reader The File Reader which contains the test data
+   * @return The Test Data
+   */
+  public TestData getTestData(FileReader reader) {
+    
+    /* Note that generics need explicit type information, which otherwise is
+     * lost during serialization and deserialization by FlexJSON, due to the
+     * way that generic information is handled by Java compilers.
+     */
+    
+    TestData electionData =
+        jsonDeserializer.use(null, TestData.class).
+        use("scenario", ElectoralScenario.class).
+        use("outcomes",Outcome.class).
+        use("method", Method.class).
+        deserialize(reader);
+    return electionData;
   }
   
   /**

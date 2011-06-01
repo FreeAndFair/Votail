@@ -101,7 +101,7 @@ public class Ballot implements Serializable {
   protected/*@ spec_public @*/int numberOfPreferences;
   
   /** Position within preference list */
-  protected/*@ spec_public @*/int positionInList;
+  protected transient /*@ spec_public @*/int positionInList;
   
   /**
    * Generate an empty ballot paper for use by a voter.

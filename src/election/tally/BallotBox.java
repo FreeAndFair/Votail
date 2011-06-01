@@ -70,7 +70,7 @@ public class BallotBox implements Serializable {
   //@ public initially index == 0;
   //@ public invariant index <= size();
   //@ public constraint \old(index) <= index;
-  protected/*@ spec_public @*/int index;
+  protected/*@ spec_public @*/ transient int index;
 
   /**
    * Create an empty ballot box.

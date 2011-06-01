@@ -4,6 +4,7 @@ import org.testng.annotations.Test;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
+import ie.votail.model.Outcome;
 import ie.votail.model.factory.ScenarioList;
 
 import java.io.BufferedInputStream;
@@ -56,21 +57,23 @@ public class UniversalTestRunner {
     objenesis = new ObjenesisStd();
     
     final String filename = getFilename(ie.votail.model.Method.STV);
+    UniversalTestGenerator generator = new UniversalTestGenerator();
+    
     try {
       
       FileReader reader = new FileReader (filename);
       
       while (reader.ready()) {
         
-        ElectionConfiguration electionConfiguration =
-          new JSONDeserializer<ElectionConfiguration>().
-          use(null,ElectionConfiguration.class).deserialize(reader);
-        
+        // Derserialize and load the next Ballot Box
+        ElectionConfiguration electionConfiguration = 
+            new ElectionConfiguration(generator.getTestData(reader));
         
           logger.info(electionConfiguration.toString());
 
           if (0 < electionConfiguration.size()) {
           
+            // Test different implementations
             ElectionResult votailResult = runVotail(electionConfiguration.copy());
             ElectionResult coyleDoyleResult =
               runCoyleDoyle(electionConfiguration.copy());

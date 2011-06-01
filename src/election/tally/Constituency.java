@@ -1,5 +1,7 @@
 package election.tally;
 
+import java.io.Serializable;
+
 /*
  * Votail, (c) Dermot Cochran, 2005-2011
  * 
@@ -32,8 +34,13 @@ package election.tally;
  * @author <a href="http://kind.ucd.ie/documents/research/lgsse/evoting.html">
  *         Dermot Cochran</a>
  */
-public class Constituency {
+public class Constituency implements Serializable {
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -6070877545836273536L;
+
   public Constituency() {
     this.numberOfCandidates = Candidate.MAX_CANDIDATES;
     this.totalNumberOfSeatsInConstituency = 1;

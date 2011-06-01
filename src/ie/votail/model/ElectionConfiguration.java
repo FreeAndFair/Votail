@@ -1,19 +1,13 @@
 package ie.votail.model;
 
-import ie.votail.model.factory.BallotBoxFactory;
+import ie.votail.uilioch.TestData;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
 import edu.mit.csail.sdg.alloy4compiler.translator.A4Tuple;
 import edu.mit.csail.sdg.alloy4compiler.translator.A4TupleSet;
+
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.Candidate;
@@ -64,12 +58,12 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   }
   
   /**
-   * Create an empty Election configuration for a given Scenario
+   * Create an empty Election configuration for a given scenario
    * 
-   * @param canonical
+   * @param theScenario The electoral scenario 
    */
-  public ElectionConfiguration(ElectoralScenario canonical) {
-    this.scenario = canonical;
+  public ElectionConfiguration(ElectoralScenario theScenario) {
+    this.scenario = theScenario;
     logger = Logger.getAnonymousLogger();
     candidateIDs = new int[Candidate.MAX_CANDIDATES];
     for (int i = 0; i < candidateIDs.length; i++) {
@@ -287,5 +281,46 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     copy.numberOfBallots = this.numberOfBallots;
     copy.numberOfSeats = this.numberOfSeats;
     return copy;
+  }
+
+  /**
+   * Export the test data for serialization
+   * 
+   * @return The data needed for serialization
+   */
+  public /*@ pure @*/ TestData export() {
+    TestData testData = new TestData();
+    testData.setScenario(scenario.canonical());
+    BallotBox ballotBox = new BallotBox();
+    for (index = 0; index < numberOfBallots; index++) {
+      ballotBox.accept(ballots[index].getPreferenceList());
+    }
+    testData.setBallotBox(ballotBox);
+    
+    return testData;
+  }
+  
+  /**
+   * Load deserialised test data
+   * 
+   * @param testData
+   */
+  public ElectionConfiguration (TestData testData) {
+    logger = Logger.getAnonymousLogger();
+    this.scenario = testData.getScenario().canonical();
+    candidateIDs = new int[Candidate.MAX_CANDIDATES];
+    for (int i = 0; i < candidateIDs.length; i++) {
+      candidateIDs[i] = Candidate.NO_CANDIDATE;
+    }
+    
+    BallotBox ballotBox = testData.getBallotBox();
+    while (ballotBox.isNextBallot()) {
+      final int[] preferenceList = ballotBox.getNextBallot().getPreferenceList();
+      this.accept(preferenceList);
+      // Recreate the anonymous list of candidates
+      for (int preference = 0; preference < preferenceList.length; preference++) {
+        updateCandidateIDs(preferenceList[preference]);
+      }
+    }
   }
 }

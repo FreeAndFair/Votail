@@ -15,7 +15,7 @@ public class OutcomeList implements Serializable {
   /**
    * 
    */
-  private ArrayList<Outcome> outcomes;
+  protected ArrayList<Outcome> outcomes;
 
   /**
    * 
@@ -38,5 +38,12 @@ public class OutcomeList implements Serializable {
    */
   public void add(final Outcome outcome) {
     this.outcomes.add(outcome);
+  }
+
+  /**
+   * @param outcomes the outcomes to set
+   */
+  public void setOutcomes(ArrayList<Outcome> outcomes) {
+    this.outcomes = outcomes;
   }
 }
