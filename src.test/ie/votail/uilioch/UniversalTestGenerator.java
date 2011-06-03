@@ -8,6 +8,8 @@ import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
 import ie.votail.model.Outcome;
+import ie.votail.model.OutcomeList;
+import ie.votail.model.data.ElectionData;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
@@ -27,14 +29,14 @@ public class UniversalTestGenerator {
   protected ScenarioFactory scenarioFactory;
   protected Logger logger;
   protected JSONSerializer serializer;
-  protected final JSONDeserializer<TestData> jsonDeserializer;
+  protected final JSONDeserializer<ElectionData> jsonDeserializer;
   
   public UniversalTestGenerator() {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
     serializer = new JSONSerializer();
-    jsonDeserializer = new JSONDeserializer<TestData>();
+    jsonDeserializer = new JSONDeserializer<ElectionData>();
   }
   
   /**
@@ -49,7 +51,8 @@ public class UniversalTestGenerator {
       final int numberOfCandidates, final Method method) {
     
     for (int seats = 1; seats <= numberOfSeats; seats++) {
-      for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
+      for (int candidates = 1 + seats; candidates <= numberOfCandidates; 
+        candidates++) {
         
         createBallotBoxes(seats, candidates, method);
       }
@@ -80,7 +83,7 @@ public class UniversalTestGenerator {
       
       if (notAlreadyGenerated(scenario, filename)) {
         
-        TestData electionData =
+        ElectionData electionData =
             ballotBoxFactory.extractBallots(scenario, candidates).export();
         
         logger.info(electionData.getScenario().toPredicate());
@@ -89,17 +92,17 @@ public class UniversalTestGenerator {
           
           FileWriter writer = new FileWriter(filename, true);
           
-          serializer.include("ballotBox",
-              "candidateIDs", "scenario.listOfOutcomes").
-              exclude("class").deepSerialize(
-              electionData, writer);
+          serializer.include("ballotBox.ballots.preferenceList", 
+            "scenario.listOfOutcomes.outcomes").
+            exclude("byeElection","constituency").
+            serialize(electionData, writer);
           
           writer.flush();
           writer.close();
         }
         catch (Exception e) {
           logger.severe("Failed to save generated test data because "
-              + e.getCause());
+            + e.getCause());
           break;
         }
         count++;
@@ -128,7 +131,7 @@ public class UniversalTestGenerator {
         
         while (reader.ready()) {
           
-          TestData electionData = getTestData(reader);
+          ElectionData electionData = getTestData(reader);
           
           if (scenario.equivalentTo(electionData.getScenario())) {
             reader.close();
@@ -144,10 +147,6 @@ public class UniversalTestGenerator {
       }
       
     }
-    catch (flexjson.JSONException je) {
-      logger.info("Failed to deserialize existing test data from " + filename
-          + " : " + je.getMessage());
-    }
     catch (IOException e) {
       logger.info("Failed to reopen existing test data from " + filename
           + " : " + e.getMessage());
@@ -162,18 +161,22 @@ public class UniversalTestGenerator {
    * @param reader The File Reader which contains the test data
    * @return The Test Data
    */
-  public TestData getTestData(FileReader reader) {
+  public ElectionData getTestData(FileReader reader) {
     
     /* Note that generics need explicit type information, which otherwise is
      * lost during serialization and deserialization by FlexJSON, due to the
      * way that generic information is handled by Java compilers.
      */
     
-    TestData electionData =
-        jsonDeserializer.use(null, TestData.class).
+    ElectionData electionData =
+        jsonDeserializer.use(null, ElectionData.class).
         use("scenario", ElectoralScenario.class).
         use("outcomes",Outcome.class).
         use("method", Method.class).
+        use("STV", Method.class).
+        use("OutcomeList", OutcomeList.class).
+        use("outcome", Outcome.class).
+        use("ElectoralScenario", ElectoralScenario.class).
         deserialize(reader);
     return electionData;
   }
