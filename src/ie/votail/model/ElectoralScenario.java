@@ -84,10 +84,9 @@ public class ElectoralScenario implements Serializable {
   public static final String SUFFIX = ".data";
   
   protected OutcomeList listOfOutcomes;
-  protected int numberOfCandidates;
   protected Method method;
 
-  protected boolean byeElection;
+  protected transient boolean byeElection;
   
   public ElectoralScenario() {
   }
@@ -110,7 +109,7 @@ public class ElectoralScenario implements Serializable {
   public/*@ pure*/String toString() {
     Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
     StringBuffer stringBuffer =
-        new StringBuffer(numberOfCandidates + " candidates (");
+        new StringBuffer(getNumberOfCandidates() + " candidates (");
     if (iterator.hasNext()) {
       stringBuffer.append(iterator.next().toString());
     }
@@ -128,12 +127,11 @@ public class ElectoralScenario implements Serializable {
    * @param outcome
    *          The candidate outcome to be added to this scenario
    */
-  /*@ ensures 1 + \old(numberOfCandidates) == numberOfCandidates;
+  /*@ ensures 1 + \old(getNumberOfCandidates()) == getNumberOfCandidates();
     @ ensures outcomes.contains(outcome);
     @*/
   public void addOutcome(/*@ non_null*/final Outcome outcome) {
     listOfOutcomes.add(outcome);
-    numberOfCandidates++;
   }
   
   /**
@@ -176,7 +174,7 @@ public class ElectoralScenario implements Serializable {
     stringBuffer
         .append(" and Election.method = " + method);
     stringBuffer.append(" and #Candidate = "
-        + this.numberOfCandidates);
+        + this.getNumberOfCandidates());
 
     return stringBuffer.toString();
   }
@@ -320,7 +318,7 @@ public class ElectoralScenario implements Serializable {
    * ensures 0 < \result;
    * ensures \result < this.outcomes.size();
    */
-  public int numberOfWinners() {
+  public /*@ pure @*/ int numberOfWinners() {
     int count = 0;
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
@@ -382,9 +380,19 @@ public class ElectoralScenario implements Serializable {
     return result;
   }
   
+  //@ ensures \result == this.listOfOutcomes.outcomes.size();
   public /*@ pure @*/ int getNumberOfCandidates() {
-    return this.numberOfCandidates;
-  }
+    if (this.listOfOutcomes == null) {
+      this.listOfOutcomes = new OutcomeList();
+      return 0;
+    }
+    if (this.listOfOutcomes.outcomes == null) {
+      listOfOutcomes.outcomes = new ArrayList<Outcome>();
+      return 0;
+    }
+    
+    return this.listOfOutcomes.outcomes.size();  
+    }
   
   /**
    * Does this scenario match the election result?

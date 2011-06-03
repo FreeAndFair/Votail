@@ -5,11 +5,12 @@ module Ethics
 open Risk
 
 abstract sig Actor {
-  trustworthy: boolean,
+  ethical: boolean, -- trustworthy
   trusted: boolean
 }
 
 abstract sig Auditee extends Actor {
+		audited: boolean
 }
 {
 }
@@ -21,13 +22,13 @@ abstract sig Supplier extends Auditee {
   ethics: Risk
   }
 sig Inspector extends Auditee{}
-sig Farmer, Distributor extends Supplier {}
+sig Developer, Consultant extends Supplier {}
 sig Auditor{}
 
 -- Foreman/boss/employer is a potential coercer/abuser
-sig Foreman{
-  employer: one Farmer,
-  ethical: Boolean}
+sig Manager {
+  employer: one Developer
+}
 sig Worker{
   employer: one Farmer
   supervisor: lone Foreman

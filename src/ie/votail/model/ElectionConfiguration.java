@@ -1,6 +1,6 @@
 package ie.votail.model;
 
-import ie.votail.uilioch.TestData;
+import ie.votail.model.data.ElectionData;
 
 import java.io.Serializable;
 import java.util.logging.Logger;
@@ -284,41 +284,38 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   }
 
   /**
-   * Export the test data for serialization
+   * Export the test data
    * 
-   * @return The data needed for serialization
+   * @return The data needed for export
    */
-  public /*@ pure @*/ TestData export() {
-    TestData testData = new TestData();
-    testData.setScenario(scenario.canonical());
-    BallotBox ballotBox = new BallotBox();
-    for (index = 0; index < numberOfBallots; index++) {
-      ballotBox.accept(ballots[index].getPreferenceList());
-    }
-    testData.setBallotBox(ballotBox);
+  public /*@ pure @*/ ElectionData export() {
+    ElectionData electionData = new ElectionData();
+    electionData.setScenario(scenario.canonical());
+    electionData.setBallots(ballots);
     
-    return testData;
+    return electionData;
   }
   
   /**
-   * Load deserialised test data
+   * Load election data
    * 
-   * @param testData
+   * @param electionData Electoral Scenario and Ballot Data
    */
-  public ElectionConfiguration (TestData testData) {
+  public ElectionConfiguration (ElectionData electionData) {
     logger = Logger.getAnonymousLogger();
-    this.scenario = testData.getScenario().canonical();
+    this.scenario = electionData.getScenario().canonical();
     candidateIDs = new int[Candidate.MAX_CANDIDATES];
     for (int i = 0; i < candidateIDs.length; i++) {
       candidateIDs[i] = Candidate.NO_CANDIDATE;
     }
     
-    BallotBox ballotBox = testData.getBallotBox();
-    while (ballotBox.isNextBallot()) {
-      final int[] preferenceList = ballotBox.getNextBallot().getPreferenceList();
+    Ballot[] theBallots = electionData.getBallots();
+    for (index = 0; index < ballots.length; index++) {
+      final int[] preferenceList = theBallots[index].getPreferenceList();
       this.accept(preferenceList);
       // Recreate the anonymous list of candidates
-      for (int preference = 0; preference < preferenceList.length; preference++) {
+      for (int preference = 0; preference < preferenceList.length; 
+        preference++) {
         updateCandidateIDs(preferenceList[preference]);
       }
     }

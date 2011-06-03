@@ -120,7 +120,12 @@ public class Ballot implements Serializable {
         preferenceList[index++] = preference;
       }
     }
-    // TODO set preferenceList.owner = this;
+  }
+  
+  protected Ballot() {
+    this.numberOfPreferences = MAX_BALLOTS;
+    this.positionInList = 0;
+    this.preferenceList = new int[this.numberOfPreferences];
   }
   
   /**

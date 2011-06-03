@@ -34,3 +34,12 @@ sig ElectoralBoard {
 
 
 -- Security Features as Solutions for Predicates
+
+sig EventLog {
+	events: set SignificantEvent}
+{}
+
+sig SignificantEvent{}
+{}
+
+

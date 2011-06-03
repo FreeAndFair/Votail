@@ -42,22 +42,22 @@ public class Constituency implements Serializable {
   private static final long serialVersionUID = -6070877545836273536L;
 
   public Constituency() {
-    this.numberOfCandidates = Candidate.MAX_CANDIDATES;
-    this.totalNumberOfSeatsInConstituency = 1;
-    this.numberOfSeatsInThisElection = 1;
+    this.candidates = Candidate.MAX_CANDIDATES;
+    this.totalSeatsInConstituency = 1;
+    this.seatsInThisElection = 1;
   }
   /** Number of candidates for election in this constituency */
-  //@ public invariant numberOfSeatsInThisElection < numberOfCandidates;
-  //@ public invariant numberOfCandidates <= Candidate.MAX_CANDIDATES;
-  protected/*@ spec_public @*/int numberOfCandidates;
+  //@ public invariant seatsInThisElection < numberOfCandidates;
+  //@ public invariant candidates <= Candidate.MAX_CANDIDATES;
+  protected/*@ spec_public @*/int candidates;
   
   /** Number of seats to be filled in this election */
-  //@ public invariant 0 < numberOfSeatsInThisElection;
-  protected/*@ spec_public @*/int numberOfSeatsInThisElection;
+  //@ public invariant 0 < seatsInThisElection;
+  protected/*@ spec_public @*/int seatsInThisElection;
   
   /** Number of seats in this constituency */
-  //@ public invariant numberOfSeatsInThisElection <= totalNumberOfSeatsInConstituency;
-  protected/*@ spec_public @*/int totalNumberOfSeatsInConstituency;
+  //@ public invariant seatsInThisElection <= totalseatsInConstituency;
+  protected/*@ spec_public @*/int totalSeatsInConstituency;
   
   /** List of all candidates in this election */
   protected/*@ spec_public @*/Candidate[] candidateList;
@@ -90,10 +90,10 @@ public class Constituency implements Serializable {
   //@ ensures this.numberOfCandidates <= candidateList.length;
   //@ ensures candidateDataInUse == true;
   public void setNumberOfCandidates(final int number) {
-    this.numberOfCandidates = number;
-    if (candidateList == null || candidateList.length < this.numberOfCandidates) {
-      this.candidateList = new Candidate[this.numberOfCandidates];
-      for (int index = 0; index < this.numberOfCandidates; index++) {
+    this.candidates = number;
+    if (candidateList == null || candidateList.length < this.candidates) {
+      this.candidateList = new Candidate[this.candidates];
+      for (int index = 0; index < this.candidates; index++) {
         this.candidateList[index] = new Candidate();
       }
     }
@@ -107,7 +107,7 @@ public class Constituency implements Serializable {
    */
   //@ ensures \result == numberOfSeatsInThisElection;
   public/*@ pure @*/int getNumberOfSeatsInThisElection() {
-    return numberOfSeatsInThisElection;
+    return seatsInThisElection;
   }
   
   /**
@@ -117,7 +117,7 @@ public class Constituency implements Serializable {
    */
   //@ ensures \result == totalNumberOfSeatsInConstituency;
   public/*@ pure @*/int getTotalNumberOfSeats() {
-    return totalNumberOfSeatsInConstituency;
+    return totalSeatsInConstituency;
   }
   
   //@ requires seatsInElection <= seatsInConstituency;
@@ -128,8 +128,8 @@ public class Constituency implements Serializable {
   //@ ensures this.totalNumberOfSeatsInConstituency == seatsInConstituency;
   public void setNumberOfSeats(final int seatsInElection,
       final int seatsInConstituency) {
-    this.totalNumberOfSeatsInConstituency = seatsInConstituency;
-    this.numberOfSeatsInThisElection = seatsInElection;
+    this.totalSeatsInConstituency = seatsInConstituency;
+    this.seatsInThisElection = seatsInElection;
   }
   
   /**
@@ -139,7 +139,7 @@ public class Constituency implements Serializable {
    */
   //@ ensures \result == this.numberOfCandidates;
   public/*@ pure @*/int getNumberOfCandidates() {
-    return this.numberOfCandidates;
+    return this.candidates;
   }
   
   /**
@@ -157,7 +157,7 @@ public class Constituency implements Serializable {
   //@ ensures candidateList.length == candidateIDs.length;
   //@ ensures numberOfCandidates == candidateIDs.length;
   public void load(/*@ non_null @*/int[] candidateIDs) {
-    this.numberOfCandidates = candidateIDs.length;
+    this.candidates = candidateIDs.length;
     //@ assert 0 <= this.numberOfCandidates;
     this.candidateList = new Candidate[candidateIDs.length];
     for (int index = 0; index < this.candidateList.length; index++) {

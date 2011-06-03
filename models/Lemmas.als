@@ -8,7 +8,8 @@ open Voting
 
 -- Basic Lemmas
 assert honestCount {
-	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies c in b.assignees
+	  all c: Candidate | all b: Ballot | b in c.votes + c.transfers implies 
+     c in b.assignees
 }
 check honestCount for 15 but 6 int
 
