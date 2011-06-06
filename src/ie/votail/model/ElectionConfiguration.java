@@ -164,6 +164,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     copy.numberOfSeats = this.numberOfSeats;
     copy.numberOfCandidates = this.numberOfCandidates;
     copy.numberOfWinners = this.numberOfWinners;
+    copy.scenario = this.scenario;
     
     return copy;
   }
@@ -310,7 +311,8 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     }
     
     Ballot[] theBallots = electionData.getBallots();
-    for (index = 0; index < ballots.length; index++) {
+    if (theBallots != null) {
+    for (index = 0; index < theBallots.length; index++) {
       final int[] preferenceList = theBallots[index].getPreferenceList();
       this.accept(preferenceList);
       // Recreate the anonymous list of candidates
@@ -318,6 +320,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
         preference++) {
         updateCandidateIDs(preferenceList[preference]);
       }
+    }
     }
   }
 }
