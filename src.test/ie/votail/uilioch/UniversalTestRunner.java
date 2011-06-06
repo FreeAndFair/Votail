@@ -5,6 +5,7 @@ import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Outcome;
+import ie.votail.model.data.ElectionData;
 import ie.votail.model.factory.ScenarioList;
 
 import java.io.BufferedInputStream;
@@ -29,6 +30,7 @@ import org.objenesis.ObjenesisStd;
 import org.objenesis.instantiator.ObjectInstantiator;
 
 import com.hexmedia.prstv.Candidate;
+import com.hexmedia.prstv.Display;
 import com.hexmedia.prstv.Election;
 import com.hexmedia.prstv.Surplus;
 
@@ -43,7 +45,7 @@ public class UniversalTestRunner {
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
   public static final String SUFFIX = ".txt";
-  public static final String TESTDATA_PREFIX = "testdata/BallotBox";
+  public static final String TESTDATA_PREFIX = "/var/tmp/uilioch";
   public static final int GENERAL_ELECTION = 0;
   protected Logger logger;
   protected Objenesis objenesis;
@@ -66,8 +68,9 @@ public class UniversalTestRunner {
       while (reader.ready()) {
         
         // Derserialize and load the next Ballot Box
+        final ElectionData testData = generator.getTestData(reader);
         ElectionConfiguration electionConfiguration = 
-            new ElectionConfiguration(generator.getTestData(reader));
+            new ElectionConfiguration(testData);
         
           logger.info(electionConfiguration.toString());
 
@@ -89,10 +92,6 @@ public class UniversalTestRunner {
           }
       }
       reader.close();
-    }
-    catch (flexjson.JSONException je) {
-      logger.info("Failed to deserialize existing test data from " + filename
-          + " : " + je.getMessage());
     }
     catch (IOException e) {
       logger.severe("Failed to read scenarios from file " + filename
@@ -124,7 +123,11 @@ public class UniversalTestRunner {
     
     ElectoralScenario scenario = ballotBox.getScenario();
     
-    if (!scenario.check(votail)) {
+    if (scenario == null) {
+      logger.warning("Unable to check scenario");
+    }
+    
+    else if (!scenario.check(votail)) {
       logger.severe("Unexpected results for scenario " + scenario
           + " using predicate " + scenario.toPredicate() + " and ballot box "
           + ballotBox);
@@ -229,26 +232,29 @@ public class UniversalTestRunner {
     int numberOfSeats =
         ballotBox.getConstituency().getNumberOfSeatsInThisElection();
     
-    ObjectInstantiator electionInstantiator =
-        objenesis.getInstantiatorOf(com.hexmedia.prstv.Election.class);
+      String[] args = new String[3];
+      args[0] = "true"; // Droop Quota
+      args[1] = ballotBox_filename;
+      args[2] = Integer.toString(numberOfSeats);
+        
+      
+      try {
+        com.hexmedia.prstv.Election.main(args);
+      }
+      catch (Exception e) {
+        logger.severe(e.getMessage());
+      }
     
-    com.hexmedia.prstv.Election election =
-        (Election) electionInstantiator.newInstance();
     
-    setNumberOfSeats(numberOfSeats, election);
-    setFilename(ballotBox_filename, election);
     
-    initialise(election);
-    com.hexmedia.prstv.Display.setElection(election);
-    com.hexmedia.prstv.Display.enableNextButton();
-    election.runCount();
-    
-    ElectionResult electionResult = getResult(election);
+    ElectionResult electionResult = getResult();
     
     ElectoralScenario scenario = ballotBox.getScenario();
     checkResult(scenario, electionResult);
     
+    
     return electionResult;
+    
   }
   
   /**
@@ -259,11 +265,23 @@ public class UniversalTestRunner {
    * @return The election result
    */
   @SuppressWarnings("unchecked")
-  protected ElectionResult getResult(Election election) {
+  protected ElectionResult getResult() {
     
     ElectionResult result = new ElectionResult();
     
     try {
+      Field displayField = 
+        com.hexmedia.prstv.Display.class.getDeclaredField("display");
+      displayField.setAccessible(true);
+
+      com.hexmedia.prstv.Display display = (Display) displayField.get(null);
+      
+      Field electionField = 
+        com.hexmedia.prstv.Display.class.getDeclaredField("election");
+      electionField.setAccessible(true);
+      
+      com.hexmedia.prstv.Election election = (Election) electionField.get(display);
+      
       Field elected = election.getClass().getDeclaredField("elected");
       elected.setAccessible(true);
       List<Candidate> electedCandidates =
@@ -314,12 +332,14 @@ public class UniversalTestRunner {
    */
   protected void initialise(com.hexmedia.prstv.Election election) {
     try {
-      Class<?> parameterTypes = null;
       
+      Class<?> parameters[] = {};
       Method initialiseElection =
-          election.getClass().getDeclaredMethod("initialise", parameterTypes);
+        com.hexmedia.prstv.Election.class.getDeclaredMethod(
+        "initialise", parameters);
+      logger.info("Method found " + initialiseElection.getName());
       initialiseElection.setAccessible(true);
-      initialiseElection.invoke(election, (Object[]) null);
+      initialiseElection.invoke(election);
     }
     catch (SecurityException e) {
       logger.severe(e.getLocalizedMessage());
@@ -328,7 +348,7 @@ public class UniversalTestRunner {
       logger.severe(e.getLocalizedMessage());
     }
     catch (NoSuchMethodException e) {
-      logger.severe(e.getLocalizedMessage());
+      logger.severe("no such method " + e.getLocalizedMessage());
     }
     catch (IllegalAccessException e) {
       logger.severe(e.getLocalizedMessage());

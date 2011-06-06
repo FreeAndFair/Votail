@@ -95,7 +95,7 @@ public class UniversalTestGenerator {
           serializer.include("ballotBox.ballots.preferenceList", 
             "scenario.listOfOutcomes.outcomes").
             exclude("byeElection","constituency").
-            serialize(electionData, writer);
+            deepSerialize(electionData, writer);
           
           writer.flush();
           writer.close();
@@ -168,7 +168,9 @@ public class UniversalTestGenerator {
      * way that generic information is handled by Java compilers.
      */
     
-    ElectionData electionData =
+    ElectionData electionData;
+    try {
+      electionData =
         jsonDeserializer.use(null, ElectionData.class).
         use("scenario", ElectoralScenario.class).
         use("outcomes",Outcome.class).
@@ -178,6 +180,11 @@ public class UniversalTestGenerator {
         use("outcome", Outcome.class).
         use("ElectoralScenario", ElectoralScenario.class).
         deserialize(reader);
+    }
+    catch (flexjson.JSONException e) {
+      logger.severe("Failed to deserialize " + e.getMessage());
+      electionData = new ElectionData();
+    }
     return electionData;
   }
   
