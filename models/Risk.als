@@ -12,3 +12,8 @@ abstract sig Risk {
 one sig Threshold {
   precent: Natural
 }
+
+/* Issues:
+			(1) pre-arranged ballot signatures in anonymised votes
+
+*/

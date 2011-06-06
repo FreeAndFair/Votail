@@ -8,21 +8,20 @@ open Voting
 open Trust
 open Ethics
 
-abstract sig Agent extends Actor {
-}
-{
-}
-
-sig Process {
+one sig Constituency {
+	population: set Voter -- those eligible to vote
 }
 
-sig Registrar extends Agent {
-  registry: set Voter,
+sig Registrar {
+  registry: set Voter, -- those registered to vote
   candidates: set Candidate
+} {
 }
 
-sig Voter extends Agent {
-	ballotCast: Ballot
+sig Voter {
+	ballotCast: Ballot,
+ eligible: boolean,
+ registered: boolean
 }
 
 sig ElectoralBoard {
@@ -39,7 +38,8 @@ sig EventLog {
 	events: set SignificantEvent}
 {}
 
-sig SignificantEvent{}
+sig SignificantEvent{
+		anonymized: boolean}
 {}
 
 
