@@ -1,21 +1,14 @@
 package ie.votail.uilioch;
 
-import org.testng.annotations.Test;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
-import ie.votail.model.Outcome;
 import ie.votail.model.data.ElectionData;
-import ie.votail.model.factory.ScenarioList;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,11 +16,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-
-import org.objenesis.Objenesis;
-import org.objenesis.ObjenesisStd;
-import org.objenesis.instantiator.ObjectInstantiator;
 
 import com.hexmedia.prstv.Candidate;
 import com.hexmedia.prstv.Display;
@@ -36,53 +26,95 @@ import com.hexmedia.prstv.Surplus;
 
 import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
+import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
-import flexjson.JSONDeserializer;
 
 public class UniversalTestRunner {
   
+  public static final String LOGFILENAME = "logs/uilioch/runner.log";
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
   public static final String SUFFIX = ".txt";
   public static final String TESTDATA_PREFIX = "/var/tmp/uilioch";
   public static final int GENERAL_ELECTION = 0;
   protected Logger logger;
-  protected Objenesis objenesis;
+  
+  public class VotailRunner extends BallotCounting {
+    /**
+     * Run the whole election count
+     * 
+     * @param ballotBox Ballot box and election configuration
+     * @return The election results
+     */
+    //@ requires state == EMPTY;
+    //@ ensures state == FINISHED;
+    public /*@ non_null @*/ ElectionResult run(Constituency constituency, BallotBox ballotBox) {
+      this.setup (constituency);
+      this.load (ballotBox);
+      this.count();
+      ElectionResult electionResult = new ElectionResult(this.candidates);
+      return electionResult;
+    }
+  }
   
   /**
    * Test all scenarios for all known implementations
    */
-  @Test()
   public void testScenarios() {
-    logger = Logger.getLogger(LOG_NAME);
-    objenesis = new ObjenesisStd();
-    
-    final String filename = getFilename(ie.votail.model.Method.STV);
-    UniversalTestGenerator generator = new UniversalTestGenerator();
-    
+    logger = Logger.getLogger(this.getClass().getName());
     try {
-      
-      FileReader reader = new FileReader (filename);
-      
-      while (reader.ready()) {
+      FileHandler handler = new FileHandler(UniversalTestRunner.LOGFILENAME);
+      logger.addHandler(handler);
+    }
+    catch (SecurityException e1) {
+      logger.info("not allowed to attach logfile" + e1.getMessage());
+    }
+    catch (IOException e1) {
+      logger.info("not able to find logfile" + e1.getMessage());
+    }
+    
+    UniversalTestGenerator generator = new UniversalTestGenerator();
+    final String[] dataFilename =
+        {
+            generator.getFilename(ie.votail.model.Method.STV,
+                UniversalTestGenerator.DATA_FILENAME_SUFFIX),
+            generator.getFilename(ie.votail.model.Method.Plurality,
+                UniversalTestGenerator.DATA_FILENAME_SUFFIX) };
+    
+    
+      for (int index = 0; index <= 1; index++) {
         
-        // Derserialize and load the next Ballot Box
-        final ElectionData testData = generator.getTestData(reader);
-        ElectionConfiguration electionConfiguration = 
-            new ElectionConfiguration(testData);
+        try {
         
-          logger.info(electionConfiguration.toString());
-
+        FileInputStream fis = new FileInputStream(dataFilename[index]);
+        ObjectInputStream in = new ObjectInputStream(fis);
+        
+        while (true) {
+          
+          // Derserialize and load the next Ballot Box
+          final ElectionData testData = generator.getTestData(in);
+          
+          if (testData == null || testData.getScenario() == null) {
+            logger.warning("Test data is either missing or not readable");
+            break;
+          }
+          
+          ElectionConfiguration electionConfiguration =
+              new ElectionConfiguration(testData);
+          
+          logger.finest(electionConfiguration.toString());
+          
           if (0 < electionConfiguration.size()) {
-          
+            
             // Test different implementations
-            ElectionResult votailResult = runVotail(electionConfiguration.copy());
+            ElectionResult votailResult =
+                runVotail(electionConfiguration.copy());
             ElectionResult coyleDoyleResult =
-              runCoyleDoyle(electionConfiguration.copy());
+                runCoyleDoyle(electionConfiguration.copy());
             ElectionResult hexMediaResult =
-              runHexMedia(electionConfiguration.copy());
-          
+                runHexMedia(electionConfiguration.copy());
+            
             assert hexMediaResult.equals(coyleDoyleResult);
             assert coyleDoyleResult.equals(votailResult);
             assert votailResult.equals(hexMediaResult);
@@ -90,24 +122,17 @@ public class UniversalTestRunner {
           else {
             logger.warning("Empty ballot box data");
           }
-      }
-      reader.close();
+        }
+        in.close();
+      
     }
     catch (IOException e) {
-      logger.severe("Failed to read scenarios from file " + filename
-          + " because " + e.getMessage());
+      logger.info("Finished reading test data because " + e.getMessage());
     }
     finally {
       logger.info("Finished!");
     }
-  }
-  
-  /**
-   * @param method The voting scheme
-   * @return The filename containing the test input data
-   */
-  protected String getFilename(ie.votail.model.Method method) {
-    return UniversalTestGenerator.getFilename(method);
+      }
   }
   
   /**
@@ -118,7 +143,7 @@ public class UniversalTestRunner {
    * @return The actual result
    */
   protected ElectionResult runVotail(ElectionConfiguration ballotBox) {
-    BallotCounting votail = new BallotCounting();
+    VotailRunner votail = new VotailRunner();
     ElectionResult result = votail.run(ballotBox.getConstituency(), ballotBox);
     
     ElectoralScenario scenario = ballotBox.getScenario();
@@ -148,7 +173,7 @@ public class UniversalTestRunner {
     ElectionResult result;
     Constituency constituency = ballotBox.getConstituency();
     ElectoralScenario scenario = ballotBox.getScenario();
-
+    
     int numberOfCandidates = scenario.getNumberOfCandidates();
     String[] candidates = new String[numberOfCandidates];
     
@@ -232,26 +257,25 @@ public class UniversalTestRunner {
     int numberOfSeats =
         ballotBox.getConstituency().getNumberOfSeatsInThisElection();
     
-      String[] args = new String[3];
-      args[0] = "true"; // Droop Quota
-      args[1] = ballotBox_filename;
-      args[2] = Integer.toString(numberOfSeats);
-        
-      
-      try {
-        com.hexmedia.prstv.Election.main(args);
-      }
-      catch (Exception e) {
-        logger.severe(e.getMessage());
-      }
+    String[] args = new String[3];
+    args[0] = "true"; // Droop Quota
+    args[1] = ballotBox_filename;
+    args[2] = Integer.toString(numberOfSeats);
     
-    
+    try {
+      com.hexmedia.prstv.Election.main(args);
+      // TODO Initialise event
+      // TODO Run All Counts event
+      // TODO Quit event
+    }
+    catch (Exception e) {
+      logger.severe(e.getMessage());
+    }
     
     ElectionResult electionResult = getResult();
     
     ElectoralScenario scenario = ballotBox.getScenario();
     checkResult(scenario, electionResult);
-    
     
     return electionResult;
     
@@ -270,17 +294,18 @@ public class UniversalTestRunner {
     ElectionResult result = new ElectionResult();
     
     try {
-      Field displayField = 
-        com.hexmedia.prstv.Display.class.getDeclaredField("display");
+      Field displayField =
+          com.hexmedia.prstv.Display.class.getDeclaredField("display");
       displayField.setAccessible(true);
-
+      
       com.hexmedia.prstv.Display display = (Display) displayField.get(null);
       
-      Field electionField = 
-        com.hexmedia.prstv.Display.class.getDeclaredField("election");
+      Field electionField =
+          com.hexmedia.prstv.Display.class.getDeclaredField("election");
       electionField.setAccessible(true);
       
-      com.hexmedia.prstv.Election election = (Election) electionField.get(display);
+      com.hexmedia.prstv.Election election =
+          (Election) electionField.get(display);
       
       Field elected = election.getClass().getDeclaredField("elected");
       elected.setAccessible(true);
@@ -335,8 +360,8 @@ public class UniversalTestRunner {
       
       Class<?> parameters[] = {};
       Method initialiseElection =
-        com.hexmedia.prstv.Election.class.getDeclaredMethod(
-        "initialise", parameters);
+          com.hexmedia.prstv.Election.class.getDeclaredMethod("initialise",
+              parameters);
       logger.info("Method found " + initialiseElection.getName());
       initialiseElection.setAccessible(true);
       initialiseElection.invoke(election);

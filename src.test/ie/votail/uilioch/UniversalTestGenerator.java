@@ -2,57 +2,64 @@
 
 package ie.votail.uilioch;
 
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
-import ie.votail.model.Outcome;
-import ie.votail.model.OutcomeList;
 import ie.votail.model.data.ElectionData;
 import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 public class UniversalTestGenerator {
   
   protected static final String FILENAME_PREFIX = "testdata/";
-  protected static final String FILENAME_SUFFIX = "_election.json";
+  protected static final String DATA_FILENAME_SUFFIX = "_election.data";
+  protected static final String LOGFILENAME = "logs/uilioch/generator.log";
   
   protected BallotBoxFactory ballotBoxFactory;
   protected ScenarioFactory scenarioFactory;
   protected Logger logger;
-  protected JSONSerializer serializer;
-  protected final JSONDeserializer<ElectionData> jsonDeserializer;
   
   public UniversalTestGenerator() {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
-    logger = Logger.getLogger(BallotBoxFactory.LOGGER_NAME);
-    serializer = new JSONSerializer();
-    jsonDeserializer = new JSONDeserializer<ElectionData>();
+    logger = Logger.getLogger(this.getClass().getName());
+    try {
+      FileHandler handler = new FileHandler(UniversalTestGenerator.LOGFILENAME);
+      logger.addHandler(handler);
+    }
+    catch (SecurityException e1) {
+      logger.info("not allowed to attach logfile" + e1.getMessage());
+    }
+    catch (IOException e1) {
+      logger.info("not able to find logfile" + e1.getMessage());
+    }
   }
   
   /**
    * Generate ballot box data for an election for the required number of seats,
    * candidates and voting scheme.
    * 
-   * @param numberOfSeats The number of seats to be filled
-   * @param numberOfCandidates The number of candidates for election
-   * @param method The voting scheme
+   * @param numberOfSeats
+   *          The number of seats to be filled
+   * @param numberOfCandidates
+   *          The number of candidates for election
+   * @param method
+   *          The voting scheme
    */
   public void generateTests(final int numberOfSeats,
       final int numberOfCandidates, final Method method) {
     
     for (int seats = 1; seats <= numberOfSeats; seats++) {
-      for (int candidates = 1 + seats; candidates <= numberOfCandidates; 
-        candidates++) {
+      for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
         
         createBallotBoxes(seats, candidates, method);
       }
@@ -71,7 +78,22 @@ public class UniversalTestGenerator {
   protected void createBallotBoxes(int seats, int candidates,
       final Method method) {
     
-    final String filename = getFilename(method);
+    final String dataFilename = getFilename(method, DATA_FILENAME_SUFFIX);
+    
+    FileInputStream fis = null;
+    ObjectInputStream in = null;
+    try {
+      fis = new FileInputStream(dataFilename);
+      in = new ObjectInputStream(fis);
+    }
+    catch (FileNotFoundException e) {
+      logger.info("No existing data because " + e.getMessage());
+    }
+    catch (IOException e) {
+      logger.severe("Cannot read existing data because " + e.getMessage());
+    }
+    finally {
+    }
     
     ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
     logger.fine("Scenarios: " + scenarioList.toString());
@@ -81,7 +103,7 @@ public class UniversalTestGenerator {
     for (ElectoralScenario scenario : scenarioList) {
       logger.info(scenario.toString());
       
-      if (notAlreadyGenerated(scenario, filename)) {
+      if (in == null || notAlreadyGenerated(scenario, in)) {
         
         ElectionData electionData =
             ballotBoxFactory.extractBallots(scenario, candidates).export();
@@ -89,20 +111,15 @@ public class UniversalTestGenerator {
         logger.info(electionData.getScenario().toPredicate());
         
         try {
-          
-          FileWriter writer = new FileWriter(filename, true);
-          
-          serializer.include("ballotBox.ballots.preferenceList", 
-            "scenario.listOfOutcomes.outcomes").
-            exclude("byeElection","constituency").
-            deepSerialize(electionData, writer);
-          
-          writer.flush();
-          writer.close();
+          FileOutputStream fos = new FileOutputStream(dataFilename, true);
+          ObjectOutputStream out = new ObjectOutputStream(fos);
+          out.writeObject(electionData);
+          out.close();
+          fos.close();
         }
         catch (Exception e) {
           logger.severe("Failed to save generated test data because "
-            + e.getCause());
+              + e.getCause());
           break;
         }
         count++;
@@ -116,74 +133,53 @@ public class UniversalTestGenerator {
   /**
    * Ensure that a ballot box has not already been generated for this scenario
    * 
-   * @param scenario The scenario that we are looking for
+   * @param scenario
+   *          The scenario that we are looking for
    * 
    * @return <code>True></code> if a ballot box exists for this scenario
    */
   protected boolean notAlreadyGenerated(ElectoralScenario scenario,
-      String filename) {
+      ObjectInputStream in) {
     
     try {
-      File file = new File(filename);
-      if (file.exists()) {
+      while (0 < in.available()) {
         
-        FileReader reader = new FileReader(filename);
+        ElectionData electionData = getTestData(in);
         
-        while (reader.ready()) {
-          
-          ElectionData electionData = getTestData(reader);
-          
-          if (scenario.equivalentTo(electionData.getScenario())) {
-            reader.close();
-            return false;
-          }
-          
+        if (electionData == null
+            || scenario.equivalentTo(electionData.getScenario())) {
+          in.close();
+          return false;
         }
-        reader.close();
       }
-      else {
-        logger.fine("No pre-existing data found.");
-        return true;
-      }
-      
+      in.close();
     }
     catch (IOException e) {
-      logger.info("Failed to reopen existing test data from " + filename
-          + " : " + e.getMessage());
+      logger.severe(e.getMessage());
     }
     
     return true;
   }
-
+  
   /**
    * Deserialization of Test Data
    * 
-   * @param reader The File Reader which contains the test data
-   * @return The Test Data
+   * @param in
+   *          The Object Input Stream which contains the test data
+   * @return The Test Data (or null)
    */
-  public ElectionData getTestData(FileReader reader) {
+  public ElectionData getTestData(ObjectInputStream in) {
     
-    /* Note that generics need explicit type information, which otherwise is
-     * lost during serialization and deserialization by FlexJSON, due to the
-     * way that generic information is handled by Java compilers.
-     */
+    ElectionData electionData = null;
     
-    ElectionData electionData;
     try {
-      electionData =
-        jsonDeserializer.use(null, ElectionData.class).
-        use("scenario", ElectoralScenario.class).
-        use("outcomes",Outcome.class).
-        use("method", Method.class).
-        use("STV", Method.class).
-        use("OutcomeList", OutcomeList.class).
-        use("outcome", Outcome.class).
-        use("ElectoralScenario", ElectoralScenario.class).
-        deserialize(reader);
+      electionData = (ElectionData) in.readObject();
     }
-    catch (flexjson.JSONException e) {
-      logger.severe("Failed to deserialize " + e.getMessage());
-      electionData = new ElectionData();
+    catch (IOException e1) {
+      logger.severe("Cannot read data because " + e1.getMessage());
+    }
+    catch (ClassNotFoundException e1) {
+      logger.severe("Cannot load data because " + e1.getMessage());
     }
     return electionData;
   }
@@ -195,18 +191,20 @@ public class UniversalTestGenerator {
    *          The type of voting scheme
    * @return The filename
    */
-  protected/*@ pure @*/static String getFilename(final Method method) {
-    return FILENAME_PREFIX + method.toString() + FILENAME_SUFFIX;
+  public/*@ pure @*/String getFilename(final Method method, final String suffix) {
+    return FILENAME_PREFIX + method.toString() + suffix;
   }
   
   /**
-   * Generate enough test data for 100% coverage
-   * 
+   * Generate enough test data for 100% path coverage 
    */
   public static void main(String[] args) {
     UniversalTestGenerator uilioch = new UniversalTestGenerator();
     
-    uilioch.generateTests(5, 11, Method.STV);
-    uilioch.generateTests(1, 7, Method.Plurality);
+    uilioch.generateTests(1, 5, Method.STV);        // IRV 1-seat
+    uilioch.generateTests(3, 7, Method.STV);        // PR-STV 3-seat
+    uilioch.generateTests(4, 9, Method.STV);        // PR-STV 4-seat
+    uilioch.generateTests(5, 11, Method.STV);       // PR-STV 5-seat
+    uilioch.generateTests(1, 5, Method.Plurality);  // First-past-the-post
   }
 }
