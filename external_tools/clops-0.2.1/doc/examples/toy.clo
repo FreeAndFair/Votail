@@ -1,9 +1,0 @@
-NAME:: toy
-
-ARGS::
-   input:{"-i"}:{file}:[mustexist] 
-   output:{"-o"}:{file}
-
-FORMAT::
-	input output;
-
