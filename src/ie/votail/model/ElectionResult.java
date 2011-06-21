@@ -105,9 +105,6 @@ public class ElectionResult {
     extractCandidateResults(candidates);
   }
   
-  /**
-   * @deprecated
-   */
   public ElectionResult(int[] outcome, int numberOfWinners) {
     load(outcome, numberOfWinners);
   }

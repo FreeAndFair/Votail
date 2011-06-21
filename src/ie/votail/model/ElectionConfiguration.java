@@ -304,7 +304,8 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    */
   public ElectionConfiguration (ElectionData electionData) {
     logger = Logger.getAnonymousLogger();
-    this.scenario = electionData.getScenario().canonical();
+    final ElectoralScenario theScenario = electionData.getScenario();
+    this.scenario = theScenario.canonical();
     candidateIDs = new int[Candidate.MAX_CANDIDATES];
     for (int i = 0; i < candidateIDs.length; i++) {
       candidateIDs[i] = Candidate.NO_CANDIDATE;

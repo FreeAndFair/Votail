@@ -523,19 +523,5 @@ public class BallotCounting extends AbstractBallotCounting {
     return candidates[i];
   }
 
-  /**
-   * Run the whole election count
-   * 
-   * @param ballotBox Ballot box and election configuration
-   * @return The election results
-   */
-  //@ requires state == EMPTY;
-  //@ ensures state == FINISHED;
-  public /*@ non_null @*/ ElectionResult run(Constituency constituency, BallotBox ballotBox) {
-    this.setup (constituency);
-    this.load (ballotBox);
-    this.count();
-    ElectionResult electionResult = new ElectionResult(this.candidates);
-    return electionResult;
-  }
+  
 }

@@ -43,7 +43,7 @@ public class BallotBoxFactory {
   public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "./models/voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
-  private static final int MAX_SCOPE = 50;
+  private static final int MAX_SCOPE = 30;
   protected String modelName;
   
   /**
@@ -67,6 +67,19 @@ public class BallotBoxFactory {
   public ElectionConfiguration /*@ non_null @*/extractBallots(
   /*@ non_null*/ElectoralScenario scenario, int scope) {
     
+    return extractBallots(scenario, scope, MAX_SCOPE);
+  }
+
+  /**
+   * Generate ballot box test data
+   * 
+   * @param scenario The set of election outcomes
+   * @param scope The initial scope for the Alloy solution
+   * @param upperBound The maximum scope
+   * @return The Ballot Box
+   */
+  public ElectionConfiguration extractBallots(ElectoralScenario scenario,
+      int scope, int upperBound) {
     final ElectionConfiguration electionConfiguration =
         new ElectionConfiguration(scenario.canonical());
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
@@ -123,7 +136,7 @@ public class BallotBoxFactory {
         return electionConfiguration.trim();
       }
       // Increase the scope and try again
-      if (!scenario.hasOutcome(Outcome.TiedSoreLoser) && scope < MAX_SCOPE) {
+      if (!scenario.hasOutcome(Outcome.TiedSoreLoser) && scope < upperBound) {
         return extractBallots(scenario, scope + 1);
       }
       else {
@@ -144,9 +157,9 @@ public class BallotBoxFactory {
   /**
    * Find the Alloy solution for an electoral scenario
    * 
-   * @param scenario
-   * @param scope
-   * @return
+   * @param scenario The electoral scenario
+   * @param scope The scope of the search
+   * @return The Alloy solution
    * @throws Err
    * @throws ErrorSyntax
    */

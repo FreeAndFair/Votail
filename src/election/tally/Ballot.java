@@ -91,10 +91,10 @@ public class Ballot implements Serializable {
    */
   public static final int NONTRANSFERABLE = 0;
   
-  private static final int NOT_APPROVED = Integer.MAX_VALUE;
+  private /*@ spec_public @*/ static final int NOT_APPROVED = Integer.MAX_VALUE;
   
   /** List of candidates in order of preference */
-  // TODO protected invariant preferenceList.owner == this;
+  //@ protected invariant preferenceList.owner == this;
   protected/*@ spec_public non_null */int[] preferenceList;
   
   /** Total number of valid preferences on this ballot paper */
@@ -106,7 +106,7 @@ public class Ballot implements Serializable {
   /**
    * Generate an empty ballot paper for use by a voter.
    */
-  /*@ also public normal_behavior
+  /*@ public normal_behavior
     @	  assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList;
     @*/
   public Ballot(final/*@ non_null @*/int[] preferences) {
@@ -204,8 +204,7 @@ public class Ballot implements Serializable {
    * 
    * @return The number of preferences remaining
    */
-  /*@ also 
-    @   public normal_behavior 
+  /*@ public normal_behavior 
     @     requires positionInList <= numberOfPreferences;
     @     ensures \result == numberOfPreferences - positionInList;
     @*/
