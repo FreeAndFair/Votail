@@ -47,6 +47,7 @@ public class Constituency implements Serializable {
     this.seatsInThisElection = 1;
   }
   /** Number of candidates for election in this constituency */
+  //@ public invariant 0 < candidates;
   //@ public invariant seatsInThisElection < candidates;
   //@ public invariant candidates <= Candidate.MAX_CANDIDATES;
   protected/*@ spec_public @*/int candidates;
@@ -122,6 +123,7 @@ public class Constituency implements Serializable {
   
   //@ requires seatsInElection <= seatsInConstituency;
   //@ requires 0 < seatsInElection;
+  //@ requires candidates < seatsInElection;
   //@ assignable this.seatsInThisElection;
   //@ assignable this.totalSeatsInConstituency;
   //@ ensures this.seatsInThisElection == seatsInElection;
@@ -158,7 +160,6 @@ public class Constituency implements Serializable {
   //@ ensures candidates == candidateIDs.length;
   public void load(/*@ non_null @*/int[] candidateIDs) {
     this.candidates = candidateIDs.length;
-    //@ assert 0 <= this.candidates;
     this.candidateList = new Candidate[candidateIDs.length];
     for (int index = 0; index < this.candidateList.length; index++) {
       this.candidateList[index] = new Candidate(candidateIDs[index]);
