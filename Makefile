@@ -10,10 +10,11 @@ FIGSCALE = 0.5
 # CLASSPATH components
 
 LIB = external_libraries
-CORECP	= src:src.test:external_tools/coyledoyle/src:external_tools/stvcounter_src:unittest:$(LIB)/alloy4.jar:$(LIB)/testng-5.14.6.jar:$(LIB)/objenesis-1.2.jar:$(LIB)/flexjson-2.1/flexjson-2.1.jar
+CORECP	= src:src.test:unittest:$(LIB)/alloy4.jar
 SPECS = external_tools/JML/specs
 JMLCP = $(LIB)/jmlruntime.jar:$(LIB)/jmljunitruntime.jar:$(LIB)/jml-release.jar:$(SPECS)
 JUNITCP = $(LIB)/junit.jar
+EXTCP = external_tools/coyledoyle/src:external_tools/stvcounter_src
 
 # local variables for build process
 javac ?= javac
@@ -23,6 +24,7 @@ jmlc ?= ./external_tools/bin/jmlc -G
 jmldoc ?= ./external_tools/bin/jmldoc
 jmlunit ?= ./external_tools/bin/jmlunit
 version ?= 1.5
+version4 ?= 1.4
 
 basedocdir = doc
 srcpath = src
@@ -34,16 +36,16 @@ jmlunit_path =	jmlunit_src
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
 ESCPATH ?= external_tools/ESCJava2/ESCJava2-2.0.5-04-11-08-binary
-escjava = $(ESCPATH)/Escjava/escj -source $(version) -vclimit 2500000 -warnUnsoundIncomplete
+escjava = $(ESCPATH)/Escjava/escj -source $(version) -vclimit 2500000 -warnUnsoundIncomplete -era
 export ESCTOOLS_ROOT=$(ESCPATH)
-export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.4.macosx
+export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.5.macosx
 
 # Various CLASSPATH constructions
 
-BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
+BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(EXTCP)
 JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
-JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(BASE_CLASSPATH):src.test/ie/votail/model/test:src.test/ie/votail/model/factory/test
+JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):src.test/ie/votail/model/test:src.test/ie/votail/model/factory/test
 ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(ESCJAVA2CP)
 UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
@@ -122,7 +124,7 @@ copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved
 
 default: classes
 
-all:	build bonc test
+all:	build bonc escjava test
 
 build:	classes jml jmlc jmlunit_classes
 
@@ -161,7 +163,7 @@ classes.stamp:	$(javafiles)
 	@mkdir -p $(buildpath)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
 	$(javac) -g -d $(buildpath) $(java_source_version) $(javapat) && \
-	$(javac) -g -d $(buildpath) $(java_source_version5) $(javapat5) && \
+	$(javac) -Xlint:unchecked -g -d $(buildpath) $(java_source_version5) $(javapat5) && \
 	touch classes.stamp
 
 jml:	jml.stamp
@@ -177,7 +179,7 @@ jmlc.stamp:	$(javafiles)
 	@mkdir -p $(jmlc_path)
 	export CLASSPATH=$(JMLC_CLASSPATH);\
 	$(jmlc) --destination $(jmlc_path) \
-		--Quiet --source $(version) -A -a $(javapat) && \
+		--Quiet --source $(version4) -A -a $(javapat) && \
 	touch jmlc.stamp
 
 jmlc_jmlunit: jmlc_jmlunit.stamp
@@ -186,7 +188,7 @@ jmlc_jmlunit.stamp:	$(javafiles)
 	@mkdir -p $(jmlc_jmlunit_path)
 	export CLASSPATH=$(JUNIT_CLASSPATH);\
 	$(jmlc) --destination $(jmlc_jmlunit_path) \
-		--Quiet --source $(version) -A -a $(javapat) && \
+		--Quiet --source $(version4) -A -a $(javapat) && \
 	touch jmlc_jmlunit.stamp
 
 jmlunit:	jmlc_jmlunit jmlunit.stamp
@@ -195,8 +197,8 @@ jmlunit.stamp:	$(javafiles)
 	@mkdir -p $(jmlunit_path)
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
 	$(jmlunit) --destination $(jmlunit_path) \
-		--sourcepath $(specpath):$(srcpath):$(testpath):src.test \
-		--package --source $(version) \
+		--sourcepath $(specpath):$(srcpath):$(testpath) \
+		--package --source $(version4) \
 		--testLevel=2 $(srcpath)/election/tally && \
 	touch jmlunit.stamp
 
@@ -205,7 +207,7 @@ jmlunit_classes:	jmlunit jmlunit_classes.stamp
 jmlunit_classes.stamp:	$(jmlunitfiles)
 	mkdir -p $(jmlc_jmlunit_path)
 	export CLASSPATH=$(JUNIT_CLASSPATH);\
-	javac -g -d $(jmlc_jmlunit_path) -source $(version) $(jmlunitpat) && \
+	javac -g -d $(jmlc_jmlunit_path) -source $(version4) $(jmlunitpat) && \
 	touch jmlunit_classes.stamp
 
 # targets related to checking software
@@ -271,10 +273,11 @@ jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 
-universal-test:	universal.stamp
+universal-test:	escjava universal.stamp
 
 universal.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
+	java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator; \
 	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
