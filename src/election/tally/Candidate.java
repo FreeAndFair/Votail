@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 
 public class Candidate extends CandidateStatus implements Serializable {
   
+  protected static final String LOGGER_NAME = "Candidate";
+
   /**
    * 
    */
@@ -46,17 +48,17 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   0 <= votesAdded[i]);
     @ public initially (\forall int i; 0 < i && i < votesAdded.length;
     @   votesAdded[i] == 0);
-    @ public invariant votesAdded.length == CountConfiguration.MAXCOUNT;
+    @ public invariant votesAdded.length <= CountConfiguration.MAXCOUNT;
     @*/
   protected/*@ spec_public non_null @*/int[] votesAdded =
       new int[CountConfiguration.MAXCOUNT];
   
   /** Number of votes removed at each count */
-  /*@ public invariant (\forall int i; 0 < i && i < votesRemoved.length;
+  /*@ public invariant (\forall int i; 0 <= i && i < votesRemoved.length;
     @                                  0 <= votesRemoved[i]);
-    @ public initially (\forall int i; 0 < i && i < votesRemoved.length;
+    @ public initially (\forall int i; 0 <= i && i < votesRemoved.length;
     @                                  votesRemoved[i] == 0);
-    @ public invariant votesRemoved.length == CountConfiguration.MAXCOUNT;
+    @ public invariant votesRemoved.length <= CountConfiguration.MAXCOUNT;
     @*/
   protected/*@ spec_public non_null @*/int[] votesRemoved =
       new int[CountConfiguration.MAXCOUNT];
@@ -77,11 +79,9 @@ public class Candidate extends CandidateStatus implements Serializable {
   //@ public invariant 0 <= lastCountNumber;
   //@ public initially lastCountNumber == 0;
   //@ public constraint \old(lastCountNumber) <= lastCountNumber;
-  //@ public invariant lastCountNumber <= CountConfiguration.MAXCOUNT;
+  //@ public invariant lastCountNumber < CountConfiguration.MAXCOUNT;
   protected /*@ spec_public @*/ int lastCountNumber = 0;
-  
-  protected/*@ spec_public @*/Logger logger;
-  
+    
   public static final int NO_CANDIDATE = 0;
   
   /**
@@ -102,8 +102,8 @@ public class Candidate extends CandidateStatus implements Serializable {
   /*@ protected normal_behavior
     @   requires 0 <= count;
     @   requires count < CountConfiguration.MAXCOUNT;
-    @   requires votesAdded.length == CountConfiguration.MAXCOUNT;
-    @   requires votesRemoved.length == CountConfiguration.MAXCOUNT;
+    @   requires count < votesAdded.length;
+    @   requires count < votesRemoved.length;
     @   ensures \result == votesAdded[count] - votesRemoved[count];
     @*/
   protected/*@ pure @*/int getVoteAtCount(final int count) {
@@ -111,21 +111,19 @@ public class Candidate extends CandidateStatus implements Serializable {
   }
   
   /**
-   * Original number of votes received by this candidate before transfers due to
-   * elimination or distribution of surplus votes.
+   * Total number of votes received by or added to this candidate.
    * 
    * @return Gross total of votes received
    */
   /*@ requires lastCountNumber < votesAdded.length;
-    @ ensures 0 <= \result;
+    @ ensures \result == 
+    @   (\sum int i; 0 <= i && i <= lastCountNumber; votesAdded[i]);
     @*/
   public/*@ pure @*/int getTotalVote() {
     int totalVote = 0;
     
     for (int i = 0; i <= lastCountNumber; i++) {
-      //@ assert 0 <= votesAdded[i];
       totalVote += votesAdded[i];
-      //@ assert 0 <= totalVote;
     }
     
     return totalVote;
@@ -159,13 +157,13 @@ public class Candidate extends CandidateStatus implements Serializable {
   /**
    * This is the default constructor method for a <code>Candidate</code>
    */
+  //@ assignable candidateID, votesAdded, votesRemoved, nextCandidateID;
   public Candidate() {
     candidateID = nextCandidateID++;
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
       votesAdded[i] = 0;
       votesRemoved[i] = 0;
     }    
-    logger = Logger.getLogger("ie.votail.Candidate");
   }
   
   /**
@@ -173,18 +171,16 @@ public class Candidate extends CandidateStatus implements Serializable {
    * 
    * @param theCandidateID
    */
+  //@ requires 0 < theCandidateID;
+  //@ assignable candidateID, votesAdded, votesRemoved;
+  //@ ensures this.candidateID == theCandidateID;
   public Candidate(int theCandidateID) {
-    if (0 < theCandidateID) {
-      this.candidateID = theCandidateID;
-    }
-    else {
-      this.candidateID = nextCandidateID++;
-    }
+    this.candidateID = theCandidateID;
+    
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
-      votesAdded[i] = 0;
-      votesRemoved[i] = 0;
+      this.votesAdded[i] = 0;
+      this.votesRemoved[i] = 0;
     }
-    logger = Logger.getLogger("ie.votail.Candidate");
   }
   
   /**
@@ -204,7 +200,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   requires count < votesAdded.length;
     @   requires 0 <= numberOfVotes;
     @   assignable lastCountNumber, votesAdded[count];
-    @   ensures numberOfVotes <= votesAdded[count];
+    @   ensures \old(votesAdded[count]) + numberOfVotes == votesAdded[count];
     @   ensures count <= lastCountNumber;
     @*/
   public void addVote(final int numberOfVotes, final int count) {
@@ -245,7 +241,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   requires 0 <= numberOfVotes;
     @   requires numberOfVotes <= getTotalAtCount(count);
     @   assignable lastCountNumber, votesRemoved[count];
-    @   ensures numberOfVotes <= votesRemoved[count];
+    @   ensures \old(votesRemoved[count]) + numberOfVotes == votesRemoved[count];
     @   ensures count <= lastCountNumber;
     @*/
   public void removeVote(final int numberOfVotes, final int count) {
@@ -264,8 +260,6 @@ public class Candidate extends CandidateStatus implements Serializable {
   public void declareElected(int countNumber) {
     state = ELECTED;
     updateCountNumber(countNumber);
-    logger.info("Candidate " + candidateID + " elected on count number "
-        + countNumber);
   }
   
   /** Declares the candidate to be eliminated */
@@ -279,9 +273,6 @@ public class Candidate extends CandidateStatus implements Serializable {
   public void declareEliminated(int countNumber) {
     state = ELIMINATED;
     updateCountNumber(countNumber);
-    logger.info("Candidate " + this.candidateID + " excluded on count number "
-        + countNumber);
-    
   }
   
   /**
@@ -321,12 +312,11 @@ public class Candidate extends CandidateStatus implements Serializable {
    *          The round of counting
    * @return The total number of votes received so far
    */
-  /*@ requires 0 <= count;
-    @ requires count < CountConfiguration.MAXCOUNT;
-    @ requires votesAdded.length == CountConfiguration.MAXCOUNT;
-    @ requires votesRemoved.length == CountConfiguration.MAXCOUNT;
+  /*@ requires 0 <= count && count < CountConfiguration.MAXCOUNT;
+    @ ensures \result == 
+    @   (\sum int i; 0 <= i && i <= count; getVoteAtCount(i));
     @*/
-  public/*@ pure*/int getTotalAtCount(final int count) {
+  public/*@ pure @*/int getTotalAtCount(final int count) {
     int totalAtCount = 0;
     
     for (int i = 0; i <= count; i++) {
@@ -341,6 +331,7 @@ public class Candidate extends CandidateStatus implements Serializable {
    * 
    * @return <code>true</code> if elected
    */
+  //@ ensures (\result == true) <==> (state == ELECTED);
   public/*@ pure*/boolean isElected() {
     return state == ELECTED;
   }
@@ -360,11 +351,9 @@ public class Candidate extends CandidateStatus implements Serializable {
     return stringBuffer.toString();
   }
   
-  //@ requires 0 <= lastCountNumber;
   //@ ensures \result == getTotalAtCount (lastCountNumber);
   public/*@ pure*/int getFinalVote() {
-    return getTotalAtCount(lastCountNumber); //@ nowarn;
-    // TODO ESC 2011.01.14 Precondition possibility not established (Pre)
+    return getTotalAtCount(lastCountNumber);
   }
   
   //@ ensures \result <==> (state == ELIMINATED);
