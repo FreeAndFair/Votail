@@ -35,10 +35,11 @@ jmlc_path =	jmlc_build
 jmlunit_path =	jmlunit_src
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
-ESCPATH ?= external_tools/ESCJava2/ESCJava2-2.0.5-04-11-08-binary
-escjava = $(ESCPATH)/Escjava/escj -source $(version) -vclimit 2500000 -warnUnsoundIncomplete -era
+ESCPATH ?= ./external_tools/ESCJava2/ESCJava-2.0.5-04-11-08-binary
+escjava = $(ESCPATH)/escj -source $(version4) -vclimit 2500000 -warnUnsoundIncomplete
 export ESCTOOLS_ROOT=$(ESCPATH)
-export SIMPLIFY=$(ESCPATH)/Escjava/release/master/bin/Simplify-1.5.5.macosx
+export SIMPLIFY=$(ESCPATH)/Simplify-1.5.5.macosx
+ESCJAVA2CP ?= $(ESCPATH)/esctools2.jar
 
 # Various CLASSPATH constructions
 
@@ -46,7 +47,7 @@ BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(EXT
 JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
 JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):src.test/ie/votail/model/test:src.test/ie/votail/model/factory/test
-ESCJAVA_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(ESCJAVA2CP)
+ESCJAVA_CLASSPATH	= $(CORECP):$(JMLCP):$(ESCJAVA2CP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP)
 UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
@@ -224,6 +225,7 @@ escjava2:	escjava2.stamp
 escjava2.stamp:	$(javafiles)
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	$(escjava) $(javapat) && \
+	$(escjava) -era $(javapat) && \
 	touch escjava2.stamp
 
 escjava2-current:
