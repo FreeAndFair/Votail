@@ -123,7 +123,7 @@ public class Constituency implements Serializable {
   
   //@ requires seatsInElection <= seatsInConstituency;
   //@ requires 0 < seatsInElection;
-  //@ requires candidates < seatsInElection;
+  //@ requires seatsInElection < candidates;
   //@ assignable this.seatsInThisElection;
   //@ assignable this.totalSeatsInConstituency;
   //@ ensures this.seatsInThisElection == seatsInElection;
@@ -153,7 +153,7 @@ public class Constituency implements Serializable {
    */
   //@ requires candidateDataInUse == false;
   //@ requires seatsInThisElection < candidateIDs.length;
-  //@ assignable candidates, candidateList, candidateDataInUse;
+  //@ assignable candidates, candidateList.*, candidateDataInUse;
   //@ ensures \nonnullelements (candidateList);
   //@ ensures candidateDataInUse == true;
   //@ ensures candidateList.length == candidateIDs.length;
