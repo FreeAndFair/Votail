@@ -275,17 +275,20 @@ jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 
-universal-test:	escjava universal.stamp
+universal-test:	 universal.stamp
 
-universal.stamp:	classes
+universal.stamp:	classes testdata/STV_election.data
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator; \
 	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
+	
+testdata/STV_election.data:	classes
+	export CLASSPATH=$(JAVAC_CLASSPATH); \
+	java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator
 
 universal-rac-test:	universal-rac.stamp
 
-universal-rac.stamp:	universal-test jml-junit-test
+universal-rac.stamp:	universal-test jml-junit-test escjava2
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
 	java $(test_memory_use) ie.votail.model.uilioch.UniversalTestRunner; \
 	touch universal.stamp
