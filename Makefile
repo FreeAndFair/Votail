@@ -216,6 +216,7 @@ jmlunit_classes.stamp:	$(jmlunitfiles)
 escjava2-typecheck:	escjava2-typecheck.stamp
 
 escjava2-typecheck.stamp:	$(javafiles)
+	chmod a+x $(escjava)
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	$(escjava) -typecheck $(javapat) && \
 	touch escjava2-typecheck.stamp
