@@ -43,7 +43,7 @@ public class BallotBoxFactory {
   public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "./models/voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
-  private static final int MAX_SCOPE = 30;
+  private static final int MAX_SCOPE = 20;
   protected String modelName;
   
   /**

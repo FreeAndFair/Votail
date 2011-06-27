@@ -7,7 +7,7 @@ package election.tally;
  * Parliament of Ireland.
  * 
  * @author Dermot Cochran
- * (c) 2005-2009 Dermot Cochran
+ * (c) 2005-2011 Dermot Cochran
  * Permission is hereby granted, free of charge, to any person obtaining
  *          a copy of this software and associated documentation files (the
  *          "Software"), to deal in the Software without restriction, including
@@ -51,8 +51,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   
   /** List of contents of each ballot paper that will be counted. */
   protected transient/*@ spec_public @*/Ballot[] ballots = new Ballot[0];
-  // TODO public invariant ballots.owner == this;
   //@ protected represents ballotsToCount <- ballots;
+  //@ invariant \nonnullelements (ballotsToCount);
   
   /** Total number of candidates for election */
   protected transient/*@ spec_public @*/int totalNumberOfCandidates;
@@ -99,17 +99,18 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   public normal_behavior
     @     assignable state, countNumber, numberElected, numberEliminated,
     @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
-    @       totalVotes, numberOfCandidatesEliminated, totalNumberOfVotes;
+    @       totalVotes, numberOfCandidatesEliminated, totalNumberOfVotes,
+    @       totalNumberOfCandidates;
     @     ensures state == ElectionStatus.EMPTY;
     @     ensures countNumber == 0;
     @     ensures numberElected == 0;
     @*/
   public AbstractBallotCounting() {
-    super();
     status = ElectionStatus.EMPTY;
     countNumberValue = 0;
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
+    totalNumberOfCandidates = 0;
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
   }
@@ -133,8 +134,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (countBallotsFor(candidate.getCandidateID()) >= getQuota());
     @*/
   public/*@ pure @*/boolean hasQuota(final/*@ non_null @*/Candidate candidate) {
-    // TODO 2009.10.14 ESC precondition violation warning
-    return (countBallotsFor(candidate.getCandidateID()) >= getQuota());
+    final int candidateID = candidate.getCandidateID();
+    return (countBallotsFor(candidateID) >= getQuota());
   }
   
   /**
@@ -179,7 +180,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     ensures 0 <= \result;
     @*/
   public/*@ pure @*/int getSurplus(final/*@ non_null @*/Candidate candidate) {
-    // TODO 2009.10.14 ESC precondition violation warning
     if (hasQuota(candidate)) {
         final int votesReceived = countBallotsFor(candidate.getCandidateID());
         return votesReceived - getQuota();
@@ -192,8 +192,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * 
    * @return The total number of surplus votes for all candidates.
    */
-  /*@ requires \nonnullelements (candidates);
-    @ ensures 0 <= \result;
+  /*@ requires state == COUNTING;
     @ ensures \result == 
     @   (\sum int c; 0 <= c && c < totalNumberOfCandidates;
     @     getSurplus(candidates[c]));
@@ -202,9 +201,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     int sumOfSurpluses = 0;
     
     for (int c = 0; c < totalNumberOfCandidates; c++) {
-      //@ assert 0 <= getSurplus(candidates[c]);
       sumOfSurpluses += getSurplus(candidates[c]);
-      //@ assert 0 <= sumOfSurpluses;
     }
     return sumOfSurpluses;
   }
@@ -215,9 +212,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * 
    * <p> The deposit saving threshold is one plus one quarter of the full
    *         quota
-   * <p> This needs to be checked just before the candidate is eliminated to
-   *         include all transfers received before the candidate was either
-   *         elected or eliminated
+   * <p> This needs to be checked against all transfers received before the 
+   *     candidate was eliminated
    * @see <a href="http://www.cev.ie/htm/tenders/pdf/1_2.pdf">CEV commentary on
    *      count rules, section 3 page 13, section 4 page 17 and section 14</a>
    * @param index
@@ -235,9 +231,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (isElected (candidateList[index]) == true);
     @*/
   public/*@ pure @*/boolean isDepositSaved(final int index) {
-    // TODO 2009.10.14 ESC negative index warning; see line 224 above
     final Candidate candidate = candidates[index];
-    // TODO 2009.10.14 ESC precondition warning
     final int originalVote = candidate.getTotalVote();
     final boolean elected = isElected(candidate);
     return ((originalVote >= savingThreshold) || elected);
@@ -317,23 +311,23 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public void load(final/*@ non_null @*/BallotBox ballotBox) {
     
-    totalNumberOfVotes = ballotBox.size(); //@ nowarn;
+    totalNumberOfVotes = ballotBox.size();
     // TODO ESC 2011.01.17 Possible violation of object invariant
     
     ballots = new Ballot[totalNumberOfVotes];
     int index = 0;
     // TODO 2009.10.14 ESC invariant violation
-    while (ballotBox.isNextBallot()) { //@ nowarn;
+    while (ballotBox.isNextBallot()) {
       // TODO 2009.10.14 ESC precondition warning
-      ballots[index++] = ballotBox.getNextBallot(); //@ nowarn;
+      ballots[index++] = ballotBox.getNextBallot();
     }
     status = PRECOUNT;
     
     // Number of first preferences for each candidate
     // TODO 2009.10.15 ESC precondition warning
-    allocateFirstPreferences(); //@ nowarn;
+    allocateFirstPreferences();
     // TODO 2009.10.15 ESC postcondition warning
-  } //@ nowarn;
+  } 
   
   /**
    * Droop quota; number of votes needed to guarantee election.
@@ -372,7 +366,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        The internal identifier of this candidate
    * @return The number of ballots in this candidate's pile
    */
-  //@ also requires \nonnullelements (ballotsToCount);
   public/*@ pure @*/int countBallotsFor(final int candidateID) {
     int numberOfBallots = 0;
     for (int b = 0; b < ballots.length; b++) {
@@ -429,8 +422,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       final Candidate fromCandidate, final int toCandidateID) {
     int numberOfBallots = 0;
     // TODO 2009.10.14 ESC null reference warnings
-    for (int j = 0; j < ballots.length; j++) { //@ nowarn;
-      if (ballots[j].isAssignedTo(fromCandidate.getCandidateID()) //@ nowarn;
+    for (int j = 0; j < ballots.length; j++) {
+      if (ballots[j].isAssignedTo(fromCandidate.getCandidateID())
           && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
         numberOfBallots++;
       }
@@ -438,7 +431,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
     return numberOfBallots;
     // TODO 2009.10.15 ESC postcondition warning
-  } //@ nowarn;
+  }
   
   /**
    * Gets the status of the algorithm in progress.
@@ -487,15 +480,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         candidate
    */
   /*@ also
-    @   requires candidates != null;
-    @   requires \nonnullelements (candidateList);
     @   ensures \result == (\exists int i;
     @     0 <= i && i < candidateList.length;
     @     candidateID == candidateList[i].getCandidateID() &&
     @     candidateList[i].getStatus() == CandidateStatus.CONTINUING);
     @*/
   public/*@ pure @*/boolean isContinuingCandidateID(final int candidateID) {
-    //@ assert candidates != null;
     for (int i = 0; i < candidates.length; i++) {
       if (candidateID == candidates[i].getCandidateID()) {
         return candidates[i].getStatus() == CandidateStatus.CONTINUING;
@@ -558,7 +548,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     return numberOfVotes;
     // TODO 2009.10.14 ESC postcondition
-  } //@ nowarn;
+  }
   
   /**
    * Determine the rounded value of a fractional transfer.
@@ -756,13 +746,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       if (candidates[i].getCandidateID() != toCandidate.getCandidateID()
           && candidates[i].getStatus() == CandidateStatus.CONTINUING) {
         // TODO 2009.10.14 ESC precondition warning
-        numberHigherThan += compareCandidates(fromCandidate, toCandidate, //@ nowarn;
+        numberHigherThan += compareCandidates(fromCandidate, toCandidate,
             actualTransfers, transferRemainder, candidates[i]);
       }
     }
     return numberHigherThan;
     // TODO 2009.10.14 ESC postcondition warning
-  } //@ nowarn;
+  } 
   
   /*@ protected normal_behavior
     @   requires state == COUNTING;
@@ -779,7 +769,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     // TODO 2009.10.14 ESC warning
     final int secondTransferRemainder =
-        getTransferRemainder(fromCandidate, secondCandidate); //@ nowarn;
+        getTransferRemainder(fromCandidate, secondCandidate);
     if (secondTransferRemainder > firstTransferRemainder) {
       return 1;
     }
@@ -888,7 +878,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     return highestCandidate;
     // TODO 2009.10.14 ESC postcondition
-  } //@ nowarn Post;
+  }
   
   /**
    * Who is the lowest continuing candidate?
@@ -981,7 +971,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       if (ballots[b].getCandidateID() == candidateID) {
         
         // TODO 2009.10.14 ESC precondition
-        transferBallot(ballots[b]); //@ nowarn;
+        transferBallot(ballots[b]);
       }
     }
   }
@@ -1009,7 +999,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       @   || isContinuingCandidateID (ballot.getCandidateID());
       @*/
     // TODO 2009.10.14 ESC postcondition
-  } //@ nowarn;
+  }
   
   /**
    * Main count algorithm.

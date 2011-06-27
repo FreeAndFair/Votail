@@ -1,7 +1,5 @@
 package election.tally;
 
-import ie.votail.model.ElectionResult;
-
 import java.util.logging.Logger;
 
 
@@ -43,10 +41,9 @@ public class BallotCounting extends AbstractBallotCounting {
    */
   public BallotCounting() {
     super();
-    // TODO 2009.10.14 ESC invariant warning
-    countStatus = new CountStatus(); //@ nowarn;
+    // TODO 2009.10.14 ESC invariant warning for inner class
+    countStatus = new CountStatus();
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
-    // TODO 2009.10.14 ESC postcondition warning
   }
   
   /**
@@ -227,21 +224,21 @@ public class BallotCounting extends AbstractBallotCounting {
     
     // Update the totals for each candidate
     // TODO 2009.10.15 ESC precondition warning
-    fromCandidate.removeVote(numberOfVotes, countNumberValue); //@ nowarn;
+    fromCandidate.removeVote(numberOfVotes, countNumberValue); 
     // TODO 2009.10.15 ESC precondition warning
-    toCandidate.addVote(numberOfVotes, countNumberValue); //@ nowarn;
+    toCandidate.addVote(numberOfVotes, countNumberValue); 
     
     // Transfer the required number of ballots
     final int fromCandidateID = fromCandidate.getCandidateID();
     final int toCandidateID = toCandidate.getCandidateID();
     int ballotsMoved = 0;
     // TODO 2009.10.15 ESC null dereference warning
-    for (int b = 0; b < ballots.length; b++) { //@ nowarn;
+    for (int b = 0; b < ballots.length; b++) { 
       // TODO 2009.10.15 ESC null dereference warning 
-      if ((ballots[b].getCandidateID() == fromCandidateID) && //@ nowarn;
+      if ((ballots[b].getCandidateID() == fromCandidateID) && 
           (getNextContinuingPreference(ballots[b]) == toCandidateID)) {
         // TODO 2009.10.15 ESC assignable warning
-        transferBallot(ballots[b]); //@ nowarn;
+        transferBallot(ballots[b]); 
         ballotsMoved++;
         if (ballotsMoved == numberOfVotes) {
           break;

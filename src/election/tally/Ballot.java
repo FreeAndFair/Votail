@@ -270,10 +270,9 @@ public class Ballot implements Serializable {
   }
   
   /**
-   * Has the candidate been ranked at any level of preference?
+   * Has the candidate received any level of preference?
    * 
-   * <p> No ranking implies complete disapproval; lower than last preference.
-   * Some variants of PR-STV use approval based elimination, to avoid early
+   * <p> Some variants of PR-STV use approval based elimination, to avoid early
    * elimination of candidates with large numbers of second or subsequent
    * preferences.
    * </p>

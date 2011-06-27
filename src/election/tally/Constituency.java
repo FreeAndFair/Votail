@@ -153,7 +153,7 @@ public class Constituency implements Serializable {
    */
   //@ requires candidateDataInUse == false;
   //@ requires seatsInThisElection < candidateIDs.length;
-  //@ assignable candidates, candidateList.*, candidateDataInUse;
+  //@ assignable candidates, candidateList, candidateDataInUse;
   //@ ensures \nonnullelements (candidateList);
   //@ ensures candidateDataInUse == true;
   //@ ensures candidateList.length == candidateIDs.length;
