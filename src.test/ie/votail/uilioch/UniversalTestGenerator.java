@@ -54,15 +54,32 @@ public class UniversalTestGenerator {
    *          The number of candidates for election
    * @param method
    *          The voting scheme
+   * @param scope Maximum scope for Alloy solution
    */
   public void generateTests(final int numberOfSeats,
-      final int numberOfCandidates, final Method method) {
+      final int numberOfCandidates, final Method method, int scope) {
     
-    for (int seats = 1; seats <= numberOfSeats; seats++) {
-      for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
-        
-        createBallotBoxes(seats, candidates, method);
+    final String dataFilename = getFilename(method, DATA_FILENAME_SUFFIX);
+    try {
+      FileOutputStream fos = new FileOutputStream(dataFilename, true);
+      ObjectOutputStream out = new ObjectOutputStream(fos);
+      
+      for (int seats = 1; seats <= numberOfSeats; seats++) {
+        for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
+          
+          createBallotBoxes(seats, candidates, method, out, scope);
+        }
       }
+      out.close();
+      fos.close();
+    }
+    catch (FileNotFoundException e) {
+      logger.severe(e.getMessage());
+    }
+    catch (IOException e) {
+      logger.severe(e.getMessage());
+    }
+    finally{
     }
     logger.info("Finished.");
   }
@@ -74,26 +91,12 @@ public class UniversalTestGenerator {
    *          The number of candidates
    * @param method
    *          The voting scheme and method of election
+   * @param out Output file stream for generated data
+   * @param scope Maximum scope for Alloy solution
    */
   protected void createBallotBoxes(int seats, int candidates,
-      final Method method) {
+      final Method method, ObjectOutputStream out, int scope) {
     
-    final String dataFilename = getFilename(method, DATA_FILENAME_SUFFIX);
-    
-    FileInputStream fis = null;
-    ObjectInputStream in = null;
-    try {
-      fis = new FileInputStream(dataFilename);
-      in = new ObjectInputStream(fis);
-    }
-    catch (FileNotFoundException e) {
-      logger.info("No existing data because " + e.getMessage());
-    }
-    catch (IOException e) {
-      logger.severe("Cannot read existing data because " + e.getMessage());
-    }
-    finally {
-    }
     
     ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
     logger.fine("Scenarios: " + scenarioList.toString());
@@ -103,19 +106,14 @@ public class UniversalTestGenerator {
     for (ElectoralScenario scenario : scenarioList) {
       logger.info(scenario.toString());
       
-      if (in == null || notAlreadyGenerated(scenario, in)) {
         
         ElectionData electionData =
-            ballotBoxFactory.extractBallots(scenario, candidates).export();
-        
-        logger.info(electionData.getScenario().toPredicate());
+            ballotBoxFactory.extractBallots(scenario, candidates, scope).export();
         
         try {
-          FileOutputStream fos = new FileOutputStream(dataFilename, true);
-          ObjectOutputStream out = new ObjectOutputStream(fos);
+         
+          logger.info("Writing: " + electionData);
           out.writeObject(electionData);
-          out.close();
-          fos.close();
         }
         catch (Exception e) {
           logger.severe("Failed to save generated test data because "
@@ -123,42 +121,11 @@ public class UniversalTestGenerator {
           break;
         }
         count++;
-      }
+      
     }
     
     logger.info("Generated " + count + " scenarios for " + method.toString()
         + " with " + candidates + " candidates for " + seats + " seats.");
-  }
-  
-  /**
-   * Ensure that a ballot box has not already been generated for this scenario
-   * 
-   * @param scenario
-   *          The scenario that we are looking for
-   * 
-   * @return <code>True></code> if a ballot box exists for this scenario
-   */
-  protected boolean notAlreadyGenerated(ElectoralScenario scenario,
-      ObjectInputStream in) {
-    
-    try {
-      while (0 < in.available()) {
-        
-        ElectionData electionData = getTestData(in);
-        
-        if (electionData == null
-            || scenario.equivalentTo(electionData.getScenario())) {
-          in.close();
-          return false;
-        }
-      }
-      in.close();
-    }
-    catch (IOException e) {
-      logger.severe(e.getMessage());
-    }
-    
-    return true;
   }
   
   /**
@@ -201,10 +168,10 @@ public class UniversalTestGenerator {
   public static void main(String[] args) {
     UniversalTestGenerator uilioch = new UniversalTestGenerator();
     
-    uilioch.generateTests(1, 5, Method.STV);        // IRV 1-seat
-    uilioch.generateTests(3, 7, Method.STV);        // PR-STV 3-seat
-    uilioch.generateTests(4, 9, Method.STV);        // PR-STV 4-seat
-    uilioch.generateTests(5, 11, Method.STV);       // PR-STV 5-seat
-    uilioch.generateTests(1, 5, Method.Plurality);  // First-past-the-post
+    uilioch.generateTests(1, 5, Method.STV, 15);        // IRV 1-seat
+    uilioch.generateTests(3, 7, Method.STV, 20);        // PR-STV 3-seat
+    uilioch.generateTests(4, 9, Method.STV, 20);        // PR-STV 4-seat
+    uilioch.generateTests(5, 11, Method.STV, 20);       // PR-STV 5-seat
+    uilioch.generateTests(1, 5, Method.Plurality, 15 ); // First-past-the-post
   }
 }
