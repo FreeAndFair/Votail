@@ -56,19 +56,17 @@ abstract sig Threat {
   antidote: Solution
 }
 
--- Different Kinds of Threats: Defects, Falsification, Coercion and Failure
+-- Different Kinds of Threats: Failures and Attacks
 
-sig Failure extends Threat {}
+sig Failure extends Threat {} -- aka defect
 sig SystemFailure extends Failure {}
 sig UsabilityFailure extends Failure {}
 
 
 sig Defect extends Threat {
-	preventable: boolean,
-	testable: boolean,
- provable: boolean
+	impact: Level,
+ liklihood: Level
 }{
-	provable and testable implies detectable
 }
 sig MisCount extends Defect{} {
 	-- To Do: independant auditabity (software independence)
@@ -81,9 +79,9 @@ sig LostBallot extends Defect{}{
 }
 
 sig Attack extends Threat {
-		cost: Natural,
-	 attacker: Actor,
-		feasability: Natural
+		cost: Level
+	 motivation: Level,
+		complexity: Level,
 }
 
 -- Falsification Threats
