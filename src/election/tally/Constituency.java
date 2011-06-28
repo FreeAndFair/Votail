@@ -124,14 +124,14 @@ public class Constituency implements Serializable {
   //@ requires seatsInElection <= seatsInConstituency;
   //@ requires 0 < seatsInElection;
   //@ requires seatsInElection < candidates;
-  //@ assignable this.seatsInThisElection;
-  //@ assignable this.totalSeatsInConstituency;
-  //@ ensures this.seatsInThisElection == seatsInElection;
-  //@ ensures this.totalSeatsInConstituency == seatsInConstituency;
+  //@ assignable seatsInThisElection;
+  //@ assignable totalSeatsInConstituency;
+  //@ ensures seatsInThisElection == seatsInElection;
+  //@ ensures totalSeatsInConstituency == seatsInConstituency;
   public void setNumberOfSeats(final int seatsInElection,
       final int seatsInConstituency) {
-    this.totalSeatsInConstituency = seatsInConstituency;
-    this.seatsInThisElection = seatsInElection;
+    totalSeatsInConstituency = seatsInConstituency;
+    seatsInThisElection = seatsInElection;
   }
   
   /**
@@ -153,7 +153,10 @@ public class Constituency implements Serializable {
    */
   //@ requires candidateDataInUse == false;
   //@ requires seatsInThisElection < candidateIDs.length;
-  //@ assignable candidates, candidateList, candidateDataInUse;
+  /*@ requires (\forall int i; 0 <= i && i < candidateIDs.length;
+    @   0 < candidateIDs[i]);
+    @*/
+  //@ assignable candidates, candidateList, candidateDataInUse, candidateList[*];
   //@ ensures \nonnullelements (candidateList);
   //@ ensures candidateDataInUse == true;
   //@ ensures candidateList.length == candidateIDs.length;
@@ -162,7 +165,8 @@ public class Constituency implements Serializable {
     this.candidates = candidateIDs.length;
     this.candidateList = new Candidate[candidateIDs.length];
     for (int index = 0; index < this.candidateList.length; index++) {
-      this.candidateList[index] = new Candidate(candidateIDs[index]);
+      final int theCandidateID = candidateIDs[index];
+      this.candidateList[index] = new Candidate(theCandidateID);
     }
     //@ set candidateDataInUse = true;
   }
