@@ -1,7 +1,6 @@
 package election.tally;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 /**
  * The Candidate object records the number of votes received during each round
@@ -16,11 +15,6 @@ import java.util.logging.Logger;
 
 public class Candidate extends CandidateStatus implements Serializable {
   
-  protected static final String LOGGER_NAME = "Candidate";
-
-  /**
-   * 
-   */
   private static final long serialVersionUID = 3435036225909047966L;
 
   /**
@@ -66,15 +60,6 @@ public class Candidate extends CandidateStatus implements Serializable {
   //@ public invariant votesAdded != votesRemoved;
   //@ public invariant votesRemoved != votesAdded;
   
-  /** The status of the candidate at the latest count */
-  /*@ public invariant state == ELECTED || state == ELIMINATED ||
-    @   state == CONTINUING;
-    @ public initially state == CONTINUING;
-    @ public constraint \old(state) == ELECTED ==> state == ELECTED;
-    @ public constraint \old(state) == ELIMINATED ==> state == ELIMINATED;
-    @*/
-  protected /*@ spec_public @*/ byte state = CONTINUING;
-  
   /** The number of rounds of counting so far */
   //@ public invariant 0 <= lastCountNumber;
   //@ public initially lastCountNumber == 0;
@@ -83,6 +68,20 @@ public class Candidate extends CandidateStatus implements Serializable {
   //@ public invariant lastCountNumber < votesAdded.length;
   //@ public invariant lastCountNumber < votesRemoved.length;
   protected /*@ spec_public @*/ int lastCountNumber = 0;
+
+  
+  //@ protected initially totalVote == 0;
+  //@ protected constraint \old(totalVote) <= totalVote;
+  protected /*@ spec_public @*/ int totalVote = 0;
+
+  
+  /** Number of ballots transferred to another candidate*/
+  /*@ protected initially removedVote == 0;
+    @ protected invariant removedVote <= totalVote;
+    @ protected constraint \old(removedVote) <= removedVote;
+    @ protected invariant (state == CONTINUING) ==> removedVote == 0;
+    @*/
+  protected int removedVote = 0;
     
   public static final int NO_CANDIDATE = 0;
   
@@ -117,17 +116,8 @@ public class Candidate extends CandidateStatus implements Serializable {
    * 
    * @return Gross total of votes received
    */
-  /*@ requires lastCountNumber < votesAdded.length;
-    @ ensures \result == 
-    @   (\sum int i; 0 <= i && i <= lastCountNumber; votesAdded[i]);
-    @*/
+  //@ ensures \result == totalVote;
   public/*@ pure @*/int getTotalVote() {
-    int totalVote = 0;
-    
-    //@ loop_invariant votesAdded[i] <= totalVote;
-    for (int i = 0; i <= lastCountNumber; i++) {
-      totalVote += votesAdded[i];
-    }
     
     return totalVote;
   }
@@ -204,12 +194,14 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   requires count < votesRemoved.length;
     @   requires count < CountConfiguration.MAXCOUNT;
     @   requires 0 <= numberOfVotes;
-    @   assignable lastCountNumber, votesAdded[count];
+    @   assignable lastCountNumber, votesAdded[count], totalVote;
     @   ensures \old(votesAdded[count]) + numberOfVotes == votesAdded[count];
-    @   ensures count <= lastCountNumber;
+    @   ensures \old(totalVote) + numberOfVotes == totalVote;
+    @   ensures count == lastCountNumber;
     @*/
   public void addVote(final int numberOfVotes, final int count) {
     votesAdded[count] += numberOfVotes;
+    totalVote += numberOfVotes;
     updateCountNumber(count);
   }
   
@@ -219,15 +211,16 @@ public class Candidate extends CandidateStatus implements Serializable {
    * @param count
    *          The number of the most recent count
    */
-  //@ requires count < CountConfiguration.MAXCOUNT;
-  //@ requires count < votesAdded.length;
-  //@ requires count < votesRemoved.length;
-  //@ assignable lastCountNumber;
-  //@ ensures count <= lastCountNumber;
+  /*@ protected normal_behavior
+    @   requires count < CountConfiguration.MAXCOUNT;
+    @   requires count < votesAdded.length;
+    @   requires count < votesRemoved.length;
+    @   requires lastCountNumber <= count;
+    @   assignable lastCountNumber;
+    @   ensures lastCountNumber == count;
+    @*/
   protected void updateCountNumber(final int count) {
-    if (lastCountNumber < count) {
-      lastCountNumber = count;
-    }
+    lastCountNumber = count;
   }
   
   /**
@@ -248,13 +241,15 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   requires count < votesAdded.length;
     @   requires count < CountConfiguration.MAXCOUNT;
     @   requires 0 <= numberOfVotes;
-    @   requires numberOfVotes <= getTotalAtCount(count);
-    @   assignable lastCountNumber, votesRemoved[count];
+    @   requires numberOfVotes <= getTotalAtCount();
+    @   assignable lastCountNumber, votesRemoved[count], removedVote;
     @   ensures \old(votesRemoved[count]) + numberOfVotes == votesRemoved[count];
-    @   ensures count <= lastCountNumber;
+    @   ensures \old(removedVote) + numberOfVotes == removedVote;
+    @   ensures count == lastCountNumber;
     @*/
   public void removeVote(final int numberOfVotes, final int count) {
     votesRemoved[count] += numberOfVotes;
+    removedVote += numberOfVotes;
     updateCountNumber(count);
   }
   
@@ -276,6 +271,8 @@ public class Candidate extends CandidateStatus implements Serializable {
   /** Declares the candidate to be eliminated */
   /*@ public normal_behavior
     @   requires 0 <= countNumber && countNumber < CountConfiguration.MAXCOUNT;
+    @   requires countNumber < votesAdded.length;
+    @   requires countNumber < votesRemoved.length;
     @   requires this.lastCountNumber <= countNumber;
     @   requires this.state == CONTINUING;
     @   assignable state, lastCountNumber;
@@ -319,25 +316,12 @@ public class Candidate extends CandidateStatus implements Serializable {
   /**
    * How many votes have been received by this round of counting?
    * 
-   * @param count
-   *          The round of counting
    * @return The total number of votes received so far
    */
-  /*@ requires 0 <= count && count < CountConfiguration.MAXCOUNT;
-    @ requires count < votesAdded.length;
-    @ requires count < votesRemoved.length;
-    @ ensures \result == 
-    @   (\sum int i; 0 <= i && i <= count; getVoteAtCount(i));
-    @*/
-  public/*@ pure @*/int getTotalAtCount(final int count) {
-    int totalAtCount = 0;
+  //@ ensures \result == totalVote - removedVote;
+  public/*@ pure @*/int getTotalAtCount() {
     
-    //@ loop_invariant getVoteAtCount(i) <= totalAtCount;
-    for (int i = 0; i <= count; i++) {
-      totalAtCount += getVoteAtCount(i);
-    }
-    
-    return totalAtCount;
+    return totalVote - removedVote;
   }
   
   /**
@@ -363,11 +347,6 @@ public class Candidate extends CandidateStatus implements Serializable {
     }
     stringBuffer.append(" with " + getTotalVote() + " votes");
     return stringBuffer.toString();
-  }
-  
-  //@ ensures \result == getTotalAtCount (lastCountNumber);
-  public/*@ pure*/int getFinalVote() {
-    return getTotalAtCount(lastCountNumber);
   }
   
   //@ ensures \result <==> (state == ELIMINATED);
