@@ -41,7 +41,6 @@ public class BallotCounting extends AbstractBallotCounting {
    */
   public BallotCounting() {
     super();
-    // TODO 2009.10.14 ESC invariant warning for inner class
     countStatus = new CountStatus();
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
   }
@@ -262,42 +261,33 @@ public class BallotCounting extends AbstractBallotCounting {
     
     // Start or else resume the counting of ballots
     if (status < ElectionStatus.COUNTING) {
-      // TODO 2009.10.14 ESC warning
       startCounting(); 
     }
     
-    // TODO 2009.10.15 ESC invariant warning
     while (getNumberContinuing() > totalRemainingSeats && 
-        0 < totalRemainingSeats && // infinite loop detected 2011.01.20
+        0 < totalRemainingSeats && // infinite loop detected by Uilioch and fixed 2011.01.20
         countNumberValue < CountConfiguration.MAXCOUNT) {
       incrementCountNumber(); 
       
-      // TODO 2009.10.15 ESC assignable warning
       countStatus.changeState( 
           AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
       
       // Transfer surplus votes from winning candidates
-      // TODO 2009.10.15 ESC precondition warning
       logger.info("Total surplus votes: " + getTotalSumOfSurpluses());
       electCandidatesWithSurplus(); 
       
       // Exclusion of lowest continuing candidates if no surplus
-      // TODO 2009.10.15 ESC precondition warning
       excludeLowestCandidates(); 
-      // TODO 2009.10.15 ESC invariant warning
     }
     
     // Filling of last seats
-    // TODO 2009.10.15 ESC warnings
-    if (getNumberContinuing() == totalRemainingSeats) { //@ nowarn Invariant ;
-      fillLastSeats(); //@ 
+    if (getNumberContinuing() == totalRemainingSeats) { 
+      fillLastSeats();
       
     }
     
-    // TODO 2009.10.16 ESC assignable warning
-    countStatus.changeState(AbstractCountStatus.END_OF_COUNT); //@ nowarn Modifies ;
+    countStatus.changeState(AbstractCountStatus.END_OF_COUNT);
     status = ElectionStatus.FINISHED;
-    // TODO 2009.10.16 ESC postcondition warning
   } //@ 
   
   /**
@@ -356,25 +346,18 @@ public class BallotCounting extends AbstractBallotCounting {
         && getNumberContinuing() > totalRemainingSeats
         && countNumberValue < CountConfiguration.MAXCOUNT) {
       
-      // TODO 2009.10.14 ESC assignable warning
-      countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE); //@ 
-      // TODO 2009.10.15 ESC precondition warning
-      final int loser = findLowestCandidate(); //@ 
+       countStatus.changeState(AbstractCountStatus.NO_SURPLUS_AVAILABLE);  
+       final int loser = findLowestCandidate();  
       
       if (loser != NONE_FOUND_YET) {
         
-        // TODO 2009.10.15 ESC precondition warning
-        countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED); //@ 
-        // TODO 2009.10.15 ESC precondition warning
-        eliminateCandidate(loser); //@ 
-        // TODO 2009.10.15 ESC assignable warning
-        countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS); //@ 
-        // TODO 2009.10.15 ESC null warning
-        redistributeBallots(candidates[loser].getCandidateID()); //@ 
+         countStatus.changeState(AbstractCountStatus.CANDIDATE_EXCLUDED); 
+         eliminateCandidate(loser); //@ 
+         countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS); 
+         redistributeBallots(candidates[loser].getCandidateID()); 
       }
     }
-    // TODO 2009.10.15 ESC warnings
-  } //@ 
+   } 
   
   /**
    * As the number of remaining seats equals the number of continuing
@@ -391,12 +374,10 @@ public class BallotCounting extends AbstractBallotCounting {
     @ ensures 0 == totalRemainingSeats;
     @*/
   protected void fillLastSeats() {
-    // TODO 2009.10.14 ESC assignable warning
-    countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED); // @ nowarn;
+    countStatus.changeState(AbstractCountStatus.LAST_SEAT_BEING_FILLED); 
     for (int c = 0; c < totalNumberOfCandidates; c++) {
       if (isContinuingCandidateID(candidates[c].getCandidateID())) {
-        // TODO 2009.10.15 ESC precondition warning
-        electCandidate(c); // @ nowarn;
+        electCandidate(c); 
       }
     }
   }
@@ -415,11 +396,9 @@ public class BallotCounting extends AbstractBallotCounting {
     countNumberValue = 0;
     
     totalRemainingSeats = numberOfSeats;
-    // TODO 2009.10.14 ESC invariant warning
     savingThreshold = getDepositSavingThreshold();
     numberOfCandidatesElected = 0;
     numberOfCandidatesEliminated = 0;
-    // TODO 2009.10.14 ESC postcondition warning
   } 
   
   /**
@@ -436,7 +415,6 @@ public class BallotCounting extends AbstractBallotCounting {
     @ assignable countStatus.substate;
     @*/
   public void updateCountStatus(final int countingStatus) {
-    // TODO 2009.10.14 ESC assignable warning
     countStatus.changeState(countingStatus);
   }
   
