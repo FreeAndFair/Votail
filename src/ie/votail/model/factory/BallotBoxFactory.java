@@ -69,13 +69,16 @@ public class BallotBoxFactory {
     
     return extractBallots(scenario, scope, MAX_SCOPE);
   }
-
+  
   /**
    * Generate ballot box test data
    * 
-   * @param scenario The set of election outcomes
-   * @param scope The initial scope for the Alloy solution
-   * @param upperBound The maximum scope
+   * @param scenario
+   *          The set of election outcomes
+   * @param scope
+   *          The initial scope for the Alloy solution
+   * @param upperBound
+   *          The maximum scope
    * @return The Ballot Box
    */
   public ElectionConfiguration extractBallots(ElectoralScenario scenario,
@@ -108,15 +111,15 @@ public class BallotBoxFactory {
             for (Field field : sig.getFields()) {
               if (field.label.contains("year")) {
                 A4TupleSet tupleSet = solution.eval(field);
-                logger.info(tupleSet.toString());
+                logger.info("Model version year = " + tupleSet.toString());
               }
               else if (field.label.contains("month")) {
                 A4TupleSet tupleSet = solution.eval(field);
-                logger.info(tupleSet.toString());
+                logger.info("Model version month = " + tupleSet.toString());
               }
               else if (field.label.contains("day")) {
                 A4TupleSet tupleSet = solution.eval(field);
-                logger.info(tupleSet.toString());
+                logger.info("Model version day = " + tupleSet.toString());
               }
             }
           }
@@ -157,8 +160,10 @@ public class BallotBoxFactory {
   /**
    * Find the Alloy solution for an electoral scenario
    * 
-   * @param scenario The electoral scenario
-   * @param scope The scope of the search
+   * @param scenario
+   *          The electoral scenario
+   * @param scope
+   *          The scope of the search
    * @return The Alloy solution
    * @throws Err
    * @throws ErrorSyntax
