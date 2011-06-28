@@ -61,10 +61,8 @@ import java.io.Serializable;
  *         Dermot Cochran</a>
  */
 
-public class Ballot implements Serializable {
-  /**
-   * 
-   */
+public final class Ballot implements Serializable {
+  
   private static final long serialVersionUID = -2377214384195511416L;
 
   private static final char WHITE_SPACE = ' ';
@@ -110,18 +108,19 @@ public class Ballot implements Serializable {
    * Generate an empty ballot paper for use by a voter.
    */
   /*@ public normal_behavior
-    @	  assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList;
+    @   requires (\forall int i; 0 <= i && i < preferences.length;
+    @     preferences[i] != NONTRANSFERABLE &&
+    @     preferences[i] != Candidate.NO_CANDIDATE);
+    @   assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList;
+    @   ensures (\forall int index; 0 <= index && index < numberOfPreferences;
+    @     preferenceList[index] == preferences[index]);
     @*/
   public Ballot(final/*@ non_null @*/int[] preferences) {
     numberOfPreferences = preferences.length;
     positionInList = 0;
-    int index = 0;
     preferenceList = new int[numberOfPreferences];
-    for (int i = 0; i < preferences.length; i++) {
-      int preference = preferences[i];
-      if (preference != NONTRANSFERABLE && preference != Candidate.NO_CANDIDATE) {
-        preferenceList[index++] = preference;
-      }
+    for (int index = 0; index < numberOfPreferences; index++) {
+      preferenceList[index] = preferences[index];
     }
   }
   
@@ -311,16 +310,20 @@ public class Ballot implements Serializable {
   }
 
   /**
+   * Get the full list of preferences from this ballot.
+   * 
    * @return the preferenceList
    */
-  public int[] getPreferenceList() {
+  public /*@ pure @*/ int[] getPreferenceList() {
     return preferenceList;
   }
 
   /**
+   * Get the length of this ballot.
+   * 
    * @return the numberOfPreferences
    */
-  public int getNumberOfPreferences() {
+  public /*@ pure @*/ int getNumberOfPreferences() {
     return numberOfPreferences;
   }
 }
