@@ -231,9 +231,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       (isElected (candidateList[index]) == true);
     @*/
   public/*@ pure @*/boolean isDepositSaved(final int index) {
-    final Candidate candidate = candidates[index];
-    final int originalVote = candidate.getTotalVote();
-    final boolean elected = isElected(candidate);
+    final int originalVote = candidates[index].getTotalVote();
+    final boolean elected = isElected(candidates[index]);
     return ((originalVote >= savingThreshold) || elected);
   }
   
@@ -690,8 +689,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     while (0 <= count) {
       
       // TODO 2009.10.14 ESC precondition warning
-      firstNumberOfVotes = firstCandidate.getTotalAtCount(count);
-      secondNumberOfVotes = secondCandidate.getTotalAtCount(count);
+      firstNumberOfVotes = firstCandidate.getTotalAtCount();
+      secondNumberOfVotes = secondCandidate.getTotalAtCount();
       if (firstNumberOfVotes > secondNumberOfVotes) {
         return true;
       }
@@ -703,7 +702,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     return secondCandidate.isAfter(firstCandidate);
     // TODO 2009.10.14 ESC postcondition warning
-  } //@ nowarn;
+  } 
   
   /**
    * Determine the number of continuing candidates with a higher remainder in
@@ -740,7 +739,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     final int actualTransfers = getActualTransfers(fromCandidate, toCandidate);
     // TODO 2009.10.14 ESC precondition warning
     final int transferRemainder =
-        getTransferRemainder(fromCandidate, toCandidate); //@ nowarn;
+        getTransferRemainder(fromCandidate, toCandidate); 
     
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getCandidateID() != toCandidate.getCandidateID()
