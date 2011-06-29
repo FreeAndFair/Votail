@@ -49,7 +49,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
 	  @ protected invariant (state == COUNTING || state == FINISHED)
 	  @ ==> 
 	  @  (\forall int i; 0 <= i && i < totalCandidates;
-	  @    candidateList[i].getTotalAtCount(countNumber) ==
+	  @    candidateList[i].getTotalAtCount() ==
 	  @    countBallotsFor (candidateList[i].getCandidateID()));
 	  @*/
 	
@@ -152,8 +152,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   remainingSeats == (seats - numberElected);
     @*/
 
-  /*@ ensures \nonnullelements (candidateList);
-    @*/
    public AbstractBallotCounting();
 	
   /** 
@@ -545,18 +543,18 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ requires firstCandidate.getStatus() == Candidate.CONTINUING;
     @ requires secondCandidate.getStatus() == Candidate.CONTINUING;
     @ ensures \result == (\exists int i; 0 <= i && i <= countNumber;
-    @   (firstCandidate.getTotalAtCount(i) > secondCandidate.getTotalAtCount(i)) 
+    @   (firstCandidate.getVoteAtCount(i) > secondCandidate.getVoteAtCount(i)) 
     @   && 
     @   (\forall int j; i < j && j <= countNumber;
-    @     firstCandidate.getTotalAtCount(j) 
-    @     == secondCandidate.getTotalAtCount(j))) 
+    @     firstCandidate.getVoteAtCount(j) 
+    @     == secondCandidate.getVoteAtCount(j))) 
     @     ||
     @     ((randomSelection (firstCandidate, secondCandidate) == 
     @     firstCandidate.getCandidateID()) 
     @     && 
     @     (\forall int k; 0 <= k && k <= countNumber;
-    @       firstCandidate.getTotalAtCount(k) 
-    @       == secondCandidate.getTotalAtCount(k)));
+    @       firstCandidate.getVoteAtCount(k) 
+    @       == secondCandidate.getVoteAtCount(k)));
     @*/
   protected /*@ pure spec_public @*/ boolean isHigherThan (
 		  /*@ non_null @*/ Candidate firstCandidate,

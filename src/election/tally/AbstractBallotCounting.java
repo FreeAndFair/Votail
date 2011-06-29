@@ -45,8 +45,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public static final int NONE_FOUND_YET = -1;
   
   /** List of candidates for election */
-  protected transient/*@ spec_public @*/Candidate[] candidates =
-      new Candidate[0];
+  /*@ public invariant (PRECOUNT <= state) ==>
+    @   (candidates != null) && 
+    @   (\forall int i; 0 <= i && i < totalNumberOfCandidates;
+    @     candidates[i] != null);
+    @*/
+  protected transient/*@ spec_public @*/ Candidate[] candidates;
   //@ protected represents candidateList <- candidates;
   
   /** List of contents of each ballot paper that will be counted. */
@@ -222,7 +226,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ also
     @     requires (state == COUNTING) || (state == FINISHED);
-    @     requires \nonnullelements (candidateList);
     @     requires 0 <= index;
     @     requires index < totalNumberOfCandidates;
     @     requires index < candidateList.length;
@@ -411,16 +414,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return Number of votes potentially transferable from this candidate to
    *         that candidate
    */
-  /*@ also
-    @   requires \nonnullelements (ballotsToCount);
-    @   ensures \result== (\num_of int j; 0 <= j && j < totalVotes;
-    @     (ballotsToCount[j].isAssignedTo(fromCandidate.getCandidateID())) &&
-    @     (getNextContinuingPreference(ballotsToCount[j]) == toCandidateID));
-    @*/
   protected/*@ pure spec_public @*/int getPotentialTransfers(
       final Candidate fromCandidate, final int toCandidateID) {
     int numberOfBallots = 0;
-    // TODO 2009.10.14 ESC null reference warnings
     for (int j = 0; j < ballots.length; j++) {
       if (ballots[j].isAssignedTo(fromCandidate.getCandidateID())
           && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
@@ -429,7 +425,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       
     }
     return numberOfBallots;
-    // TODO 2009.10.15 ESC postcondition warning
   }
   
   /**
@@ -455,8 +450,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return Internal ID of next continuing candidate or
    *         <code>NONTRANSFERABLE</code>
    */
-  //@ also requires \nonnullelements (candidateList);
-  //@ requires candidates != null;
   protected/*@ pure spec_public*/int getNextContinuingPreference(
       final/*@ non_null*/Ballot ballot) {
     
@@ -737,20 +730,17 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       final/*@ non_null @*/Candidate toCandidate) {
     int numberHigherThan = 0;
     final int actualTransfers = getActualTransfers(fromCandidate, toCandidate);
-    // TODO 2009.10.14 ESC precondition warning
     final int transferRemainder =
         getTransferRemainder(fromCandidate, toCandidate); 
     
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getCandidateID() != toCandidate.getCandidateID()
           && candidates[i].getStatus() == CandidateStatus.CONTINUING) {
-        // TODO 2009.10.14 ESC precondition warning
         numberHigherThan += compareCandidates(fromCandidate, toCandidate,
             actualTransfers, transferRemainder, candidates[i]);
       }
     }
     return numberHigherThan;
-    // TODO 2009.10.14 ESC postcondition warning
   } 
   
   /*@ protected normal_behavior
