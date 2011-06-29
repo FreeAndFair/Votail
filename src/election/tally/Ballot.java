@@ -65,7 +65,7 @@ public final class Ballot implements Serializable {
   
   private static final long serialVersionUID = -2377214384195511416L;
 
-  private static final char WHITE_SPACE = ' ';
+  protected static final char WHITE_SPACE = ' ';
   
   /**
    * Maximum possible number of ballots based on maximum population size for a
@@ -89,7 +89,9 @@ public final class Ballot implements Serializable {
    */
   public static final int NONTRANSFERABLE = 0;
   
-  private /*@ spec_public @*/ static final int NOT_APPROVED = Integer.MAX_VALUE;
+  
+  /** Indicates that a candidate has not received any preference in the ballot */
+  public static final int NOT_APPROVED = Integer.MAX_VALUE;
   
   /** List of candidates in order of preference */
   protected/*@ spec_public non_null */int[] preferenceList;
@@ -100,6 +102,8 @@ public final class Ballot implements Serializable {
   protected /*@ spec_public @*/ int numberOfPreferences;
   
   /** Position within preference list */
+  //@ initially positionInList == 0;
+  //@ constraint \old(positionInList) <= positionInList;
   //@ invariant 0 <= positionInList;
   //@ invariant positionInList <= numberOfPreferences;
   protected transient /*@ spec_public @*/int positionInList;
@@ -122,12 +126,6 @@ public final class Ballot implements Serializable {
     for (int index = 0; index < numberOfPreferences; index++) {
       preferenceList[index] = preferences[index];
     }
-  }
-  
-  protected Ballot() {
-    this.positionInList = 0;
-    this.preferenceList = new int[MAX_BALLOTS];
-    this.numberOfPreferences = preferenceList.length;
   }
   
   /**
@@ -218,14 +216,14 @@ public final class Ballot implements Serializable {
   }
   
   /*@ requires 0 <= index;
-    @ ensures (index < numberOfPreferences && index < preferenceList.length) 
+    @ requires index <= numberOfPreferences;
+    @ ensures (index < numberOfPreferences) 
     @   ==> preferenceList[index] == \result;
-    @ ensures (numberOfPreferences <= index || 
-    @   preferenceList.length <= index) 
+    @ ensures (numberOfPreferences == index) 
     @   ==> \result == Ballot.NONTRANSFERABLE;
     @*/
   protected final/*@ spec_public pure @*/int getPreference(final int index) {
-    if (index < numberOfPreferences && index < preferenceList.length) {
+    if (index < numberOfPreferences) {
       return preferenceList[index];
     }
     
@@ -293,11 +291,17 @@ public final class Ballot implements Serializable {
     return false;
   }
   
+  /**
+   * Get the ranking of the candidate in the list of preferences
+   * 
+   * @param candidateID The candidate to be checked
+   * @return The ranking of the candidate or else <code>NOT_APPROVED</code>
+   */
   /*@ public normal_behavior
     @ ensures isApproved(candidateID) ==>
     @   (0 <= \result && \result <= numberOfPreferences);
     @ ensures !isApproved(candidateID) ==>
-    @   (NOT_APPROVED == \result); 
+    @   (NOT_APPROVED == \result);
     @*/
   public/*@ pure @*/int getRank(int candidateID) {
     for (int i = 0; i < numberOfPreferences; i++) {
@@ -314,6 +318,7 @@ public final class Ballot implements Serializable {
    * 
    * @return the preferenceList
    */
+  //@ ensures \result == preferenceList;
   public /*@ pure @*/ int[] getPreferenceList() {
     return preferenceList;
   }

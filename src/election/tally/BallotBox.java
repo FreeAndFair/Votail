@@ -38,6 +38,10 @@ public class BallotBox implements Serializable {
    * List of valid ballot papers, already shuffled and mixed by the data loader
    * or returning officer.
    */
+  /*@ invariant ballots.length <= Ballot.MAX_BALLOTS;
+    @ invariant (\forall int i; 0 <= i && i < numberOfBallots;
+    @   ballots[i] != null);
+    @*/
   protected/*@ non_null spec_public*/Ballot[] ballots =
     new Ballot[Ballot.MAX_BALLOTS];
 
@@ -60,9 +64,12 @@ public class BallotBox implements Serializable {
    */
   /*@ public invariant 0 <= numberOfBallots;
     @ public invariant numberOfBallots <= Ballot.MAX_BALLOTS;
+    @ public invariant numberOfBallots <= ballots.length;
     @ public constraint \old (numberOfBallots) <= numberOfBallots;
     @*/
   protected/*@ spec_public @*/int numberOfBallots;
+  
+  //@ public ghost int lastBallotAdded = 0;
 
   /**
    * Number of ballots copied from box
@@ -91,13 +98,20 @@ public class BallotBox implements Serializable {
    * @param preferences
    *        The list of candidate preferences
    */
-  /*@ requires numberOfBallots < ballots.length;
-    @ requires numberOfBallots < Ballot.MAX_BALLOTS;
-    @ ensures \old(numberOfBallots) + 1 == numberOfBallots;
+  /*@ public normal_behavior
+    @   requires numberOfBallots < ballots.length;
+    @   requires numberOfBallots < Ballot.MAX_BALLOTS;
+    @   requires (\forall int i; 0 <= i && i < preferences.length;
+    @     preferences[i] != Ballot.NONTRANSFERABLE &&
+    @     preferences[i] != Candidate.NO_CANDIDATE);
+    @   assignable ballots, numberOfBallots, ballots[*], lastBallotAdded;
+    @   ensures \old(numberOfBallots) + 1 == numberOfBallots;
+    @   ensures ballots[lastBallotAdded] != null;
     @*/
   public void accept(final/*@ non_null @*/int[] preferences) {
-    final int next = numberOfBallots++;
-    ballots[next] = new Ballot(preferences);
+    //@ set lastBallotAdded = numberOfBallots;
+    ballots[numberOfBallots] = new Ballot(preferences);
+    numberOfBallots++;
   }
 
   /**
@@ -120,6 +134,7 @@ public class BallotBox implements Serializable {
   //@ requires index + 1 < ballots.length;
   //@ assignable index;
   //@ ensures \result == ballots[\old(index)];
+  //@ ensures \old(index) + 1 == index;
   public Ballot getNextBallot() {
     return ballots[index++];
   }
@@ -131,8 +146,18 @@ public class BallotBox implements Serializable {
    */
   public /*@ pure non_null */ String toString() {
     StringBuffer stringBuffer = new StringBuffer(numberOfBallots + " ballots ");
-    for (int i = 0; i < numberOfBallots; i++) {
-      stringBuffer.append(ballots[i].toString());
+    for (int b = 0; b < numberOfBallots; b++) {
+      for (int p = 0; b < ballots[b].getNumberOfPreferences(); p++) {
+        final int nextPreference = ballots[b].getPreference(p);
+        if (nextPreference == Candidate.NO_CANDIDATE) {
+          break;
+        }
+        if (0 < p) {
+          stringBuffer.append(Ballot.WHITE_SPACE);
+        }
+        stringBuffer.append("" + nextPreference);
+      }
+      stringBuffer.append(")");
     }
     return stringBuffer.toString();
   }
