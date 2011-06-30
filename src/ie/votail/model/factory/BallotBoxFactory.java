@@ -14,6 +14,7 @@ package ie.votail.model.factory;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.Outcome;
+import ie.votail.uilioch.WorkPackage;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -62,7 +63,7 @@ public class BallotBoxFactory {
    * @param scope
    *          The scope for model finding in Alloy Analyser
    * @param byeElection
-   * @return The ELection Configuration (null if generation fails)
+   * @return The Election Configuration (null if generation fails)
    */
   public ElectionConfiguration /*@ non_null @*/extractBallots(
   /*@ non_null*/ElectoralScenario scenario, int scope) {
@@ -189,5 +190,9 @@ public class BallotBoxFactory {
             .getAllReachableSigs(), command, options);
     logger.finest("Found this solution: " + solution.toString());
     return solution;
+  }
+
+  public ElectionConfiguration extractBallots(WorkPackage wp) {
+    return (extractBallots (wp.getScenario(), wp.getCandidates(), wp.getScope()));
   }
 }
