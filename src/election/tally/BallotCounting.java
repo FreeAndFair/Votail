@@ -107,10 +107,8 @@ public class BallotCounting extends AbstractBallotCounting {
     }
   }
   
-  // Status of the ballot counting process
-  public CountStatus countStatus;
-  
-  protected/*@ spec_public @*/Logger logger;
+  /** Inner ASM */
+  public /*@ non_null @*/ CountStatus countStatus;
   
   /**
    * Distribute the surplus of an elected candidate.
@@ -254,7 +252,6 @@ public class BallotCounting extends AbstractBallotCounting {
     @		assignable status, countStatus;
     @		assignable remainingSeats, totalRemainingSeats;
     @   assignable candidateList;
-    @   assignable logger;
     @   ensures state == ElectionStatus.FINISHED;
     @*/
   public void count() {
@@ -273,7 +270,6 @@ public class BallotCounting extends AbstractBallotCounting {
           AbstractCountStatus.MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS);
       
       // Transfer surplus votes from winning candidates
-      logger.info("Total surplus votes: " + getTotalSumOfSurpluses());
       electCandidatesWithSurplus(); 
       
       // Exclusion of lowest continuing candidates if no surplus
@@ -340,6 +336,7 @@ public class BallotCounting extends AbstractBallotCounting {
   /*@ requires \nonnullelements (candidateList);
     @ assignable countStatus, countNumberValue, candidates, candidateList;
     @ assignable numberOfCandidatesEliminated, ballots, ballotsToCount;
+    @ assignable countStatus.substate;
     @*/
   protected void excludeLowestCandidates() {
     while (!candidatesWithQuota()
@@ -383,14 +380,12 @@ public class BallotCounting extends AbstractBallotCounting {
   }
   
   /*@ requires state == PRECOUNT;
-    @ assignable state, countStatus, countNumberValue, totalRemainingSeats,
-    @   savingThreshold, numberOfCandidatesElected, numberOfCandidatesEliminated;
-    @ assignable logger;
+    @ assignable state, countStatus, countStatus.substate, countNumberValue, 
+    @   totalRemainingSeats, savingThreshold, numberOfCandidatesElected, 
+    @   numberOfCandidatesEliminated;
     @ ensures state == COUNTING;
-    @ ensures logger != null;
     @*/
   public void startCounting() {
-    logger = Logger.getLogger("election.tally.BallotCounting");
     status = ElectionStatus.COUNTING;
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
     countNumberValue = 0;
@@ -411,8 +406,10 @@ public class BallotCounting extends AbstractBallotCounting {
     return 1 + (getQuota() / 4);
   }
   
-  /*@ requires state == COUNTING && countStatus != null;
-    @ assignable countStatus.substate;
+  /*@ requires state == COUNTING;
+    @ requires countStatus.isPossibleState (countingStatus);
+    @ assignable countStatus, countStatus.substate;
+    @ ensures countingStatus == countStatus.getState();
     @*/
   public void updateCountStatus(final int countingStatus) {
     countStatus.changeState(countingStatus);

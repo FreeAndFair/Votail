@@ -15,6 +15,7 @@ package election.tally;
 
 public class ElectionStatus extends CountConfiguration {
 
+  /** Abstract State Machine */ 
   /*@ public model byte state;
     @ public initially state == EMPTY;
     @ public constraint \old (state) <= state;

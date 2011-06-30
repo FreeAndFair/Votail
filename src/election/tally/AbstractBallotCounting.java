@@ -344,8 +344,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Calculate the first preference counts for each candidate.
    */
   //@ requires PRECOUNT <= state;
-  //@ requires \nonnullelements (candidateList);
-  //@ requires \nonnullelements (ballotsToCount);
   //@ requires 0 == countNumberValue;
   //@ requires getNumberContinuing() == totalNumberOfCandidates;
   //@ assignable candidates[*];
@@ -581,7 +579,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return The shortfall between the sum of the transfers and the size of surplus
    */
   /*@ also 
-    @   requires \nonnullelements (candidateList);
     @   requires state == COUNTING;
     @   requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
     @            (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
@@ -634,7 +631,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ also
     @   protected normal_behavior
-    @     requires \nonnullelements (candidateList);
     @     requires state == COUNTING;
     @     requires isElected (fromCandidate);
     @     requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
