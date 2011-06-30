@@ -38,4 +38,3 @@ public class AlloyPool implements Executor {
     new Thread(runLoop).start();
     }
   }
-}
