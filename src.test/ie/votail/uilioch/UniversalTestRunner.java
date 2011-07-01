@@ -62,7 +62,7 @@ public class UniversalTestRunner {
    * Test all scenarios for all known implementations
    * @param capacity 
    */
-  public void testScenarios(int capacity) {
+  public void testScenarios(int capacity, int width) {
     logger = Logger.getLogger(this.getClass().getName());
     try {
       FileHandler handler = new FileHandler(UniversalTestRunner.LOGFILENAME);
@@ -75,7 +75,7 @@ public class UniversalTestRunner {
       logger.info("not able to find logfile" + e1.getMessage());
     }
     
-    UniversalTestGenerator generator = new UniversalTestGenerator(capacity);
+    UniversalTestGenerator generator = new UniversalTestGenerator(capacity, width);
     final String[] dataFilename =
         {
             generator.getFilename(ie.votail.model.Method.STV,
@@ -516,6 +516,6 @@ public class UniversalTestRunner {
   
   public static void main(String[] args) {
     UniversalTestRunner uilioch = new UniversalTestRunner();
-    uilioch.testScenarios(4);
+    uilioch.testScenarios(10,10);
   }
 }

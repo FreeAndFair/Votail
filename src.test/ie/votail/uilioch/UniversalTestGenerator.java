@@ -29,10 +29,18 @@ public class UniversalTestGenerator {
   protected BallotBoxFactory ballotBoxFactory;
   protected ScenarioFactory scenarioFactory;
   protected Logger logger;
-  private AlloyPool alloyPool;
-  private Channel taskQueue;
+  protected Channel<AlloyTask> taskQueue;
+  protected AlloyPool taskPool;
   
-  public UniversalTestGenerator(int capacity) {
+  /**
+   * Prepare for test generation
+   * 
+   * @param capacity The number of tasks than run in parallel
+   * @param width The expected maximum queue length per task
+   */
+  /*@ requires 0 < capacity;
+    @ requires 0 < width; */
+  public UniversalTestGenerator(int capacity, int width) {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(this.getClass().getName());
@@ -46,8 +54,8 @@ public class UniversalTestGenerator {
     catch (IOException e1) {
       logger.info("not able to find logfile" + e1.getMessage());
     }
-    taskQueue = new TaskQueue(capacity);
-    alloyPool = new AlloyPool(taskQueue, capacity);
+    taskQueue = new ChannelQueue<AlloyTask>(capacity*width);
+    taskPool = new AlloyPool(taskQueue, capacity);
   }
   
   /**
@@ -70,29 +78,29 @@ public class UniversalTestGenerator {
     final String existingDataFilename =
         dataFilename + System.currentTimeMillis();
     
-    // If file already exists then rename it to old file
-    checkAndRename(dataFilename, existingDataFilename);
+    // If file already exists then rename it
+    final boolean existingData = checkAndRename(dataFilename, existingDataFilename);
     
     try {
       FileOutputStream fos = new FileOutputStream(dataFilename, true);
       ObjectOutputStream out = new ObjectOutputStream(fos);
-      FileInputStream fis = new FileInputStream(existingDataFilename);
-      ObjectInputStream in = new ObjectInputStream(fis);
       
       for (int seats = 1; seats <= numberOfSeats; seats++) {
-        for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
+        for (int candidates = 1 + seats; candidates <= numberOfCandidates; 
+          candidates++) {
           
-          createBallotBoxes(seats, candidates, method, in, out, scope);
+          createBallotBoxes(seats, candidates, method, out, 
+            existingDataFilename, scope, existingData);
         }
       }
       out.close();
       fos.close();
     }
     catch (FileNotFoundException e) {
-      logger.severe(e.getMessage());
+      logger.severe(e.toString());
     }
     catch (IOException e) {
-      logger.severe(e.getMessage());
+      logger.severe(e.toString());
     }
     finally {
     }
@@ -107,15 +115,16 @@ public class UniversalTestGenerator {
    * @param newName
    *          The new filename
    */
-  protected void checkAndRename(/*@ non_null*/String oldName,
+  protected boolean checkAndRename(/*@ non_null*/String oldName,
   /*@ non_null*/String newName) {
     
     File file = new File(oldName);
     if (file.exists()) {
       File newFile = new File(newName);
       file.renameTo(newFile);
+      return true;
     }
-    
+    return false:
   }
   
   /**
@@ -134,8 +143,8 @@ public class UniversalTestGenerator {
    *          Maximum scope for Alloy solution
    */
   protected void createBallotBoxes(final int seats, final int candidates,
-      final Method method, ObjectInputStream in, ObjectOutputStream out,
-      final int scope) {
+      final Method method, ObjectOutputStream out, 
+      final String filename, final int scope, final boolean existingData) {
     
     ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
     logger.fine("Scenarios: " + scenarioList.toString());
@@ -146,9 +155,9 @@ public class UniversalTestGenerator {
       logger.info(scenario.toString());
       
       // Check if this scenario already generated
-      if (notAlreadyExists(scenario, in)) {
+      if (!existingData || !alreadyExists(scenario, filename, out)) {
         
-        alloyTask(candidates, out, scope, scenario);
+        generateData(out, scenario);
         count++;
       }
     }
@@ -158,26 +167,23 @@ public class UniversalTestGenerator {
   }
   
   /**
-   * Create a work package and add to the queue of tasks
+   * Create a task that generates test data
    * 
-   * @param candidates The number of candidates to consider
    * @param out The output stream for test data
-   * @param scope The maximum scope for bounded model finding
    * @param scenario The scenario for which we require test data
    */
-  protected void alloyTask(final int candidates, ObjectOutputStream out,
-      final int scope, final ElectoralScenario scenario) {
+  protected void generateData(ObjectOutputStream out,
+      final ElectoralScenario scenario) {
     
     // Add scenario to the list of tasks
     AlloyTask task = new AlloyTask(out);
-    WorkQueue wq = task.getWorkQueue();
-    WorkPackage wp = new WorkPackage (scenario, candidates, scope);
+    ChannelQueue<ElectoralScenario> wq = task.getWorkQueue();
     try {
-      wq.put(wp);
+      wq.put(scenario);
       taskQueue.put(task);
     }
     catch (InterruptedException e1) {
-      logger.severe(e1.getMessage());
+      logger.severe(e1.toString());
     }
   }
   
@@ -186,27 +192,38 @@ public class UniversalTestGenerator {
    * 
    * @param scenario
    *          The scenario to check
+   * @param out 
    * @param in
-   *          The file input stream containg existing test data
+   *          The file input stream containing existing test data
    * @return <code>false></code> if scenario is found in the data
    */
-  protected boolean notAlreadyExists(ElectoralScenario scenario,
-      ObjectInputStream in) {
+  protected boolean alreadyExists(ElectoralScenario scenario,
+      String filename, ObjectOutputStream out) {
     
+    // Open a new reader
     try {
-      in.reset();
+      FileInputStream fis = new FileInputStream(filename);
+      ObjectInputStream in = new ObjectInputStream(fis);
+      
+      ElectionData testData = getTestData(in);
+      while (testData != null) {
+        if (testData.getScenario().equivalentTo(scenario)) {
+          
+          // Copy existing data into new data file
+          logger.info("Copying existing data: " + testData);
+          out.writeObject(testData);
+          
+          return true;
+        }
+      }
+      in.close();
+      fis.close();
     }
     catch (IOException e) {
-      logger.severe("Unable to reset input stream: " + e.getMessage());
-    }
-    ElectionData testData = getTestData(in);
-    while (testData != null) {
-      if (testData.getScenario().equivalentTo(scenario)) {
-        return false;
-      }
+      logger.severe(e.getMessage());
     }
     
-    return true;
+    return false;
   }
   
   /**
@@ -223,11 +240,11 @@ public class UniversalTestGenerator {
     try {
       electionData = (ElectionData) in.readObject();
     }
-    catch (IOException e1) {
-      logger.severe("Cannot read data because " + e1.getMessage());
+    catch (IOException ioe) {
+      logger.severe(ioe.toString());
     }
-    catch (ClassNotFoundException e1) {
-      logger.severe("Cannot load data because " + e1.getMessage());
+    catch (ClassNotFoundException cnfe) {
+      logger.severe(cnfe.toString());
     }
     return electionData;
   }
@@ -247,7 +264,7 @@ public class UniversalTestGenerator {
    * Generate enough test data for 100% path coverage
    */
   public static void main(String[] args) {
-    UniversalTestGenerator uilioch = new UniversalTestGenerator(10);
+    UniversalTestGenerator uilioch = new UniversalTestGenerator(10, 10);
     
     uilioch.generateTests(1, 5, Method.STV, 15); // IRV 1-seat
     uilioch.generateTests(3, 7, Method.STV, 20); // PR-STV 3-seat

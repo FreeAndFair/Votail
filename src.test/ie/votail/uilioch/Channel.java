@@ -1,6 +1,6 @@
 package ie.votail.uilioch;
 
-public interface Channel {
-  void put (Object x) throws InterruptedException;
-  Object take () throws InterruptedException;
+public interface Channel<T> {
+  void put (T x) throws InterruptedException;
+  T take () throws InterruptedException;
 }
