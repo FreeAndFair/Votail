@@ -81,7 +81,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @ protected constraint \old(removedVote) <= removedVote;
     @ protected invariant (state == CONTINUING) ==> removedVote == 0;
     @*/
-  protected int removedVote = 0;
+  protected /*@ spec_public*/ int removedVote = 0;
     
   public static final int NO_CANDIDATE = 0;
   

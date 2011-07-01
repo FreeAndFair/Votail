@@ -289,15 +289,19 @@ public class BallotCounting extends AbstractBallotCounting {
   /**
    * Elect any candidate with a quota or more of votes.
    */
-  /*@ assignable candidateList, ballotsToCount, candidates,
+  /*@ requires state == COUNTING;
+    @ assignable candidateList, ballotsToCount, candidates,
     @   numberOfCandidatesElected, totalRemainingSeats;
+    @ assignable countStatus;
+    @ ensures countStatus.substate == AbstractCountStatus.CANDIDATE_ELECTED ||
+    @   countStatus.substate == AbstractCountStatus.SURPLUS_AVAILABLE;
     @*/
   protected void electCandidatesWithSurplus() {
     while (candidatesWithQuota()
         && countNumberValue < CountConfiguration.MAXCOUNT
         && getNumberContinuing() > totalRemainingSeats) {
       
-      countStatus.changeState(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
+      updateCountStatus(AbstractCountStatus.CANDIDATES_HAVE_QUOTA);
       final int winner = findHighestCandidate();
       
       // Elect highest continuing candidate
@@ -312,7 +316,7 @@ public class BallotCounting extends AbstractBallotCounting {
         @*/
       electCandidate(winner);
       if (0 < getSurplus(candidates[winner])) {
-        countStatus.changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
+        updateCountStatus(AbstractCountStatus.SURPLUS_AVAILABLE);
         distributeSurplus(winner);
       }
       
