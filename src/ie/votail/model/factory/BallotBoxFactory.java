@@ -11,10 +11,9 @@
 
 package ie.votail.model.factory;
 
-import ie.votail.model.ElectoralScenario;
 import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Outcome;
-import ie.votail.uilioch.WorkPackage;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -82,7 +81,8 @@ public class BallotBoxFactory {
    *          The maximum scope
    * @return The Ballot Box
    */
-  public ElectionConfiguration extractBallots(ElectoralScenario scenario,
+  public ElectionConfiguration extractBallots(/*@ non_null*/ 
+      ElectoralScenario scenario,
       int scope, int upperBound) {
     final ElectionConfiguration electionConfiguration =
         new ElectionConfiguration(scenario.canonical());
@@ -190,9 +190,5 @@ public class BallotBoxFactory {
             .getAllReachableSigs(), command, options);
     logger.finest("Found this solution: " + solution.toString());
     return solution;
-  }
-
-  public ElectionConfiguration extractBallots(WorkPackage wp) {
-    return (extractBallots (wp.getScenario(), wp.getCandidates(), wp.getScope()));
   }
 }
