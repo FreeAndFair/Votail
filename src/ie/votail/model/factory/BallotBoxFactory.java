@@ -41,7 +41,7 @@ public class BallotBoxFactory {
   
   public static final int DEFAULT_BIT_WIDTH = 7;
   public static final String LOGGER_NAME = "votail.log";
-  public static final String MODELS_VOTING_ALS = "./models/voting.als";
+  public static final String MODELS_VOTING_ALS = "models/voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
   private static final int MAX_SCOPE = 20;
   protected String modelName;
@@ -81,9 +81,8 @@ public class BallotBoxFactory {
    *          The maximum scope
    * @return The Ballot Box
    */
-  public ElectionConfiguration extractBallots(/*@ non_null*/ 
-      ElectoralScenario scenario,
-      int scope, int upperBound) {
+  protected ElectionConfiguration extractBallots(/*@ non_null*/
+  ElectoralScenario scenario, int scope, int upperBound) {
     final ElectionConfiguration electionConfiguration =
         new ElectionConfiguration(scenario.canonical());
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
@@ -102,9 +101,10 @@ public class BallotBoxFactory {
     // Find a ballot box which creates this scenario
     try {
       A4Solution solution = findSolution(scenario, scope);
-      logger.info("Using scope = " + scope + " found scenario " + scenario);
       
       if (solution.satisfiable()) { // Extract ballots from the solution
+        logger.info("Using scope = " + scope + " found scenario " + scenario);
+        
         // Iterate through the solution and add each vote to the table
         for (Sig sig : solution.getAllReachableSigs()) {
           // Log the model version number
@@ -144,7 +144,7 @@ public class BallotBoxFactory {
         return extractBallots(scenario, scope + 1);
       }
       else {
-        logger.info("Skipped this scenario " + scenario.toString());
+        logger.severe("Skipped this scenario " + scenario.toString());
         return electionConfiguration.trim();
       }
       
@@ -153,7 +153,7 @@ public class BallotBoxFactory {
       // Log failure to find scenario
       logger.severe("Unable to find ballot box for this scenario "
           + scenario.toString() + " with scope " + scope + " and predicate "
-          + scenario.toPredicate() + " because " + e.msg);
+          + scenario.toPredicate() + " because " + e.toString());
       return electionConfiguration.trim();
     }
   }
@@ -177,18 +177,16 @@ public class BallotBoxFactory {
     Map<String, String> loaded = null;
     CompModule world =
         CompUtil.parseEverything_fromFile(reporter, loaded, modelName);
-    SafeList<Pair<String, Expr>> facts = world.getAllFacts();
     Expr predicate =
         CompUtil.parseOneExpression_fromString(world, scenario.toPredicate());
     logger.finest("Using this predicate: " + predicate.toString() + " "
         + predicate.getDescription());
     Command command =
         new Command(false, scope, DEFAULT_BIT_WIDTH, scope, predicate);
-    logger.info("using scope " + scope + " and bitwidth " + DEFAULT_BIT_WIDTH);
+    logger.info("trying scope " + scope);
     A4Solution solution =
         TranslateAlloyToKodkod.execute_command(reporter, world
             .getAllReachableSigs(), command, options);
-    logger.finest("Found this solution: " + solution.toString());
     return solution;
   }
 }

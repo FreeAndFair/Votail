@@ -157,7 +157,7 @@ public class BallotBox implements Serializable {
         }
         stringBuffer.append("" + nextPreference);
       }
-      stringBuffer.append(")");
+      stringBuffer.append(",");
     }
     return stringBuffer.toString();
   }
