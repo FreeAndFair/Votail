@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.alloy4.ErrorSyntax;
-import edu.mit.csail.sdg.alloy4.Pair;
-import edu.mit.csail.sdg.alloy4.SafeList;
 import edu.mit.csail.sdg.alloy4compiler.ast.Command;
 import edu.mit.csail.sdg.alloy4compiler.ast.Expr;
 import edu.mit.csail.sdg.alloy4compiler.ast.Sig;
@@ -175,8 +173,15 @@ public class BallotBoxFactory {
     A4Options options = new A4Options();
     options.solver = A4Options.SatSolver.SAT4J;
     Map<String, String> loaded = null;
-    CompModule world =
-        CompUtil.parseEverything_fromFile(reporter, loaded, modelName);
+    CompModule world;
+    try {
+      world = CompUtil.parseEverything_fromFile(reporter, loaded, modelName);
+    }
+    catch (Exception e) {
+      logger.severe (e.toString());
+      
+      return null;
+    }
     Expr predicate =
         CompUtil.parseOneExpression_fromString(world, scenario.toPredicate());
     logger.finest("Using this predicate: " + predicate.toString() + " "
