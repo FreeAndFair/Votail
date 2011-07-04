@@ -12,8 +12,7 @@ public class CheckRemainingSeatsEventM extends TestCase {
     final Constituency constituency = new Constituency();
     constituency.setNumberOfSeats(3,3);
     constituency.setNumberOfCandidates(4);
-    // TODO precondition not established
-    ballotCounting.setup(constituency); //@ nowarn;
+    ballotCounting.setup(constituency);
     /*@ assert (constituency.getNumberOfSeatsInThisElection() 
         == ballotCounting.getRemainingSeats()); @*/
     final BallotBox ballotBox = new BallotBox();
@@ -24,6 +23,5 @@ public class CheckRemainingSeatsEventM extends TestCase {
     /*@ assert (constituency.getNumberOfSeatsInThisElection() 
         == ballotCounting.getRemainingSeats()); @*/
     ballotCounting.count();
-    //@ assert 0 == ballotCounting.getRemainingSeats());
   }
 }

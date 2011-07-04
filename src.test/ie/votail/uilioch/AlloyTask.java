@@ -37,7 +37,8 @@ public class AlloyTask implements Runnable {
             scenario);
       }
       else {
-        logger.info("Writing: " + electionData);
+        logger.info("Writing: " + electionData.getBallots() + " for scenario " +
+            electionData.getScenario());
         out.writeObject(electionData);
       }
       
