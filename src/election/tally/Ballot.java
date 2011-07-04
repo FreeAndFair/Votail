@@ -254,9 +254,7 @@ public final class Ballot implements Serializable {
     StringBuffer stringBuffer = new StringBuffer("(");
     for (int i = 0; i < numberOfPreferences; i++) {
       final int nextPreference = preferenceList[i];
-      if (nextPreference == Candidate.NO_CANDIDATE) {
-        break;
-      }
+      
       if (0 < i) {
         stringBuffer.append(Ballot.WHITE_SPACE);
       }

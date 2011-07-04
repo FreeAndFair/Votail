@@ -32,6 +32,10 @@ import java.io.Serializable;
 /** Data transfer structure for set of all valid ballots */
 public class BallotBox implements Serializable {
 
+  protected static final String SUFFIX = ")";
+
+  protected static final String PREFIX = "(";
+
   private static final long serialVersionUID = 6555654720546373358L;
 
   /**
@@ -146,19 +150,22 @@ public class BallotBox implements Serializable {
    */
   public /*@ pure non_null */ String toString() {
     StringBuffer stringBuffer = new StringBuffer(numberOfBallots + " ballots ");
+    stringBuffer.append(BallotBox.PREFIX);
     for (int b = 0; b < numberOfBallots; b++) {
+      if (0 < b) {
+        stringBuffer.append(Ballot.WHITE_SPACE);
+      }
+      stringBuffer.append(BallotBox.PREFIX);
       for (int p = 0; b < ballots[b].getNumberOfPreferences(); p++) {
         final int nextPreference = ballots[b].getPreference(p);
-        if (nextPreference == Candidate.NO_CANDIDATE) {
-          break;
-        }
         if (0 < p) {
           stringBuffer.append(Ballot.WHITE_SPACE);
         }
         stringBuffer.append("" + nextPreference);
       }
-      stringBuffer.append(",");
+      stringBuffer.append(BallotBox.SUFFIX);
     }
+    stringBuffer.append(BallotBox.SUFFIX);
     return stringBuffer.toString();
   }
 }
