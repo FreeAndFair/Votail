@@ -216,7 +216,7 @@ jmlunit_classes.stamp:	$(jmlunitfiles)
 escjava2-typecheck:	escjava2-typecheck.stamp
 
 escjava2-typecheck.stamp:	$(javafiles)
-	chmod a+x $(escjava)
+	chmod a+x $(ESCPATH)/escj
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	$(escjava) -typecheck $(javapat) && \
 	touch escjava2-typecheck.stamp
@@ -278,14 +278,11 @@ jml-junit-tests:	classes jmlunit_classes
 
 universal-test:	 universal.stamp
 
-universal.stamp:	classes testdata/STV_election.data
-	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
-	touch universal.stamp
-	
-testdata/STV_election.data:	classes
+universal.stamp:	classes 
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
 	java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator
+	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
+	touch universal.stamp
 
 universal-rac-test:	universal-rac.stamp
 
