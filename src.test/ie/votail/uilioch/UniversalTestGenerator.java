@@ -259,7 +259,7 @@ public class UniversalTestGenerator {
    * Generate enough test data for 100% path coverage
    */
   public static void main(String[] args) {
-    UniversalTestGenerator uilioch = new UniversalTestGenerator(10, 10);
+    UniversalTestGenerator uilioch = new UniversalTestGenerator(25, 10);
     
     uilioch.generateTests(1, 5, Method.STV, 15); // IRV 1-seat
     uilioch.generateTests(3, 7, Method.STV, 20); // PR-STV 3-seat
