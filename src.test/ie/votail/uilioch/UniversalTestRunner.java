@@ -44,14 +44,16 @@ public class UniversalTestRunner {
     /**
      * Run the whole election count
      * 
-     * @param ballotBox Ballot box and election configuration
+     * @param ballotBox
+     *          Ballot box and election configuration
      * @return The election results
      */
     //@ requires state == EMPTY;
     //@ ensures state == FINISHED;
-    public /*@ non_null @*/ ElectionResult run(Constituency constituency, BallotBox ballotBox) {
-      this.setup (constituency);
-      this.load (ballotBox);
+    public/*@ non_null @*/ElectionResult run(Constituency constituency,
+        BallotBox ballotBox) {
+      this.setup(constituency);
+      this.load(ballotBox);
       this.count();
       ElectionResult electionResult = new ElectionResult(this.candidates);
       return electionResult;
@@ -60,7 +62,8 @@ public class UniversalTestRunner {
   
   /**
    * Test all scenarios for all known implementations
-   * @param capacity 
+   * 
+   * @param capacity
    */
   public void testScenarios(int capacity, int width) {
     logger = Logger.getLogger(this.getClass().getName());
@@ -69,62 +72,54 @@ public class UniversalTestRunner {
       logger.addHandler(handler);
     }
     catch (SecurityException e1) {
-      logger.info("not allowed to attach logfile" + e1.getMessage());
+      logger.info("not allowed to attach logfile" + e1.toString());
     }
     catch (IOException e1) {
-      logger.info("not able to find logfile" + e1.getMessage());
+      logger.info("not able to find logfile" + e1.toString());
     }
     
-    UniversalTestGenerator generator = new UniversalTestGenerator(capacity, width);
-    final String[] dataFilename =
-        {
-            generator.getFilename(ie.votail.model.Method.STV,
-                UniversalTestGenerator.DATA_FILENAME_SUFFIX),
-            generator.getFilename(ie.votail.model.Method.Plurality,
-                UniversalTestGenerator.DATA_FILENAME_SUFFIX) };
+    UniversalTestGenerator generator =
+        new UniversalTestGenerator(capacity, width);
+    final String dataFilename = generator.getFilename();
     
-    
-      for (int index = 0; index <= 1; index++) {
+    try {
+      
+      FileInputStream fis = new FileInputStream(dataFilename);
+      ObjectInputStream in = new ObjectInputStream(fis);
+      
+      while (true) {
         
-        try {
+        // Derserialize and load the next Ballot Box
+        final ElectionData testData = generator.getTestData(in);
         
-        FileInputStream fis = new FileInputStream(dataFilename[index]);
-        ObjectInputStream in = new ObjectInputStream(fis);
-        
-        while (true) {
-          
-          // Derserialize and load the next Ballot Box
-          final ElectionData testData = generator.getTestData(in);
-          
-          if (testData == null || testData.getScenario() == null) {
-            logger.warning("Test data is either missing or not readable");
-            break;
-          }
-          
-          ElectionConfiguration electionConfiguration =
-              new ElectionConfiguration(testData);
-          
-          logger.finest(electionConfiguration.toString());
-          
-          if (0 < electionConfiguration.size()) {
-            
-            // Test different implementations
-            ElectionResult votailResult =
-                runVotail(electionConfiguration.copy());
-            ElectionResult coyleDoyleResult =
-                runCoyleDoyle(electionConfiguration.copy());
-            ElectionResult hexMediaResult =
-                runHexMedia(electionConfiguration.copy());
-            
-            assert hexMediaResult.equals(coyleDoyleResult);
-            assert coyleDoyleResult.equals(votailResult);
-            assert votailResult.equals(hexMediaResult);
-          }
-          else {
-            logger.warning("Empty ballot box data");
-          }
+        if (testData == null || testData.getScenario() == null) {
+          logger.warning("Test data is either missing or not readable");
+          break;
         }
-        in.close();
+        
+        ElectionConfiguration electionConfiguration =
+            new ElectionConfiguration(testData);
+        
+        logger.finest(electionConfiguration.toString());
+        
+        if (0 < electionConfiguration.size()) {
+          
+          // Test different implementations
+          ElectionResult votailResult = runVotail(electionConfiguration.copy());
+          ElectionResult coyleDoyleResult =
+              runCoyleDoyle(electionConfiguration.copy());
+          ElectionResult hexMediaResult =
+              runHexMedia(electionConfiguration.copy());
+          
+          assert hexMediaResult.equals(coyleDoyleResult);
+          assert coyleDoyleResult.equals(votailResult);
+          assert votailResult.equals(hexMediaResult);
+        }
+        else {
+          logger.warning("Empty ballot box data");
+        }
+      }
+      in.close();
       
     }
     catch (IOException e) {
@@ -133,7 +128,7 @@ public class UniversalTestRunner {
     finally {
       logger.info("Finished!");
     }
-      }
+    
   }
   
   /**
@@ -516,6 +511,6 @@ public class UniversalTestRunner {
   
   public static void main(String[] args) {
     UniversalTestRunner uilioch = new UniversalTestRunner();
-    uilioch.testScenarios(10,10);
+    uilioch.testScenarios(10, 10);
   }
 }

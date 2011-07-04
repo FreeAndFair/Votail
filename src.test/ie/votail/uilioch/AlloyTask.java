@@ -11,14 +11,12 @@ import java.util.logging.Logger;
 
 public class AlloyTask implements Runnable {
   
-  protected static ChannelQueue<ElectoralScenario> dataQueue;
   protected ObjectOutputStream out;
   protected int scope = 7;
+  protected ElectoralScenario scenario;
   
-  public AlloyTask(ObjectOutputStream out) {
-    if (dataQueue == null) {
-      dataQueue = new ChannelQueue<ElectoralScenario>(scope);
-    }
+  public AlloyTask(ObjectOutputStream out, ElectoralScenario scenario) {
+    this.scenario = scenario;
     this.out = out;
   }
   
@@ -27,15 +25,8 @@ public class AlloyTask implements Runnable {
     
     Logger logger = Logger.getAnonymousLogger();    
     BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
-    ElectoralScenario scenario;
     try { 
-      // Get next scenario from queue
-      scenario = (ElectoralScenario) dataQueue.take();
       
-      if (scenario == null) {
-        logger.severe ("Failed to read scenario from data queue");
-      }
-      else {
       // Write solution to the output file
       final ElectionConfiguration ballots = 
         ballotBoxFactory.extractBallots(scenario,scope);
@@ -49,18 +40,11 @@ public class AlloyTask implements Runnable {
         logger.info("Writing: " + electionData);
         out.writeObject(electionData);
       }
-      }
-    }
-    catch (InterruptedException e1) {
-      logger.severe(e1.getMessage());
+      
     }
     catch (IOException e) {
-      logger.severe(e.getMessage());
+      logger.warning(e.toString());
     }
-  }
-  
-  public ChannelQueue<ElectoralScenario> getWorkQueue() {
-    return dataQueue;
   }
   
 }

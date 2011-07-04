@@ -31,6 +31,8 @@ public class UniversalTestGenerator {
   protected Logger logger;
   protected Channel<AlloyTask> taskQueue;
   protected AlloyPool taskPool;
+  protected String dataFilename;
+  protected String existingDataFilename;
   
   /**
    * Prepare for test generation
@@ -56,6 +58,16 @@ public class UniversalTestGenerator {
     }
     taskQueue = new ChannelQueue<AlloyTask>(capacity*width);
     taskPool = new AlloyPool(taskQueue, capacity);
+    
+    dataFilename = getFilename();
+    existingDataFilename = dataFilename + System.currentTimeMillis();
+  }
+
+  /**
+   * @return
+   */
+  public String getFilename() {
+    return getFilename(Method.STV, DATA_FILENAME_SUFFIX);
   }
   
   /**
@@ -74,9 +86,7 @@ public class UniversalTestGenerator {
   public void generateTests(final int numberOfSeats,
       final int numberOfCandidates, final Method method, int scope) {
     
-    final String dataFilename = getFilename(method, DATA_FILENAME_SUFFIX);
-    final String existingDataFilename =
-        dataFilename + System.currentTimeMillis();
+    
     
     // If file already exists then rename it
     final boolean existingData = checkAndRename(dataFilename, existingDataFilename);
@@ -124,7 +134,7 @@ public class UniversalTestGenerator {
       file.renameTo(newFile);
       return true;
     }
-    return false:
+    return false;
   }
   
   /**
@@ -157,34 +167,19 @@ public class UniversalTestGenerator {
       // Check if this scenario already generated
       if (!existingData || !alreadyExists(scenario, filename, out)) {
         
-        generateData(out, scenario);
+        try {
+        taskQueue.put(new AlloyTask(out,scenario));
         count++;
+        }
+        catch (InterruptedException ioe) {
+          logger.info(ioe.toString());
+        }
+        
       }
     }
     
     logger.info("Generated " + count + " scenarios for " + method.toString()
         + " with " + candidates + " candidates for " + seats + " seats.");
-  }
-  
-  /**
-   * Create a task that generates test data
-   * 
-   * @param out The output stream for test data
-   * @param scenario The scenario for which we require test data
-   */
-  protected void generateData(ObjectOutputStream out,
-      final ElectoralScenario scenario) {
-    
-    // Add scenario to the list of tasks
-    AlloyTask task = new AlloyTask(out);
-    ChannelQueue<ElectoralScenario> wq = task.getWorkQueue();
-    try {
-      wq.put(scenario);
-      taskQueue.put(task);
-    }
-    catch (InterruptedException e1) {
-      logger.severe(e1.toString());
-    }
   }
   
   /**
@@ -256,7 +251,7 @@ public class UniversalTestGenerator {
    *          The type of voting scheme
    * @return The filename
    */
-  public/*@ pure @*/String getFilename(final Method method, final String suffix) {
+  protected /*@ pure @*/String getFilename(final Method method, final String suffix) {
     return FILENAME_PREFIX + method.toString() + suffix;
   }
   

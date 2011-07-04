@@ -5,12 +5,12 @@ import java.util.concurrent.Executor;
 
 
 public class AlloyPool implements Executor {
-  protected final Channel workQueue;
+  protected final Channel<AlloyTask> workQueue;
   
   @Override
   public void execute(Runnable r) {
     try {
-      workQueue.put(r);
+      workQueue.put((AlloyTask)r);
     }
     catch (InterruptedException ie) { // postpone response
       Thread.currentThread().interrupt();
@@ -18,7 +18,7 @@ public class AlloyPool implements Executor {
     
   }
   
-  public AlloyPool (Channel ch, int nworkers) {
+  public AlloyPool (Channel<AlloyTask> ch, int nworkers) {
     workQueue = ch;
     for (int i = 0; i < nworkers; ++i) activate();
   }
