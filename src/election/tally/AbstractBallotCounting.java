@@ -46,9 +46,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   
   /** List of candidates for election */
   /*@ public invariant (PRECOUNT <= state) ==>
-    @   (candidates != null) && 
+    @   ((candidates != null) && 
     @   (\forall int i; 0 <= i && i < totalNumberOfCandidates;
-    @     candidates[i] != null);
+    @     candidates[i] != null));
     @*/
   protected transient/*@ spec_public @*/ Candidate[] candidates;
   //@ protected represents candidateList <- candidates;
@@ -56,7 +56,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /** List of contents of each ballot paper that will be counted. */
   protected transient/*@ spec_public @*/Ballot[] ballots = new Ballot[0];
   //@ protected represents ballotsToCount <- ballots;
-  //@ invariant \nonnullelements (ballotsToCount);
+  //@ invariant (PRECOUNT <= state) ==> \nonnullelements (ballotsToCount);
   
   /** Total number of candidates for election */
   protected transient/*@ spec_public @*/int totalNumberOfCandidates;
@@ -314,21 +314,16 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public void load(final/*@ non_null @*/BallotBox ballotBox) {
     
     totalNumberOfVotes = ballotBox.size();
-    // TODO ESC 2011.01.17 Possible violation of object invariant
     
     ballots = new Ballot[totalNumberOfVotes];
     int index = 0;
-    // TODO 2009.10.14 ESC invariant violation
     while (ballotBox.isNextBallot()) {
-      // TODO 2009.10.14 ESC precondition warning
       ballots[index++] = ballotBox.getNextBallot();
     }
     status = PRECOUNT;
     
     // Number of first preferences for each candidate
-    // TODO 2009.10.15 ESC precondition warning
     allocateFirstPreferences();
-    // TODO 2009.10.15 ESC postcondition warning
   } 
   
   /**
