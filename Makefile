@@ -36,11 +36,10 @@ jmlunit_path =	jmlunit_src
 jmlc_jmlunit_path =	jmlc_jmlunit_build
 
 ESCPATH ?= ./external_tools/ESCJava2/ESCJava-2.0.5-04-11-08-binary
+ESCJ_SIMPLIFY_DIR ?= $(ESCPATH)
 JAVAFE_PATH ?= ./external_tools/ESCJava2/Javafe-2.0.11-26-04-10-binary
 BCEL_PATH ?= ./external_tools/ESCJava2/bcel-5.2
 escjava = $(ESCPATH)/escj -source $(version4) -vclimit 2500000 -warnUnsoundIncomplete
-export ESCTOOLS_ROOT=$(ESCPATH)
-export SIMPLIFY=$(ESCPATH)/Simplify-1.5.5.macosx
 ESCJAVA2CP ?= $(ESCPATH)/esctools2.jar:$(JAVAFE_PATH)/Javafe2.0.11.jar:$(BCEL_PATH)/bcel-5.2.jar
 
 # Various CLASSPATH constructions
@@ -218,20 +217,23 @@ jmlunit_classes.stamp:	$(jmlunitfiles)
 escjava2-typecheck:	escjava2-typecheck.stamp
 
 escjava2-typecheck.stamp:	$(javafiles)
-	ls -l $(ESCPATH)/esctool2.jar
 	chmod a+x $(ESCPATH)/escj
+	export VCSVER=0;\
+	export ESC_CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
-	$(escjava) -typecheck $(javapat) && \
+	export ESCTOOLS_ROOT=$(ESCPATH);\
+		$(escjava) -typecheck $(javapat) && \
 	touch escjava2-typecheck.stamp
 
 escjava2:	escjava2.stamp
 
 escjava2.stamp:	$(javafiles)
-	export VERBOSE=2;\
 	export VCSVER=0;\
 	export ESC_CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
-	$(escjava) -vv $(javapat) && \
+	export ESCTOOLS_ROOT=$(ESCPATH);\
+	export SIMPLY_DIR=$(ESCPATH);\
+	$(escjava) $(javapat) && \
 	$(escjava) -era $(javapat) && \
 	touch escjava2.stamp
 
