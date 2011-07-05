@@ -37,10 +37,11 @@ jmlc_jmlunit_path =	jmlc_jmlunit_build
 
 ESCPATH ?= ./external_tools/ESCJava2/ESCJava-2.0.5-04-11-08-binary
 JAVAFE_PATH ?= ./external_tools/ESCJava2/Javafe-2.0.11-26-04-10-binary
+BCEL_PATH ?= ./external_tools/ESCJava2/bcel-5.2
 escjava = $(ESCPATH)/escj -source $(version4) -vclimit 2500000 -warnUnsoundIncomplete
 export ESCTOOLS_ROOT=$(ESCPATH)
 export SIMPLIFY=$(ESCPATH)/Simplify-1.5.5.macosx
-ESCJAVA2CP ?= $(ESCPATH)/esctools2.jar:$(JAVAFE_PATH)/Javafe2.0.11.jar
+ESCJAVA2CP ?= $(ESCPATH)/esctools2.jar:$(JAVAFE_PATH)/Javafe2.0.11.jar:$(BCEL_PATH)/bcel-5.2.jar
 
 # Various CLASSPATH constructions
 
@@ -255,7 +256,7 @@ checkstyle:	checkstyle.stamp
 
 main: classes
 	export CLASSPATH=$(JAVAC_CLASSPATH);\
-	java $(main_memory_use) election.tally.*
+	java $(main_memory_use) -version $(version) election.tally.*
 
 main-jmlrac: jmlc
 	export CLASSPATH=$(JMLC_CLASSPATH):$(testpath);\
