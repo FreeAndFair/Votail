@@ -133,8 +133,6 @@ public class BallotBoxFactory {
             }
           }
         }
-        logger.info("Scenario for " + scenario + " has "
-            + electionConfiguration);
         return electionConfiguration.trim();
       }
       // Increase the scope and try again
