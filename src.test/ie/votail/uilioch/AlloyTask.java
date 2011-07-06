@@ -37,8 +37,6 @@ public class AlloyTask implements Runnable {
             scenario);
       }
       else {
-        logger.info("Writing " + ballots.toString() + " for scenario " +
-            scenario);
         out.writeObject(ballotBox);
       }
       
