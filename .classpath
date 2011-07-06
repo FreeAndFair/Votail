@@ -2,17 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="src.test"/>
-	<classpathentry kind="src" path="external_tools/coyledoyle/src"/>
-	<classpathentry kind="src" path="external_tools/stvcounter_src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="external_libraries/alloy4.jar"/>
-	<classpathentry kind="lib" path="external_libraries/jmljunitruntime.jar"/>
-	<classpathentry kind="lib" path="external_libraries/jmlmodels.jar"/>
-	<classpathentry kind="lib" path="external_libraries/jmlmodelsnonrac.jar"/>
-	<classpathentry kind="lib" path="external_libraries/jml-release.jar"/>
-	<classpathentry kind="lib" path="external_libraries/jmlruntime.jar"/>
-	<classpathentry kind="lib" path="external_libraries/emma-2.0.5312-patched.jar"/>
 	<classpathentry kind="src" path="/jmlspecs"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
