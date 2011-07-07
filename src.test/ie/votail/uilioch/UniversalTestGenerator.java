@@ -84,7 +84,7 @@ public class UniversalTestGenerator {
    *          Maximum scope for Alloy solution
    */
   public void generateTests(final int numberOfSeats,
-      final int numberOfCandidates, final Method method, int scope) {
+      final int numberOfCandidates, final Method method) {
     
     
     
@@ -100,7 +100,7 @@ public class UniversalTestGenerator {
           candidates++) {
           
           createBallotBoxes(seats, candidates, method, out, 
-            existingDataFilename, scope, existingData);
+            existingDataFilename, existingData);
         }
       }
       out.close();
@@ -154,7 +154,7 @@ public class UniversalTestGenerator {
    */
   protected void createBallotBoxes(final int seats, final int candidates,
       final Method method, ObjectOutputStream out, 
-      final String filename, final int scope, final boolean existingData) {
+      final String filename, final boolean existingData) {
     
     ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
     logger.fine("Scenarios: " + scenarioList.toString());
@@ -261,10 +261,10 @@ public class UniversalTestGenerator {
   public static void main(String[] args) {
     UniversalTestGenerator uilioch = new UniversalTestGenerator(15, 10);
     
-    uilioch.generateTests(1, 5, Method.STV, 30); // IRV 1-seat
-    uilioch.generateTests(3, 7, Method.STV, 30); // PR-STV 3-seat
-    uilioch.generateTests(4, 9, Method.STV, 30); // PR-STV 4-seat
-    uilioch.generateTests(5, 11, Method.STV, 30); // PR-STV 5-seat
-    uilioch.generateTests(1, 11, Method.Plurality, 30); // First-past-the-post
+    uilioch.generateTests(1, 5, Method.STV); // IRV 1-seat
+    uilioch.generateTests(3, 7, Method.STV); // PR-STV 3-seat
+    uilioch.generateTests(4, 9, Method.STV); // PR-STV 4-seat
+    uilioch.generateTests(5, 11, Method.STV); // PR-STV 5-seat
+    uilioch.generateTests(1, 11, Method.Plurality); // First-past-the-post
   }
 }
