@@ -200,10 +200,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ ensures \result == 
     @   (\sum int c; 0 <= c && c < totalNumberOfCandidates;
     @     getSurplus(candidates[c]));
+    @ ensures 0 <= \result;
     @*/
   public final /*@ pure @*/ int getTotalSumOfSurpluses() {
     int sumOfSurpluses = 0;
     
+    /*@ loop_invariant 0 <= sumOfSurpluses &&
+      @   (sumOfSurpluses == (\sum int i; 0 <= i && i < c;
+      @     getSurplus(candidates[i])));
+      @*/
     for (int c = 0; c < totalNumberOfCandidates; c++) {
       sumOfSurpluses += getSurplus(candidates[c]);
     }
@@ -287,12 +292,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.totalNumberOfSeats = constituency.getTotalNumberOfSeats();
     this.status = PRELOAD;
     this.candidates = new Candidate[this.totalNumberOfCandidates];
+    //@ loop_invariant this.candidates[i].equals(constituency.getCandidate(i));
     for (int i = 0; i < candidates.length; i++) {
-      // TODO 2009.10.14 ESC precondition
       this.candidates[i] = constituency.getCandidate(i);
     }
     this.totalRemainingSeats = this.numberOfSeats;
-    // TODO 2009.10.14 ESC postcondition
   }
   
   /**
@@ -343,9 +347,11 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ requires getNumberContinuing() == totalNumberOfCandidates;
   //@ assignable candidates[*];
   protected void allocateFirstPreferences() {
+    //@ loop_invariant 0 <= c && c < candidates.length;
     for (int c = 0; c < candidates.length; c++) {
       final int candidateID = candidates[c].getCandidateID();
       final int numberOfBallotsInPile = countFirstPreferences(candidateID);
+
       if (0 < numberOfBallotsInPile && 
           this.isContinuingCandidateID(candidateID)) {
         candidates[c].addVote(numberOfBallotsInPile, this.countNumberValue);
@@ -361,8 +367,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        The internal identifier of this candidate
    * @return The number of ballots in this candidate's pile
    */
+  //@ ensures 0 <= \result;
   public/*@ pure @*/int countBallotsFor(final int candidateID) {
     int numberOfBallots = 0;
+    
+    //@ loop_invariant 0 <= numberOfBallots;
+    //@ decreasing 0 - numberOfBallots;
     for (int b = 0; b < ballots.length; b++) {
       //@ assert ballots[b] != null;
       if (ballots[b].isAssignedTo(candidateID)) {
@@ -386,6 +396,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public/*@ pure @*/int countFirstPreferences(final int candidateID) {
     int numberOfBallots = 0;
+    //@ loop_invariant 0 <= numberOfBallots;
+    //@ decreaseing 0 - numberOfBallots;
     for (int b = 0; b < ballots.length; b++) {
       //@ assert ballots[b] != null;
       if (ballots[b].isFirstPreference(candidateID)) {
@@ -410,6 +422,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected/*@ pure spec_public @*/int getPotentialTransfers(
       final Candidate fromCandidate, final int toCandidateID) {
     int numberOfBallots = 0;
+    
+    //@ loop_invariant 0 <= numberOfBallots;
+    //@ decreasing 0 - numberOfBallots;
     for (int j = 0; j < ballots.length; j++) {
       if (ballots[j].isAssignedTo(fromCandidate.getCandidateID())
           && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
@@ -471,13 +486,14 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     candidateList[i].getStatus() == CandidateStatus.CONTINUING);
     @*/
   public/*@ pure @*/boolean isContinuingCandidateID(final int candidateID) {
+    //@ loop_invariant 0 <= && i < candidates.length;
+    //@ decreases candidates.length - i;
     for (int i = 0; i < candidates.length; i++) {
       if (candidateID == candidates[i].getCandidateID()) {
         return candidates[i].getStatus() == CandidateStatus.CONTINUING;
       }
     }
     return false; // not a candidate
-    // TODO 2009.10.14 ESC postcondition
   }
   
   /**
