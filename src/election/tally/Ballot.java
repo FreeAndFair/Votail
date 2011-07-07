@@ -74,7 +74,7 @@ public final class Ballot implements Serializable {
    * 
    * @see "Constitution of Ireland, Article 16, Section 2"
    */
-  public static final int MAX_BALLOTS = 150000;
+  public static final int MAX_BALLOTS = 150; // 150000
   
   /**
    * Candidate ID value to use for non-transferable ballot papers
