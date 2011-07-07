@@ -30,13 +30,12 @@ public class AlloyTask implements Runnable {
       // Write solution to the output file
       final ElectionConfiguration ballots =
           ballotBoxFactory.extractBallots(scenario, scope);
-      final ElectionData ballotBox = ballots.export();
       
-      if (ballotBox == null) {
+      if (ballots == null) {
         logger.severe("Failed to find a solution for scenario " + scenario);
       }
       else {
-        writeBallots(ballotBox);
+        writeBallots(ballots.export());
       }
       
     }
