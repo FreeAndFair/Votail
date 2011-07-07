@@ -347,7 +347,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ requires getNumberContinuing() == totalNumberOfCandidates;
   //@ assignable candidates[*];
   protected void allocateFirstPreferences() {
-    //@ loop_invariant 0 <= c && c < candidates.length;
+    
+    /*@ loop_invariant (0 < countFirstPreferences(candidateID)) ==>
+      @    (candidates[c].getTotalAtCount() ==
+      @    \old(candidates[c].getTotalAtCount()) + 
+      @    countFirstPreferences(candidateID)) &&
+      @    (candidates[c].lastCountNumber == this.countNumberValue);  
+      @*/
     for (int c = 0; c < candidates.length; c++) {
       final int candidateID = candidates[c].getCandidateID();
       final int numberOfBallotsInPile = countFirstPreferences(candidateID);
