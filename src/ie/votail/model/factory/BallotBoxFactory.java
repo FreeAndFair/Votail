@@ -81,8 +81,42 @@ public class BallotBoxFactory {
    */
   protected ElectionConfiguration extractBallots(/*@ non_null*/
   ElectoralScenario scenario, int scope, int upperBound) {
+   
+    
+    // Find a ballot box which creates this scenario
+    try {
+      for (int i=scope; i < upperBound; i++) {
+        A4Solution solution = findSolution(scenario, scope);
+        if (solution.satisfiable()) {
+          return parseSolution(scenario, scope, solution);
+        }
+      }
+      
+      logger.severe("Skipped this scenario " + scenario.toString());
+      return null;
+    }
+    catch (Err e) {
+      // Log failure to find scenario
+      logger.severe("Unable to find ballot box for this scenario "
+          + scenario.toString() + " with scope " + scope + " and predicate "
+          + scenario.toPredicate() + " because " + e.toString());
+      return null;
+    }
+  }
+
+  /**
+   * @param scenario
+   * @param scope
+   * @param electionConfiguration
+   * @param solution
+   */
+  protected ElectionConfiguration parseSolution(ElectoralScenario scenario, int scope,
+      A4Solution solution) {
+    
     final ElectionConfiguration electionConfiguration =
-        new ElectionConfiguration(scenario.canonical());
+      new ElectionConfiguration(scenario.canonical());
+  
+    
     electionConfiguration.setNumberOfWinners(scenario.numberOfWinners());
     final int numberOfSeats = scenario.numberOfWinners();
     if (scenario.isByeElection()) {
@@ -95,63 +129,41 @@ public class BallotBoxFactory {
     electionConfiguration.setNumberOfCandidates(numberOfCandidates);
     logger.info(numberOfCandidates + " candidates for " + numberOfSeats
         + " seats");
+
+    logger.info("Using scope = " + scope + " found scenario " + scenario);
     
-    // Find a ballot box which creates this scenario
-    try {
-      A4Solution solution = findSolution(scenario, scope);
-      
-      if (solution.satisfiable()) { // Extract ballots from the solution
-        logger.info("Using scope = " + scope + " found scenario " + scenario);
-        
-        // Iterate through the solution and add each vote to the table
-        for (Sig sig : solution.getAllReachableSigs()) {
-          // Log the model version number
-          if (sig.label.contains("Version")) {
-            for (Field field : sig.getFields()) {
-              if (field.label.contains("year")) {
-                A4TupleSet tupleSet = solution.eval(field);
-                logger.info("Model version year = " + tupleSet.toString());
-              }
-              else if (field.label.contains("month")) {
-                A4TupleSet tupleSet = solution.eval(field);
-                logger.info("Model version month = " + tupleSet.toString());
-              }
-              else if (field.label.contains("day")) {
-                A4TupleSet tupleSet = solution.eval(field);
-                logger.info("Model version day = " + tupleSet.toString());
-              }
-            }
+    // Iterate through the solution and add each vote to the table
+    for (Sig sig : solution.getAllReachableSigs()) {
+      // Log the model version number
+      if (sig.label.contains("Version")) {
+        for (Field field : sig.getFields()) {
+          if (field.label.contains("year")) {
+            A4TupleSet tupleSet = solution.eval(field);
+            logger.info("Model version year = " + tupleSet.toString());
           }
-          
-          else if (sig.label.contains("this/Ballot")) {
-            for (Field field : sig.getFields()) {
-              if (field.label.contains("preferences")) {
-                A4TupleSet tupleSet = solution.eval(field);
-                //@ assert tupleSet != null;
-                electionConfiguration.extractPreferences(tupleSet);
-              }
-            }
+          else if (field.label.contains("month")) {
+            A4TupleSet tupleSet = solution.eval(field);
+            logger.info("Model version month = " + tupleSet.toString());
+          }
+          else if (field.label.contains("day")) {
+            A4TupleSet tupleSet = solution.eval(field);
+            logger.info("Model version day = " + tupleSet.toString());
           }
         }
-        return electionConfiguration.trim();
-      }
-      // Increase the scope and try again
-      if (!scenario.hasOutcome(Outcome.TiedSoreLoser) && scope < upperBound) {
-        return extractBallots(scenario, scope + 1);
-      }
-      else {
-        logger.severe("Skipped this scenario " + scenario.toString());
-        return electionConfiguration.trim();
       }
       
+      else if (sig.label.contains("this/Ballot")) {
+        for (Field field : sig.getFields()) {
+          if (field.label.contains("preferences")) {
+            A4TupleSet tupleSet = solution.eval(field);
+            //@ assert tupleSet != null;
+            electionConfiguration.extractPreferences(tupleSet);
+          }
+        }
+      }
     }
-    catch (Err e) {
-      // Log failure to find scenario
-      logger.severe("Unable to find ballot box for this scenario "
-          + scenario.toString() + " with scope " + scope + " and predicate "
-          + scenario.toPredicate() + " because " + e.toString());
-      return electionConfiguration.trim();
-    }
+    return electionConfiguration.trim();
+
   }
   
   /**
