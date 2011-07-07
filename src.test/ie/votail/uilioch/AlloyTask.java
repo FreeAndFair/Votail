@@ -51,6 +51,7 @@ public class AlloyTask implements Runnable {
   protected synchronized void writeBallots(final ElectionData ballotBox)
       throws IOException {
     out.writeObject(ballotBox);
+    out.flush();
   }
   
 }
