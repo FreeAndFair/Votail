@@ -86,7 +86,7 @@ public class BallotBoxFactory {
     // Find a ballot box which creates this scenario
     try {
       for (int i=scope; i < upperBound; i++) {
-        A4Solution solution = findSolution(scenario, scope);
+        A4Solution solution = findSolution(scenario, i);
         if (solution.satisfiable()) {
           return parseSolution(scenario, scope, solution);
         }
