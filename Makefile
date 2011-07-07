@@ -233,7 +233,7 @@ escjava2.stamp:	$(javafiles)
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	export ESCTOOLS_ROOT=$(ESCPATH);\
 	export SIMPLY_DIR=$(ESCPATH);\
-	$(escjava) $(javapat) && \
+	$(escjava) -suggest -loopsafe $(javapat) && \
 	$(escjava) -era $(javapat) && \
 	touch escjava2.stamp
 
@@ -288,7 +288,9 @@ universal-test:	 universal.stamp
 
 universal.stamp:	classes 
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator
+	touch testdata/STV_election.data;\
+	java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator;\
+	svn commit -m "latest test generation" testdata/STV_election.data;\
 	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
