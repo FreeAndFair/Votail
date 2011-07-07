@@ -87,7 +87,7 @@ public class BallotBoxFactory {
     try {
       for (int i=scope; i < upperBound; i++) {
         A4Solution solution = findSolution(scenario, i);
-        if (solution.satisfiable()) {
+        if (solution != null && solution.satisfiable()) {
           return parseSolution(scenario, scope, solution);
         }
       }
