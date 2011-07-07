@@ -28,16 +28,16 @@ public class ElectionData implements Serializable {
     return ballots;
   }
   /**
-   * @param scenario the scenario to set
+   * @param theScenario the scenario to set
    */
-  public void setScenario(ElectoralScenario scenario) {
-    this.scenario = scenario;
+  public void setScenario(final ElectoralScenario theScenario) {
+    this.scenario = theScenario.canonical();
   }
   /**
    * @param ballotBox the ballotBox to set
    */
-  public void setBallots(Ballot[] theBallots) {
-    this.ballots = theBallots;
+  public void setBallots(final Ballot[] theBallots) {
+    this.ballots = theBallots.clone();
   }
   
 }

@@ -291,7 +291,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    */
   public /*@ pure @*/ ElectionData export() {
     ElectionData electionData = new ElectionData();
-    electionData.setScenario(scenario.canonical());
+    electionData.setScenario(scenario);
     electionData.setBallots(ballots);
     
     return electionData;

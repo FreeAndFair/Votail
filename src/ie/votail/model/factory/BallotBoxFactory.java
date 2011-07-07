@@ -41,7 +41,7 @@ public class BallotBoxFactory {
   public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "models/Voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
-  private static final int MAX_SCOPE = 20;
+  private static final int MAX_SCOPE = 30;
   protected String modelName;
   
   /**
@@ -177,8 +177,9 @@ public class BallotBoxFactory {
    * @throws Err
    * @throws ErrorSyntax
    */
-  protected A4Solution findSolution(ElectoralScenario scenario, int scope)
-      throws Err, ErrorSyntax {
+  //@ requires 0 < scope;
+  protected A4Solution findSolution(/*@ non_null @*/ ElectoralScenario scenario, 
+      int scope) throws Err, ErrorSyntax {
     A4Reporter reporter = new A4Reporter();
     A4Options options = new A4Options();
     options.solver = A4Options.SatSolver.SAT4J;
@@ -194,11 +195,10 @@ public class BallotBoxFactory {
     }
     Expr predicate =
         CompUtil.parseOneExpression_fromString(world, scenario.toPredicate());
-    logger.finest("Using this predicate: " + predicate.toString() + " "
-        + predicate.getDescription());
+    logger.info("Trying scope " + scope + "using for this predicate " + 
+        predicate.toString() + " " + predicate.getDescription());
     Command command =
         new Command(false, scope, DEFAULT_BIT_WIDTH, scope, predicate);
-    logger.info("trying scope " + scope);
     A4Solution solution =
         TranslateAlloyToKodkod.execute_command(reporter, world
             .getAllReachableSigs(), command, options);
