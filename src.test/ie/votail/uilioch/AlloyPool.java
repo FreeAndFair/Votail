@@ -1,8 +1,7 @@
 package ie.votail.uilioch;
 
 import java.util.concurrent.Executor;
-
-
+import java.util.logging.Logger;
 
 public class AlloyPool implements Executor {
   protected final Channel<AlloyTask> workQueue;
@@ -10,17 +9,17 @@ public class AlloyPool implements Executor {
   @Override
   public void execute(Runnable r) {
     try {
-      workQueue.put((AlloyTask)r);
+      workQueue.put((AlloyTask) r);
     }
-    catch (InterruptedException ie) { // postpone response
+    catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
     }
-    
   }
   
-  public AlloyPool (Channel<AlloyTask> ch, int nworkers) {
+  public AlloyPool(Channel<AlloyTask> ch, int nworkers) {
     workQueue = ch;
-    for (int i = 0; i < nworkers; ++i) activate();
+    for (int i = 0; i < nworkers; ++i)
+      activate();
   }
   
   protected void activate() {
@@ -28,13 +27,16 @@ public class AlloyPool implements Executor {
       public void run() {
         try {
           for (;;) {
-            Runnable r = (Runnable)(workQueue.take());
+            Runnable r = (Runnable) (workQueue.take());
             r.run();
           }
         }
-        catch (InterruptedException ie) {} // stop
+        catch (InterruptedException ie) {
+          Logger log = Logger.getAnonymousLogger();
+          log.severe(ie.toString());
+        }
       }
     };
     new Thread(runLoop).start();
-    }
   }
+}

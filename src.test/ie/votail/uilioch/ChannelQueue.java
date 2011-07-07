@@ -2,17 +2,13 @@ package ie.votail.uilioch;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Logger;
 
 public class ChannelQueue<T> implements Channel<T> {
   
-  BlockingQueue<T> queue;
-  protected Logger logger;
-  
+  BlockingQueue<T> queue;  
   
   public ChannelQueue (int capacity) {
     queue = new ArrayBlockingQueue<T> (capacity);
-    logger = Logger.getAnonymousLogger();
   }
   
   @Override

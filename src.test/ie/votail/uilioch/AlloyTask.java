@@ -23,27 +23,35 @@ public class AlloyTask implements Runnable {
   @Override
   public void run() {
     
-    Logger logger = Logger.getAnonymousLogger();    
+    Logger logger = Logger.getAnonymousLogger();
     BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
-    try { 
+    try {
       
       // Write solution to the output file
-      final ElectionConfiguration ballots = 
-        ballotBoxFactory.extractBallots(scenario,scope);
+      final ElectionConfiguration ballots =
+          ballotBoxFactory.extractBallots(scenario, scope);
       final ElectionData ballotBox = ballots.export();
       
       if (ballotBox == null) {
-        logger.severe("Failed to find a solution for scenario " +
-            scenario);
+        logger.severe("Failed to find a solution for scenario " + scenario);
       }
       else {
-        out.writeObject(ballotBox);
+        writeBallots(ballotBox);
       }
       
     }
     catch (IOException e) {
       logger.warning(e.toString());
     }
+  }
+  
+  /**
+   * @param ballotBox
+   * @throws IOException
+   */
+  protected synchronized void writeBallots(final ElectionData ballotBox)
+      throws IOException {
+    out.writeObject(ballotBox);
   }
   
 }

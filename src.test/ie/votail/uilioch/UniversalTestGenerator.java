@@ -37,12 +37,12 @@ public class UniversalTestGenerator {
   /**
    * Prepare for test generation
    * 
-   * @param capacity The number of tasks than run in parallel
+   * @param workers The number of tasks than run in parallel
    * @param width The expected maximum queue length per task
    */
-  /*@ requires 0 < capacity;
+  /*@ requires 0 < workers;
     @ requires 0 < width; */
-  public UniversalTestGenerator(int capacity, int width) {
+  public UniversalTestGenerator(int workers, int width) {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(this.getClass().getName());
@@ -56,8 +56,8 @@ public class UniversalTestGenerator {
     catch (IOException e1) {
       logger.info("not able to find logfile" + e1.getMessage());
     }
-    taskQueue = new ChannelQueue<AlloyTask>(capacity*width);
-    taskPool = new AlloyPool(taskQueue, capacity);
+    taskQueue = new ChannelQueue<AlloyTask>(workers*width);
+    taskPool = new AlloyPool(taskQueue, workers);
     
     dataFilename = getFilename();
     existingDataFilename = dataFilename + System.currentTimeMillis();
@@ -172,7 +172,7 @@ public class UniversalTestGenerator {
         count++;
         }
         catch (InterruptedException ioe) {
-          logger.info(ioe.toString());
+          logger.severe(ioe.toString());
         }
         
       }
