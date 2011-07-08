@@ -9,6 +9,7 @@ import ie.votail.model.factory.BallotBoxFactory;
 import ie.votail.model.factory.ScenarioFactory;
 import ie.votail.model.factory.ScenarioList;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,12 +34,15 @@ public class UniversalTestGenerator {
   protected AlloyPool taskPool;
   protected String dataFilename;
   protected String existingDataFilename;
+  protected boolean existingDataFlag;
   
   /**
    * Prepare for test generation
    * 
-   * @param workers The number of tasks than run in parallel
-   * @param width The expected maximum queue length per task
+   * @param workers
+   *          The number of tasks than run in parallel
+   * @param width
+   *          The expected maximum queue length per task
    */
   /*@ requires 0 < workers;
     @ requires 0 < width; */
@@ -46,9 +50,10 @@ public class UniversalTestGenerator {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(this.getClass().getName());
+    
     try {
-      final String logFilename = UniversalTestGenerator.LOGFILENAME + "." +
-        System.currentTimeMillis();
+      final String logFilename =
+          UniversalTestGenerator.LOGFILENAME + "." + System.currentTimeMillis();
       FileHandler handler = new FileHandler(logFilename);
       logger.addHandler(handler);
     }
@@ -58,13 +63,15 @@ public class UniversalTestGenerator {
     catch (IOException e1) {
       logger.info("not able to find logfile " + e1.getMessage());
     }
-    taskQueue = new ChannelQueue<AlloyTask>(workers*width);
+    
+    taskQueue = new ChannelQueue<AlloyTask>(workers * width);
     taskPool = new AlloyPool(taskQueue, workers);
     
     dataFilename = getFilename();
     existingDataFilename = dataFilename + System.currentTimeMillis();
+    existingDataFlag = checkAndRename(dataFilename, existingDataFilename);
   }
-
+  
   /**
    * @return
    */
@@ -89,20 +96,14 @@ public class UniversalTestGenerator {
       final int numberOfCandidates, final Method method) {
     
     
-    
-    // If file already exists then rename it
-    final boolean existingData = checkAndRename(dataFilename, existingDataFilename);
-    
     try {
       FileOutputStream fos = new FileOutputStream(dataFilename, true);
       ObjectOutputStream out = new ObjectOutputStream(fos);
       
       for (int seats = 1; seats <= numberOfSeats; seats++) {
-        for (int candidates = 1 + seats; candidates <= numberOfCandidates; 
-          candidates++) {
+        for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
           
-          createBallotBoxes(seats, candidates, method, out, 
-            existingDataFilename, existingData);
+          createBallotBoxes(seats, candidates, method, out);
         }
       }
       out.close();
@@ -134,6 +135,7 @@ public class UniversalTestGenerator {
     if (file.exists()) {
       File newFile = new File(newName);
       file.renameTo(newFile);
+      newFile.setReadOnly();
       return true;
     }
     return false;
@@ -155,8 +157,7 @@ public class UniversalTestGenerator {
    *          Maximum scope for Alloy solution
    */
   protected void createBallotBoxes(final int seats, final int candidates,
-      final Method method, ObjectOutputStream out, 
-      final String filename, final boolean existingData) {
+      final Method method, ObjectOutputStream out) {
     
     ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
     logger.fine("Scenarios: " + scenarioList.toString());
@@ -167,14 +168,16 @@ public class UniversalTestGenerator {
       logger.info(scenario.toString());
       
       // Check if this scenario already generated
-      if (!existingData || !alreadyExists(scenario, filename, out)) {
+      if (!alreadyExists(scenario, out)) {
         
         try {
-        taskQueue.put(new AlloyTask(out,scenario));
-        count++;
+          taskQueue.put(new AlloyTask(out, scenario));
+          count++;
         }
         catch (InterruptedException ioe) {
-          logger.severe(ioe.toString());
+          logger.severe(
+            "Failed to generate or find existing ballot box for scenario" + 
+            scenario + " because " + ioe.toString());
         }
         
       }
@@ -189,49 +192,58 @@ public class UniversalTestGenerator {
    * 
    * @param scenario
    *          The scenario to check
-   * @param out 
+   * @param out
    * @param in
    *          The file input stream containing existing test data
    * @return <code>false></code> if scenario is found in the data
    */
   protected boolean alreadyExists(ElectoralScenario scenario,
-      String filename, ObjectOutputStream out) {
+      ObjectOutputStream out) {
+    
+    if (!existingDataFlag) {
+      return false;
+    }
     
     // Open a new reader
     try {
-      FileInputStream fis = new FileInputStream(filename);
+      FileInputStream fis = new FileInputStream(existingDataFilename);
       ObjectInputStream in = new ObjectInputStream(fis);
       
       ElectionData testData = getTestData(in);
-      while (testData != null) {
-        logger.info("Found existing ballot box for scenario " + 
-            testData.getScenario());
-        if (testData.getScenario().equivalentTo(scenario)) {
-          logger.info("Found an existing ballot box for this scenario");
-          writeBallots(out, testData);
-          return true;
-        
+      try {
+        while (testData != null) {
+          if (testData.getScenario().equivalentTo(scenario)) {
+            logger.info("Found an existing ballot box for this scenario");
+            writeBallots(out, testData);
+            return true;
+            
+          }
+          testData = getTestData(in);
         }
-        testData = getTestData(in);
+      }
+      catch (EOFException eofe) {
+        
+        logger.info("No existing ballot box for this scenario");
       }
       in.close();
       fis.close();
     }
-    catch (IOException e) {
-      logger.severe(e.getMessage());
+    
+    catch (IOException ioe) {
+      logger.severe(ioe.getMessage());
     }
     
     logger.info("Generating new ballot box for this scenario");
     return false;
   }
-
+  
   /**
    * @param out
    * @param testData
    * @throws IOException
    */
-  protected synchronized void writeBallots(ObjectOutputStream out, ElectionData testData)
-      throws IOException {
+  protected synchronized void writeBallots(ObjectOutputStream out,
+      ElectionData testData) throws IOException {
     out.writeObject(testData);
     out.flush();
   }
@@ -266,7 +278,8 @@ public class UniversalTestGenerator {
    *          The type of voting scheme
    * @return The filename
    */
-  protected /*@ pure @*/String getFilename(final Method method, final String suffix) {
+  protected/*@ pure @*/String getFilename(final Method method,
+      final String suffix) {
     return FILENAME_PREFIX + method.toString() + suffix;
   }
   
