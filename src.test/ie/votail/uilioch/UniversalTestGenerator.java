@@ -205,11 +205,8 @@ public class UniversalTestGenerator {
       ElectionData testData = getTestData(in);
       while (testData != null) {
         if (testData.getScenario().equivalentTo(scenario)) {
-          
-          // Copy existing data into new data file
-          logger.info("Copying existing data: " + testData);
-          out.writeObject(testData);
-          
+          logger.info("Found an existing ballot box for this scenario");
+          writeBallots(out, testData);
           return true;
         }
       }
@@ -220,7 +217,19 @@ public class UniversalTestGenerator {
       logger.severe(e.getMessage());
     }
     
+    logger.info("Generating new ballot box for this scenario");
     return false;
+  }
+
+  /**
+   * @param out
+   * @param testData
+   * @throws IOException
+   */
+  protected synchronized void writeBallots(ObjectOutputStream out, ElectionData testData)
+      throws IOException {
+    out.writeObject(testData);
+    out.flush();
   }
   
   /**
