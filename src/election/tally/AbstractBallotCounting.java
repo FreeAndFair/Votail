@@ -206,7 +206,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     int sumOfSurpluses = 0;
     
     /*@ loop_invariant 0 <= sumOfSurpluses &&
-      @   (sumOfSurpluses == (\sum int i; 0 <= i && i < c;
+      @   (sumOfSurpluses == (\sum int i; 0 <= i && i <= c;
       @     getSurplus(candidates[i])));
       @*/
     for (int c = 0; c < totalNumberOfCandidates; c++) {
@@ -350,8 +350,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     /*@ loop_invariant (0 < countFirstPreferences(candidateID)) ==>
       @    (candidates[c].getTotalAtCount() ==
-      @    \old(candidates[c].getTotalAtCount()) + 
-      @    countFirstPreferences(candidateID)) &&
+      @      \old(candidates[c].getTotalAtCount()) + 
+      @      countFirstPreferences(candidateID)) &&
       @    (candidates[c].lastCountNumber == this.countNumberValue);  
       @*/
     for (int c = 0; c < candidates.length; c++) {
@@ -373,12 +373,16 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        The internal identifier of this candidate
    * @return The number of ballots in this candidate's pile
    */
-  //@ ensures 0 <= \result;
+  /*@ ensures 0 <= \result;
+    @ ensures \result == (\num_of int b; 0 <= b && b < ballots.length;
+    @   ballots[b].isAssignedTo(candidateID));
+    @*/
   public/*@ pure @*/int countBallotsFor(final int candidateID) {
     int numberOfBallots = 0;
     
-    //@ loop_invariant 0 <= numberOfBallots;
-    //@ decreasing 0 - numberOfBallots;
+    /*@ loop_invariant numberOfBallots == (\num_of int i; 0 <= i && i <= b;
+      @   ballots[i].isAssignedTo(candidateID));
+      @*/
     for (int b = 0; b < ballots.length; b++) {
       //@ assert ballots[b] != null;
       if (ballots[b].isAssignedTo(candidateID)) {
@@ -396,14 +400,16 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @return The number of ballots in this candidate's pile
    */
   /*@ requires PRECOUNT <= state;
-    @ requires \nonnullelements (ballotsToCount);
     @ ensures 0 <= \result;
     @ ensures \result <= ballotsToCount.length;
+    @ ensures \result == (\num_of int b; 0 <= b && b < ballotsToCount.length;
+    @   ballots[b].isFirstPreference(candidateID));
     @*/
   public/*@ pure @*/int countFirstPreferences(final int candidateID) {
     int numberOfBallots = 0;
-    //@ loop_invariant 0 <= numberOfBallots;
-    //@ decreaseing 0 - numberOfBallots;
+    /*@ loop_invariant numberOfBallots == (\num_of int i; 0 <= i && i <= b;
+      @   ballots[i].isFirstPreference(candidateID));
+      @ */
     for (int b = 0; b < ballots.length; b++) {
       //@ assert ballots[b] != null;
       if (ballots[b].isFirstPreference(candidateID)) {
@@ -429,14 +435,15 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       final Candidate fromCandidate, final int toCandidateID) {
     int numberOfBallots = 0;
     
-    //@ loop_invariant 0 <= numberOfBallots;
-    //@ decreasing 0 - numberOfBallots;
+    /*@ loop_invariant numberOfBallots == (\num_of int i; 0 <= i && i <= j;
+      @   ballots[i].isAssignedTo(fromCandidate.getCandidateID())
+      @   && (getNextContinuingPreference(ballots[i]) == toCandidateID));
+      @*/
     for (int j = 0; j < ballots.length; j++) {
       if (ballots[j].isAssignedTo(fromCandidate.getCandidateID())
           && (getNextContinuingPreference(ballots[j]) == toCandidateID)) {
         numberOfBallots++;
       }
-      
     }
     return numberOfBallots;
   }
@@ -450,10 +457,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ also
     @   protected normal_behavior
-    @   ensures \result == state;
-    @ public model pure byte getStatus() {
-    @   return status;
-    @}
+    @     ensures \result == state;
+    @ public model pure byte getStatus() {return status;}
     @*/
   
   /**
@@ -467,6 +472,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected/*@ pure spec_public*/int getNextContinuingPreference(
       final/*@ non_null*/Ballot ballot) {
     
+    /*@ loop_invariant (/forall int j; 1 <= j && j < i;
+      @   !isContinuingCandidateID(ballot.getNextPreference(j)));
+      @*/
     for (int i = 1; i <= ballot.remainingPreferences(); i++) {
       final int nextPreference = ballot.getNextPreference(i);
       if (isContinuingCandidateID(nextPreference)) {
@@ -492,8 +500,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     candidateList[i].getStatus() == CandidateStatus.CONTINUING);
     @*/
   public/*@ pure @*/boolean isContinuingCandidateID(final int candidateID) {
-    //@ loop_invariant 0 <= && i < candidates.length;
-    //@ decreases candidates.length - i;
+    /*@ loop_invariant (/forall int j; 0 <= j && j < i;
+      @   candidateID != candidates[j].getCandidateID());
+      @*/
     for (int i = 0; i < candidates.length; i++) {
       if (candidateID == candidates[i].getCandidateID()) {
         return candidates[i].getStatus() == CandidateStatus.CONTINUING;
@@ -599,10 +608,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires state == COUNTING;
     @   requires (fromCandidate.getStatus() == CandidateStatus.ELECTED) ||
     @            (fromCandidate.getStatus() == CandidateStatus.ELIMINATED);
+    @   ensures \result = (\sum int j; 0 <= j && j < totalNumberOfCandidates 
+    @     && candidates[j].getStatus() == CandidateStatus.CONTINUING;
+    @     getActualTransfers(fromCandidate, candidates[j])) - 
+    @     getSurplus(fromCandidate);
     @*/
   protected/*@ pure spec_public @*/int getTransferShortfall(
       final/*@ non_null @*/Candidate fromCandidate) {
     int shortfall = 0;
+    /*@ loop_invariant shortfall == (\sum int j; 
+      @   0 <= j && j <= i && 
+      @   candidates[j].getStatus() == CandidateStatus.CONTINUING; 
+      @   getActualTransfers(fromCandidate, candidates[j]));
+      @*/
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
         shortfall += getActualTransfers(fromCandidate, candidates[i]);
@@ -718,13 +736,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         allocating the transfer shortfall. If two or more candidates have
    *         equal remainders then use the number of transfers they are about to
    *         receive and if the number of transfers are equal then look at the
-   *         number of votes all ready received.
+   *         number of votes already received.
    * @param fromCandidate
    *        Candidate, already elected, with surplus votes to donate
    * @param toCandidate
    *        Continuing candidate eligible to receive vote transfer
-   * @return The number of continuing candidates with a higher quotient remainder
-   *         than this candidate
+   * @return The number of continuing candidates with a higher quotient 
+   *         remainder than this candidate
    */
   /*@ also
     @   protected normal_behavior
@@ -746,6 +764,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     final int transferRemainder =
         getTransferRemainder(fromCandidate, toCandidate); 
     
+    /*@ loop_invariant numberHigherThan == (\sum int j; 0 <= j && j <= i && 
+      @   candidates[j].getCandidateID() != toCandidate.getCandidateID() && 
+      @   candidates[j].getStatus() == CandidateStatus.CONTINUING); 
+      @   compareCandidates(fromCandidate, toCandidate,
+      @     actualTransfers, transferRemainder, candidates[j]);
+      @*/
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getCandidateID() != toCandidate.getCandidateID()
           && candidates[i].getStatus() == CandidateStatus.CONTINUING) {
@@ -811,15 +835,18 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   protected/*@ pure spec_public @*/int getTotalTransferableVotes(
       final/*@ non_null @*/Candidate fromCandidate) {
     int numberOfTransfers = 0;
+    /*@ loop_invariant numberOfTransfers == (\sum int j; 0 <= j && j <= i &&
+      @   candidates[j].getStatus() == CandidateStatus.CONTINUING;
+      @   getPotentialTransfers(fromCandidate, candidates[j].getCandidateID());
+      @*/
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
         numberOfTransfers +=
-            getPotentialTransfers(fromCandidate, candidates[i].getCandidateID());
+          getPotentialTransfers(fromCandidate, candidates[i].getCandidateID());
       }
     }
     return numberOfTransfers;
-    // TODO 2009.10.14 ESC postcondition
-  } //@ nowarn Post;
+  }
   
   /**
    * Transfer votes from one candidate to another.
