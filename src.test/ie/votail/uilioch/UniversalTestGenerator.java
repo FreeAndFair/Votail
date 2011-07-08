@@ -47,14 +47,16 @@ public class UniversalTestGenerator {
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(this.getClass().getName());
     try {
-      FileHandler handler = new FileHandler(UniversalTestGenerator.LOGFILENAME);
+      final String logFilename = UniversalTestGenerator.LOGFILENAME + "." +
+        System.currentTimeMillis();
+      FileHandler handler = new FileHandler(logFilename);
       logger.addHandler(handler);
     }
     catch (SecurityException e1) {
-      logger.info("not allowed to attach logfile" + e1.getMessage());
+      logger.info("not allowed to attach logfile " + e1.getMessage());
     }
     catch (IOException e1) {
-      logger.info("not able to find logfile" + e1.getMessage());
+      logger.info("not able to find logfile " + e1.getMessage());
     }
     taskQueue = new ChannelQueue<AlloyTask>(workers*width);
     taskPool = new AlloyPool(taskQueue, workers);
