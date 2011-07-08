@@ -214,7 +214,7 @@ public class UniversalTestGenerator {
         while (testData != null) {
           if (testData.getScenario().equivalentTo(scenario)) {
             logger.info("Found an existing ballot box for this scenario");
-            writeBallots(out, testData);
+            writeBallots(out, testData, scenario);
             return true;
             
           }
@@ -240,11 +240,13 @@ public class UniversalTestGenerator {
   /**
    * @param out
    * @param testData
+   * @param scenario 
    * @throws IOException
    */
   protected synchronized void writeBallots(ObjectOutputStream out,
-      ElectionData testData) throws IOException {
-    out.writeObject(testData);
+      ElectionData testData, ElectoralScenario scenario) throws IOException {
+    AlloyTask alloyTask = new AlloyTask(out,scenario);
+    alloyTask.writeBallots(testData);
     out.flush();
   }
   
