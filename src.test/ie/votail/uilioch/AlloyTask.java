@@ -35,12 +35,15 @@ public class AlloyTask implements Runnable {
         logger.severe("Failed to find a solution for scenario " + scenario);
       }
       else {
+        logger.info("Writing newly generated ballot box for scenario " +
+          scenario);
         writeBallots(ballots.export());
+        logger.info("Finished writing ballot box for scenario " + scenario);
       }
       
     }
     catch (IOException e) {
-      logger.warning(e.toString());
+      logger.severe(e.toString());
     }
   }
   
