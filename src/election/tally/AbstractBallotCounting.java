@@ -940,7 +940,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     
     /*@ loop_invariant (lowest == i) <==>
       @   (leastVotes == countBallotsFor(candidates[i].getCandidateID()) &&
-      @   (\for_all 
+      @   (\for_all int j; 0 <= j && j < i && leastVotes ==
+      @     countBallotsFor(candidates[j].getCandidateID());
+      @     isHigherThan(candidates[j],candidates[i]));
       @
       @ decreasing leastVotes; 
       @*/
@@ -1002,16 +1004,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param candidateID The unique identifier for the excluded candidate
    */
   /*@ requires candidateID != Ballot.NONTRANSFERABLE;
-    @ requires countNumberValue < CountConfiguration.MAXCOUNT;
-    @ requires \nonnullelements (ballotsToCount);
+    @ requires !isContinuingCandidateID(candidateID);
     @ assignable ballots;
+    @ ensures 0 == countBallotsFor(candidateID);
     @*/
   protected void redistributeBallots(final int candidateID) {
-    
+
+    // TODO
+    /*@ loop_invariant
+      @
+      @*/
     for (int b = 0; b < ballots.length; b++) {
       if (ballots[b].getCandidateID() == candidateID) {
         
-        // TODO 2009.10.14 ESC precondition
         transferBallot(ballots[b]);
       }
     }
