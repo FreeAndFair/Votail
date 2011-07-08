@@ -262,6 +262,10 @@ public class UniversalTestGenerator {
     try {
       electionData = (ElectionData) in.readObject();
     }
+    catch (EOFException eofe) {
+      
+      logger.info("No more ballot boxes to read");
+    }
     catch (IOException ioe) {
       logger.severe(ioe.toString());
     }
