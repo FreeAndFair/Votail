@@ -204,6 +204,7 @@ public class UniversalTestGenerator {
       
       ElectionData testData = getTestData(in);
       while (testData != null) {
+        logger.info("Found existing scenario " + scenario);
         if (testData.getScenario().equivalentTo(scenario)) {
           logger.info("Found an existing ballot box for this scenario");
           writeBallots(out, testData);
