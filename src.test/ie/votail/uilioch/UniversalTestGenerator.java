@@ -210,7 +210,9 @@ public class UniversalTestGenerator {
           logger.info("Found an existing ballot box for this scenario");
           writeBallots(out, testData);
           return true;
+        
         }
+        testData = getTestData(in);
       }
       in.close();
       fis.close();
