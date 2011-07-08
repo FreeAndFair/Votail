@@ -68,6 +68,7 @@ jmldocdir =	$(basedocdir)/jmldocs
 main_memory_use =	-ms256M -mx256M
 rac_memory_use =	-ms256M -mx320M
 test_memory_use	=	-ms256M -mx3200M
+generator_memory_use =	-ms512M -mx6400M
 
 copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved"
 
@@ -289,7 +290,7 @@ universal-test:	 universal.stamp
 universal.stamp:	classes 
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
 	touch testdata/STV_election.data;\
-	java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator;\
+	java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator;\
 	svn commit -m "latest test generation" testdata/STV_election.data;\
 	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
