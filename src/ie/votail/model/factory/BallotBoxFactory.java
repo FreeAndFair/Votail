@@ -195,8 +195,7 @@ public class BallotBoxFactory {
     }
     Expr predicate =
         CompUtil.parseOneExpression_fromString(world, scenario.toPredicate());
-    logger.info("Trying scope " + scope + "using for this predicate " + 
-        predicate.toString() + " " + predicate.getDescription());
+    logger.info("Trying scope " + scope + " for scenario " + scenario);
     Command command =
         new Command(false, scope, DEFAULT_BIT_WIDTH, scope, predicate);
     A4Solution solution =
