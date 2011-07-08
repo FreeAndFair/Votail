@@ -891,6 +891,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     int highestCandidate = AbstractBallotCounting.NONE_FOUND_YET;
     long mostVotes = 0;
     
+    /*@ loop_invariant (highestCandidate == i) <==>
+      @   (mostVotes == countBallotsFor(candidates[i].getCandidateID()) &&
+      @   (\for_all int j; 0 <= j && j < i && 
+      @     mostVotes == countBallotsFor(candidates[i].getCandidateID());
+      @     isHigherThan(candidateList[i],candidateList[j])));
+      @ decreasing Ballot.MAX_BALLOT - mostVotes;
+      @*/
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
         final int votes = countBallotsFor(candidates[i].getCandidateID());
@@ -906,7 +913,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
     
     return highestCandidate;
-    // TODO 2009.10.14 ESC postcondition
   }
   
   /**
@@ -932,6 +938,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     long leastVotes = CountConfiguration.MAXVOTES;
     int lowest = AbstractBallotCounting.NONE_FOUND_YET;
     
+    /*@ loop_invariant (lowest == i) <==>
+      @   (leastVotes == countBallotsFor(candidates[i].getCandidateID()) &&
+      @   (\for_all 
+      @
+      @ decreasing leastVotes; 
+      @*/
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if (candidates[i].getStatus() == CandidateStatus.CONTINUING) {
         final int votes = countBallotsFor(candidates[i].getCandidateID());
