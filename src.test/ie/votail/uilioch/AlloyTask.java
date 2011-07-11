@@ -14,20 +14,21 @@ public class AlloyTask implements Runnable {
   protected ObjectOutputStream out;
   protected int scope = 7;
   protected ElectoralScenario scenario;
+  protected Logger logger;
+  protected BallotBoxFactory ballotBoxFactory;
   
   public AlloyTask(ObjectOutputStream out, ElectoralScenario scenario) {
     this.scenario = scenario;
     this.out = out;
+    this.logger = Logger.getAnonymousLogger();
+    this.ballotBoxFactory = new BallotBoxFactory();
   }
   
   @Override
   public void run() {
     
-    Logger logger = Logger.getAnonymousLogger();
-    BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
     try {
-      
-      // Write solution to the output file
+      // Find solution
       final ElectionConfiguration ballots =
           ballotBoxFactory.extractBallots(scenario, scope);
       

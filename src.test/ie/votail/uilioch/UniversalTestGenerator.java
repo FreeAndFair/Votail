@@ -30,7 +30,6 @@ public class UniversalTestGenerator {
   protected BallotBoxFactory ballotBoxFactory;
   protected ScenarioFactory scenarioFactory;
   protected Logger logger;
-  protected Channel<AlloyTask> taskQueue;
   protected AlloyPool taskPool;
   protected String dataFilename;
   protected String existingDataFilename;
@@ -46,7 +45,7 @@ public class UniversalTestGenerator {
    */
   /*@ requires 0 < workers;
     @ requires 0 < width; */
-  public UniversalTestGenerator(int workers, int width) {
+  public UniversalTestGenerator(int workers, int capacity) {
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
     logger = Logger.getLogger(this.getClass().getName());
@@ -64,8 +63,7 @@ public class UniversalTestGenerator {
       logger.info("not able to find logfile " + e1.getMessage());
     }
     
-    taskQueue = new ChannelQueue<AlloyTask>(workers * width);
-    taskPool = new AlloyPool(taskQueue, workers);
+    taskPool = new AlloyPool(workers, capacity);
     
     dataFilename = getFilename();
     existingDataFilename = dataFilename + System.currentTimeMillis();
@@ -169,17 +167,8 @@ public class UniversalTestGenerator {
       
       // Check if this scenario already generated
       if (!alreadyExists(scenario, out)) {
-        
-        try {
-          taskQueue.put(new AlloyTask(out, scenario));
+          taskPool.execute(new AlloyTask(out, scenario));
           count++;
-        }
-        catch (InterruptedException ioe) {
-          logger.severe(
-            "Failed to generate or find existing ballot box for scenario" + 
-            scenario + " because " + ioe.toString());
-        }
-        
       }
     }
     
@@ -238,16 +227,17 @@ public class UniversalTestGenerator {
   }
   
   /**
-   * @param out
-   * @param testData
-   * @param scenario 
+   * Rewrite existing test data to the new data file
+   * 
+   * @param out The new output stream
+   * @param testData The existing test data
+   * @param scenario  The expected results from this test data
    * @throws IOException
    */
   protected synchronized void writeBallots(ObjectOutputStream out,
       ElectionData testData, ElectoralScenario scenario) throws IOException {
     AlloyTask alloyTask = new AlloyTask(out,scenario);
     alloyTask.writeBallots(testData);
-    out.flush();
   }
   
   /**
@@ -257,7 +247,7 @@ public class UniversalTestGenerator {
    *          The Object Input Stream which contains the test data
    * @return The Test Data (or null)
    */
-  public ElectionData getTestData(ObjectInputStream in) {
+  public synchronized ElectionData getTestData(ObjectInputStream in) {
     
     ElectionData electionData = null;
     
@@ -278,7 +268,8 @@ public class UniversalTestGenerator {
   }
   
   /**
-   * Get name of the file which contains testdata for this method.
+   * Get name of the file in which to store generated test data and from which
+   * the test data will be read when running the tests.
    * 
    * @param method
    *          The type of voting scheme
@@ -293,7 +284,7 @@ public class UniversalTestGenerator {
    * Generate enough test data for 100% path coverage
    */
   public static void main(String[] args) {
-    UniversalTestGenerator uilioch = new UniversalTestGenerator(15, 10);
+    UniversalTestGenerator uilioch = new UniversalTestGenerator(3,12);
     
     uilioch.generateTests(1, 5, Method.STV); // IRV 1-seat
     uilioch.generateTests(3, 7, Method.STV); // PR-STV 3-seat

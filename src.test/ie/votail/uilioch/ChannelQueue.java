@@ -11,13 +11,11 @@ public class ChannelQueue<T> implements Channel<T> {
     queue = new ArrayBlockingQueue<T> (capacity);
   }
   
-  @Override
   public void put(T x) throws InterruptedException {
    
     queue.put(x); 
   }
   
-  @Override
   public T take() throws InterruptedException {
     return queue.take();
   }

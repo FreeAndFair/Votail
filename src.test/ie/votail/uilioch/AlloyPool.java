@@ -16,8 +16,16 @@ public class AlloyPool implements Executor {
     }
   }
   
-  public AlloyPool(Channel<AlloyTask> ch, int nworkers) {
-    workQueue = ch;
+  /**
+   * 
+   * @param nworkers
+   * @param capacity
+   */
+  
+  //@ requires 0 <= nworkers;
+  //@ requires 0 <= capacity;
+  public AlloyPool(int nworkers, int capacity) {
+    workQueue = new ChannelQueue<AlloyTask>(capacity);
     for (int i = 0; i < nworkers; ++i)
       activate();
   }
