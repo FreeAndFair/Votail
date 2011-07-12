@@ -287,7 +287,7 @@ jml-junit-tests:	classes jmlunit_classes
 
 generate-tests: tests-generated.stamp
 
-tests-generated-stamp:	classes
+tests-generated.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
 	nice java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator
 	touch tests-generated-stamp
