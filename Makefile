@@ -352,7 +352,7 @@ clean:	clean_javadoc clean_jmldoc clean_classes clean_jml clean_jmlc clean_jmlcj
 	rm -f *.pstex *.pstex_t *.pdf *.pdf_t *.pdftex
 	rm -f *.bak
 clean_other_stamps:
-	rm -f escjava2-typecheck.stamp escjava2.stamp checkstyle.stamp
+	rm -f escjava2-typecheck.stamp escjava2.stamp checkstyle.stamp *.stamp
 
 clean_classes:
 	rm -rf distr $(buildpath) classes.stamp jmlunit_classes.stamp
