@@ -285,13 +285,16 @@ jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
 	java junit.textui.TestRunner $(test_memory_use) election.tally.AbstractCountStatus_JML_Test
 
-generate-tests:	classes
+generate-tests: tests-generated.stamp
+
+tests-generated-stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	nice java $(test_memory_use) ie.votail.uilioch.UniversalTestGenerator
+	nice java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator
+	touch tests-generated-stamp
 
 universal-test:	 universal.stamp
 
-universal.stamp:	classes 
+universal.stamp:	generate-tests
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
 	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
