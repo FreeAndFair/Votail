@@ -39,4 +39,5 @@ explanation
   "The design and generation of test data"
 class SCENARIO description "A set of candidate outcomes"
 class SCENARIO_LIST description "The complete set of possible scenarios"
+class ANALYSIS description "Statistical analysis of generated tests"
 end
