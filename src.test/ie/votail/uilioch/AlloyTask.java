@@ -16,12 +16,14 @@ public class AlloyTask implements Runnable {
   protected ElectoralScenario scenario;
   protected Logger logger;
   protected BallotBoxFactory ballotBoxFactory;
+  protected Analysis analysis;
   
   public AlloyTask(ObjectOutputStream out, ElectoralScenario scenario) {
     this.scenario = scenario;
     this.out = out;
     this.logger = Logger.getAnonymousLogger();
     this.ballotBoxFactory = new BallotBoxFactory();
+    this.analysis = new Analysis();
   }
   
   @Override
@@ -40,6 +42,7 @@ public class AlloyTask implements Runnable {
           scenario);
         writeBallots(ballots.export());
         logger.info("Finished writing ballot box for scenario " + scenario);
+        analysis.add(scenario,ballots);
       }
       
     }
