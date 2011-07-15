@@ -68,7 +68,7 @@ jmldocdir =	$(basedocdir)/jmldocs
 main_memory_use =	-ms256M -mx256M
 rac_memory_use =	-ms256M -mx320M
 test_memory_use	=	-ms256M -mx3200M
-generator_memory_use =  -ms512M -mx16000M
+generator_memory_use =  -ms1024M -mx102400M
 
 copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved"
 

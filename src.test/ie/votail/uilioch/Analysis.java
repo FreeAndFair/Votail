@@ -15,6 +15,7 @@ import ie.votail.model.data.ElectionData;
 public class Analysis {
 
   protected static final String ANALYSIS_FILENAME = "testdata/analysis.txt";
+  protected static int counter = 1;
 
   public void add(ElectoralScenario scenario, ElectionConfiguration ballots) {
     Logger logger = Logger.getAnonymousLogger();
@@ -25,6 +26,9 @@ public class Analysis {
       FileOutputStream fos = new FileOutputStream(ANALYSIS_FILENAME, true);
       ObjectOutputStream out = new ObjectOutputStream(fos);
       
+      out.writeChars("Scenario Number ");
+      out.writeInt(counter++);
+      out.writeChars(" is ");
       out.writeChars(scenario.toString());
       // Number of Ballots
       out.writeChars("Number of ballots ");
@@ -41,6 +45,10 @@ public class Analysis {
       out.writeInt(averageLength);
       out.close();
       fos.close();
+      
+     logger.info("Wrote scenario number " + counter + " with " +
+       numberOfBallots + " of average length " + averageLength);
+     
     
   }
     catch (FileNotFoundException e) {
