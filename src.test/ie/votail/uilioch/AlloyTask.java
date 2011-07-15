@@ -42,7 +42,7 @@ public class AlloyTask implements Runnable {
           scenario);
         writeBallots(ballots.export());
         logger.info("Finished writing ballot box for scenario " + scenario);
-        analysis.add(scenario,ballots);
+        
       }
       
     }
@@ -59,6 +59,7 @@ public class AlloyTask implements Runnable {
       throws IOException {
     out.writeObject(ballotBox);
     out.flush();
+    analysis.add(scenario,ballotBox);
   }
   
 }

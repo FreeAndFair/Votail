@@ -13,16 +13,15 @@ import ie.votail.model.ElectoralScenario;
 import ie.votail.model.data.ElectionData;
 
 public class Analysis {
-
+  
   protected static final String ANALYSIS_FILENAME = "testdata/analysis.txt";
   protected static int counter = 1;
-
-  public void add(ElectoralScenario scenario, ElectionConfiguration ballots) {
-    Logger logger = Logger.getAnonymousLogger();
-
   
-    try {
+  public void add(ElectoralScenario scenario, ElectionData ballotBox) {
+    Logger logger = Logger.getAnonymousLogger();
     
+    try {
+      
       FileOutputStream fos = new FileOutputStream(ANALYSIS_FILENAME, true);
       ObjectOutputStream out = new ObjectOutputStream(fos);
       
@@ -32,25 +31,24 @@ public class Analysis {
       out.writeChars(scenario.toString());
       // Number of Ballots
       out.writeChars("Number of ballots ");
-      final int numberOfBallots = ballots.getBallots().length;
+      Ballot[] box = ballotBox.getBallots();
+      final int numberOfBallots = box.length;
       out.writeInt(numberOfBallots);
       // Average Length of Ballots
       int sumOfLengths = 0;
-      Ballot[] box = ballots.getBallots();
       for (int index = 0; index < numberOfBallots; index++) {
         sumOfLengths += box[index].remainingPreferences();
       }
       out.writeChars("Average length of each ballot ");
-      final int averageLength = 1+(sumOfLengths/numberOfBallots);
+      final int averageLength = 1 + (sumOfLengths / numberOfBallots);
       out.writeInt(averageLength);
       out.close();
       fos.close();
       
-     logger.info("Wrote scenario number " + counter + " with " +
-       numberOfBallots + " of average length " + averageLength);
-     
-    
-  }
+      logger.info("Wrote scenario number " + counter + " with "
+          + numberOfBallots + " of average length " + averageLength);
+      
+    }
     catch (FileNotFoundException e) {
       logger.info(e.toString());
     }
