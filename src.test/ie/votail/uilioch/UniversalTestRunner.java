@@ -98,9 +98,7 @@ public class UniversalTestRunner extends Uilioch {
         
         ElectionConfiguration electionConfiguration =
             new ElectionConfiguration(testData);
-        
-        logger.finest(electionConfiguration.toString());
-        
+                
         if (0 < electionConfiguration.size()) {
           
           // Test different implementations
