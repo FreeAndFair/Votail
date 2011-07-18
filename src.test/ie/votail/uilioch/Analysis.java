@@ -1,5 +1,8 @@
 package ie.votail.uilioch;
 
+import ie.votail.model.ElectoralScenario;
+import ie.votail.model.data.ElectionData;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,10 +10,6 @@ import java.io.ObjectOutputStream;
 import java.util.logging.Logger;
 
 import election.tally.Ballot;
-
-import ie.votail.model.ElectionConfiguration;
-import ie.votail.model.ElectoralScenario;
-import ie.votail.model.data.ElectionData;
 
 public class Analysis {
   
@@ -25,23 +24,24 @@ public class Analysis {
       FileOutputStream fos = new FileOutputStream(ANALYSIS_FILENAME, true);
       ObjectOutputStream out = new ObjectOutputStream(fos);
       
-      out.writeChars("Scenario Number ");
-      out.writeInt(counter++);
-      out.writeChars(" is ");
-      out.writeChars(scenario.toString());
+      out.writeChars("Scenario Number " + Integer.toString(counter++) + "\n");
+      out.writeChars(scenario.toString() + "\n");
       // Number of Ballots
       out.writeChars("Number of ballots ");
       Ballot[] box = ballotBox.getBallots();
       final int numberOfBallots = box.length;
-      out.writeInt(numberOfBallots);
+      out.writeChars(Integer.toString(numberOfBallots) + "\n");
       // Average Length of Ballots
       int sumOfLengths = 0;
+      int maxLength = 1;
       for (int index = 0; index < numberOfBallots; index++) {
-        sumOfLengths += box[index].remainingPreferences();
+        final int lengthOfBallot = box[index].remainingPreferences();
+        sumOfLengths += lengthOfBallot;
+        if (maxLength < lengthOfBallot) maxLength = lengthOfBallot;
       }
       out.writeChars("Average length of each ballot ");
       final int averageLength = 1 + (sumOfLengths / numberOfBallots);
-      out.writeInt(averageLength);
+      out.writeChars(Integer.toString(averageLength) + "\n");
       out.close();
       fos.close();
       
