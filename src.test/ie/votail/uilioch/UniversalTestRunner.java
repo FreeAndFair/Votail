@@ -91,7 +91,8 @@ public class UniversalTestRunner extends Uilioch {
         // Derserialize and load the next Ballot Box
         final ElectionData testData = getTestData(in);
         
-        if (testData == null || testData.getScenario() == null) {
+        if (testData == null || testData.getScenario() == null ||
+            testData.getBallots().length == 0) {
           logger.warning("Test data is either missing or not readable");
           break;
         }
