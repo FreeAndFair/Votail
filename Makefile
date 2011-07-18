@@ -289,12 +289,12 @@ generate-tests: tests-generated.stamp
 
 tests-generated.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	nice java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator
+	nice nohup java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator
 	touch tests-generated-stamp
 
 universal-test:	 universal.stamp
 
-universal.stamp:	generate-tests
+universal.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
 	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
