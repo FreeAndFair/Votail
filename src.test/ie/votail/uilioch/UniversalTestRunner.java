@@ -30,7 +30,7 @@ import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
 
-public class UniversalTestRunner {
+public class UniversalTestRunner extends Uilioch {
   
   public static final String LOGFILENAME = "logs/uilioch/runner.log";
   public static final int INITIAL_SCOPE = 6;
@@ -78,9 +78,8 @@ public class UniversalTestRunner {
       logger.info("not able to find logfile" + e1.toString());
     }
     
-    UniversalTestGenerator generator =
-        new UniversalTestGenerator(capacity, width);
-    final String dataFilename = generator.getFilename();
+    
+    final String dataFilename = getFilename();
     
     try {
       
@@ -90,7 +89,7 @@ public class UniversalTestRunner {
       while (true) {
         
         // Derserialize and load the next Ballot Box
-        final ElectionData testData = generator.getTestData(in);
+        final ElectionData testData = getTestData(in);
         
         if (testData == null || testData.getScenario() == null) {
           logger.warning("Test data is either missing or not readable");
