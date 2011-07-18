@@ -276,7 +276,6 @@ public class Election {
 		if (numberOfRemainingSeats == 1 && numberOfContinuingCandidates == 2) {
 			endElection(ballotStacks);
 		}
-    // FIXME 2011.04.06 possible array index out of bounds
 		int lastCandidate = order[numberOfContinuingCandidates - 1];
 		int lastCandidateNumberOfVotes = ballotStacks.getCandidateNumberOfBallotPapers(lastCandidate);
 		int secondLowestCandidate = order[numberOfContinuingCandidates - 2];

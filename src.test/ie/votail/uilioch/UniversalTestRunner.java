@@ -163,7 +163,7 @@ public class UniversalTestRunner extends Uilioch {
    */
   public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox) {
     
-    ElectionResult result;
+    ElectionResult result = null;
     Constituency constituency = ballotBox.getConstituency();
     ElectoralScenario scenario = ballotBox.getScenario();
     
@@ -186,11 +186,16 @@ public class UniversalTestRunner extends Uilioch {
         convertBallotsIntoCoyleDoyleFormat(ballotBox);
     logger.info("CoyleDoyle ballot papers: " + ballotPapers.toString());
     
-    outcome = election.election(ballotPapers);
+    if (!ballotPapers.isEmpty()) {
     
-    result = new ElectionResult(outcome, numberOfSeats);
-    
-    checkResult(scenario, result);
+      outcome = election.election(ballotPapers); 
+      result = new ElectionResult(outcome, numberOfSeats);
+      checkResult(scenario, result);
+    }
+    else {
+      logger.severe("Failed to extract ballot data from " + ballotBox.toString()
+          + " to " + ballotPapers.toString());
+    }
     
     return result;
   }
