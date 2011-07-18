@@ -100,7 +100,7 @@ public class UniversalTestRunner extends Uilioch {
         ElectionConfiguration electionConfiguration =
             new ElectionConfiguration(testData);
                 
-        if (0 < electionConfiguration.size()) {
+        if (0 < electionConfiguration.getBallots().length) {
           
           // Test different implementations
           ElectionResult votailResult = runVotail(electionConfiguration.copy());
