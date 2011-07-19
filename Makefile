@@ -296,7 +296,7 @@ universal-test:	 universal.stamp
 
 universal.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
+	java -Djava.awt.headless=true $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
 universal-rac-test:	universal-rac.stamp
