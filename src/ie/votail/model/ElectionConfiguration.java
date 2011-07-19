@@ -305,7 +305,12 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     Ballot[] theBallots = electionData.getBallots();
     if (theBallots != null) {
     for (index = 0; index < theBallots.length; index++) {
-      final int[] preferenceList = theBallots[index].getPreferenceList();
+      final int numberOfPreferences = theBallots[index].getPreferenceList().length;
+      final int[] preferenceList = new int[numberOfPreferences];
+      for (int p=0; p < numberOfPreferences; p++) {
+        preferenceList[p] = theBallots[index].getNextPreference(p);
+      }
+
       this.accept(preferenceList);
       // Recreate the anonymous list of candidates
       for (int preference = 0; preference < preferenceList.length; 
