@@ -262,6 +262,7 @@ public class UniversalTestRunner extends Uilioch {
     args[2] = Integer.toString(numberOfSeats);
     
     try {
+      // TODO run headless or set virtual display
       com.hexmedia.prstv.Election.main(args);
       // TODO Initialise event
       // TODO Run All Counts event

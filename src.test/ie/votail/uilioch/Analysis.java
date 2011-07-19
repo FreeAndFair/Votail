@@ -36,6 +36,7 @@ public class Analysis {
       int maxLength = 1;
       for (int index = 0; index < numberOfBallots; index++) {
         final int lengthOfBallot = box[index].remainingPreferences();
+        assert lengthOfBallot <= scenario.getNumberOfCandidates();
         sumOfLengths += lengthOfBallot;
         if (maxLength < lengthOfBallot) maxLength = lengthOfBallot;
       }
@@ -46,7 +47,8 @@ public class Analysis {
       fos.close();
       
       logger.info("Wrote scenario number " + counter + " with "
-          + numberOfBallots + " of average length " + averageLength);
+          + numberOfBallots + " ballots of average length " + averageLength
+          + " and maximum length of " + maxLength );
       
     }
     catch (FileNotFoundException e) {
