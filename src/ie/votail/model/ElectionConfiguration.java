@@ -157,18 +157,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    */
   //@ ensures this.equals(\result);
   public ElectionConfiguration copy() {
-    ElectionConfiguration copy = new ElectionConfiguration();
-    
-    System.arraycopy(this.ballots, 0, copy.ballots, 0, this.numberOfBallots);
-    System.arraycopy(this.candidateIDs, 0, copy.candidateIDs, 0, 
-      this.numberOfBallots);
-
-    copy.numberOfSeats = this.numberOfSeats;
-    copy.numberOfCandidates = this.numberOfCandidates;
-    copy.numberOfWinners = this.numberOfWinners;
-    copy.scenario = this.scenario;
-    
-    return copy;
+    return new ElectionConfiguration(this.export());
   }
   
   //@ ensures \result == this.scenario;
