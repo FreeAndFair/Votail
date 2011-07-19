@@ -305,6 +305,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     Ballot[] theBallots = electionData.getBallots();
     if (theBallots != null) {
     for (index = 0; index < theBallots.length; index++) {
+      assert theBallots[index] != null;
       final int[] thePreferenceList = theBallots[index].getPreferenceList();
       final int numberOfPreferences = thePreferenceList.length;
       final int[] preferenceList = new int[numberOfPreferences];

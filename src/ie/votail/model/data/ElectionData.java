@@ -37,7 +37,11 @@ public class ElectionData implements Serializable {
    * @param ballotBox the ballotBox to set
    */
   public void setBallots(final Ballot[] theBallots) {
-    this.ballots = theBallots.clone();
+    int numberOfBallots = theBallots.length;
+    this.ballots = new Ballot[numberOfBallots];
+    for (int b=0; b < numberOfBallots; b++) {
+      this.ballots[b] = theBallots[b];
+    }
   }
   
 }
