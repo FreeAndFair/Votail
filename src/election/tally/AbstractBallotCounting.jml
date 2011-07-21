@@ -354,9 +354,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ 
     @ public model pure int getSumOfTransfers(non_null Candidate fromCandidate) {
     @   int sum = 0;
-    @   loop_invariant sum == (\num_of j; 0 <= j && j <= i;
+    @   loop_invariant sum == (\sum int j; 0 <= j && j < i;
     @     getPotentialTransfers (fromCandidate, 
-    @       candidateList[j].getCandidateID());
+    @       candidateList[j].getCandidateID()));
     @   for (int i=0; i < totalCandidates; i++) {
     @     sum += getPotentialTransfers (fromCandidate,
     @       candidateList[i].getCandidateID());

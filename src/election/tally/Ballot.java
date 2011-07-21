@@ -123,6 +123,9 @@ public final class Ballot implements Serializable {
     numberOfPreferences = preferences.length;
     positionInList = 0;
     preferenceList = new int[numberOfPreferences];
+    /*@ loop_invariant (0 < index) ==>
+      @   (preferenceList[index-1] == preferences[index-1]);
+      @*/
     for (int index = 0; index < numberOfPreferences; index++) {
       preferenceList[index] = preferences[index];
     }
@@ -250,15 +253,16 @@ public final class Ballot implements Serializable {
    * 
    * @return The ballot as a string
    */
+  //@ also ensures (2*numberOfPreferences) <= \result.length();
   public/*@ non_null pure @*/final String toString() {
     StringBuffer stringBuffer = new StringBuffer("(");
+    
+    //@ loop_invariant (2*i) <= stringBuffer.length();
     for (int i = 0; i < numberOfPreferences; i++) {
-      final int nextPreference = preferenceList[i];
-      
       if (0 < i) {
         stringBuffer.append(Ballot.WHITE_SPACE);
       }
-      stringBuffer.append("" + nextPreference);
+      stringBuffer.append("" + preferenceList[i]);
     }
     stringBuffer.append(")");
     return stringBuffer.toString();
@@ -280,6 +284,9 @@ public final class Ballot implements Serializable {
     @   candidateID == preferenceList[i]);
     @*/
   public/*@ pure @*/boolean isApproved(int candidateID) {
+    /*@ loop_invariant (0 < i) ==>
+      @   candidateID != preferenceList[i];
+      @ */
     for (int i = 0; i < numberOfPreferences; i++) {
       if (candidateID == preferenceList[i]) {
         return true;
@@ -297,11 +304,17 @@ public final class Ballot implements Serializable {
    */
   /*@ public normal_behavior
     @ ensures isApproved(candidateID) ==>
-    @   (0 <= \result && \result <= numberOfPreferences);
+    @   ((0 <= \result && \result <= numberOfPreferences) &&
+    @   (candidateID == preferenceLlist[\result]) &&
+    @   (\forall int i; 0 <= i && i < \result;
+    @     candidateID != preferenceList[i]));
     @ ensures !isApproved(candidateID) ==>
     @   (NOT_APPROVED == \result);
     @*/
   public/*@ pure @*/int getRank(int candidateID) {
+    /*@ loop_invariant (0<i) ==>
+      @   candidateID != preferenceList[i-1];
+      @*/
     for (int i = 0; i < numberOfPreferences; i++) {
       if (candidateID == preferenceList[i]) {
         return i;
@@ -316,9 +329,16 @@ public final class Ballot implements Serializable {
    * 
    * @return the preferenceList
    */
-  //@ ensures \result == preferenceList;
-  public /*@ pure @*/ int[] getPreferenceList() {
-    return preferenceList;
+  /*@ ensures (\forall int i; 0 <= i && i < preferenceList.length;
+    @   \result[i] == preferenceList[i]);
+    @*/
+  public /*@ pure non_null @*/ int[] getPreferenceList() {
+    int[] preferences = new int[preferenceList.length];
+    //@ loop_invariant (0 < p) ==> (preferences[p-1] == preferenceList[p-1]);
+    for (int p = 0; p < preferenceList.length; p++) {
+      preferences[p] = preferenceList[p];
+    }
+    return preferences;
   }
 
   /**

@@ -102,7 +102,6 @@ public class Candidate extends CandidateStatus implements Serializable {
    */
   /*@ protected normal_behavior
     @   requires 0 <= count;
-    @   requires count < CountConfiguration.MAXCOUNT;
     @   requires count < votesAdded.length;
     @   requires count < votesRemoved.length;
     @   ensures \result == votesAdded[count] - votesRemoved[count];
@@ -191,8 +190,6 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   requires lastCountNumber <= count;
     @   requires 0 <= count;
     @   requires count < votesAdded.length;
-    @   requires count < votesRemoved.length;
-    @   requires count < CountConfiguration.MAXCOUNT;
     @   requires 0 <= numberOfVotes;
     @   assignable lastCountNumber, votesAdded[count], totalVote;
     @   ensures \old(votesAdded[count]) + numberOfVotes == votesAdded[count];

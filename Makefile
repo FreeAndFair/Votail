@@ -127,7 +127,7 @@ copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved
 
 default: classes
 
-all:	build bonc escjava test
+all:	clean build test universal-rac-test escjava bonc
 
 build:	classes jml jmlc jmlunit_classes
 

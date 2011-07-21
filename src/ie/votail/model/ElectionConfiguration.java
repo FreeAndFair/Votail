@@ -302,23 +302,28 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
       candidateIDs[i] = Candidate.NO_CANDIDATE;
     }
     
-    Ballot[] theBallots = electionData.getBallots();
+    final Ballot[] theBallots = electionData.getBallots();
     if (theBallots != null) {
-    for (index = 0; index < theBallots.length; index++) {
-      assert theBallots[index] != null;
-      final int[] thePreferenceList = theBallots[index].getPreferenceList();
-      final int numberOfPreferences = thePreferenceList.length;
-      final int[] preferenceList = new int[numberOfPreferences];
-      for (int p=0; p < numberOfPreferences; p++) {
-        preferenceList[p] = thePreferenceList[p];
+    for (int b = 0; b < theBallots.length; b++) {
+      Ballot ballot = theBallots[b];
+      if (ballot != null) {
+        final int numberOfPreferences = ballot.getNumberOfPreferences();
+        final int[] preferenceList = new int[numberOfPreferences];
+        for (int p = 0; p < numberOfPreferences; p++) {
+          preferenceList[p] = ballot.getNextPreference(p);
+        }
+          
+        this.accept(preferenceList);
+        // Recreate the anonymous list of candidates
+        for (int preference = 0; preference < preferenceList.length; 
+          preference++) {
+          updateCandidateIDs(preferenceList[preference]);
+        }
       }
-
-      this.accept(preferenceList);
-      // Recreate the anonymous list of candidates
-      for (int preference = 0; preference < preferenceList.length; 
-        preference++) {
-        updateCandidateIDs(preferenceList[preference]);
+      else {
+        logger.warning("Unexpected empty ballot in " + theBallots);
       }
+      
     }
     }
   }
