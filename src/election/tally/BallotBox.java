@@ -151,11 +151,13 @@ public class BallotBox implements Serializable {
   public /*@ pure non_null */ String toString() {
     StringBuffer stringBuffer = new StringBuffer(numberOfBallots + " ballots ");
     stringBuffer.append(BallotBox.PREFIX);
+    //@ loop_invariant 5*b <= stringBuffer.length();
     for (int b = 0; b < numberOfBallots; b++) {
       if (0 < b) {
         stringBuffer.append(Ballot.WHITE_SPACE);
       }
       stringBuffer.append(BallotBox.PREFIX);
+      //@ loop_invariant 2*p <= stringBuffer.length();
       for (int p = 0; b < ballots[b].getNumberOfPreferences(); p++) {
         final int nextPreference = ballots[b].getPreference(p);
         if (0 < p) {

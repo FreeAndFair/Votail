@@ -289,7 +289,7 @@ generate-tests: tests-generated.stamp
 
 tests-generated.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	nice nohup java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator
+	java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator
 	touch tests-generated-stamp
 
 universal-test:	 universal.stamp
@@ -303,7 +303,7 @@ universal-rac-test:	universal-rac.stamp
 
 universal-rac.stamp:	universal-test jml-junit-test escjava2
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
-	java $(test_memory_use) ie.votail.model.uilioch.UniversalTestRunner; \
+	java -Djava.awt.headless=true $(test_memory_use) ie.votail.model.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
 # generating source-based documentation

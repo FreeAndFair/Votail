@@ -118,19 +118,25 @@ public class BallotCounting extends AbstractBallotCounting {
    */
   /*@ also
     @   requires state == COUNTING;
-    @   requires countStatus.getState() == AbstractCountStatus.SURPLUS_AVAILABLE;
+    @   requires countStatus.getState() == 
+    @     AbstractCountStatus.SURPLUS_AVAILABLE;
     @   requires isElected (candidateList[winner]);
     @   requires \nonnullelements (candidateList);
     @   requires 0 <= winner && winner < candidateList.length;
     @*/
   public void distributeSurplus(final int winner) {
-    //@ assert candidateList[winner] != null;
     final int surplus = getSurplus(candidates[winner]);
     final int totalTransferableVotes =
         getTotalTransferableVotes(candidates[winner]);
     if (0 < surplus && 0 < totalTransferableVotes) {
       countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
       
+      /*@ loop_invariant (0 < i) ==>
+        @   (\old countBallotsFor(candidates[winner].getCandidateID()) + 
+        @     \old (countBallotsFor(candidates[i-1].getCandidateID())) ==
+        @   (countBallotsFor(candidates[winner].getCandidateID()) +
+        @     countBallotsFor(candidates[i-1].getCandidateID())));
+        @*/
       for (int i = 0; i < totalNumberOfCandidates; i++) {
         moveSurplusBallots(winner, i);
       }
@@ -153,7 +159,6 @@ public class BallotCounting extends AbstractBallotCounting {
   //@ requires 0 <= winner && winner < candidateList.length;
   //@ requires \nonnullelements (candidateList);
   protected void moveSurplusBallots(final int winner, final int index) {
-    //@ assert candidateList[index] != null;
     if ((index != winner) &&
         (candidates[index].getStatus() == CandidateStatus.CONTINUING)) {
       final int numberOfTransfers = calculateNumberOfTransfers(winner, index);
@@ -162,8 +167,8 @@ public class BallotCounting extends AbstractBallotCounting {
   }
   
   //@ requires 0 <= winner && winner < candidateList.length;
-  //@ requires \nonnullelements (candidateList);
-  //@ requires \nonnullelements (ballotsToCount);
+  //@ requires state == COUNTING;
+  //@ requires countStatus.getStatus == READY_TO_TRANSFER;
   protected void removeNonTransferableBallots(final int winner,
       final int surplus, final int totalTransferableVotes) {
     if (surplus > totalTransferableVotes) {
@@ -171,11 +176,15 @@ public class BallotCounting extends AbstractBallotCounting {
       //@ assert 0 < numberToRemove;
       //@ assert candidateList[winner] != null;
       final int fromCandidateID = candidates[winner].getCandidateID();
+      /*@ loop_invariant (0 < b) ==> 
+        @   !(ballots[b-1].isAssignedTo(fromCandidateID));
+        @ decreasing numberToRemove;
+        @*/
       for (int b = 0; b < ballots.length; b++) {
-        //@ assert ballotsToCount[b] != null;
         if ((ballots[b].isAssignedTo(fromCandidateID))
             && (0 < numberToRemove)
-            && (getNextContinuingPreference(ballots[b]) == Ballot.NONTRANSFERABLE)) {
+            && (getNextContinuingPreference(ballots[b]) == 
+              Ballot.NONTRANSFERABLE)) {
           transferBallot(ballots[b]);
           numberToRemove--;
         }
