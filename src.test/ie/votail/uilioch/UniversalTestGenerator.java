@@ -231,7 +231,7 @@ public class UniversalTestGenerator extends Uilioch {
    * Generate enough test data for 100% path coverage
    */
   public static void main(String[] args) {
-    UniversalTestGenerator uilioch = new UniversalTestGenerator(80,100);
+    UniversalTestGenerator uilioch = new UniversalTestGenerator(17,9000);
     
     uilioch.generateTests(1, 5, Method.STV); // IRV 1-seat
     uilioch.generateTests(3, 7, Method.STV); // PR-STV 3-seat

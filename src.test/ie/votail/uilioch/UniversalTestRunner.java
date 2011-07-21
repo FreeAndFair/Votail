@@ -54,7 +54,12 @@ public class UniversalTestRunner extends Uilioch {
         BallotBox ballotBox) {
       this.setup(constituency);
       this.load(ballotBox);
+      if (0 < this.totalNumberOfVotes) {
       this.count();
+      }
+      else {
+        logger.warning("Unexpected empty ballot box");
+      }
       ElectionResult electionResult = new ElectionResult(this.candidates);
       return electionResult;
     }
@@ -96,6 +101,7 @@ public class UniversalTestRunner extends Uilioch {
           logger.warning("Test data is either missing or not readable");
           break;
         }
+
         
         ElectionConfiguration electionConfiguration =
             new ElectionConfiguration(testData);
@@ -103,15 +109,15 @@ public class UniversalTestRunner extends Uilioch {
         if (0 < electionConfiguration.getBallots().length) {
           
           // Test different implementations
-          ElectionResult votailResult = runVotail(electionConfiguration.copy());
-          ElectionResult coyleDoyleResult =
-              runCoyleDoyle(electionConfiguration.copy());
-          ElectionResult hexMediaResult =
-              runHexMedia(electionConfiguration.copy());
+          ElectionResult votailResult = runVotail(electionConfiguration);
+//          ElectionResult coyleDoyleResult =
+//              runCoyleDoyle(electionConfiguration.copy());
+//          ElectionResult hexMediaResult =
+//              runHexMedia(electionConfiguration.copy());
           
-          assert hexMediaResult.equals(coyleDoyleResult);
-          assert coyleDoyleResult.equals(votailResult);
-          assert votailResult.equals(hexMediaResult);
+//          assert hexMediaResult.equals(coyleDoyleResult);
+//          assert coyleDoyleResult.equals(votailResult);
+//          assert votailResult.equals(hexMediaResult);
         }
         else {
           logger.warning("Empty ballot box data");
@@ -143,13 +149,11 @@ public class UniversalTestRunner extends Uilioch {
     ElectoralScenario scenario = ballotBox.getScenario();
     
     if (scenario == null) {
-      logger.warning("Unable to check scenario");
+      logger.warning("Unexpected null scenario");
     }
     
     else if (!scenario.check(votail)) {
-      logger.severe("Unexpected results for scenario " + scenario
-          + " using predicate " + scenario.toPredicate() + " and ballot box "
-          + ballotBox);
+      logger.warning("Unexpected results for scenario " + scenario);
     }
     
     return result;
