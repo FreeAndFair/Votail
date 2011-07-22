@@ -115,7 +115,8 @@ public final class Ballot implements Serializable {
     @   requires (\forall int i; 0 <= i && i < preferences.length;
     @     preferences[i] != NONTRANSFERABLE &&
     @     preferences[i] != Candidate.NO_CANDIDATE);
-    @   assignable numberOfPreferences, positionInList, preferenceList[*], preferenceList;
+    @   assignable numberOfPreferences, positionInList, preferenceList[*], 
+    @     preferenceList;
     @   ensures (\forall int index; 0 <= index && index < numberOfPreferences;
     @     preferenceList[index] == preferences[index]);
     @*/

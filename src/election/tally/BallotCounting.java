@@ -222,14 +222,17 @@ public class BallotCounting extends AbstractBallotCounting {
   public void transferVotes(final/*@ non_null @*/Candidate fromCandidate,
       final/*@ non_null @*/Candidate toCandidate, final int numberOfVotes) {
     
-    // Update the totals for each candidate
-    fromCandidate.removeVote(numberOfVotes, countNumberValue); 
-    toCandidate.addVote(numberOfVotes, countNumberValue); 
+    
     
     // Transfer the required number of ballots
     final int fromCandidateID = fromCandidate.getCandidateID();
     final int toCandidateID = toCandidate.getCandidateID();
     int ballotsMoved = 0;
+    /*@ loop_invariant (0 < b) ==>
+      @   ((ballotsMoved <= numberOfVotes) &&
+      @   (\old(ballots[b-1].isAssignedTo(fromCandidate)) ==>
+      @     ballots[b-1].isAssignedTo(toCandidate)));
+      @*/
     for (int b = 0; b < ballots.length; b++) { 
       if ((ballots[b].getCandidateID() == fromCandidateID) && 
           (getNextContinuingPreference(ballots[b]) == toCandidateID)) {
@@ -240,6 +243,10 @@ public class BallotCounting extends AbstractBallotCounting {
         }
       }
     }
+    
+    // Update the totals for each candidate
+    fromCandidate.removeVote(ballotsMoved, countNumberValue); 
+    toCandidate.addVote(ballotsMoved, countNumberValue); 
     
   } 
   

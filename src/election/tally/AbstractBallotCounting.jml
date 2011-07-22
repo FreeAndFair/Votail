@@ -40,23 +40,23 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @
     @ public invariant (PRELOAD <= state) ==> 
     @   (totalCandidates == candidateList.length);
-	  @ public invariant (state == PRELOAD || state == LOADING) ==>
-	  @   (\forall int i; 0 <= i && i < totalCandidates;
-	  @     candidateList[i].getStatus() == Candidate.CONTINUING &&
-	  @     candidateList[i].getTotalVote() == 0);
-	  @
-	  @ public invariant (state == PRELOAD || state == LOADING ||   
-	  @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
-	  @   (\forall int i, j; 0 <= i && i < totalCandidates && 
-	  @     i < j && j < totalCandidates;
-	  @     candidateList[i].getCandidateID() != 
-	  @     candidateList[j].getCandidateID());
-	  @
-	  @ protected invariant (state == COUNTING || state == FINISHED) ==> 
-	  @  (\forall int i; 0 <= i && i < totalCandidates;
-	  @    candidateList[i].getTotalAtCount() ==
-	  @    countBallotsFor (candidateList[i].getCandidateID()));
-	  @*/
+    @ public invariant (state == PRELOAD || state == LOADING) ==>
+    @   (\forall int i; 0 <= i && i < totalCandidates;
+    @     candidateList[i].getStatus() == Candidate.CONTINUING &&
+    @     candidateList[i].getTotalVote() == 0);
+    @
+    @ public invariant (state == PRELOAD || state == LOADING ||   
+    @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
+    @   (\forall int i, j; 0 <= i && i < totalCandidates && 
+    @     i < j && j < totalCandidates;
+    @     candidateList[i].getCandidateID() != 
+    @     candidateList[j].getCandidateID());
+    @
+    @ protected invariant (state == COUNTING || state == FINISHED) ==> 
+    @  (\forall int i; 0 <= i && i < totalCandidates;
+    @    candidateList[i].getTotalAtCount() ==
+    @    countBallotsFor (candidateList[i].getCandidateID()));
+    @*/
 	
   /** List of contents of each ballot paper that will be counted. */
   //@ public model non_null election.tally.Ballot[] ballotsToCount;
@@ -565,8 +565,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @       == secondCandidate.getVoteAtCount(k)));
     @*/
   protected /*@ pure spec_public @*/ boolean isHigherThan (
-		  /*@ non_null @*/ Candidate firstCandidate,
-		  /*@ non_null @*/ Candidate secondCandidate);
+    /*@ non_null @*/ Candidate firstCandidate,
+    /*@ non_null @*/ Candidate secondCandidate);
   
   /**
    * Draw lots to choose between two continuing candidates.
