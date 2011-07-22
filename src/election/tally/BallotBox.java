@@ -148,6 +148,7 @@ public class BallotBox implements Serializable {
    * 
    * @return The Ballot Box as a string
    */
+  //@ ensures 5*numberOfBallots <= \result.length();
   public /*@ pure non_null */ String toString() {
     StringBuffer stringBuffer = new StringBuffer(numberOfBallots + " ballots ");
     stringBuffer.append(BallotBox.PREFIX);
