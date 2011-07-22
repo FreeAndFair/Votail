@@ -149,9 +149,15 @@ public class Candidate extends CandidateStatus implements Serializable {
   /**
    * This is the default constructor method for a <code>Candidate</code>
    */
-  //@ assignable candidateID, votesAdded, votesRemoved, nextCandidateID;
+  /*@ assignable candidateID, votesAdded, votesRemoved, nextCandidateID;
+    @ ensures candidateID != nextCandidateID;
+    @ ensures nextCandidateID != \old(nextCandidateID);
+    @ ensures (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
+    @   getVoteAtCount() == 0);
+    @*/
   public Candidate() {
     candidateID = nextCandidateID++;
+    //@ loop_invariant (0 < i) ==> getVoteAtCount(i-1) == 0;
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
       votesAdded[i] = 0;
       votesRemoved[i] = 0;
@@ -163,12 +169,16 @@ public class Candidate extends CandidateStatus implements Serializable {
    * 
    * @param theCandidateID
    */
-  //@ requires 0 < theCandidateID;
-  //@ assignable candidateID, votesAdded, votesRemoved;
-  //@ ensures this.candidateID == theCandidateID;
+  /*@ requires 0 < theCandidateID;
+    @ assignable candidateID, votesAdded, votesRemoved;
+    @ ensures this.candidateID == theCandidateID;
+    @ ensures (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
+    @   getVoteAtCount() == 0);
+    @*/
   public Candidate(int theCandidateID) {
     this.candidateID = theCandidateID;
     
+    //@ loop_invariant (0 < i) ==> getVoteAtCount(i-1) == 0;
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
       this.votesAdded[i] = 0;
       this.votesRemoved[i] = 0;

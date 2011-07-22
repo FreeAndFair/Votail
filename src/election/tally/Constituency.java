@@ -94,6 +94,8 @@ public class Constituency implements Serializable {
     this.candidates = number;
     if (candidateList == null || candidateList.length < this.candidates) {
       this.candidateList = new Candidate[this.candidates];
+      
+      //@ loop_invariant (0 < index) ==> candidateList[i-1] != null;
       for (int index = 0; index < this.candidates; index++) {
         this.candidateList[index] = new Candidate();
       }
@@ -164,6 +166,10 @@ public class Constituency implements Serializable {
   public void load(/*@ non_null @*/int[] candidateIDs) {
     this.candidates = candidateIDs.length;
     this.candidateList = new Candidate[candidateIDs.length];
+    /*@ loop_invariant (0 < index) ==>
+      @   candidateList[index-1].getCandidateID() ==
+      @   candidateIDs[index-1];
+      @*/
     for (int index = 0; index < this.candidateList.length; index++) {
       final int theCandidateID = candidateIDs[index];
       this.candidateList[index] = new Candidate(theCandidateID);
