@@ -340,10 +340,22 @@ public class BallotCounting extends AbstractBallotCounting {
   }
   
   /**
-   * @return <code>true</code> if there is at least one continuing candidate
-   *         with a quota of votes
+   * Indicates if there are any continuing candidates with at least a quota
+   * of votes; these candidates are ready to be deemed elected by quota.
+   * 
+   * @return <code>true</code> if there exists a continuing candidate
+   *         who has quota of votes
    */
+  /*@ requires PRECOUNT <= state;
+    @ ensures \result == (\exists int i; 0 <= i && i < totalNumberOfCandidates;
+    @   (candidates[i].getStatus() == CandidateStatus.CONTINUING)
+    @   && hasQuota(candidates[i]);
+    @*/
   protected/*@ pure @*/boolean candidatesWithQuota() {
+    /*@ loop_invariant !(\exists int c; 0 <= c && c < i;
+      @   (candidates[i].getStatus() == CandidateStatus.CONTINUING) && 
+      @   hasQuota(candidates[i])); 
+      @*/
     for (int i = 0; i < totalNumberOfCandidates; i++) {
       if ((candidates[i].getStatus() == CandidateStatus.CONTINUING)
           && hasQuota(candidates[i])) {
@@ -467,7 +479,8 @@ public class BallotCounting extends AbstractBallotCounting {
     return countStatus;
   }
   
-  public/*@ pure*/String getResults() {
+  //@ ensures 3*totalNumberOfCandidates + 60 <= \result.length;
+  public/*@ pure non_null */String getResults() {
     StringBuffer buffer = new StringBuffer();
     
     buffer.append("quota = " + this.getQuota());
@@ -475,6 +488,7 @@ public class BallotCounting extends AbstractBallotCounting {
     buffer.append(this.countNumberValue + " rounds of counting ");
     buffer.append(this.totalNumberOfCandidates + " candidates\n");
     
+    //@ loop_invariant 3*index + 60 <= buffer.length();
     for (int index = 0; index < this.totalNumberOfCandidates; index++) {
       final Candidate candidate = candidates[index];
       buffer.append("(" + candidate.toString() + ") ");
