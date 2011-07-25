@@ -13,6 +13,7 @@ import election.tally.Ballot;
 
 public class Analysis {
   
+  protected static final String WHITE_SPACE = " ";
   protected static final String ANALYSIS_FILENAME = "testdata/analysis.txt";
   protected static int counter = 1;
   
@@ -24,13 +25,14 @@ public class Analysis {
       FileOutputStream fos = new FileOutputStream(ANALYSIS_FILENAME, true);
       ObjectOutputStream out = new ObjectOutputStream(fos);
       
-      out.writeChars("Scenario Number " + Integer.toString(counter++) + "\n");
-      out.writeChars(scenario.toString() + "\n");
+      out.writeChars("Scenario Number " + Integer.toString(counter++) + 
+          Analysis.WHITE_SPACE);
+      out.writeChars(scenario.toString() + Analysis.WHITE_SPACE);
       // Number of Ballots
       out.writeChars("Number of ballots ");
       Ballot[] box = ballotBox.getBallots();
       final int numberOfBallots = box.length;
-      out.writeChars(Integer.toString(numberOfBallots) + "\n");
+      out.writeChars(Integer.toString(numberOfBallots) + Analysis.WHITE_SPACE);
       // Average Length of Ballots
       int sumOfLengths = 0;
       int maxLength = 1;
@@ -42,7 +44,7 @@ public class Analysis {
       }
       out.writeChars("Average length of each ballot ");
       final int averageLength = 1 + (sumOfLengths / numberOfBallots);
-      out.writeChars(Integer.toString(averageLength) + "\n");
+      out.writeChars(Integer.toString(averageLength) + Analysis.WHITE_SPACE);
       out.close();
       fos.close();
       
