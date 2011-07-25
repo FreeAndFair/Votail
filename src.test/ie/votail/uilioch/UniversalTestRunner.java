@@ -93,7 +93,7 @@ public class UniversalTestRunner extends Uilioch {
       
       while (true) {
         
-        // Derserialize and load the next Ballot Box
+        // Deserialize and load the next Ballot Box
         final ElectionData testData = getTestData(in);
         
         if (testData == null || testData.getScenario() == null ||
@@ -144,9 +144,27 @@ public class UniversalTestRunner extends Uilioch {
    */
   protected ElectionResult runVotail(ElectionConfiguration ballotBox) {
     VotailRunner votail = new VotailRunner();
-    ElectionResult result = votail.run(ballotBox.getConstituency(), ballotBox);
-    
+    final Constituency constituency = ballotBox.getConstituency();
     ElectoralScenario scenario = ballotBox.getScenario();
+
+    int seatsInElection;
+    int seatsInConstituency = scenario.numberOfWinners();
+    logger.info(seatsInConstituency + " seats in constituency");
+    if (scenario.isByeElection()) {
+      seatsInElection = 1;
+      logger.info("bye-election for 1 seat");
+    }
+    else {
+      seatsInElection = seatsInConstituency;
+      logger.info(seatsInElection + " seats for election");
+    }
+    constituency.setNumberOfSeats(seatsInElection, seatsInConstituency);
+    final int numberOfCandidates = scenario.getNumberOfCandidates();
+    constituency.setNumberOfCandidates(numberOfCandidates);
+    logger.info(numberOfCandidates + " candidates");
+    
+    ElectionResult result = votail.run(constituency, ballotBox);
+    
     
     if (scenario == null) {
       logger.warning("Unexpected null scenario");

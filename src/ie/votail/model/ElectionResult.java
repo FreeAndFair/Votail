@@ -142,9 +142,14 @@ public class ElectionResult {
    */
   protected void extractCandidateResults(Candidate[] candidates) {
     candidateResults.numberOfCandidates = candidates.length;
-    candidateResults.setStatus(new byte[candidateResults.numberOfCandidates]);
-    candidateResults
-        .setIdentifiers(new int[candidateResults.numberOfCandidates]);
+    byte[] status = new byte[candidateResults.numberOfCandidates];
+    int[] identifiers = new int[candidateResults.numberOfCandidates];
+    for (int index=0; index < candidates.length; index++) {
+      status[index] = candidates[index].getStatus();
+      identifiers[index] = candidates[index].getCandidateID();
+    }
+    candidateResults.setIdentifiers(identifiers);
+    candidateResults.setStatus(status);    
   }
   
   /**
