@@ -1,6 +1,5 @@
 package election.tally;
 
-import java.util.logging.Logger;
 
 
 /**
@@ -56,6 +55,7 @@ public class BallotCounting extends AbstractBallotCounting {
      */
     //@ ensures READY_TO_COUNT == this.substate;
     public CountStatus() {
+      super();
       this.substate = READY_TO_COUNT;
     }
     
@@ -434,6 +434,7 @@ public class BallotCounting extends AbstractBallotCounting {
    * 
    * @return
    */
+  //@ ensures \result == 1 + (getQuota() / 4);
   public/*@ pure @*/int getDepositSavingThreshold() {
     return 1 + (getQuota() / 4);
   }
@@ -481,12 +482,17 @@ public class BallotCounting extends AbstractBallotCounting {
   
   //@ ensures 3*totalNumberOfCandidates + 60 <= \result.length;
   public/*@ pure non_null */String getResults() {
-    StringBuffer buffer = new StringBuffer();
+    final StringBuffer buffer = new StringBuffer(150);
     
-    buffer.append("quota = " + this.getQuota());
-    buffer.append(" threshold = " + this.getSavingThreshold() + "\n");
-    buffer.append(this.countNumberValue + " rounds of counting ");
-    buffer.append(this.totalNumberOfCandidates + " candidates\n");
+    buffer.append("quota = ");
+    buffer.append(Integer.toString(this.getQuota()));
+    buffer.append(" threshold = ");
+    buffer.append(Integer.toString(this.getDepositSavingThreshold()));
+    buffer.append(' ');
+    buffer.append(Integer.toString(this.countNumberValue));
+    buffer.append(" rounds of counting ");
+    buffer.append(Integer.toString(this.totalNumberOfCandidates));
+    buffer.append(" candidates\n");
     
     //@ loop_invariant 3*index + 60 <= buffer.length();
     for (int index = 0; index < this.totalNumberOfCandidates; index++) {
@@ -514,8 +520,8 @@ public class BallotCounting extends AbstractBallotCounting {
     return this.countNumberValue;
   }
   
-  public Candidate getCandidate(int i) {
-    return candidates[i];
+  public /*@ pure @*/ Candidate getCandidate(final int index) {
+    return candidates[index];
   }
 
   

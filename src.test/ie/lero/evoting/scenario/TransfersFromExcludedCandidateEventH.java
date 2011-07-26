@@ -19,7 +19,7 @@ public class TransfersFromExcludedCandidateEventH extends TestCase {
         { election.getCandidate(0).getCandidateID(),
             election.getCandidate(1).getCandidateID() };
     for (int i = 0; i < 3; i++) {
-      int[] preferenceA = { election.getCandidate(i).getCandidateID() };
+      final int[] preferenceA = { election.getCandidate(i).getCandidateID() };
       ballotBox.accept(preferenceA);
       ballotBox.accept(preferences);
     }

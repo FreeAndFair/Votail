@@ -7,7 +7,6 @@ import junit.framework.TestCase;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
-import election.tally.ElectionStatus;
 
 /**
  * @author Dermot Cochran
@@ -24,7 +23,6 @@ public class QuotaCalculationEventA extends TestCase {
     parameters.setNumberOfCandidates(3);
     ballotCounting.setup(parameters);
     
-    //@ assert (ballotCounting.getStatus() == ElectionStatus.PRELOAD);
     final BallotBox ballotBox = new BallotBox();
     int[] preferences = new int[1];
     for (int i = 0; i < 51; i++) {

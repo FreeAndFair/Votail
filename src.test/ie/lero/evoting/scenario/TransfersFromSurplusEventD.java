@@ -34,9 +34,9 @@ public class TransfersFromSurplusEventD extends TestCase {
     
     for (int i = 0; i < NUM_CANDIDATES; i++) {
       assertTrue(election.getCandidate(i).sameAs(election.getCandidate(i)));
-      preferenceA[0] = (election.getCandidate(0).getCandidateID());
+      preferenceA[0] = election.getCandidate(0).getCandidateID();
       ballotBox.accept(preferenceA);
-      preferenceB[0] = (election.getCandidate(i).getCandidateID());
+      preferenceB[0] = election.getCandidate(i).getCandidateID();
       ballotBox.accept(preferenceB);
       ballotBox.accept(preferences);
     }

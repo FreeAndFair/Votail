@@ -163,7 +163,7 @@ public class Constituency implements Serializable {
   //@ ensures candidateDataInUse == true;
   //@ ensures candidateList.length == candidateIDs.length;
   //@ ensures candidates == candidateIDs.length;
-  public void load(/*@ non_null @*/int[] candidateIDs) {
+  public void load(final /*@ non_null @*/int[] candidateIDs) {
     this.candidates = candidateIDs.length;
     this.candidateList = new Candidate[candidateIDs.length];
     /*@ loop_invariant (0 < index) ==>

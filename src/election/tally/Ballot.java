@@ -65,7 +65,7 @@ public final class Ballot implements Serializable {
   
   private static final long serialVersionUID = -2377214384195511416L;
 
-  protected static final char WHITE_SPACE = ' ';
+  public static final char WHITE_SPACE = ' ';
   
   /**
    * Maximum possible number of ballots based on maximum population size for a
@@ -94,19 +94,19 @@ public final class Ballot implements Serializable {
   public static final int NOT_APPROVED = Integer.MAX_VALUE;
   
   /** List of candidates in order of preference */
-  protected/*@ spec_public non_null */int[] preferenceList;
+  private final /*@ spec_public non_null */int[] preferenceList;
   
   /** Total number of valid preferences on this ballot paper */
   //@ invariant 0 <= numberOfPreferences;
   //@ invariant numberOfPreferences <= preferenceList.length;
-  protected /*@ spec_public @*/ int numberOfPreferences;
+  private final /*@ spec_public @*/ int numberOfPreferences;
   
   /** Position within preference list */
   //@ initially positionInList == 0;
   //@ constraint \old(positionInList) <= positionInList;
   //@ invariant 0 <= positionInList;
   //@ invariant positionInList <= numberOfPreferences;
-  protected transient /*@ spec_public @*/int positionInList;
+  private transient /*@ spec_public @*/int positionInList;
   
   /**
    * Generate an empty ballot paper for use by a voter.
@@ -139,7 +139,7 @@ public final class Ballot implements Serializable {
    */
   /*@ ensures \result == getPreference(positionInList);
     @*/
-  public final/*@ pure @*/int getCandidateID() {
+  public /*@ pure @*/int getCandidateID() {
     return getPreference(positionInList);
   }
   
@@ -226,7 +226,7 @@ public final class Ballot implements Serializable {
     @ ensures (numberOfPreferences == index) 
     @   ==> \result == Ballot.NONTRANSFERABLE;
     @*/
-  protected final/*@ spec_public pure @*/int getPreference(final int index) {
+  protected /*@ spec_public pure @*/int getPreference(final int index) {
     if (index < numberOfPreferences) {
       return preferenceList[index];
     }
@@ -255,17 +255,17 @@ public final class Ballot implements Serializable {
    * @return The ballot as a string
    */
   //@ also ensures (2*numberOfPreferences) <= \result.length();
-  public/*@ non_null pure @*/final String toString() {
-    StringBuffer stringBuffer = new StringBuffer("(");
+  public/*@ non_null pure @*/ String toString() {
+    final StringBuffer stringBuffer = new StringBuffer("(");
     
     //@ loop_invariant (2*i) <= stringBuffer.length();
     for (int i = 0; i < numberOfPreferences; i++) {
       if (0 < i) {
         stringBuffer.append(Ballot.WHITE_SPACE);
       }
-      stringBuffer.append("" + preferenceList[i]);
+      stringBuffer.append(Integer.toString(preferenceList[i]));
     }
-    stringBuffer.append(")");
+    stringBuffer.append(')');
     return stringBuffer.toString();
   }
   
@@ -284,7 +284,7 @@ public final class Ballot implements Serializable {
     @ ensures \result == (\exists int i; 0 <= i && i < numberOfPreferences;
     @   candidateID == preferenceList[i]);
     @*/
-  public/*@ pure @*/boolean isApproved(int candidateID) {
+  public/*@ pure @*/boolean isApproved(final int candidateID) {
     /*@ loop_invariant (0 < i) ==>
       @   candidateID != preferenceList[i];
       @ */
@@ -312,7 +312,7 @@ public final class Ballot implements Serializable {
     @ ensures !isApproved(candidateID) ==>
     @   (NOT_APPROVED == \result);
     @*/
-  public/*@ pure @*/int getRank(int candidateID) {
+  public/*@ pure @*/int getRank(final int candidateID) {
     /*@ loop_invariant (0<i) ==>
       @   candidateID != preferenceList[i-1];
       @*/

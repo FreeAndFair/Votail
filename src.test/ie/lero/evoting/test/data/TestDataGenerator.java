@@ -35,7 +35,7 @@ public class TestDataGenerator {
    * other class.
    */
   //@ requires 0 <= n;
-  public static AbstractBallotCounting getAbstractBallotCounting(int n) 
+  public static AbstractBallotCounting getAbstractBallotCounting(final int n) 
     throws java.util.NoSuchElementException {
     if (abstractBallotCounting_count == 0 || n == 0) {
       abstractBallotCounting_count++;
@@ -45,8 +45,6 @@ public class TestDataGenerator {
     throw new java.util.NoSuchElementException();
   }
 
-  // TODO construct a set of unique values
-  // TODO construct out-of-range values
   public static byte[] getByteArray() {
     final byte[] bytes =
                          {

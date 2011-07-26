@@ -148,9 +148,11 @@ public class BallotBox implements Serializable {
    * 
    * @return The Ballot Box as a string
    */
-  //@ ensures 5*numberOfBallots <= \result.length();
+  //@ also ensures 5*numberOfBallots <= \result.length();
   public /*@ pure non_null */ String toString() {
-    StringBuffer stringBuffer = new StringBuffer(numberOfBallots + " ballots ");
+    final StringBuffer stringBuffer = new StringBuffer(1500);
+    stringBuffer.append(Integer.toString(numberOfBallots));
+    stringBuffer.append(" ballots ");
     stringBuffer.append(BallotBox.PREFIX);
     //@ loop_invariant 5*b <= stringBuffer.length();
     for (int b = 0; b < numberOfBallots; b++) {
@@ -164,7 +166,7 @@ public class BallotBox implements Serializable {
         if (0 < p) {
           stringBuffer.append(Ballot.WHITE_SPACE);
         }
-        stringBuffer.append("" + nextPreference);
+        stringBuffer.append(Integer.toString(nextPreference));
       }
       stringBuffer.append(BallotBox.SUFFIX);
     }

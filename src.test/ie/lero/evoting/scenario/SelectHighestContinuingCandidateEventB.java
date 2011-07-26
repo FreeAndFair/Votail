@@ -26,8 +26,7 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     final Constituency parameters = new Constituency();
     parameters.setNumberOfSeats(1,3);
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
-    // TODO precondition not established
-    ballotCounting.setup(parameters); //@ nowarn;
+    ballotCounting.setup(parameters);
     // All candidates get one vote; draw lots to resolve ties
     for (int i=0; i < NUM_CANDIDATES; i++) {
       int[] preferences =

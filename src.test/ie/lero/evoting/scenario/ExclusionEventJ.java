@@ -5,7 +5,6 @@ import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.CandidateStatus;
 import election.tally.Constituency;
-import election.tally.ElectionStatus;
 
 /**
  * This is a test for the correctness of the ballot counting process in the

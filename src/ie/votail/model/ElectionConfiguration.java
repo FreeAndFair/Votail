@@ -39,7 +39,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   
   protected int numberOfCandidates;
   
-  protected transient Logger logger;
+  protected static final transient Logger logger = Logger.getAnonymousLogger();
   
   //@ invariant numberOfCandidateIDs <= numberOfCandidates;
   protected int numberOfCandidateIDs;
@@ -54,7 +54,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * 
    */
   protected ElectionConfiguration() {
-    logger = Logger.getAnonymousLogger();
+    super();
   }
   
   /**
@@ -110,7 +110,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   }
   
   //@ ensures numberOfCandidateIDs <= numberOfCandidates;
-  protected void updateCandidateIDs(int candidateID) {
+  protected final void updateCandidateIDs(int candidateID) {
     for (int i = 0; i < numberOfCandidateIDs; i++) {
       if (candidateID == candidateIDs[i]) {
         return;
@@ -294,7 +294,6 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * @param electionData Electoral Scenario and Ballot Data
    */
   public ElectionConfiguration (ElectionData electionData) {
-    logger = Logger.getAnonymousLogger();
     final ElectoralScenario theScenario = electionData.getScenario();
     this.scenario = theScenario.canonical();
     candidateIDs = new int[Candidate.MAX_CANDIDATES];

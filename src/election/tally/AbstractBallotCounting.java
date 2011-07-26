@@ -1,8 +1,7 @@
 package election.tally;
 
-import java.util.logging.Logger;
 
-//@ refine "AbstractBallotCounting.jml";
+//@ refines "AbstractBallotCounting.jml";
 
 /**
  * Ballot counting algorithm for elections to Oireachtas Eireann - the National
@@ -112,6 +111,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     ensures numberElected == 0;
     @*/
   public AbstractBallotCounting() {
+    super();
     status = ElectionStatus.EMPTY;
     countNumberValue = 0;
     numberOfCandidatesElected = 0;

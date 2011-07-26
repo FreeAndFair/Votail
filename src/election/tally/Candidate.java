@@ -156,6 +156,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   getVoteAtCount() == 0);
     @*/
   public Candidate() {
+    super();
     candidateID = nextCandidateID++;
     //@ loop_invariant (0 < i) ==> getVoteAtCount(i-1) == 0;
     for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
@@ -173,9 +174,10 @@ public class Candidate extends CandidateStatus implements Serializable {
     @ assignable candidateID, votesAdded, votesRemoved;
     @ ensures this.candidateID == theCandidateID;
     @ ensures (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
-    @   getVoteAtCount() == 0);
+    @   getTotalAtCount() == 0);
     @*/
-  public Candidate(int theCandidateID) {
+  public Candidate(final int theCandidateID) {
+    super();
     this.candidateID = theCandidateID;
     
     //@ loop_invariant (0 < i) ==> getVoteAtCount(i-1) == 0;
@@ -270,7 +272,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   assignable state, lastCountNumber;
     @   ensures state == ELECTED;
     @*/
-  public void declareElected(int countNumber) {
+  public void declareElected(final int countNumber) {
     updateCountNumber(countNumber);
     state = ELECTED;
   }
@@ -285,7 +287,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   assignable state, lastCountNumber;
     @   ensures state == ELIMINATED;
     @*/
-  public void declareEliminated(int countNumber) {
+  public void declareEliminated(final int countNumber) {
     updateCountNumber(countNumber);
     state = ELIMINATED;
   }
@@ -345,14 +347,19 @@ public class Candidate extends CandidateStatus implements Serializable {
    * Summary of candidate information, excluding transfers
    */
   public/*@ non_null pure*/String toString() {
-    StringBuffer stringBuffer = new StringBuffer("Candidate " + candidateID);
+    final StringBuffer stringBuffer = new StringBuffer(60);
+    stringBuffer.append("Candidate");
+    stringBuffer.append(Integer.toString(candidateID));
     if (isElected()) {
       stringBuffer.append(" elected");
     }
     else {
       stringBuffer.append(" lost");
     }
-    stringBuffer.append(" with " + getTotalVote() + " votes");
+    stringBuffer.append(" with ");
+    stringBuffer.append(Integer.toString(getTotalVote()));
+    stringBuffer.append(" votes");
+
     return stringBuffer.toString();
   }
   
