@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.FileHandler;
-import java.util.logging.Logger;
 
 import com.hexmedia.prstv.Candidate;
 import com.hexmedia.prstv.Display;
@@ -38,7 +37,6 @@ public class UniversalTestRunner extends Uilioch {
   public static final String SUFFIX = ".txt";
   public static final String TESTDATA_PREFIX = "/var/tmp/uilioch";
   public static final int GENERAL_ELECTION = 0;
-  protected Logger logger;
   
   public class VotailRunner extends BallotCounting {
     /**
@@ -50,8 +48,8 @@ public class UniversalTestRunner extends Uilioch {
      */
     //@ requires state == EMPTY;
     //@ ensures state == FINISHED;
-    public/*@ non_null @*/ElectionResult run(Constituency constituency,
-        BallotBox ballotBox) {
+    public/*@ non_null @*/ElectionResult run(final Constituency constituency,
+        final BallotBox ballotBox) {
       this.setup(constituency);
       this.load(ballotBox);
       if (0 < this.totalNumberOfVotes) {
@@ -60,8 +58,7 @@ public class UniversalTestRunner extends Uilioch {
       else {
         logger.warning("Unexpected empty ballot box");
       }
-      ElectionResult electionResult = new ElectionResult(this.candidates);
-      return electionResult;
+      return new ElectionResult(this.candidates);
     }
   }
   
@@ -70,10 +67,11 @@ public class UniversalTestRunner extends Uilioch {
    * 
    * @param capacity
    */
-  public void testScenarios(int capacity, int width) {
-    logger = Logger.getLogger(this.getClass().getName());
+  public void testScenarios(final int capacity, final int width) {
+    
     try {
-      FileHandler handler = new FileHandler(UniversalTestRunner.LOGFILENAME);
+      final FileHandler handler =
+          new FileHandler(UniversalTestRunner.LOGFILENAME);
       logger.addHandler(handler);
     }
     catch (SecurityException e1) {
@@ -83,47 +81,38 @@ public class UniversalTestRunner extends Uilioch {
       logger.info("not able to find logfile" + e1.toString());
     }
     
-    
     final String dataFilename = getFilename();
     
     try {
       
-      FileInputStream fis = new FileInputStream(dataFilename);
-      ObjectInputStream in = new ObjectInputStream(fis);
+      final FileInputStream fis = new FileInputStream(dataFilename);
+      final ObjectInputStream objectInputStream = new ObjectInputStream(fis);
       
       while (true) {
         
         // Deserialize and load the next Ballot Box
-        final ElectionData testData = getTestData(in);
+        final ElectionData testData = getTestData(objectInputStream);
         
-        if (testData == null || testData.getScenario() == null ||
-            testData.getBallots().length == 0) {
+        if (testData == null || testData.getScenario() == null
+            || testData.getBallots().length == 0) {
           logger.warning("Test data is either missing or not readable");
           break;
         }
-
         
-        ElectionConfiguration electionConfiguration =
-            new ElectionConfiguration(testData);
-                
-        if (0 < electionConfiguration.getBallots().length) {
-          
-          // Test different implementations
-          ElectionResult votailResult = runVotail(electionConfiguration);
-//          ElectionResult coyleDoyleResult =
-//              runCoyleDoyle(electionConfiguration.copy());
-//          ElectionResult hexMediaResult =
-//              runHexMedia(electionConfiguration.copy());
-          
-//          assert hexMediaResult.equals(coyleDoyleResult);
-//          assert coyleDoyleResult.equals(votailResult);
-//          assert votailResult.equals(hexMediaResult);
-        }
-        else {
-          logger.warning("Empty ballot box data");
-        }
+        final ElectionResult votailResult =
+            runVotail(new ElectionConfiguration(testData));
+        logger.info(votailResult.toString());
+        //          ElectionResult coyleDoyleResult =
+        //              runCoyleDoyle(new ElectionConfiguration(testData));
+        //          ElectionResult hexMediaResult =
+        //              runHexMedia(new ElectionConfiguration(testData));
+        
+        //          assert hexMediaResult.equals(coyleDoyleResult);
+        //          assert coyleDoyleResult.equals(votailResult);
+        //          assert votailResult.equals(hexMediaResult);
+        
       }
-      in.close();
+      objectInputStream.close();
       
     }
     catch (IOException e) {
@@ -142,13 +131,13 @@ public class UniversalTestRunner extends Uilioch {
    *          The test data
    * @return The actual result
    */
-  protected ElectionResult runVotail(ElectionConfiguration ballotBox) {
-    VotailRunner votail = new VotailRunner();
+  protected ElectionResult runVotail(final ElectionConfiguration ballotBox) {
+    final VotailRunner votail = new VotailRunner();
     final Constituency constituency = ballotBox.getConstituency();
-    ElectoralScenario scenario = ballotBox.getScenario();
+    final ElectoralScenario scenario = ballotBox.getScenario();
 
     int seatsInElection;
-    int seatsInConstituency = scenario.numberOfWinners();
+    final int seatsInConstituency = scenario.numberOfWinners();
     logger.info(seatsInConstituency + " seats in constituency");
     if (scenario.isByeElection()) {
       seatsInElection = 1;
@@ -158,19 +147,15 @@ public class UniversalTestRunner extends Uilioch {
       seatsInElection = seatsInConstituency;
       logger.info(seatsInElection + " seats for election");
     }
+    
     constituency.setNumberOfSeats(seatsInElection, seatsInConstituency);
     final int numberOfCandidates = scenario.getNumberOfCandidates();
     constituency.setNumberOfCandidates(numberOfCandidates);
     logger.info(numberOfCandidates + " candidates");
     
-    ElectionResult result = votail.run(constituency, ballotBox);
+    final ElectionResult result = votail.run(constituency, ballotBox);
     
-    
-    if (scenario == null) {
-      logger.warning("Unexpected null scenario");
-    }
-    
-    else if (!scenario.check(votail)) {
+    if (!scenario.check(votail)) {
       logger.warning("Unexpected results for scenario " + scenario);
     }
     
@@ -184,40 +169,43 @@ public class UniversalTestRunner extends Uilioch {
    *          The set of test data
    * @return The actual result
    */
-  public ElectionResult runCoyleDoyle(ElectionConfiguration ballotBox) {
+  public ElectionResult runCoyleDoyle(final ElectionConfiguration ballotBox) {
     
     ElectionResult result = null;
-    Constituency constituency = ballotBox.getConstituency();
-    ElectoralScenario scenario = ballotBox.getScenario();
+    final Constituency constituency = ballotBox.getConstituency();
+    final ElectoralScenario scenario = ballotBox.getScenario();
     
-    int numberOfCandidates = scenario.getNumberOfCandidates();
+    final int numberOfCandidates = scenario.getNumberOfCandidates();
     String[] candidates = new String[numberOfCandidates];
     
     for (int i = 0; i < numberOfCandidates; i++) {
-      candidates[i] = "" + constituency.getCandidate(i).getCandidateID();
+      candidates[i] = Integer.toString(
+          constituency.getCandidate(i).getCandidateID());
     }
     
-    int numberOfSeats = scenario.numberOfWinners();
-    int electionType = GENERAL_ELECTION;
+    final int numberOfSeats = scenario.numberOfWinners();
+    final int electionType = GENERAL_ELECTION;
     
     int[] outcome;
-    coyle_doyle.election.Election election =
+    final coyle_doyle.election.Election election =
         new coyle_doyle.election.Election(candidates, numberOfSeats,
             electionType);
     
-    List<BallotPaper> ballotPapers =
+    final List<BallotPaper> ballotPapers =
         convertBallotsIntoCoyleDoyleFormat(ballotBox);
     logger.info("CoyleDoyle ballot papers: " + ballotPapers.toString());
     
-    if (!ballotPapers.isEmpty()) {
+    if (ballotPapers.isEmpty()) {
+      
+      logger.severe("Failed to extract ballot data from " + ballotBox.toString()
+          + " to " + ballotPapers.toString());
     
+      
+    }
+    else {
       outcome = election.election(ballotPapers); 
       result = new ElectionResult(outcome, numberOfSeats);
       checkResult(scenario, result);
-    }
-    else {
-      logger.severe("Failed to extract ballot data from " + ballotBox.toString()
-          + " to " + ballotPapers.toString());
     }
     
     return result;
@@ -227,7 +215,7 @@ public class UniversalTestRunner extends Uilioch {
    * @param scenario
    * @param result
    */
-  protected void checkResult(ElectoralScenario scenario, ElectionResult result) {
+  protected void checkResult(final ElectoralScenario scenario, final ElectionResult result) {
     if (!scenario.matchesResult(result)) {
       logger.severe("Expected result: " + scenario.toString()
           + " but actual result " + result.toString());
@@ -243,22 +231,22 @@ public class UniversalTestRunner extends Uilioch {
    * @return The test data in Coyle-Doyle format.
    */
   protected List<BallotPaper> convertBallotsIntoCoyleDoyleFormat(
-      ElectionConfiguration ballotBox) {
+      final ElectionConfiguration ballotBox) {
     
-    List<BallotPaper> votes = new ArrayList<BallotPaper>();
+    final List<BallotPaper> votes = new ArrayList<BallotPaper>();
     
     int voteNumber = 0;
     while (ballotBox.isNextBallot()) {
-      Ballot ballot = ballotBox.getNextBallot();
-      int numberOfPreferences = ballot.remainingPreferences();
+      final Ballot ballot = ballotBox.getNextBallot();
+      final int numberOfPreferences = ballot.remainingPreferences();
       int[] preferences = new int[numberOfPreferences];
       for (int i = 0; i < numberOfPreferences; i++) {
         preferences[i] = ballot.getNextPreference(i);
       }
-      BallotPaper bp = new BallotPaper(voteNumber, preferences);
-      votes.add(bp);
+      final BallotPaper ballotPaper = new BallotPaper(voteNumber, preferences);
+      votes.add(ballotPaper);
       voteNumber++;
-      logger.info(bp.toString());
+      logger.info(ballotPaper.toString());
     }
     
     return votes;
@@ -271,11 +259,11 @@ public class UniversalTestRunner extends Uilioch {
    *          Test data in Votail format
    * @return Actual results
    */
-  public ElectionResult runHexMedia(ElectionConfiguration ballotBox) {
+  public ElectionResult runHexMedia(final ElectionConfiguration ballotBox) {
     
-    String ballotBox_filename = convertBallotsToHexMediaFormat(ballotBox);
+    final String ballotBox_filename = convertBallotsToHexMediaFormat(ballotBox);
     
-    int numberOfSeats =
+    final int numberOfSeats =
         ballotBox.getConstituency().getNumberOfSeatsInThisElection();
     
     String[] args = new String[3];
@@ -284,19 +272,15 @@ public class UniversalTestRunner extends Uilioch {
     args[2] = Integer.toString(numberOfSeats);
     
     try {
-      // TODO run headless or set virtual display
       com.hexmedia.prstv.Election.main(args);
-      // TODO Initialise event
-      // TODO Run All Counts event
-      // TODO Quit event
     }
     catch (Exception e) {
       logger.severe(e.getMessage());
     }
     
-    ElectionResult electionResult = getResult();
+    final ElectionResult electionResult = getResult();
     
-    ElectoralScenario scenario = ballotBox.getScenario();
+    final ElectoralScenario scenario = ballotBox.getScenario();
     checkResult(scenario, electionResult);
     
     return electionResult;
@@ -313,34 +297,35 @@ public class UniversalTestRunner extends Uilioch {
   @SuppressWarnings("unchecked")
   protected ElectionResult getResult() {
     
-    ElectionResult result = new ElectionResult();
+    final ElectionResult result = new ElectionResult();
     
     try {
-      Field displayField =
+      final Field displayField =
           com.hexmedia.prstv.Display.class.getDeclaredField("display");
       displayField.setAccessible(true);
       
-      com.hexmedia.prstv.Display display = (Display) displayField.get(null);
+      final com.hexmedia.prstv.Display display = 
+        (Display) displayField.get(null);
       
-      Field electionField =
+      final Field electionField =
           com.hexmedia.prstv.Display.class.getDeclaredField("election");
       electionField.setAccessible(true);
       
-      com.hexmedia.prstv.Election election =
+      final com.hexmedia.prstv.Election election =
           (Election) electionField.get(display);
       
-      Field elected = election.getClass().getDeclaredField("elected");
+      final Field elected = election.getClass().getDeclaredField("elected");
       elected.setAccessible(true);
-      List<Candidate> electedCandidates =
+      final List<Candidate> electedCandidates =
           (List<Candidate>) elected.get(election);
       
-      Field eliminated = election.getClass().getDeclaredField("eliminated");
+      final Field eliminated = election.getClass().getDeclaredField("eliminated");
       eliminated.setAccessible(true);
-      List<Candidate> eliminatedCandidates =
+      final List<Candidate> eliminatedCandidates =
           (List<Candidate>) eliminated.get(election);
       
       final int numberOfWinners = electedCandidates.size();
-      int numberOfCandidates = numberOfWinners + eliminatedCandidates.size();
+      final int numberOfCandidates = numberOfWinners + eliminatedCandidates.size();
       
       int[] outcomes = new int[numberOfCandidates];
       int index = 0;
@@ -377,11 +362,11 @@ public class UniversalTestRunner extends Uilioch {
    * 
    * @param election
    */
-  protected void initialise(com.hexmedia.prstv.Election election) {
+  protected void initialise(final com.hexmedia.prstv.Election election) {
     try {
       
-      Class<?> parameters[] = {};
-      Method initialiseElection =
+      final Class<?> parameters[] = {};
+      final Method initialiseElection =
           com.hexmedia.prstv.Election.class.getDeclaredMethod("initialise",
               parameters);
       logger.info("Method found " + initialiseElection.getName());
@@ -413,15 +398,15 @@ public class UniversalTestRunner extends Uilioch {
    * @param election
    *          The election object to be constructed
    */
-  protected void setNumberOfSeats(int numberOfSeats,
-      com.hexmedia.prstv.Election election) {
+  protected void setNumberOfSeats(final int numberOfSeats,
+      final com.hexmedia.prstv.Election election) {
     final Class<? extends Election> electionClass = election.getClass();
     
     try {
-      Field nseats = electionClass.getDeclaredField("nseats");
-      Field elected = electionClass.getDeclaredField("elected");
-      Field eliminated = electionClass.getDeclaredField("eliminated");
-      Field surpluses = electionClass.getDeclaredField("surpluses");
+      final Field nseats = electionClass.getDeclaredField("nseats");
+      final Field elected = electionClass.getDeclaredField("elected");
+      final Field eliminated = electionClass.getDeclaredField("eliminated");
+      final Field surpluses = electionClass.getDeclaredField("surpluses");
       
       nseats.setAccessible(true);
       nseats.setInt(election, numberOfSeats);
@@ -452,8 +437,8 @@ public class UniversalTestRunner extends Uilioch {
    * @param ballotBox_filename
    * @param election
    */
-  protected void setFilename(String ballotBox_filename,
-      com.hexmedia.prstv.Election election) {
+  protected void setFilename(final String ballotBox_filename,
+      final com.hexmedia.prstv.Election election) {
     try {
       Field filename;
       filename = election.getClass().getDeclaredField("file");
@@ -482,9 +467,9 @@ public class UniversalTestRunner extends Uilioch {
    * @return The name of the file into which testdata was written
    */
   protected String convertBallotsToHexMediaFormat(
-      ElectionConfiguration ballotBox) {
+      final ElectionConfiguration ballotBox) {
     
-    String filename =
+    final String filename =
         TESTDATA_PREFIX + ballotBox.hashCode() + System.currentTimeMillis()
             + SUFFIX;
     
@@ -494,31 +479,32 @@ public class UniversalTestRunner extends Uilioch {
       fileWriter = new FileWriter(filename);
       writer = new BufferedWriter(fileWriter);
       
-      Constituency candidateList = ballotBox.getConstituency();
-      int numberOfCandidates = candidateList.getNumberOfCandidates();
+      final Constituency candidateList = ballotBox.getConstituency();
+      final int numberOfCandidates = candidateList.getNumberOfCandidates();
       
       writer.append("\"Mixed Vote No.\"");
       for (int c = 0; c < numberOfCandidates; c++) {
-        election.tally.Candidate candidate = candidateList.getCandidate(c);
+        final election.tally.Candidate candidate = candidateList.getCandidate(c);
         writer.append(";\"" + candidate.getCandidateID() + "\"");
         
       }
       
       int index = 1;
       while (ballotBox.isNextBallot()) {
-        Ballot ballot = ballotBox.getNextBallot();
+        final Ballot ballot = ballotBox.getNextBallot();
         writer.append("\"" + index + "\"");
         
         for (int i = 0; i < numberOfCandidates; i++) {
-          election.tally.Candidate candidate = candidateList.getCandidate(i);
-          int candidateID = candidate.getCandidateID();
+          final election.tally.Candidate candidate = candidateList.getCandidate(i);
+          final int candidateID = candidate.getCandidateID();
           
-          if (!ballot.isApproved(candidateID)) {
-            writer.append(";\"" + " " + "\"");
-          }
-          else {
+          if (ballot.isApproved(candidateID)) {
             writer.append(";\"" + Integer.toString(ballot.getRank(candidateID))
                 + "\"");
+          }
+          else {
+            writer.append(";\"" + " " + "\"");
+
           }
         }
         index++;
@@ -535,8 +521,8 @@ public class UniversalTestRunner extends Uilioch {
     return filename;
   }
   
-  public static void main(String[] args) {
-    UniversalTestRunner uilioch = new UniversalTestRunner();
+  public static void main(final String[] args) {
+    final UniversalTestRunner uilioch = new UniversalTestRunner();
     uilioch.testScenarios(10, 10);
   }
 }

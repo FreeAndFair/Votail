@@ -5,15 +5,15 @@ import java.util.concurrent.BlockingQueue;
 
 public class ChannelQueue<T> implements Channel<T> {
   
-  BlockingQueue<T> queue;  
+  protected BlockingQueue<T> queue;  
   
-  public ChannelQueue (int capacity) {
+  public ChannelQueue (final int capacity) {
     queue = new ArrayBlockingQueue<T> (capacity);
   }
   
-  public void put(T x) throws InterruptedException {
+  public void put(final T task) throws InterruptedException {
    
-    queue.put(x); 
+    queue.put(task); 
   }
   
   public T take() throws InterruptedException {

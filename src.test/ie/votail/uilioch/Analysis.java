@@ -17,20 +17,20 @@ public class Analysis {
   protected static final String ANALYSIS_FILENAME = "testdata/analysis.txt";
   protected static int counter = 1;
   
-  public void add(ElectoralScenario scenario, ElectionData ballotBox) {
-    Logger logger = Logger.getAnonymousLogger();
+  public void add(final ElectoralScenario scenario, final ElectionData ballotBox) {
+    final Logger logger = Logger.getAnonymousLogger();
     
     try {
       
-      FileOutputStream fos = new FileOutputStream(ANALYSIS_FILENAME, true);
-      ObjectOutputStream out = new ObjectOutputStream(fos);
+      final FileOutputStream fos = new FileOutputStream(ANALYSIS_FILENAME);
+      final ObjectOutputStream out = new ObjectOutputStream(fos);
       
       out.writeChars("Scenario Number " + Integer.toString(counter++) + 
           Analysis.WHITE_SPACE);
       out.writeChars(scenario.toString() + Analysis.WHITE_SPACE);
       // Number of Ballots
       out.writeChars("Number of ballots ");
-      Ballot[] box = ballotBox.getBallots();
+      final Ballot[] box = ballotBox.getBallots();
       final int numberOfBallots = box.length;
       out.writeChars(Integer.toString(numberOfBallots) + Analysis.WHITE_SPACE);
       // Average Length of Ballots
@@ -40,7 +40,9 @@ public class Analysis {
         final int lengthOfBallot = box[index].remainingPreferences();
         assert lengthOfBallot <= scenario.getNumberOfCandidates();
         sumOfLengths += lengthOfBallot;
-        if (maxLength < lengthOfBallot) maxLength = lengthOfBallot;
+        if (maxLength < lengthOfBallot) {
+          maxLength = lengthOfBallot;
+        }
       }
       out.writeChars("Average length of each ballot ");
       final int averageLength = 1 + (sumOfLengths / numberOfBallots);

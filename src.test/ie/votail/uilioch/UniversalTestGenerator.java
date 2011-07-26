@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.logging.FileHandler;
-import java.util.logging.Logger;
 
 public class UniversalTestGenerator extends Uilioch {
   
@@ -39,15 +38,16 @@ public class UniversalTestGenerator extends Uilioch {
    */
   /*@ requires 0 < workers;
     @ requires 0 < width; */
-  public UniversalTestGenerator(int workers, int capacity) {
+  public UniversalTestGenerator(final int workers, final int capacity) {
+    super();
+    
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
-    logger = Logger.getLogger(this.getClass().getName());
     
     try {
       final String logFilename =
           UniversalTestGenerator.LOGFILENAME + "." + System.currentTimeMillis();
-      FileHandler handler = new FileHandler(logFilename);
+      final FileHandler handler = new FileHandler(logFilename);
       logger.addHandler(handler);
     }
     catch (SecurityException e1) {
@@ -82,8 +82,8 @@ public class UniversalTestGenerator extends Uilioch {
     
     
     try {
-      FileOutputStream fos = new FileOutputStream(dataFilename, true);
-      ObjectOutputStream out = new ObjectOutputStream(fos);
+      final FileOutputStream fos = new FileOutputStream(dataFilename);
+      final ObjectOutputStream out = new ObjectOutputStream(fos);
       
       for (int seats = 1; seats <= numberOfSeats; seats++) {
         for (int candidates = 1 + seats; candidates <= numberOfCandidates; candidates++) {
@@ -100,8 +100,7 @@ public class UniversalTestGenerator extends Uilioch {
     catch (IOException e) {
       logger.severe(e.toString());
     }
-    finally {
-    }
+    
     logger.info("Finished.");
   }
   
@@ -113,12 +112,12 @@ public class UniversalTestGenerator extends Uilioch {
    * @param newName
    *          The new filename
    */
-  protected boolean checkAndRename(/*@ non_null*/String oldName,
-  /*@ non_null*/String newName) {
+  protected final boolean checkAndRename(final /*@ non_null*/String oldName,
+    final /*@ non_null*/String newName) {
     
-    File file = new File(oldName);
+    final File file = new File(oldName);
     if (file.exists()) {
-      File newFile = new File(newName);
+      final File newFile = new File(newName);
       file.renameTo(newFile);
       newFile.setReadOnly();
       return true;
@@ -142,9 +141,10 @@ public class UniversalTestGenerator extends Uilioch {
    *          Maximum scope for Alloy solution
    */
   protected void createBallotBoxes(final int seats, final int candidates,
-      final Method method, ObjectOutputStream out) {
+      final Method method, final ObjectOutputStream out) {
     
-    ScenarioList scenarioList = scenarioFactory.find(candidates, seats, method);
+    final ScenarioList scenarioList = 
+      scenarioFactory.find(candidates, seats, method);
     logger.fine("Scenarios: " + scenarioList.toString());
     
     int count = 0;
@@ -173,8 +173,8 @@ public class UniversalTestGenerator extends Uilioch {
    *          The file input stream containing existing test data
    * @return <code>false></code> if scenario is found in the data
    */
-  protected boolean alreadyExists(ElectoralScenario scenario,
-      ObjectOutputStream out) {
+  protected boolean alreadyExists(final ElectoralScenario scenario,
+      final ObjectOutputStream out) {
     
     if (!existingDataFlag) {
       return false;
@@ -182,10 +182,10 @@ public class UniversalTestGenerator extends Uilioch {
     
     // Open a new reader
     try {
-      FileInputStream fis = new FileInputStream(existingDataFilename);
-      ObjectInputStream in = new ObjectInputStream(fis);
+      final FileInputStream fis = new FileInputStream(existingDataFilename);
+      final ObjectInputStream objectInputStream = new ObjectInputStream(fis);
       
-      ElectionData testData = getTestData(in);
+      ElectionData testData = getTestData(objectInputStream);
       try {
         while (testData != null) {
           if (testData.getScenario().equivalentTo(scenario)) {
@@ -194,14 +194,14 @@ public class UniversalTestGenerator extends Uilioch {
             return true;
             
           }
-          testData = getTestData(in);
+          testData = getTestData(objectInputStream);
         }
       }
       catch (EOFException eofe) {
         
         logger.info("No existing ballot box for this scenario");
       }
-      in.close();
+      objectInputStream.close();
       fis.close();
     }
     
@@ -221,17 +221,18 @@ public class UniversalTestGenerator extends Uilioch {
    * @param scenario  The expected results from this test data
    * @throws IOException
    */
-  protected synchronized void writeBallots(ObjectOutputStream out,
-      ElectionData testData, ElectoralScenario scenario) throws IOException {
-    AlloyTask alloyTask = new AlloyTask(out,scenario);
+  protected void writeBallots(final ObjectOutputStream out,
+    final ElectionData testData, final ElectoralScenario scenario) 
+    throws IOException {
+    final AlloyTask alloyTask = new AlloyTask(out,scenario);
     alloyTask.writeBallots(testData);
   }
   
   /**
    * Generate enough test data for 100% path coverage
    */
-  public static void main(String[] args) {
-    UniversalTestGenerator uilioch = new UniversalTestGenerator(17,9000);
+  public static void main(final String[] args) {
+    final UniversalTestGenerator uilioch = new UniversalTestGenerator(17,9000);
     
     uilioch.generateTests(1, 5, Method.STV); // IRV 1-seat
     uilioch.generateTests(3, 7, Method.STV); // PR-STV 3-seat

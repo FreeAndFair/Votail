@@ -13,14 +13,12 @@ public class Uilioch {
   protected static final String FILENAME_PREFIX = "testdata/";
   protected static final String DATA_FILENAME_SUFFIX = "_election.data";
   protected static final String LOGFILENAME = "logs/uilioch/generator.log";
-  protected Logger logger;
-
-  public Uilioch() {
-    super();
-  }
+  protected static final Logger logger = Logger.getAnonymousLogger();
 
   /**
-   * @return
+   * Get the name of the file that contains generated data
+   * 
+   * @return The filename
    */
   public String getFilename() {
     return getFilename(Method.STV, DATA_FILENAME_SUFFIX);
@@ -29,16 +27,19 @@ public class Uilioch {
   /**
    * Deserialization of Test Data
    * 
-   * @param in
+   * @param objectInputStream
    *          The Object Input Stream which contains the test data
    * @return The Test Data (or null)
    */
-  public synchronized ElectionData getTestData(ObjectInputStream in) {
+  public ElectionData getTestData(
+      final ObjectInputStream objectInputStream) {
     
     ElectionData electionData = null;
     
     try {
-      electionData = (ElectionData) in.readObject();
+      synchronized (objectInputStream) {
+        electionData = (ElectionData) objectInputStream.readObject();
+      }
     }
     catch (EOFException eofe) {
       

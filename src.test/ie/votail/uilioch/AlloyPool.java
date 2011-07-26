@@ -7,9 +7,9 @@ public class AlloyPool implements Executor {
   protected final Channel<AlloyTask> workQueue;
   
   @Override
-  public void execute(Runnable r) {
+  public void execute(final Runnable task) {
     try {
-      workQueue.put((AlloyTask) r);
+      workQueue.put((AlloyTask) task);
     }
     catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
@@ -24,19 +24,20 @@ public class AlloyPool implements Executor {
   
   //@ requires 0 <= nworkers;
   //@ requires 0 <= capacity;
-  public AlloyPool(int nworkers, int capacity) {
+  public AlloyPool(final int nworkers, final int capacity) {
     workQueue = new ChannelQueue<AlloyTask>(capacity);
-    for (int i = 0; i < nworkers; ++i)
+    for (int i = 0; i < nworkers; ++i) {
       activate();
+    }
   }
   
-  protected void activate() {
-    Runnable runLoop = new Runnable() {
+  protected final void activate() {
+    final Runnable runLoop = new Runnable() {
       public void run() {
         try {
           for (;;) {
-            Runnable r = (Runnable) (workQueue.take());
-            r.run();
+            Runnable runner = (Runnable) (workQueue.take());
+            runner.run();
           }
         }
         catch (InterruptedException ie) {

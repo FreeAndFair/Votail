@@ -14,14 +14,14 @@ public class AlloyTask implements Runnable {
   protected ObjectOutputStream out;
   protected int scope = 7;
   protected ElectoralScenario scenario;
-  protected Logger logger;
+  protected static final Logger logger = Logger.getAnonymousLogger();
   protected BallotBoxFactory ballotBoxFactory;
   protected Analysis analysis;
   
-  public AlloyTask(ObjectOutputStream out, ElectoralScenario scenario) {
+  public AlloyTask(final ObjectOutputStream out, 
+      final ElectoralScenario scenario) {
     this.scenario = scenario;
     this.out = out;
-    this.logger = Logger.getAnonymousLogger();
     this.ballotBoxFactory = new BallotBoxFactory();
     this.analysis = new Analysis();
   }
@@ -55,10 +55,12 @@ public class AlloyTask implements Runnable {
    * @param ballotBox
    * @throws IOException
    */
-  protected synchronized void writeBallots(final ElectionData ballotBox)
+  protected void writeBallots(final ElectionData ballotBox)
       throws IOException {
-    out.writeObject(ballotBox);
-    out.flush();
+    synchronized(out) {
+      out.writeObject(ballotBox);
+      out.flush();
+    }
     analysis.add(scenario,ballotBox);
   }
   
