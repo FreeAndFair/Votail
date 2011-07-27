@@ -9,20 +9,19 @@ import org.junit.Test;
 
 public class ScenarioFactoryTest extends TestCase {
   
-  @Test
+  
   public void testTwoCandidateScenarios() {
-    ScenarioFactory scenarioFactory = new ScenarioFactory();
-    ScenarioList twoCandidateScenarios = scenarioFactory.find(2, 1, Method.STV);
+    final ScenarioFactory scenarioFactory = new ScenarioFactory();
+    final ScenarioList twoCandidateScenarios = scenarioFactory.find(2, 1, Method.STV);
     assertEquals(4, twoCandidateScenarios.size());
     assertEquals(4, twoCandidateScenarios.getNumberOfScenarios(1));
   }
   
   @Test
   public void testThreeCandidateScenarios() {
-    ScenarioFactory scenarioFactory = new ScenarioFactory();
-    final int numberOfCandidates = 3;
+    final ScenarioFactory scenarioFactory = new ScenarioFactory();
     ScenarioList threeCandidateScenarios =
-        scenarioFactory.find(numberOfCandidates, 1, Method.STV);
+        scenarioFactory.find(3, 1, Method.STV);
     assertEquals(52, threeCandidateScenarios.size());
     assertEquals(38, threeCandidateScenarios.getNumberOfScenarios(1));
     assertEquals(14, threeCandidateScenarios.getNumberOfScenarios(2));
@@ -30,10 +29,9 @@ public class ScenarioFactoryTest extends TestCase {
   
   @Test
   public void testFourCandidateScenarios() {
-    ScenarioFactory scenarioFactory = new ScenarioFactory();
-    final int numberOfCandidates = 4;
+    final ScenarioFactory scenarioFactory = new ScenarioFactory();
     ScenarioList candidateScenarios =
-        scenarioFactory.find(numberOfCandidates, 1, Method.STV);
+        scenarioFactory.find(4, 1, Method.STV);
     assertEquals(367, candidateScenarios.size());
   }
   

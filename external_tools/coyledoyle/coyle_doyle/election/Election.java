@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import tools.Tools;
+
+import toolsForCoyleDoyle.Tools;
 
 /**
  * This is the main class that implements Irish Elections

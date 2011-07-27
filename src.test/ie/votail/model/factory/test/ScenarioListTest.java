@@ -10,13 +10,13 @@ import org.junit.Test;
 
 public class ScenarioListTest extends TestCase {
   
-  @Test
+  
   public void testAddScenario() {
-    ScenarioList scenarioList = new ScenarioList();
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ScenarioList scenarioList = new ScenarioList();
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenarioList.add(scenario);
     scenarioList.add(scenario.canonical());
-    boolean addDuplicate = scenarioList.add(scenario);
+    final boolean addDuplicate = scenarioList.add(scenario);
     assertFalse(addDuplicate);
     assertTrue(scenarioList.hasScenario(scenario));
     assertTrue(scenario.equivalentTo(scenario.canonical()));

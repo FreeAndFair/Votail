@@ -13,7 +13,7 @@ public class ScenarioTest {
 
   @Test
   public void testAddOutcome() {
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     assertFalse(scenario.hasOutcome(Outcome.TiedSoreLoser));
     scenario.addOutcome(Outcome.TiedSoreLoser);
     assertTrue(scenario.hasOutcome(Outcome.TiedSoreLoser));
@@ -21,18 +21,18 @@ public class ScenarioTest {
 
   @Test
   public void testCanonical() {
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenario.addOutcome(Outcome.EarlyLoser);
-    ElectoralScenario canonical = scenario.canonical();
+    final ElectoralScenario canonical = scenario.canonical();
     assertTrue (scenario.equivalentTo(canonical));
   }
 
   @Test
   public void testAppend() {
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
-    ElectoralScenario oneWinner = scenario.append(Outcome.Winner);
-    ElectoralScenario oneLoser = scenario.append(Outcome.Loser);
-    ElectoralScenario twoOutcomes = oneWinner.append(Outcome.Loser);
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario oneWinner = scenario.append(Outcome.Winner);
+    final ElectoralScenario oneLoser = scenario.append(Outcome.Loser);
+    final ElectoralScenario twoOutcomes = oneWinner.append(Outcome.Loser);
     assertEquals (1,twoOutcomes.numberOfWinners());
     assertEquals (1,oneWinner.numberOfWinners());
     assertEquals (0,oneLoser.numberOfWinners());
@@ -43,7 +43,7 @@ public class ScenarioTest {
 
   @Test
   public void testIsTied() {
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     assertFalse (scenario.isTied());
     scenario.addOutcome(Outcome.TiedWinner);
     assertTrue (scenario.isTied());

@@ -18,6 +18,13 @@ import election.tally.ElectionStatus;
 
 public class TestDataGenerator {
 
+  /**
+   * 
+   */
+  private TestDataGenerator() {
+    super();
+  }
+
   // Maximum number of ballot boxes that can be held in memory
   private static final int MEMORY_LIMIT = 1000000000;
   
@@ -34,13 +41,12 @@ public class TestDataGenerator {
    * BallotCouting but is neither used as a field nor a formal parameter in any
    * other class.
    */
-  //@ requires 0 <= n;
-  public static AbstractBallotCounting getAbstractBallotCounting(final int n) 
+  //@ requires 0 <= number;
+  public static AbstractBallotCounting getAbstractBallotCounting(final int number) 
     throws java.util.NoSuchElementException {
-    if (abstractBallotCounting_count == 0 || n == 0) {
+    if (abstractBallotCounting_count == 0 || number == 0) {
       abstractBallotCounting_count++;
-      final AbstractBallotCounting ballotCounting = new BallotCounting();
-      return ballotCounting;
+      return new BallotCounting();
     }
     throw new java.util.NoSuchElementException();
   }
@@ -75,60 +81,60 @@ public class TestDataGenerator {
     return bytes;
   }
 
-  //@ requires 0 <= n;
-  public static Constituency getConstituency(int n) {
-    if (constituency_count == 0 || n == 0) {
+  //@ requires 0 <= number;
+  public static Constituency getConstituency(final int number) {
+    if (constituency_count == 0 || number == 0) {
       constituency_count++;
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(1, 5);
       constituency.setNumberOfCandidates(3);
       return constituency;
-    } else if (n <= 3) {
+    } else if (number <= 3) {
       final Constituency constituency = new Constituency();
-      constituency.setNumberOfSeats(n, 3);
-      constituency.setNumberOfCandidates(n + 2);
+      constituency.setNumberOfSeats(number, 3);
+      constituency.setNumberOfCandidates(number + 2);
       return constituency;
-    } else if (n <= 5) {
+    } else if (number <= 5) {
       final Constituency constituency = new Constituency();
-      constituency.setNumberOfSeats(n, 5);
-      constituency.setNumberOfCandidates(n + 1);
+      constituency.setNumberOfSeats(number, 5);
+      constituency.setNumberOfCandidates(number + 1);
       return constituency;
-    } else if (n == 6) {
+    } else if (number == 6) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(1, 4);
-      constituency.setNumberOfCandidates(n);
+      constituency.setNumberOfCandidates(number);
       return constituency;
-    } else if (n == 7) {
+    } else if (number == 7) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(2, 4);
-      constituency.setNumberOfCandidates(n);
+      constituency.setNumberOfCandidates(number);
       return constituency;
-    } else if (n == 8) {
+    } else if (number == 8) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(3, 4);
-      constituency.setNumberOfCandidates(n);
+      constituency.setNumberOfCandidates(number);
       return constituency;
-    } else if (n == 9) {
+    } else if (number == 9) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(4, 4);
-      constituency.setNumberOfCandidates(n);
+      constituency.setNumberOfCandidates(number);
       return constituency;
-    } else if (n == 10) {
+    } else if (number == 10) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(2, 5);
-      constituency.setNumberOfCandidates(n);
+      constituency.setNumberOfCandidates(number);
       return constituency;
-    } else if (n == 11) {
+    } else if (number == 11) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(3, 5);
-      constituency.setNumberOfCandidates(n);
+      constituency.setNumberOfCandidates(number);
       return constituency;
-    } else if (n == 12) {
+    } else if (number == 12) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(5, 5);
       constituency.setNumberOfCandidates(Candidate.MAX_CANDIDATES);
       return constituency;
-    } else if (n == 13) {
+    } else if (number == 13) {
       final Constituency constituency = new Constituency();
       constituency.setNumberOfSeats(4, 4);
       constituency.setNumberOfCandidates(Candidate.MAX_CANDIDATES - 1);
@@ -137,15 +143,14 @@ public class TestDataGenerator {
     throw new java.util.NoSuchElementException();
   }
 
-  //@ requires 0 <= n;
-  public static Ballot getBallot(int n) {
-    if (ballot_count == 0 || n == 0) {
+  //@ requires 0 <= number;
+  public static Ballot getBallot(final int number) {
+    if (ballot_count == 0 || number == 0) {
       ballot_count++;
-      int[] list = new int[0];
-      return new Ballot(list);
-    } else if (n < Candidate.MAX_CANDIDATES) {
-      int[] list = new int[n];
-      for (int i=0; i<n; i++) {
+      return new Ballot(new int[0]);
+    } else if (number < Candidate.MAX_CANDIDATES) {
+      int[] list = new int[number];
+      for (int i=0; i<number; i++) {
         list[i] = new Candidate().getCandidateID();
       }
       return new Ballot(list);
@@ -153,33 +158,32 @@ public class TestDataGenerator {
     throw new java.util.NoSuchElementException();
   }
 
-  //@ requires 0 <= n;
-  public static Candidate getCandidate(int n) {
-    if (candidate_count == 0 || n == 0) {
+  //@ requires 0 <= number;
+  public static Candidate getCandidate(int number) {
+    if (candidate_count == 0 || number == 0) {
       candidate_count++;
       return new Candidate();
     }
     throw new java.util.NoSuchElementException();
   }
 
-  //@ requires 0 <= n;
-  public static BallotBox getBallotBox (int n) {
+  //@ requires 0 <= number;
+  public static BallotBox getBallotBox (final int number) {
     if (ballotBox_count < MEMORY_LIMIT) {
       ballotBox_count++;
-      if (n == 0) {
-        final BallotBox emptyBallotBox = new BallotBox();
-        return emptyBallotBox;
-      } else if (n == 1) {
+      if (number == 0) {
+        return new BallotBox();
+      } else if (number == 1) {
         final BallotBox oneBallotInBox = new BallotBox();
-        Candidate firstCandidate = new Candidate();
+        final Candidate firstCandidate = new Candidate();
         int[] list = new int[1];
         list[0] = firstCandidate.getCandidateID();
         oneBallotInBox.accept(list);
         return oneBallotInBox;
-      } else if (n == 2) {
+      } else if (number == 2) {
         final BallotBox twoBallotsInBox = new BallotBox();
-        Candidate firstCandidate = new Candidate();
-        Candidate secondCandidate = new Candidate();
+        final Candidate firstCandidate = new Candidate();
+        final Candidate secondCandidate = new Candidate();
         int[] list = new int[2];
         list[0] = firstCandidate.getCandidateID();
         list[1] = secondCandidate.getCandidateID();
@@ -190,8 +194,8 @@ public class TestDataGenerator {
         return twoBallotsInBox;
       }
       // Two way ties
-      else if (n == 3) {
-        BallotBox ballotBox = new BallotBox();
+      else if (number == 3) {
+        final BallotBox ballotBox = new BallotBox();
         Candidate candidate1 = new Candidate();
         Candidate candidate2 = new Candidate();
         Candidate candidate3 = new Candidate();
@@ -209,7 +213,7 @@ public class TestDataGenerator {
         return ballotBox;
       }
       // Three way ties
-      else if (n == 4) {
+      else if (number == 4) {
         BallotBox ballotBox = new BallotBox();
         Candidate candidate1 = new Candidate();
         Candidate candidate2 = new Candidate();

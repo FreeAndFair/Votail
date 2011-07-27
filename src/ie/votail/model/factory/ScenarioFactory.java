@@ -21,20 +21,21 @@ public class ScenarioFactory {
    *          The number of candidate outcomes
    * @return All election scenarios with this number of outcomes
    */
-  public/*@ pure @*/ScenarioList find(int numberOfOutcomes, int numberOfSeats,
-      Method method) {
-    ScenarioList scenarios = new ScenarioList();
+  public/*@ pure @*/ScenarioList find(final int numberOfOutcomes, 
+      final int numberOfSeats,
+      final Method method) {
+    final ScenarioList scenarios = new ScenarioList();
     if (numberOfOutcomes == 2) {
       findBaseScenarios(method, scenarios, false); // full election
       findBaseScenarios(method, scenarios, true); // special election
     }
     else {
       // Extend the base scenario by adding one additional candidate outcome
-      ScenarioList baseScenarios =
+      final ScenarioList baseScenarios =
           find(numberOfOutcomes - 1, numberOfSeats, method);
-      Iterator<ElectoralScenario> iterator = baseScenarios.iterator();
+      final Iterator<ElectoralScenario> iterator = baseScenarios.iterator();
       while (iterator.hasNext()) {
-        ElectoralScenario baseScenario = iterator.next();
+        final ElectoralScenario baseScenario = iterator.next();
         scenarios.add(baseScenario.append(Outcome.Winner));
         if (!baseScenario.hasOutcome(Outcome.TiedSoreLoser)) {
           // Cannot have a Loser with a Tied Sore Loser or Tied Early Loser
@@ -84,17 +85,18 @@ public class ScenarioFactory {
    * @param scenarios
    * @param byeElection
    */
-  protected void findBaseScenarios(Method method, ScenarioList scenarios,
+  protected void findBaseScenarios(final Method method, 
+      final ScenarioList scenarios,
       boolean byeElection) {
     // Winner gets majority of votes, loser reaches threshold
-    ElectoralScenario commonScenario =
+    final ElectoralScenario commonScenario =
         new ElectoralScenario(method, byeElection);
     commonScenario.addOutcome(Outcome.Winner);
     commonScenario.addOutcome(Outcome.Loser);
     scenarios.add(commonScenario);
     
     // Winner by tie breaker, loser reaches threshold
-    ElectoralScenario tiedScenario = new ElectoralScenario(method, byeElection);
+    final ElectoralScenario tiedScenario = new ElectoralScenario(method, byeElection);
     tiedScenario.addOutcome(Outcome.TiedWinner);
     tiedScenario.addOutcome(Outcome.TiedLoser);
     scenarios.add(tiedScenario);

@@ -30,7 +30,7 @@ public class QuotaCalculationEventA extends TestCase {
       ballotBox.accept(preferences);
     }
     for (int i = 0; i < 49; i++) {
-      preferences[0] = (parameters.getCandidate(1).getCandidateID());
+      preferences[0] = parameters.getCandidate(1).getCandidateID();
       ballotBox.accept(preferences);
     }
     

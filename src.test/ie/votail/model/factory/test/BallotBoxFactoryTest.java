@@ -1,31 +1,30 @@
 package ie.votail.model.factory.test;
 
+import ie.votail.model.ElectionConfiguration;
+import ie.votail.model.ElectoralScenario;
 import ie.votail.model.Method;
 import ie.votail.model.Outcome;
-import ie.votail.model.ElectoralScenario;
-import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.factory.BallotBoxFactory;
 import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import election.tally.AbstractBallotCounting;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
 
 public class BallotBoxFactoryTest extends TestCase {
   
-  @Test
+  
   public void testGenerateSmallestBallotBox() {
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
-    BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
-    BallotBox ballotBox = ballotBoxFactory.extractBallots(scenario, 7);
+    final BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
+    final BallotBox ballotBox = ballotBoxFactory.extractBallots(scenario, 7);
     assertFalse(ballotBox == null);
     assertEquals(4, ballotBox.size());
-    BallotCounting counter = new BallotCounting();
+    final BallotCounting counter = new BallotCounting();
     counter.load(ballotBox);
     counter.count();
     //@ assert (counter.getStatus() == AbstractBallotCounting.FINISHED);
@@ -33,7 +32,7 @@ public class BallotBoxFactoryTest extends TestCase {
   
   @Test
   public void testGenerateSmallBallotBox() {
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     scenario.addOutcome(Outcome.EarlyLoser);
@@ -75,9 +74,8 @@ public class BallotBoxFactoryTest extends TestCase {
    * @param voteTable
    */
   protected void checkElectionConfiguration(
-      ElectionConfiguration electionConfiguration) {
+      final ElectionConfiguration electionConfiguration) {
     Constituency constituency = electionConfiguration.getConstituency();
-    assertFalse(electionConfiguration == null);
     BallotCounting counter = new BallotCounting();
     counter.setup(constituency);
     counter.load(electionConfiguration);

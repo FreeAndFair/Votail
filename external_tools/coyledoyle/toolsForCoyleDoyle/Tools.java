@@ -1,12 +1,19 @@
-package tools;
+package toolsForCoyleDoyle;
 
 import java.util.logging.Logger;
 
 public class Tools {
   
-  static Logger logger = Logger.getAnonymousLogger();
+  /**
+   * 
+   */
+  private Tools() {
+    super();
+  }
+
+  static final Logger logger = Logger.getAnonymousLogger();
   
-  public static int[] reverseList(int[] tiedCandidates) {
+  public static int[] reverseList(final int[] tiedCandidates) {
     final int lengthOfList = tiedCandidates.length;
     int[] reversedList = new int[lengthOfList];
     for (int i = 0; i < lengthOfList; i++) {
@@ -15,11 +22,11 @@ public class Tools {
     return reversedList;
   }
   
-  public static void println(String line) {
+  public static void println(final String line) {
     logger.info(line);
   }
   
-  public static void println(int num) {
+  public static void println(final int num) {
     logger.info(" " + num);
   }
   

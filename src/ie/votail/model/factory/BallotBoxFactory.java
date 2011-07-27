@@ -13,7 +13,6 @@ package ie.votail.model.factory;
 
 import ie.votail.model.ElectionConfiguration;
 import ie.votail.model.ElectoralScenario;
-import ie.votail.model.Outcome;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -37,12 +36,14 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
  */
 public class BallotBoxFactory {
   
-  public static final int DEFAULT_BIT_WIDTH = 7;
+  public static final int BIT_WIDTH = 10;
   public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "models/Voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
   protected static final int MAX_SCOPE = 45;
   protected String modelName;
+
+  protected ScenarioList unsolvedScenarioList;
   
   /**
    *
@@ -50,6 +51,7 @@ public class BallotBoxFactory {
   public BallotBoxFactory() {
     modelName = MODELS_VOTING_ALS;
     logger.info("Using model " + modelName);
+    unsolvedScenarioList = new ScenarioList();
   }
   
   /**
@@ -63,7 +65,7 @@ public class BallotBoxFactory {
    * @return The Election Configuration (null if generation fails)
    */
   public ElectionConfiguration /*@ non_null @*/extractBallots(
-  /*@ non_null*/ElectoralScenario scenario, int scope) {
+    final /*@ non_null*/ ElectoralScenario scenario, final int scope) {
     
     return extractBallots(scenario, scope, MAX_SCOPE);
   }
@@ -79,29 +81,34 @@ public class BallotBoxFactory {
    *          The maximum scope
    * @return The Ballot Box
    */
-  protected ElectionConfiguration extractBallots(/*@ non_null*/
-  ElectoralScenario scenario, int scope, int upperBound) {
-   
+  //@ requires 0 < scope && scope <= upperBound;
+  protected /*@ pure @*/ ElectionConfiguration extractBallots(/*@ non_null*/
+      final ElectoralScenario scenario, final int scope, final int upperBound) {
     
     // Find a ballot box which creates this scenario
-    try {
-      for (int i=scope; i < upperBound; i++) {
-        A4Solution solution = findSolution(scenario, i);
+    for (int i=scope; i < upperBound; i++) {
+      try {
+        final A4Solution solution = findSolution(scenario, i);
         if (solution != null && solution.satisfiable()) {
           return parseSolution(scenario, scope, solution);
         }
       }
-      
-      logger.severe("Skipped this scenario " + scenario.toString());
-      return null;
-    }
-    catch (Err e) {
-      // Log failure to find scenario
-      logger.severe("Unable to find ballot box for this scenario "
+      catch (Err e) {
+        // Log failure to find scenario
+        logger.severe("Unable to find ballot box for this scenario "
           + scenario.toString() + " with scope " + scope + " and predicate "
           + scenario.toPredicate() + " because " + e.toString());
-      return null;
+        return null;
+      }
     }
+      
+    logger.info(
+      "No Solution for this scenario - please add a hand-written test case " + 
+      scenario.toString());
+    unsolvedScenarioList.add(scenario);
+    logger.info("Number of unsolved scenarios so far: " + 
+      unsolvedScenarioList.size());
+    return null;
   }
 
   /**
@@ -110,8 +117,9 @@ public class BallotBoxFactory {
    * @param electionConfiguration
    * @param solution
    */
-  protected ElectionConfiguration parseSolution(ElectoralScenario scenario, int scope,
-      A4Solution solution) {
+  protected ElectionConfiguration parseSolution(final ElectoralScenario scenario, 
+      final int scope,
+      final A4Solution solution) {
     
     final ElectionConfiguration electionConfiguration =
       new ElectionConfiguration(scenario.canonical());
@@ -136,26 +144,13 @@ public class BallotBoxFactory {
     for (Sig sig : solution.getAllReachableSigs()) {
       // Log the model version number
       if (sig.label.contains("Version")) {
-        for (Field field : sig.getFields()) {
-          if (field.label.contains("year")) {
-            A4TupleSet tupleSet = solution.eval(field);
-            logger.info("Model version year = " + tupleSet.toString());
-          }
-          else if (field.label.contains("month")) {
-            A4TupleSet tupleSet = solution.eval(field);
-            logger.info("Model version month = " + tupleSet.toString());
-          }
-          else if (field.label.contains("day")) {
-            A4TupleSet tupleSet = solution.eval(field);
-            logger.info("Model version day = " + tupleSet.toString());
-          }
-        }
+        logVersionNumber(solution, sig);
       }
       
       else if (sig.label.contains("this/Ballot")) {
         for (Field field : sig.getFields()) {
           if (field.label.contains("preferences")) {
-            A4TupleSet tupleSet = solution.eval(field);
+            final A4TupleSet tupleSet = solution.eval(field);
             //@ assert tupleSet != null;
             electionConfiguration.extractPreferences(tupleSet);
           }
@@ -164,6 +159,27 @@ public class BallotBoxFactory {
     }
     return electionConfiguration.trim();
 
+  }
+
+  /**
+   * @param solution
+   * @param sig
+   */
+  protected void logVersionNumber(final A4Solution solution, Sig sig) {
+    for (Field field : sig.getFields()) {
+      if (field.label.contains("year")) {
+        final A4TupleSet tupleSet = solution.eval(field);
+        logger.info("Model version year = " + tupleSet.toString());
+      }
+      else if (field.label.contains("month")) {
+        final A4TupleSet tupleSet = solution.eval(field);
+        logger.info("Model version month = " + tupleSet.toString());
+      }
+      else if (field.label.contains("day")) {
+        final A4TupleSet tupleSet = solution.eval(field);
+        logger.info("Model version day = " + tupleSet.toString());
+      }
+    }
   }
   
   /**
@@ -178,12 +194,13 @@ public class BallotBoxFactory {
    * @throws ErrorSyntax
    */
   //@ requires 0 < scope;
-  protected A4Solution findSolution(/*@ non_null @*/ ElectoralScenario scenario, 
-      int scope) throws Err, ErrorSyntax {
-    A4Reporter reporter = new A4Reporter();
-    A4Options options = new A4Options();
+  protected A4Solution findSolution(
+      final /*@ non_null @*/ ElectoralScenario scenario, 
+      final int scope) throws Err, ErrorSyntax {
+    final A4Reporter reporter = new A4Reporter();
+    final A4Options options = new A4Options();
     options.solver = A4Options.SatSolver.SAT4J;
-    Map<String, String> loaded = null;
+    final Map<String, String> loaded = null;
     CompModule world;
     try {
       world = CompUtil.parseEverything_fromFile(reporter, loaded, modelName);
@@ -193,11 +210,11 @@ public class BallotBoxFactory {
       
       return null;
     }
-    Expr predicate =
+    final Expr predicate =
         CompUtil.parseOneExpression_fromString(world, scenario.toPredicate());
     logger.info("Trying scope " + scope + " for scenario " + scenario);
-    Command command =
-        new Command(false, scope, DEFAULT_BIT_WIDTH, scope, predicate);
+    final Command command =
+        new Command(false, scope, BIT_WIDTH, scope, predicate);
     A4Solution solution =
         TranslateAlloyToKodkod.execute_command(reporter, world
             .getAllReachableSigs(), command, options);

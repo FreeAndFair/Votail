@@ -27,9 +27,9 @@ public class SelectHighestContinuingCandidateEventB extends TestCase {
     parameters.setNumberOfSeats(1,3);
     parameters.setNumberOfCandidates(NUM_CANDIDATES);
     ballotCounting.setup(parameters);
-    // All candidates get one vote; draw lots to resolve ties
+    // All candidates get one first-preference vote; draw lots to resolve ties
     for (int i=0; i < NUM_CANDIDATES; i++) {
-      int[] preferences =
+      final int[] preferences =
         {parameters.getCandidate(i).getCandidateID()};
       ballotBox.accept(preferences);
     }

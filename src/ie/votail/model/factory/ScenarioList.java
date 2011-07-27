@@ -8,15 +8,10 @@ package ie.votail.model.factory;
 
 import ie.votail.model.ElectoralScenario;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class ScenarioList extends ArrayList<ElectoralScenario> implements Serializable {
   
@@ -26,13 +21,13 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
   private static final long serialVersionUID = 7207848959544184536L;
 
   // Maximum number of partitions within the list
-  public static int MAX_PARTITIONS = 11; // Ten possible outcomes, plus one
+  public static final int MAX_PARTITIONS = 11; // Ten possible outcomes, plus one
   
   // Sublists of scenarios for each fixed number of winners
-  protected ArrayList<ElectoralScenario>[] partitions;
+  protected List<ElectoralScenario>[] partitions;
   
   // Scenarios with a larger number of winners, not held in any partition
-  protected ArrayList<ElectoralScenario> bucket;
+  protected List<ElectoralScenario> bucket;
   
   /**
    * Creates a new empty list of scenarios, with an empty bucket and
@@ -44,6 +39,7 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
     @*/
   @SuppressWarnings("unchecked")
   public ScenarioList() {
+    super();
     this.partitions = new ArrayList[MAX_PARTITIONS];
     for (int i = 0; i < MAX_PARTITIONS; i++) {
       partitions[i] = new ArrayList<ElectoralScenario>();
@@ -58,10 +54,10 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
    *          The scenario to look for
    * @return <code>true</code> if the scenario is in the list
    */
-  public boolean hasScenario(/*@ non_null @*/ ElectoralScenario scenario) {
-    Iterator<ElectoralScenario> it = this.iterator();
-    while (it.hasNext()) {
-      if (it.next().equivalentTo(scenario)) {
+  public boolean hasScenario(final /*@ non_null @*/ ElectoralScenario scenario) {
+    final Iterator<ElectoralScenario> scenarioIterator = this.iterator();
+    while (scenarioIterator.hasNext()) {
+      if (scenarioIterator.next().equivalentTo(scenario)) {
         return true;
       }
     }
@@ -76,20 +72,18 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
    *          The scenario to be added
    * @return <code>true</code> if this scenario is not already in list
    */
-  /*@
-   * ensures this.hasScenario(scenario);
-   */
+  //@ ensures this.hasScenario(scenario);
   @Override
-  public boolean add(/*@ non_null*/ElectoralScenario scenario) {
+  public boolean add(final /*@ non_null*/ElectoralScenario scenario) {
     if (this.hasScenario(scenario)) {
       return false;
     }
     
     // Sort the scenario into canonical order before adding it
-    ElectoralScenario canonical = scenario.canonical();
+    final ElectoralScenario canonical = scenario.canonical();
     
     // Also, add to sublist according to number of winners
-    int partitionNumber = scenario.numberOfWinners();
+    final int partitionNumber = scenario.numberOfWinners();
     if (partitionNumber < MAX_PARTITIONS) {
       partitions[partitionNumber].add(canonical);
     }
@@ -108,11 +102,10 @@ public class ScenarioList extends ArrayList<ElectoralScenario> implements Serial
    *          The number of winners in each scenario
    * @return Either the number of scenarios in this partition or the bucket
    */
-  /*@
-   * requires 0 < numberOfWinners;
-   * ensures 0 <= \result;
+  /*@ requires 0 < numberOfWinners;
+    @ ensures 0 <= \result;
    */
-  public/*@ pure*/int getNumberOfScenarios(int numberOfWinners) {
+  public/*@ pure*/int getNumberOfScenarios(final int numberOfWinners) {
     if (numberOfWinners <= MAX_PARTITIONS) {
       return partitions[numberOfWinners].size();
     }
