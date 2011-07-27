@@ -63,6 +63,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * @param theScenario The electoral scenario 
    */
   public ElectionConfiguration(final ElectoralScenario theScenario) {
+    super();
     this.scenario = theScenario;
     candidateIDs = new int[Candidate.MAX_CANDIDATES];
     for (int i = 0; i < candidateIDs.length; i++) {
@@ -128,7 +129,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * @return The constituency with matching candidate ID numbers
    */
   public Constituency getConstituency() {
-    Constituency constituency = new Constituency();
+    final Constituency constituency = new Constituency();
     constituency.setNumberOfSeats(this.numberOfWinners, this.numberOfSeats);
     constituency.load(this.candidateIDs);
     return constituency;
@@ -146,7 +147,9 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     this.numberOfSeats = theNumberOfSeats;
   }
   
-  public void setNumberOfCandidates(int theNumberOfCandidates) {
+  //@ requires 0 < theNumberOfCandidates;
+  //@ ensures this.numberOfCandidates == theNumberOfCandidates;
+  public void setNumberOfCandidates(final int theNumberOfCandidates) {
     this.numberOfCandidates = theNumberOfCandidates;
   }
   
