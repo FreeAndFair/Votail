@@ -31,8 +31,8 @@ public enum Outcome {
    * @param candidate The candidate to be verified
    * @return True if the results match the outcome
    */
-  public boolean check(/*@ non_null @*/ Candidate candidate, 
-      int threshold, int quota) {
+  public boolean check(final /*@ non_null @*/ Candidate candidate,   
+      final int threshold, final int quota) {
     
     // Winners above quota, with our without transfers
     if (this == SurplusWinner || this == AboveQuotaWinner ||
@@ -48,25 +48,25 @@ public enum Outcome {
       return candidate.isElected() && candidate.getTotalVote() < quota;
     }
     // Losers at or above threshold, without elimination
-    else if (this == Loser || this == TiedLoser) {
+    if (this == Loser || this == TiedLoser) {
         return !candidate.isElected() &&
                threshold <= candidate.getTotalVote();
     }
     // Losers at or above threshold, with elimination
-    else if (this == EarlyLoser || 
+    if (this == EarlyLoser || 
         this == EarlyLoserNonTransferable) {
         return !candidate.isElected() && 
                candidate.isEliminated() && 
                threshold <= candidate.getTotalVote();
     }
     // Early Losers below threshold, with or without ties
-    else if (this == EarlySoreLoserNonTransferable || this == EarlySoreLoser) {
+    if (this == EarlySoreLoserNonTransferable || this == EarlySoreLoser) {
         return !candidate.isElected() && 
                candidate.isEliminated() && 
                candidate.getTotalVote() < threshold;
     }
     // Late Losers below threshold, with or without ties
-    else if (this == SoreLoser || this == TiedSoreLoser) {
+    if (this == SoreLoser || this == TiedSoreLoser) {
         return !candidate.isElected() && 
                !candidate.isEliminated() && 
                candidate.getTotalVote() < threshold;

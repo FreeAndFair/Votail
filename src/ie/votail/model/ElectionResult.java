@@ -22,23 +22,24 @@ public class ElectionResult {
     private byte[] status;
     private int[] identifiers;
     
-    public CandidateResults() {
+    //@ requires this.status == null;
+    //@ requires \nonnullelements (listOfStates);
+    //@ ensures \nonnullelements (this.status);
+    public void setStatus(final byte[] listOfStates) {
+      this.status = new byte[listOfStates.length];
+      for (int i = 0; i < listOfStates.length; i++) {
+        this.status[i] = listOfStates[i];
+      }
     }
     
-    public byte[] getStatus() {
-      return status;
-    }
-    
-    public void setStatus(byte[] status) {
-      this.status = status;
-    }
-    
-    public int[] getIdentifiers() {
-      return identifiers;
-    }
-    
-    public void setIdentifiers(int[] identifiers) {
-      this.identifiers = identifiers;
+    //@ requires thus.identifiers == null;
+    //@ requires \nonnullelements (listOfIDs);
+    //@ ensures \nonnullelements (this.identifiers);
+    public void setIdentifiers(final int[] listOfIDs) {
+      this.identifiers = new int[listOfIDs.length];
+      for (int i = 0; i < listOfIDs.length; i++) {
+        this.identifiers[i] = listOfIDs[i];
+      }
     }
     
     /**
@@ -49,7 +50,7 @@ public class ElectionResult {
      * @return <code>True</code> if the election results agree, when sorted in
      *         a canonical order
      */
-    public boolean equals(CandidateResults other) {
+    public boolean matches(final CandidateResults other) {
       if (this.numberOfCandidates != other.numberOfCandidates) {
         return false;
       }
@@ -115,7 +116,7 @@ public class ElectionResult {
    * @param outcome The ordered list of winners and losers
    * @param numberOfWinners The number of winners
    */
-  public void load(int[] outcome, int numberOfWinners) {
+  public final void load(int[] outcome, int numberOfWinners) {
     candidateResults.numberOfCandidates = outcome.length;
     
     candidateResults.setIdentifiers(outcome);
@@ -140,7 +141,7 @@ public class ElectionResult {
    * 
    * @param candidates
    */
-  protected void extractCandidateResults(Candidate[] candidates) {
+  protected final void extractCandidateResults(Candidate[] candidates) {
     candidateResults.numberOfCandidates = candidates.length;
     byte[] status = new byte[candidateResults.numberOfCandidates];
     int[] identifiers = new int[candidateResults.numberOfCandidates];
@@ -160,9 +161,9 @@ public class ElectionResult {
    * 
    * @return True if all values agree, when sorted by identifier
    */
-  public boolean equals(ElectionResult other) {
+  public boolean matches(ElectionResult other) {
     
-    return this.candidateResults.equals(other.candidateResults);
+    return this.candidateResults.matches(other.candidateResults);
   }
   
 }

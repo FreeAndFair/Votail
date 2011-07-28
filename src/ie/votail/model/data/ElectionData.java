@@ -25,7 +25,11 @@ public class ElectionData implements Serializable {
    * @return the ballotBox
    */
   public /*@ pure @*/ Ballot[] getBallots() {
-    return ballots;
+    Ballot[] theBallots = new Ballot[this.ballots.length];
+    for (int i=0; i < this.ballots.length; i++) {
+      theBallots[i] = this.ballots[i];
+    }
+    return theBallots;
   }
   /**
    * @param theScenario the scenario to set

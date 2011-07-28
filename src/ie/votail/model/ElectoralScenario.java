@@ -7,6 +7,7 @@ package ie.votail.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import election.tally.BallotCounting;
 import election.tally.Candidate;
@@ -88,7 +89,11 @@ public class ElectoralScenario implements Serializable {
 
   protected transient boolean byeElection;
   
+  /**
+   * Create an empty scenario
+   */
   public ElectoralScenario() {
+    super();
   }
 
   /**
@@ -97,7 +102,8 @@ public class ElectoralScenario implements Serializable {
    * @param method
    * @param byeElection 
    */
-  public ElectoralScenario(Method method, boolean byeElection) {
+  public ElectoralScenario(final Method method, final boolean byeElection) {
+    super();
     listOfOutcomes = new OutcomeList();
     this.method = method;
     this.byeElection= byeElection;
@@ -106,10 +112,12 @@ public class ElectoralScenario implements Serializable {
   /**
    * Textual representation of a model election scenario.
    */
-  public/*@ pure*/String toString() {
-    Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
-    StringBuffer stringBuffer =
-        new StringBuffer(getNumberOfCandidates() + " candidates (");
+  public/*@ pure @*/String toString() {
+    final Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
+    final StringBuffer stringBuffer =
+      new StringBuffer(10*getNumberOfCandidates() + 15);
+    stringBuffer.append(Integer.toString(getNumberOfCandidates()));
+    stringBuffer.append(" candidates (");
     if (iterator.hasNext()) {
       stringBuffer.append(iterator.next().toString());
     }
@@ -154,8 +162,8 @@ public class ElectoralScenario implements Serializable {
    */
   //@ requires 0 < outcomes.size();
   public/*@ pure*/String toPredicate() {
-    Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
-    StringBuffer stringBuffer = new StringBuffer("some disj ");
+    final Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
+    final StringBuffer stringBuffer = new StringBuffer("some disj ");
     for (int i = 0; i < listOfOutcomes.getOutcomes().size(); i++) {
       if (i > 0) {
         stringBuffer.append(",");
@@ -163,13 +171,13 @@ public class ElectoralScenario implements Serializable {
       stringBuffer.append("c" + i);
     }
     stringBuffer.append(": Candidate | ");
-    int i = 0;
+    int indexi = 0;
     while (iterator.hasNext()) {
-      if (i > 0) {
+      if (indexi > 0) {
         stringBuffer.append(" and ");
       }
-      stringBuffer.append("c" + i + ".outcome = " + iterator.next().toString());
-      i++;
+      stringBuffer.append("c" + indexi + ".outcome = " + iterator.next().toString());
+      indexi++;
     }
     stringBuffer
         .append(" and Election.method = " + method);
@@ -187,7 +195,7 @@ public class ElectoralScenario implements Serializable {
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
   public ElectoralScenario canonical() {
-    ElectoralScenario sorted = new ElectoralScenario(this.method, this.byeElection);
+    final ElectoralScenario sorted = new ElectoralScenario(this.method, this.byeElection);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
       Iterator<Outcome> iterator = this.getOutcomes().iterator();
@@ -209,7 +217,7 @@ public class ElectoralScenario implements Serializable {
    *         each kind of outcome
    */
   //@ ensures \result <==> this.canonical().equals(other.canonical());
-  public/*@ pure*/boolean equivalentTo(ElectoralScenario other) {
+  public/*@ pure*/boolean equivalentTo(final ElectoralScenario other) {
     if (other == null) {
       return false;
     }
@@ -229,7 +237,7 @@ public class ElectoralScenario implements Serializable {
     return true;
   }
   
-  protected /*@ pure @*/ ArrayList<Outcome> getOutcomes() {
+  protected /*@ pure @*/ List<Outcome> getOutcomes() {
     if (listOfOutcomes == null) {
       listOfOutcomes = new OutcomeList();
     }
@@ -248,7 +256,8 @@ public class ElectoralScenario implements Serializable {
    * ensures \result.contains (outcome);
    * ensures \result.equivalentTo (this.addOutcome(outcome));
    */
-  public/*@ pure*/ElectoralScenario append(/*@ non_null*/Outcome outcome) {
+  public/*@ pure*/ElectoralScenario append(
+      final /*@ non_null*/Outcome outcome) {
     ElectoralScenario result = this.copy();
     result.addOutcome(outcome);
     return result;
@@ -292,14 +301,12 @@ public class ElectoralScenario implements Serializable {
    * 
    * @return True if there is at least outcome of that kind
    */
-  /*@
-   * ensures \result ==> isTied();
-   */
-  public/*@ pure*/boolean hasOutcome(Outcome theOutcome) {
+  //@ ensures \result ==> isTied();
+  public/*@ pure @*/boolean hasOutcome(final Outcome theOutcome) {
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       Outcome outcome = iterator.next();
-      if (outcome == theOutcome) {
+      if (outcome.equals(theOutcome)) {
         return true;
       }
     }

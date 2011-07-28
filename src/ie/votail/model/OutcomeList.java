@@ -2,6 +2,7 @@ package ie.votail.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Dermot Cochran
@@ -15,7 +16,7 @@ public class OutcomeList implements Serializable {
   /**
    * 
    */
-  protected ArrayList<Outcome> outcomes;
+  protected List<Outcome> outcomes;
 
   /**
    * 
@@ -28,7 +29,7 @@ public class OutcomeList implements Serializable {
    * 
    * @return
    */
-  public ArrayList<Outcome> getOutcomes() {
+  public List<Outcome> getOutcomes() {
     return outcomes;
   }
 
@@ -43,7 +44,7 @@ public class OutcomeList implements Serializable {
   /**
    * @param outcomes the outcomes to set
    */
-  public void setOutcomes(ArrayList<Outcome> outcomes) {
+  public void setOutcomes(final List<Outcome> outcomes) {
     this.outcomes = outcomes;
   }
 }

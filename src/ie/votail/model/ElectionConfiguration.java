@@ -128,7 +128,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * 
    * @return The constituency with matching candidate ID numbers
    */
-  public Constituency getConstituency() {
+  public /*@ pure @*/ Constituency getConstituency() {
     final Constituency constituency = new Constituency();
     constituency.setNumberOfSeats(this.numberOfWinners, this.numberOfSeats);
     constituency.load(this.candidateIDs);
@@ -218,24 +218,9 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     return currentBallotID;
   }
   
-  /**
-   * @param theScenario
-   *          the scenario to set
-   */
-  /*@ assignable this.scenario;
-    @ ensures this.scenario == theScenario;
-   */
-  public void setScenario(final /*@ non_null @*/ ElectoralScenario theScenario) {
-    this.scenario = theScenario;
-  }
+
   
-  /**
-   * @param numberOfCandidateIDs
-   *          the numberOfCandidateIDs to set
-   */
-  public void setNumberOfCandidateIDs(int numberOfCandidateIDs) {
-    this.numberOfCandidateIDs = numberOfCandidateIDs;
-  }
+
   
   /**
    * @param theCandidateIDs
@@ -251,13 +236,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     }
   }
   
-  /**
-   * @param currentBallotID
-   *          the currentBallotID to set
-   */
-  public void setCurrentBallotID(int currentBallotID) {
-    this.currentBallotID = currentBallotID;
-  }
+
   
   /**
    * Get the contents of the ballot box
@@ -273,8 +252,8 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * 
    * @return The minimal ballot configuration
    */
-  public ElectionConfiguration trim() {
-    ElectionConfiguration copy = new ElectionConfiguration();
+  public /*@ pure @*/ ElectionConfiguration trim() {
+    final ElectionConfiguration copy = new ElectionConfiguration();
     
     copy.ballots = new Ballot[this.numberOfBallots];
     for (int i = 0; i < this.numberOfBallots; i++) {
@@ -301,7 +280,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * @return The data needed for export
    */
   public /*@ pure @*/ ElectionData export() {
-    ElectionData electionData = new ElectionData();
+    final ElectionData electionData = new ElectionData();
     electionData.setScenario(scenario);
     electionData.setBallots(ballots);
     
@@ -313,7 +292,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * 
    * @param electionData Electoral Scenario and Ballot Data
    */
-  public ElectionConfiguration (ElectionData electionData) {
+  public ElectionConfiguration (final ElectionData electionData) {
     super();
     final ElectoralScenario theScenario = electionData.getScenario();
     this.scenario = theScenario.canonical();
@@ -325,7 +304,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     final Ballot[] theBallots = electionData.getBallots();
     if (theBallots != null) {
     for (int b = 0; b < theBallots.length; b++) {
-      Ballot ballot = theBallots[b];
+      final Ballot ballot = theBallots[b];
       if (ballot == null) {
         logger.warning("Unexpected empty ballot");
       }
