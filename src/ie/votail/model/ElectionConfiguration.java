@@ -219,11 +219,14 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   }
   
   /**
-   * @param scenario
+   * @param theScenario
    *          the scenario to set
    */
-  public void setScenario(ElectoralScenario scenario) {
-    this.scenario = scenario;
+  /*@ assignable this.scenario;
+    @ ensures this.scenario == theScenario;
+   */
+  public void setScenario(final /*@ non_null @*/ ElectoralScenario theScenario) {
+    this.scenario = theScenario;
   }
   
   /**

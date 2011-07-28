@@ -36,14 +36,14 @@ import edu.mit.csail.sdg.alloy4compiler.translator.TranslateAlloyToKodkod;
  */
 public class BallotBoxFactory {
   
-  public static final int BIT_WIDTH = 10;
+  public static final int BIT_WIDTH = 7;
   public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "models/Voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
-  protected static final int MAX_SCOPE = 45;
+  protected static final int MAX_SCOPE = 30;
   protected String modelName;
 
-  protected ScenarioList unsolvedScenarioList;
+  protected ScenarioList impossibleScenarios;
   
   /**
    *
@@ -51,7 +51,7 @@ public class BallotBoxFactory {
   public BallotBoxFactory() {
     modelName = MODELS_VOTING_ALS;
     logger.info("Using model " + modelName);
-    unsolvedScenarioList = new ScenarioList();
+    impossibleScenarios = new ScenarioList();
   }
   
   /**
@@ -102,12 +102,13 @@ public class BallotBoxFactory {
       }
     }
       
+    // No solution found implies that scenario might be impossible
     logger.info(
-      "No Solution for this scenario - please add a hand-written test case " + 
+      "This scenario might be impossible " + 
       scenario.toString());
-    unsolvedScenarioList.add(scenario);
-    logger.info("Number of unsolved scenarios so far: " + 
-      unsolvedScenarioList.size());
+    impossibleScenarios.add(scenario);
+    logger.info("Number of questionable scenarios so far: " + 
+      impossibleScenarios.size());
     return null;
   }
 
