@@ -40,11 +40,13 @@ public class UniversalTestGenerator extends Uilioch {
    */
   /*@ requires 0 < workers;
     @ requires 0 < width; */
-  public UniversalTestGenerator(final int workers, final int capacity, int scopeLimit) {
+  public UniversalTestGenerator(final int workers, final int capacity, 
+      final int scopeLimit) {
     super();
     
     ballotBoxFactory = new BallotBoxFactory();
     scenarioFactory = new ScenarioFactory();
+    this.maxScope = scopeLimit;
     
     try {
       final String logFilename =
