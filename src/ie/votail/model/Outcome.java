@@ -37,43 +37,109 @@ public enum Outcome {
     // Winners above quota, with our without transfers
     if (this == SurplusWinner || this == AboveQuotaWinner ||
         this == WinnerNonTransferable || this == QuotaWinnerNonTransferable) {
-      return candidate.isElected() && quota < candidate.getTotalVote();
+      return isWinnerAboveQuota(candidate, quota);
     }
     // Winner at quota, with or without transfers
     if (this == Winner || this == QuotaWinner) {
-      return candidate.isElected() && quota == candidate.getTotalVote();
+      return isWinnerAtQuota(candidate, quota);
     }
     // Winners below quota, with or without ties
     if (this == CompromiseWinner || this == TiedWinner) {
-      return candidate.isElected() && candidate.getTotalVote() < quota;
+      return isWinnerBelowQuota(candidate, quota);
     }
     // Losers at or above threshold, without elimination
     if (this == Loser || this == TiedLoser) {
-        return !candidate.isElected() &&
-               threshold <= candidate.getTotalVote();
+        return isLoser(candidate, threshold);
     }
     // Losers at or above threshold, with elimination
     if (this == EarlyLoser || 
         this == EarlyLoserNonTransferable) {
-        return !candidate.isElected() && 
-               candidate.isEliminated() && 
-               threshold <= candidate.getTotalVote();
+        return isEarlyLoser(candidate, threshold);
     }
     // Early Losers below threshold, with or without ties
     if (this == EarlySoreLoserNonTransferable || this == EarlySoreLoser) {
-        return !candidate.isElected() && 
-               candidate.isEliminated() && 
-               candidate.getTotalVote() < threshold;
+        return isEarlySoreLoser(candidate, threshold);
     }
     // Late Losers below threshold, with or without ties
     if (this == SoreLoser || this == TiedSoreLoser) {
-        return !candidate.isElected() && 
-               !candidate.isEliminated() && 
-               candidate.getTotalVote() < threshold;
+        return isSoreLoser(candidate, threshold);
     }
     
     Logger.getAnonymousLogger().warning(
         "Outcome " + this.toString() + " failed to match " + candidate);
     return false;
+  }
+
+  /**
+   * @param candidate
+   * @param threshold
+   * @return
+   */
+  protected boolean
+
+  /**
+   * @param candidate
+   * @param threshold
+   * @return
+   */
+  protected b
+
+  /**
+   * @param candidate
+   * @param threshold
+   * @return
+   */
+  protected boolea
+
+  /**
+   * @param candidate
+   * @param thresho
+
+  /**
+   * @param c
+
+  /**
+   * @param candi
+
+  /**
+   * @param candidate
+   * @param quota
+   * @return
+   */
+  protected boolean isWinnerAboveQuota(final Candidate candidate,
+      final int quota) {
+    return candidate.isElected() && quota < candidate.getTotalVote();
+  }date
+   * @param quota
+   * @return
+   */
+  protected boolean isWinnerAtQuota(final Candidate candidate, final int quota) {
+    return candidate.isElected() && quota == candidate.getTotalVote();
+  }andidate
+   * @param quota
+   * @return
+   */
+  protected boolean isWinnerBelowQuota(final Candidate candidate,
+      final int quota) {
+    return candidate.isElected() && candidate.getTotalVote() < quota;
+  }ld
+   * @return
+   */
+  protected boolean isLoser(final Candidate candidate, final int threshold) {
+    return !candidate.isElected() &&
+           threshold <= candidate.getTotalVote();
+  }n isEarlyLoser(final Candidate candidate, final int threshold) {
+    return !candidate.isElected() && 
+           candidate.isEliminated() && 
+           threshold <= candidate.getTotalVote();
+  }oolean isEarlySoreLoser(final Candidate candidate,
+      final int threshold) {
+    return !candidate.isElected() && 
+           candidate.isEliminated() && 
+           candidate.getTotalVote() < threshold;
+  } isSoreLoser(final Candidate candidate, final int threshold) {
+    return !candidate.isElected() && 
+           !candidate.isEliminated() && 
+           candidate.getTotalVote() < threshold;
   }
 }
