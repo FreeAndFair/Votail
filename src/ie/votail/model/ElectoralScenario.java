@@ -198,7 +198,7 @@ public class ElectoralScenario implements Serializable {
     final ElectoralScenario sorted = new ElectoralScenario(this.method, this.byeElection);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
-      Iterator<Outcome> iterator = this.getOutcomes().iterator();
+      final Iterator<Outcome> iterator = this.getOutcomes().iterator();
       while (iterator.hasNext()) {
         if (outcome.equals(iterator.next())) {
           sorted.addOutcome(outcome);
@@ -225,9 +225,9 @@ public class ElectoralScenario implements Serializable {
     if (this.getNumberOfCandidates() != other.getNumberOfCandidates()) {
       return false;
     }
-    Iterator<Outcome> it1 =
+    final Iterator<Outcome> it1 =
         this.canonical().getOutcomes().iterator();
-    Iterator<Outcome> it2 =
+    final Iterator<Outcome> it2 =
         other.canonical().getOutcomes().iterator();
     while (it1.hasNext() && it2.hasNext()) {
       if (!it1.next().equals(it2.next())) {
@@ -258,7 +258,7 @@ public class ElectoralScenario implements Serializable {
    */
   public/*@ pure*/ElectoralScenario append(
       final /*@ non_null*/Outcome outcome) {
-    ElectoralScenario result = this.copy();
+    final ElectoralScenario result = this.copy();
     result.addOutcome(outcome);
     return result;
   }
@@ -272,7 +272,7 @@ public class ElectoralScenario implements Serializable {
    * ensures \result.equals(this);
    */
   private/*@ pure*/ElectoralScenario copy() {
-    ElectoralScenario clone = new ElectoralScenario(this.method, this.byeElection);
+    final ElectoralScenario clone = new ElectoralScenario(this.method, this.byeElection);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());
@@ -354,7 +354,7 @@ public class ElectoralScenario implements Serializable {
    * requires 0 < losers;
    * ensures 4 <= \result;
    */
-  public static int numberOfScenarios(int winners, int losers) {
+  public static int numberOfScenarios(final int winners, final int losers) {
     if (winners == 1) {
       if (losers == 1) {
         return 4;
@@ -374,15 +374,16 @@ public class ElectoralScenario implements Serializable {
    *          The number of candidate outcomes
    * @return The total number of distinct outcomes
    */
-  /*@
-   * requires 1 < numberOfOutcomes
-   * ensures 4 <= \result
+  /*@ requires 1 < numberOfOutcomes
+    @ ensures \result == (\sum int i; 1 <= i && i < numberOfOutcomes;
+    @   numberOfScenarios (i, numberOfOutcomes - i));
    */
-  public static int totalNumberOfScenarios(int numberOfOutcomes) {
+  public static /*@Êpure **/ int totalNumberOfScenarios(final int numberOfOutcomes) {
     int result = 0;
-    for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; numberOfWinners++) {
+    for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; 
+    numberOfWinners++) {
       result +=
-          numberOfScenarios(numberOfWinners, numberOfOutcomes - numberOfWinners);
+        numberOfScenarios(numberOfWinners, numberOfOutcomes - numberOfWinners);
     }
     return result;
   }
@@ -408,7 +409,7 @@ public class ElectoralScenario implements Serializable {
    * @return True if this scenario matches this election result
    */
   //@ requires ballotCounting.isFinished();
-  public boolean check(BallotCounting ballotCounting) {
+  public boolean check(final BallotCounting ballotCounting) {
 
     final int threshold = ballotCounting.getDepositSavingThreshold();
     final int numberOfCandidates = ballotCounting.getTotalNumberOfCandidates();
@@ -443,12 +444,23 @@ public class ElectoralScenario implements Serializable {
    * 
    * @return
    */
-  public boolean matchesResult (ElectionResult result) {
+  public boolean matchesResult (final ElectionResult result) {
     
+    final int numberOfCandidates = this.getNumberOfCandidates();
+
     for (Outcome outcome : listOfOutcomes.getOutcomes()) {
       // Find a result to match each expected outcome
       
-      // TODO
+      boolean matched = false;
+      for (int i=0; i < numberOfCandidates; i++) {
+        if (outcome.check(result.getStatus(i), result.threshold(), result.getQuota()) {
+          matched = true;
+        }
+        
+        if (matched == false) {
+          return false;
+        }
+      }
       
     }
     

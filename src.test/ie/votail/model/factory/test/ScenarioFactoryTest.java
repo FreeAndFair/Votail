@@ -20,7 +20,7 @@ public class ScenarioFactoryTest extends TestCase {
   @Test
   public void testThreeCandidateScenarios() {
     final ScenarioFactory scenarioFactory = new ScenarioFactory();
-    ScenarioList threeCandidateScenarios =
+    final ScenarioList threeCandidateScenarios =
         scenarioFactory.find(3, 1, Method.STV);
     assertEquals(52, threeCandidateScenarios.size());
     assertEquals(38, threeCandidateScenarios.getNumberOfScenarios(1));

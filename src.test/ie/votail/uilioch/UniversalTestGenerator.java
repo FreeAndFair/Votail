@@ -235,7 +235,7 @@ public class UniversalTestGenerator extends Uilioch {
    */
   public static void main(final String[] args) {
     final UniversalTestGenerator uilioch = 
-      new UniversalTestGenerator(17, 17, 17);
+      new UniversalTestGenerator(17, 17, 17); // 17 tasks with max scope of 17
     
     uilioch.generateTests(1, 5, Method.STV); // IRV 1-seat
     uilioch.generateTests(3, 7, Method.STV); // PR-STV 3-seat

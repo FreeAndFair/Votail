@@ -87,7 +87,7 @@ public class ScenarioFactory {
    */
   protected void findBaseScenarios(final Method method, 
       final ScenarioList scenarios,
-      boolean byeElection) {
+      final boolean byeElection) {
     // Winner gets majority of votes, loser reaches threshold
     final ElectoralScenario commonScenario =
         new ElectoralScenario(method, byeElection);
@@ -102,7 +102,7 @@ public class ScenarioFactory {
     scenarios.add(tiedScenario);
     
     // Winner by tie breaker, loser below threshold
-    ElectoralScenario landslideScenario =
+    final ElectoralScenario landslideScenario =
         new ElectoralScenario(method, byeElection);
     landslideScenario.addOutcome(Outcome.Winner);
     landslideScenario.addOutcome(Outcome.SoreLoser);
@@ -110,7 +110,7 @@ public class ScenarioFactory {
     
     // Winner by tie breaker, loser below threshold
     if (method == Method.STV) {
-      ElectoralScenario unusualScenario =
+      final ElectoralScenario unusualScenario =
           new ElectoralScenario(method, byeElection);
       unusualScenario.addOutcome(Outcome.TiedWinner);
       unusualScenario.addOutcome(Outcome.TiedSoreLoser);

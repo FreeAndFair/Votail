@@ -40,7 +40,7 @@ public class UniversalTestRunner extends Uilioch {
   
   public class VotailRunner extends BallotCounting {
     /**
-     * Run the whole election count
+     * Run the whole election count.
      * 
      * @param ballotBox
      *          Ballot box and election configuration
@@ -48,17 +48,17 @@ public class UniversalTestRunner extends Uilioch {
      */
     //@ requires state == EMPTY;
     //@ ensures state == FINISHED;
-    public/*@ non_null @*/ElectionResult run(final Constituency constituency,
+    public final /*@ non_null @*/ElectionResult run(final Constituency constituency,
         final BallotBox ballotBox) {
       this.setup(constituency);
       this.load(ballotBox);
       if (0 < this.totalNumberOfVotes) {
       this.count();
-      }
+    }
       else {
         logger.warning("Unexpected empty ballot box");
       }
-      return new ElectionResult(this.candidates);
+      return new ElectionResult(this.candidates, this.getQuota(), this.getSavingThreshold());
     }
   }
   

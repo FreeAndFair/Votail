@@ -36,11 +36,11 @@ public class BallotBoxFactoryTest extends TestCase {
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     scenario.addOutcome(Outcome.EarlyLoser);
-    BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
-    ElectionConfiguration electionConfiguration =
+    final BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
+    final ElectionConfiguration electionConfiguration =
         ballotBoxFactory.extractBallots(scenario, 7);
     assertFalse(electionConfiguration == null);
-    BallotCounting counter = new BallotCounting();
+    final BallotCounting counter = new BallotCounting();
     counter.setup(electionConfiguration.getConstituency());
     counter.load(electionConfiguration);
     counter.count();
@@ -49,12 +49,12 @@ public class BallotBoxFactoryTest extends TestCase {
   
   @Test
   public void testGenerateBallotBox() {
-    ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
     scenario.addOutcome(Outcome.EarlyLoser);
     scenario.addOutcome(Outcome.SoreLoser);
-    BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
+    final BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
     ElectionConfiguration electionConfiguration =
         ballotBoxFactory.extractBallots(scenario, 7);
     checkElectionConfiguration(electionConfiguration);

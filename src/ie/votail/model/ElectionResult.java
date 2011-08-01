@@ -19,8 +19,8 @@ public class ElectionResult {
   
   public static class CandidateResults {
     protected int numberOfCandidates;
-    private byte[] status;
-    private int[] identifiers;
+    protected byte[] status;
+    protected int[] identifiers;
     
     //@ requires this.status == null;
     //@ requires \nonnullelements (listOfStates);
@@ -83,30 +83,38 @@ public class ElectionResult {
     }
     
     /**
-     * @param numberOfCandidates
+     * @param number
      *          the numberOfCandidates to set
      */
-    public void setNumberOfCandidates(int numberOfCandidates) {
-      this.numberOfCandidates = numberOfCandidates;
+    /*@ requires 1 < number;
+      @ assignable this.numberOfCandidates;
+      @ ensures this.numberOfCandidates == number;
+      @*/
+    public void setNumberOfCandidates(final int number) {
+      this.numberOfCandidates = number;
     }
   }
   
   protected CandidateResults candidateResults = new CandidateResults();
+  private int threshold;
+  private int quota;
   
   /**
    * Extract election results from Votail format
    * 
-   * @param quota
-   * @param threshold
-   * @param rounds
    * @param candidates
+   * @param theThreshold 
+   * @param theQuota 
    */
-  public ElectionResult(Candidate[] candidates) {
+  public ElectionResult(final Candidate[] candidates, final int theQuota, 
+      final int theThreshold) {
     
     extractCandidateResults(candidates);
+    this.setQuota(theQuota);
+    this.setThreshold(theThreshold);
   }
   
-  public ElectionResult(int[] outcome, int numberOfWinners) {
+  public ElectionResult(final int[] outcome, final int numberOfWinners) {
     load(outcome, numberOfWinners);
   }
   
@@ -116,7 +124,7 @@ public class ElectionResult {
    * @param outcome The ordered list of winners and losers
    * @param numberOfWinners The number of winners
    */
-  public final void load(int[] outcome, int numberOfWinners) {
+  public final void load(int[] outcome, final int numberOfWinners) {
     candidateResults.numberOfCandidates = outcome.length;
     
     candidateResults.setIdentifiers(outcome);
@@ -134,6 +142,7 @@ public class ElectionResult {
    * Create an empty Election Result.
    */
   public ElectionResult() {
+    // Create an empty result, to be filled later
   }
   
   /**
@@ -165,5 +174,30 @@ public class ElectionResult {
     
     return this.candidateResults.matches(other.candidateResults);
   }
+ 
+  public /*@ pure */ byte getStatus (int index) {
+    return this.candidateResults.status[index];   
+  }
   
+  public int getThreshold() {
+    return threshold;
+  }
+  
+  public int getQuota() {
+    return quota;
+  }
+
+  /**
+   * @param threshold the threshold to set
+   */
+  public void setThreshold(int threshold) {
+    this.threshold = threshold;
+  }
+
+  /**
+   * @param quota the quota to set
+   */
+  public void setQuota(int quota) {
+    this.quota = quota;
+  }
 }

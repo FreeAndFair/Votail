@@ -16,7 +16,7 @@ import election.tally.Constituency;
 import election.tally.CountConfiguration;
 import election.tally.ElectionStatus;
 
-public class TestDataGenerator {
+public final class TestDataGenerator {
 
   /**
    * 
@@ -159,7 +159,7 @@ public class TestDataGenerator {
   }
 
   //@ requires 0 <= number;
-  public static Candidate getCandidate(int number) {
+  public static Candidate getCandidate(final int number) {
     if (candidate_count == 0 || number == 0) {
       candidate_count++;
       return new Candidate();
@@ -196,9 +196,9 @@ public class TestDataGenerator {
       // Two way ties
       else if (number == 3) {
         final BallotBox ballotBox = new BallotBox();
-        Candidate candidate1 = new Candidate();
-        Candidate candidate2 = new Candidate();
-        Candidate candidate3 = new Candidate();
+        final Candidate candidate1 = new Candidate();
+        final Candidate candidate2 = new Candidate();
+        final Candidate candidate3 = new Candidate();
         int[] list = new int[3];
 
         // First ballot
@@ -214,8 +214,8 @@ public class TestDataGenerator {
       }
       // Three way ties
       else if (number == 4) {
-        BallotBox ballotBox = new BallotBox();
-        Candidate candidate1 = new Candidate();
+        final BallotBox ballotBox = new BallotBox();
+        final Candidate candidate1 = new Candidate();
         Candidate candidate2 = new Candidate();
         Candidate candidate3 = new Candidate();
         int[] list = new int[4];
@@ -259,12 +259,12 @@ public class TestDataGenerator {
    * BallotCounting is the top level object in the system; it is neither a field
    * nor a formal parameter for any other object.
    * 
-   * @param n
+   * @param number
    * @return A Ballot Counting object
    */
   //@ requires 0 <= n;
-  public static BallotCounting getBallotCounting(int n) {
-    if (ballotCounting_count == 0 || n == 0) {
+  public static BallotCounting getBallotCounting(final int number) {
+    if (ballotCounting_count == 0 || number == 0) {
       ballotCounting_count++;
       return new BallotCounting();
     }
@@ -272,13 +272,12 @@ public class TestDataGenerator {
   }
 
   public static Object[] getIntArrayAsObject() {
-    final Object[] intArray = new Object[0];
-    return intArray;
+    return new Object[0];
   }
 
-  //@ requires 0 <= n;
-  public static AbstractCountStatus getAbstractCountStatus(int n) {
-    if (abstractCountStatus_count == 0 || n == 0) {
+  //@ requires 0 <= number;
+  public static AbstractCountStatus getAbstractCountStatus(int number) {
+    if (abstractCountStatus_count == 0 || number == 0) {
       abstractCountStatus_count++;
       BallotCounting ballotCounting = new BallotCounting();
       return ballotCounting.getCountStatus();

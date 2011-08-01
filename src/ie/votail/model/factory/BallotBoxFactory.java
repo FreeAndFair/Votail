@@ -44,6 +44,7 @@ public class BallotBoxFactory {
   protected String modelName;
 
   protected ScenarioList impossibleScenarios;
+  protected final Map<String, String> loaded;
   
   /**
    *
@@ -52,6 +53,7 @@ public class BallotBoxFactory {
     modelName = MODELS_VOTING_ALS;
     logger.info("Using model " + modelName);
     impossibleScenarios = new ScenarioList();
+    loaded = null;
   }
   
   /**
@@ -166,7 +168,7 @@ public class BallotBoxFactory {
    * @param solution
    * @param sig
    */
-  protected void logVersionNumber(final A4Solution solution, Sig sig) {
+  protected void logVersionNumber(final A4Solution solution, final Sig sig) {
     for (Field field : sig.getFields()) {
       if (field.label.contains("year")) {
         final A4TupleSet tupleSet = solution.eval(field);
@@ -201,7 +203,6 @@ public class BallotBoxFactory {
     final A4Reporter reporter = new A4Reporter();
     final A4Options options = new A4Options();
     options.solver = A4Options.SatSolver.SAT4J;
-    final Map<String, String> loaded = null;
     CompModule world;
     try {
       world = CompUtil.parseEverything_fromFile(reporter, loaded, modelName);
@@ -216,7 +217,7 @@ public class BallotBoxFactory {
     logger.info("Trying scope " + scope + " for scenario " + scenario);
     final Command command =
         new Command(false, scope, BIT_WIDTH, scope, predicate);
-    A4Solution solution =
+    final A4Solution solution =
         TranslateAlloyToKodkod.execute_command(reporter, world
             .getAllReachableSigs(), command, options);
     return solution;
