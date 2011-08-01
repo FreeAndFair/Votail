@@ -40,7 +40,7 @@ public class BallotBoxFactory {
   public static final String LOGGER_NAME = "votail.log";
   public static final String MODELS_VOTING_ALS = "models/Voting.als";
   protected final static Logger logger = Logger.getLogger(LOGGER_NAME);
-  protected static final int MAX_SCOPE = 30;
+  protected static final int MAX_SCOPE = 17;
   protected String modelName;
 
   protected ScenarioList impossibleScenarios;
@@ -82,7 +82,7 @@ public class BallotBoxFactory {
    * @return The Ballot Box
    */
   //@ requires 0 < scope && scope <= upperBound;
-  protected /*@ pure @*/ ElectionConfiguration extractBallots(/*@ non_null*/
+  public /*@ pure @*/ ElectionConfiguration extractBallots(/*@ non_null*/
       final ElectoralScenario scenario, final int scope, final int upperBound) {
     
     // Find a ballot box which creates this scenario
