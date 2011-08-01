@@ -12,18 +12,20 @@ import java.util.logging.Logger;
 public class AlloyTask implements Runnable {
   
   protected ObjectOutputStream out;
-  protected int scope = 7;
+  protected int initialScope = 7;
   protected ElectoralScenario scenario;
   protected static final Logger logger = Logger.getAnonymousLogger();
   protected BallotBoxFactory ballotBoxFactory;
   protected Analysis analysis;
+  protected int limit; //@ protected invariant initialScope <= limit;
   
   public AlloyTask(final ObjectOutputStream out, 
-      final ElectoralScenario scenario) {
+      final ElectoralScenario scenario, final int maximumScope) {
     this.scenario = scenario;
     this.out = out;
     this.ballotBoxFactory = new BallotBoxFactory();
     this.analysis = new Analysis();
+    this.limit = maximumScope;
   }
   
   @Override
@@ -32,7 +34,7 @@ public class AlloyTask implements Runnable {
     try {
       // Find solution
       final ElectionConfiguration ballots =
-          ballotBoxFactory.extractBallots(scenario, scope);
+          ballotBoxFactory.extractBallots(scenario, initialScope, limit);
       
       if (ballots == null) {
         logger.severe("Failed to find a solution for scenario " + scenario);

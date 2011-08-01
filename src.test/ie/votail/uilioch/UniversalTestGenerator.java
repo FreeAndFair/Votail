@@ -27,18 +27,20 @@ public class UniversalTestGenerator extends Uilioch {
   protected String dataFilename;
   protected String existingDataFilename;
   protected boolean existingDataFlag;
+  protected int maxScope;
   
   /**
    * Prepare for test generation
    * 
    * @param workers
    *          The number of tasks than run in parallel
+   * @param scopeLimit TODO
    * @param width
    *          The expected maximum queue length per task
    */
   /*@ requires 0 < workers;
     @ requires 0 < width; */
-  public UniversalTestGenerator(final int workers, final int capacity) {
+  public UniversalTestGenerator(final int workers, final int capacity, int scopeLimit) {
     super();
     
     ballotBoxFactory = new BallotBoxFactory();
@@ -154,7 +156,7 @@ public class UniversalTestGenerator extends Uilioch {
       
       // Check if this scenario already generated
       if (!alreadyExists(scenario, out)) {
-          taskPool.execute(new AlloyTask(out, scenario));
+          taskPool.execute(new AlloyTask(out, scenario, maxScope));
           count++;
       }
     }
@@ -232,7 +234,8 @@ public class UniversalTestGenerator extends Uilioch {
    * Generate enough test data for 100% path coverage
    */
   public static void main(final String[] args) {
-    final UniversalTestGenerator uilioch = new UniversalTestGenerator(17,9000);
+    final UniversalTestGenerator uilioch = 
+      new UniversalTestGenerator(17, 17, 17);
     
     uilioch.generateTests(1, 5, Method.STV); // IRV 1-seat
     uilioch.generateTests(3, 7, Method.STV); // PR-STV 3-seat
