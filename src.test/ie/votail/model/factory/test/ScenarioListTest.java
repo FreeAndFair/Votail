@@ -25,7 +25,8 @@ public class ScenarioListTest extends TestCase {
   @Test
   public void testGetNumberOfScenarios() {
     final ScenarioList scenarioList = new ScenarioList();
-    final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
+    final ElectoralScenario scenario = 
+      new ElectoralScenario(Method.STV, false);
     scenario.addOutcome(Outcome.Winner);
     scenarioList.add(scenario);
     assertEquals(1, scenarioList.getNumberOfScenarios(1));

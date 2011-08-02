@@ -452,8 +452,12 @@ public class ElectoralScenario implements Serializable {
       // Find a result to match each expected outcome
       
       boolean matched = false;
+      final int threshold = result.getThreshold();
+      final int quota = result.getQuota();
+
       for (int i=0; i < numberOfCandidates; i++) {
-        if (outcome.check(result.getStatus(i), result.threshold(), result.getQuota()) {
+        if (outcome.check(result.getCandidate(i), threshold, 
+            quota)) {
           matched = true;
         }
         

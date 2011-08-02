@@ -98,6 +98,7 @@ public class ElectionResult {
   protected CandidateResults candidateResults = new CandidateResults();
   private int threshold;
   private int quota;
+  private Candidate[] candidateList;
   
   /**
    * Extract election results from Votail format
@@ -109,6 +110,10 @@ public class ElectionResult {
   public ElectionResult(final Candidate[] candidates, final int theQuota, 
       final int theThreshold) {
     
+    candidateList = new Candidate[candidates.length];
+    for (int i=0; i < candidates.length; i++) {
+      candidateList[i] = candidates[i];
+    }
     extractCandidateResults(candidates);
     this.setQuota(theQuota);
     this.setThreshold(theThreshold);
@@ -199,5 +204,9 @@ public class ElectionResult {
    */
   public void setQuota(int quota) {
     this.quota = quota;
+  }
+
+  public Candidate getCandidate(int i) {
+    return candidateList[i];
   }
 }
