@@ -47,10 +47,10 @@ public enum Outcome {
     if (this == CompromiseWinner || this == TiedWinner) {
       return candidate.isElected() && candidate.getTotalVote() < quota;
     }
-    // Losers at or above threshold, without elimination
+    
+    // Losers or tied losers of any kind
     if (this == Loser || this == TiedLoser) {
-        return !candidate.isElected() &&
-               threshold <= candidate.getTotalVote();
+        return !candidate.isElected();
     }
     // Losers at or above threshold, with elimination
     if (this == EarlyLoser || 
@@ -68,7 +68,6 @@ public enum Outcome {
     // Late Losers below threshold, with or without ties
     if (this == SoreLoser || this == TiedSoreLoser) {
         return !candidate.isElected() && 
-               !candidate.isEliminated() && 
                candidate.getTotalVote() < threshold;
     }
     

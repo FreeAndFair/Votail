@@ -113,9 +113,13 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   
   //@ ensures numberOfCandidateIDs <= numberOfCandidates;
   protected final void updateCandidateIDs(final int candidateID) {
+    if (candidateID == Candidate.NO_CANDIDATE) {
+      return; // do nothing
+    }
+    
     for (int i = 0; i < numberOfCandidateIDs; i++) {
       if (candidateID == candidateIDs[i]) {
-        return;
+        return; // do nothing
       }
     }
     candidateIDs[numberOfCandidateIDs] = candidateID;

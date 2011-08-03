@@ -384,6 +384,9 @@ public class BallotCounting extends AbstractBallotCounting {
          countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS); 
          redistributeBallots(candidates[loser].getCandidateID()); 
       }
+      else {
+        break; // Infinite loop detected by Uilioch; fixed 2011.08.03
+      }
     }
    } 
   

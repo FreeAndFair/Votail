@@ -85,7 +85,8 @@ public class BallotBoxFactory {
    */
   //@ requires 0 < scope && scope <= upperBound;
   public /*@ pure @*/ ElectionConfiguration extractBallots(/*@ non_null*/
-      final ElectoralScenario scenario, final int scope, final int upperBound) {
+      final ElectoralScenario scenario, final int scope, 
+      final int upperBound) {
     
     // Find a ballot box which creates this scenario
     for (int i=scope; i < upperBound; i++) {
@@ -108,7 +109,9 @@ public class BallotBoxFactory {
     logger.info(
       "This scenario might be impossible " + 
       scenario.toString());
-    impossibleScenarios.add(scenario);
+    synchronized (impossibleScenarios) {
+      impossibleScenarios.add(scenario);
+    }
     logger.info("Number of questionable scenarios so far: " + 
       impossibleScenarios.size());
     return null;
