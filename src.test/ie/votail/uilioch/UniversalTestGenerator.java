@@ -228,7 +228,7 @@ public class UniversalTestGenerator extends Uilioch {
   protected void writeBallots(final ObjectOutputStream out,
     final ElectionData testData, final ElectoralScenario scenario) 
     throws IOException {
-    final AlloyTask alloyTask = new AlloyTask(out,scenario);
+    final AlloyTask alloyTask = new AlloyTask(out,scenario, maxScope);
     alloyTask.writeBallots(testData);
   }
   
