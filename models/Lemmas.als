@@ -172,6 +172,13 @@ assert handleSpoiltBallots {
 }
 check handleSpoiltBallots for 7 int
 
+// Non-sore Loser is above threshold
+assert nonSoreLoserAboveThreshold {
+  no c : Candidate | c.outcome = Loser and 
+    (#c.votes + #c.transfers) < Scenario.threshold
+}
+check nonSoreLoserAboveThreshold for 7 but  7 int
+
 -- Sample scenarios
 pred TwoCandidatePlurality { 
 	Election.method = Plurality
@@ -336,6 +343,12 @@ pred LW {
   Election.method = Plurality and 0 < #Ballot and #Candidate = 2
 }
 run LW for 5 but 6 int
+
+pred LWstv {
+  some disj c0,c1: Candidate | c0.outcome = Loser and c1.outcome = Winner and 
+  Election.method = STV and 0 < #Ballot and #Candidate = 2
+}
+run LWstv for 7 but 7 int
 
 pred LLWstv {
   some disj c0,c1,c2: Candidate | c0.outcome = Loser and c1.outcome = Winner and
