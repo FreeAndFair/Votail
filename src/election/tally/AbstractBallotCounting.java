@@ -907,7 +907,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public/*@ pure @*/int findHighestCandidate() {
     
     int highestCandidate = AbstractBallotCounting.NONE_FOUND_YET;
-    long mostVotes = 0;
+    int mostVotes = 0;
     
     /*@ loop_invariant (highestCandidate == i) <==>
       @   (mostVotes == countBallotsFor(candidates[i].getCandidateID()) &&
@@ -953,7 +953,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
   public/*@ pure @*/int findLowestCandidate() {
     
-    long leastVotes = CountConfiguration.MAXVOTES;
+    int leastVotes = CountConfiguration.MAXVOTES;
     int lowest = AbstractBallotCounting.NONE_FOUND_YET;
     
     /*@ loop_invariant (lowest == i) <==>
