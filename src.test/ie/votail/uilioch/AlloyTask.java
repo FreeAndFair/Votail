@@ -37,7 +37,7 @@ public class AlloyTask implements Runnable {
           ballotBoxFactory.extractBallots(scenario, initialScope, limit);
       
       if (ballots == null) {
-        logger.severe("Failed to find a solution for scenario " + scenario);
+        logger.info("Failed to find a solution for scenario " + scenario);
       }
       else {
         logger.info("Writing newly generated ballot box for scenario " +
