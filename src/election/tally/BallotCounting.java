@@ -132,7 +132,7 @@ public class BallotCounting extends AbstractBallotCounting {
       countStatus.changeState(AbstractCountStatus.READY_TO_MOVE_BALLOTS);
       
       /*@ loop_invariant (0 < i) ==>
-        @   (\old countBallotsFor(candidates[winner].getCandidateID()) + 
+        @   (\old (countBallotsFor(candidates[winner].getCandidateID())) + 
         @     \old (countBallotsFor(candidates[i-1].getCandidateID())) ==
         @   (countBallotsFor(candidates[winner].getCandidateID()) +
         @     countBallotsFor(candidates[i-1].getCandidateID())));
@@ -168,7 +168,6 @@ public class BallotCounting extends AbstractBallotCounting {
   
   //@ requires 0 <= winner && winner < candidateList.length;
   //@ requires state == COUNTING;
-  //@ requires countStatus.getStatus == READY_TO_TRANSFER;
   protected void removeNonTransferableBallots(final int winner,
       final int surplus, final int totalTransferableVotes) {
     if (surplus > totalTransferableVotes) {
@@ -230,8 +229,8 @@ public class BallotCounting extends AbstractBallotCounting {
     int ballotsMoved = 0;
     /*@ loop_invariant (0 < b) ==>
       @   ((ballotsMoved <= numberOfVotes) &&
-      @   (\old(ballots[b-1].isAssignedTo(fromCandidate)) ==>
-      @     ballots[b-1].isAssignedTo(toCandidate)));
+      @   (\old(ballots[b-1].isAssignedTo(fromCandidate.getCandidateID())) ==>
+      @     ballots[b-1].isAssignedTo(toCandidate.getCandidateID())));
       @*/
     for (int b = 0; b < ballots.length; b++) { 
       if ((ballots[b].getCandidateID() == fromCandidateID) && 
@@ -349,7 +348,7 @@ public class BallotCounting extends AbstractBallotCounting {
   /*@ requires PRECOUNT <= state;
     @ ensures \result == (\exists int i; 0 <= i && i < totalNumberOfCandidates;
     @   (candidates[i].getStatus() == CandidateStatus.CONTINUING)
-    @   && hasQuota(candidates[i]);
+    @   && hasQuota(candidates[i]));
     @*/
   protected/*@ pure @*/boolean candidatesWithQuota() {
     /*@ loop_invariant !(\exists int c; 0 <= c && c < i;
@@ -480,7 +479,7 @@ public class BallotCounting extends AbstractBallotCounting {
     return countStatus;
   }
   
-  //@ ensures 3*totalNumberOfCandidates + 60 <= \result.length;
+  //@ ensures 3*totalNumberOfCandidates + 60 <= \result.length();
   public/*@ pure non_null */String getResults() {
     final StringBuffer buffer = new StringBuffer(150);
     

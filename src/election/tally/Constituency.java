@@ -95,7 +95,7 @@ public class Constituency implements Serializable {
     if (candidateList == null || candidateList.length < this.candidates) {
       this.candidateList = new Candidate[this.candidates];
       
-      //@ loop_invariant (0 < index) ==> candidateList[i-1] != null;
+      //@ loop_invariant (0 < index) ==> candidateList[index-1] != null;
       for (int index = 0; index < this.candidates; index++) {
         this.candidateList[index] = new Candidate();
       }

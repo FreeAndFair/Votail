@@ -295,7 +295,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.status = PRELOAD;
     this.candidates = new Candidate[this.totalNumberOfCandidates];
     /*@ loop_invariant (0 < i) ==> 
-      @   (this.candidates[i-1].equals(constituency.getCandidate(i-1));
+      @   (this.candidates[i-1].equals(constituency.getCandidate(i-1)));
       @*/
     for (int i = 0; i < candidates.length; i++) {
       this.candidates[i] = constituency.getCandidate(i);
@@ -813,7 +813,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       final int transfersToFirst, final int firstTransferRemainder,
       final/*@ non_null @*/Candidate secondCandidate) {
     
-    // TODO 2009.10.14 ESC warning
     final int secondTransferRemainder =
         getTransferRemainder(fromCandidate, secondCandidate);
     if (secondTransferRemainder > firstTransferRemainder) {

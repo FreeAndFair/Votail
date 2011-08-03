@@ -153,7 +153,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @ ensures candidateID != nextCandidateID;
     @ ensures nextCandidateID != \old(nextCandidateID);
     @ ensures (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
-    @   getVoteAtCount() == 0);
+    @   getVoteAtCount(i) == 0);
     @*/
   public Candidate() {
     super();

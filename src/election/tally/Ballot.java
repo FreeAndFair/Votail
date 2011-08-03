@@ -306,7 +306,7 @@ public final class Ballot implements Serializable {
   /*@ public normal_behavior
     @ ensures isApproved(candidateID) ==>
     @   ((0 <= \result && \result <= numberOfPreferences) &&
-    @   (candidateID == preferenceLlist[\result]) &&
+    @   (candidateID == preferenceList[\result]) &&
     @   (\forall int i; 0 <= i && i < \result;
     @     candidateID != preferenceList[i]));
     @ ensures !isApproved(candidateID) ==>
