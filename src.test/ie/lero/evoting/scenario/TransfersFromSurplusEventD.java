@@ -65,8 +65,6 @@ public class TransfersFromSurplusEventD extends TestCase {
     //@ assert (2 == ballotCounting.getRemainingSeats());
     assertTrue(3 * NUM_CANDIDATES == ballotBox.size());
     assertTrue(1 == secondPlace);
-    final int countState = ballotCounting.countStatus.getState();
-    assertTrue(ballotCounting.countStatus.isPossibleState(countState));
     
     // Test that the count completes normally
     ballotCounting.count();

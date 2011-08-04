@@ -59,19 +59,7 @@ public class BallotCounting extends AbstractBallotCounting {
       this.substate = READY_TO_COUNT;
     }
     
-    protected/*@ spec_public @*/int substate;
-    
-    /**
-     * Get the state of the inner automaton for counting ballots in Dail
-     * elections.
-     * 
-     * @return The state of the count.
-     */
-    /*@ also ensures \result == substate;
-      @*/
-    public/*@ pure @*/int getState() {
-      return this.substate;
-    }
+    protected/*@ spec_public @*/int substate; //@ represents state;
     
     /**
      * Move along the next valid transition in state.
@@ -84,30 +72,9 @@ public class BallotCounting extends AbstractBallotCounting {
     public void changeState(final int newState) {
       substate = newState;
     }
-    
-    /**
-     * Is this a valid state for the count to be in?
-     * 
-     * @param value
-     *          The state to be checked.
-     * @return <code>true</code> if this stage exists with the automaton for
-     *         counting of Dail ballots
-     */
-    public/*@ pure @*/boolean isPossibleState(final int value) {
-      return ((READY_TO_COUNT == value) || (NO_SEATS_FILLED_YET == value)
-          || (CANDIDATES_HAVE_QUOTA == value) || (CANDIDATE_ELECTED == value)
-          || (NO_SURPLUS_AVAILABLE == value) || (SURPLUS_AVAILABLE == value)
-          || (READY_TO_ALLOCATE_SURPLUS == value)
-          || (READY_TO_MOVE_BALLOTS == value) || (CANDIDATE_EXCLUDED == value)
-          || (READY_FOR_NEXT_ROUND_OF_COUNTING == value)
-          || (LAST_SEAT_BEING_FILLED == value)
-          || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
-          || (ONE_OR_MORE_SEATS_REMAINING == value)
-          || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
-    }
   }
-  
-  /** Inner ASM */
+    
+    /** Inner ASM */
   public /*@ non_null @*/ CountStatus countStatus;
   
   /**
@@ -470,17 +437,6 @@ public class BallotCounting extends AbstractBallotCounting {
     @   return getNumberContinuing();
     @ }
     @*/
-  
-  /**
-   * Return the status of the count
-   * 
-   * @return The status of the count
-   */
-  //@ requires countStatus != null;
-  //@ ensures \result == countStatus;
-  public/*@ pure @*/AbstractCountStatus getCountStatus() {
-    return countStatus;
-  }
   
   //@ ensures 3*totalNumberOfCandidates + 60 <= \result.length();
   public/*@ pure non_null */String getResults() {

@@ -19,10 +19,15 @@ public abstract class AbstractCountStatus {
 	public static final int ALL_SEATS_FILLED = 16;
 	public static final int END_OF_COUNT = 17;
 	public static final int ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT = 18;
+	
+	
+	//@ public model int state;
 	/**
 	 * Get the current stage of counting.
 	 */
-	public abstract /*@ pure @*/ int getState();
+	/*@ public model pure  int getState()
+	  @   return state;
+	  @*/
 
 	/**
 	 * Move to the next stage of counting.
@@ -56,8 +61,20 @@ public abstract class AbstractCountStatus {
     @   (ALL_SEATS_FILLED == value) ||
     @   (END_OF_COUNT == value) ||
     @   (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
-	  @*/
-	public abstract /*@ pure @*/ boolean isPossibleState(int value);
+    @
+    @  public model pure boolean isPossibleState(int value) 
+    @     return ((READY_TO_COUNT == value) || (NO_SEATS_FILLED_YET == value)
+    @      || (CANDIDATES_HAVE_QUOTA == value) || (CANDIDATE_ELECTED == value)
+          || (NO_SURPLUS_AVAILABLE == value) || (SURPLUS_AVAILABLE == value)
+          || (READY_TO_ALLOCATE_SURPLUS == value)
+          || (READY_TO_MOVE_BALLOTS == value) || (CANDIDATE_EXCLUDED == value)
+          || (READY_FOR_NEXT_ROUND_OF_COUNTING == value)
+          || (LAST_SEAT_BEING_FILLED == value)
+          || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
+          || (ONE_OR_MORE_SEATS_REMAINING == value)
+          || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
+    }
+      @*/
 
 	/*
 	 * Confirm that this is a valid transition from one stage of counting to another.

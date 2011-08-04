@@ -277,11 +277,6 @@ public final class TestDataGenerator {
 
   //@ requires 0 <= number;
   public static AbstractCountStatus getAbstractCountStatus(int number) {
-    if (abstractCountStatus_count == 0 || number == 0) {
-      abstractCountStatus_count++;
-      BallotCounting ballotCounting = new BallotCounting();
-      return ballotCounting.getCountStatus();
-    }
     throw new java.util.NoSuchElementException();
   }
 }
