@@ -151,7 +151,7 @@ public final class TestDataGenerator {
     } else if (number < Candidate.MAX_CANDIDATES) {
       int[] list = new int[number];
       for (int i=0; i<number; i++) {
-        list[i] = new Candidate().getCandidateID();
+        list[i] = i;
       }
       return new Ballot(list);
     }
@@ -162,7 +162,7 @@ public final class TestDataGenerator {
   public static Candidate getCandidate(final int number) {
     if (candidate_count == 0 || number == 0) {
       candidate_count++;
-      return new Candidate();
+      return new Candidate(number);
     }
     throw new java.util.NoSuchElementException();
   }
@@ -175,15 +175,15 @@ public final class TestDataGenerator {
         return new BallotBox();
       } else if (number == 1) {
         final BallotBox oneBallotInBox = new BallotBox();
-        final Candidate firstCandidate = new Candidate();
+        final Candidate firstCandidate = new Candidate(number);
         int[] list = new int[1];
         list[0] = firstCandidate.getCandidateID();
         oneBallotInBox.accept(list);
         return oneBallotInBox;
       } else if (number == 2) {
         final BallotBox twoBallotsInBox = new BallotBox();
-        final Candidate firstCandidate = new Candidate();
-        final Candidate secondCandidate = new Candidate();
+        final Candidate firstCandidate = new Candidate(number);
+        final Candidate secondCandidate = new Candidate(number+1);
         int[] list = new int[2];
         list[0] = firstCandidate.getCandidateID();
         list[1] = secondCandidate.getCandidateID();
@@ -196,9 +196,9 @@ public final class TestDataGenerator {
       // Two way ties
       else if (number == 3) {
         final BallotBox ballotBox = new BallotBox();
-        final Candidate candidate1 = new Candidate();
-        final Candidate candidate2 = new Candidate();
-        final Candidate candidate3 = new Candidate();
+        final Candidate candidate1 = new Candidate(number);
+        final Candidate candidate2 = new Candidate(number+1);
+        final Candidate candidate3 = new Candidate(number+2);
         int[] list = new int[3];
 
         // First ballot
@@ -215,9 +215,9 @@ public final class TestDataGenerator {
       // Three way ties
       else if (number == 4) {
         final BallotBox ballotBox = new BallotBox();
-        final Candidate candidate1 = new Candidate();
-        Candidate candidate2 = new Candidate();
-        Candidate candidate3 = new Candidate();
+        final Candidate candidate1 = new Candidate(number);
+        Candidate candidate2 = new Candidate(number+1);
+        Candidate candidate3 = new Candidate(number+2);
         int[] list = new int[4];
 
         // First ballot

@@ -48,17 +48,21 @@ public class UniversalTestRunner extends Uilioch {
      */
     //@ requires state == EMPTY;
     //@ ensures state == FINISHED;
-    public final /*@ non_null @*/ElectionResult run(final Constituency constituency,
-        final BallotBox ballotBox) {
+    public final /*@ non_null @*/ElectionResult run(
+      final Constituency constituency,
+      final BallotBox ballotBox) {
       this.setup(constituency);
       this.load(ballotBox);
       if (0 < this.totalNumberOfVotes) {
-      this.count();
-    }
-      else {
-        logger.warning("Unexpected empty ballot box");
+        this.count();
       }
-      return new ElectionResult(this.candidates, this.getQuota(), this.getSavingThreshold());
+      
+      logger.info(this.getResults());
+      logger.info(ballotBox.size() + " ballots");
+      logger.info(this.getTotalNumberOfCandidates() + " candidates");
+      
+      return new ElectionResult(this.candidates, this.getQuota(), 
+          this.getSavingThreshold());
     }
   }
   
@@ -159,6 +163,7 @@ public class UniversalTestRunner extends Uilioch {
       logger.warning("Unexpected results for scenario " + scenario);
     }
     
+    
     return result;
   }
   
@@ -195,18 +200,11 @@ public class UniversalTestRunner extends Uilioch {
         convertBallotsIntoCoyleDoyleFormat(ballotBox);
     logger.info("CoyleDoyle ballot papers: " + ballotPapers.toString());
     
-    if (ballotPapers.isEmpty()) {
-      
-      logger.severe("Failed to extract ballot data from " + ballotBox.toString()
-          + " to " + ballotPapers.toString());
     
-      
-    }
-    else {
       outcome = election.election(ballotPapers); 
       result = new ElectionResult(outcome, numberOfSeats);
       checkResult(scenario, result);
-    }
+    
     
     return result;
   }
@@ -497,15 +495,10 @@ public class UniversalTestRunner extends Uilioch {
         for (int i = 0; i < numberOfCandidates; i++) {
           final election.tally.Candidate candidate = candidateList.getCandidate(i);
           final int candidateID = candidate.getCandidateID();
+         
+            writer.append(";\"" + getRank(ballot,candidateID) + "\"");
           
-          if (ballot.isApproved(candidateID)) {
-            writer.append(";\"" + Integer.toString(ballot.getRank(candidateID))
-                + "\"");
-          }
-          else {
-            writer.append(";\"" + " " + "\"");
-
-          }
+         
         }
         index++;
       }
@@ -521,6 +514,16 @@ public class UniversalTestRunner extends Uilioch {
     return filename;
   }
   
+  protected String getRank(Ballot ballot, int candidateID) {
+    for (int index = 0; index < ballot.remainingPreferences(); index++) {
+      if (ballot.getNextPreference(index) == candidateID) {
+        return Integer.toString(index);
+      }
+    }
+    
+    return " "; // White space if no preference for this candidate
+  }
+
   public static void main(final String[] args) {
     final UniversalTestRunner uilioch = new UniversalTestRunner();
     uilioch.testScenarios(10, 10);

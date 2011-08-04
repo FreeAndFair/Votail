@@ -33,14 +33,13 @@ public class TransfersFromSurplusEventD extends TestCase {
     int[] preferenceB = new int[1];
     
     for (int i = 0; i < NUM_CANDIDATES; i++) {
-      assertTrue(election.getCandidate(i).sameAs(election.getCandidate(i)));
       preferenceA[0] = election.getCandidate(0).getCandidateID();
       ballotBox.accept(preferenceA);
       preferenceB[0] = election.getCandidate(i).getCandidateID();
       ballotBox.accept(preferenceB);
       ballotBox.accept(preferences);
     }
-    
+        
     ballotCounting.load(ballotBox);
     ballotCounting.startCounting();
     assertTrue(ballotBox.size() == 3 * NUM_CANDIDATES);
@@ -54,6 +53,7 @@ public class TransfersFromSurplusEventD extends TestCase {
     ballotCounting.electCandidate(winner);
     assertTrue(ballotCounting.isElected(election.getCandidate(winner)));
     assertTrue(election.getCandidate(winner).isElected());
+    assertFalse(election.getCandidate(winner).isEliminated());
     ballotCounting.countStatus
         .changeState(AbstractCountStatus.SURPLUS_AVAILABLE);
     ballotCounting.distributeSurplus(winner);

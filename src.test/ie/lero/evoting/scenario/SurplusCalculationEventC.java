@@ -37,7 +37,6 @@ public class SurplusCalculationEventC extends TestCase {
     for (int i = 0; i < NUM_CANDIDATES; i++) {
       preferences[i] = parameters.getCandidate(i).getCandidateID();
       assertTrue(parameters.getCandidate(i).getStatus() == CandidateStatus.CONTINUING);
-      assertTrue(parameters.getCandidate(i).getTotalAtCount() == 0);
     }
 
     final int numberOfVotes = NUM_BALLOTS;

@@ -51,7 +51,6 @@ public class QuotaCalculationEventA extends TestCase {
     // Candidate 0 has the full quota but no surplus
     assertTrue(quota == ballotCounting.countBallotsFor(parameters.getCandidate(
         0).getCandidateID()));
-    assertTrue(ballotCounting.getTotalSumOfSurpluses() == 0);
     
     ballotCounting.count();
     assertTrue(quota == ballotCounting.getQuota());
