@@ -142,35 +142,4 @@ public class BallotBox implements Serializable {
   public Ballot getNextBallot() {
     return ballots[index++];
   }
-
-  /**
-   * Convert the ballot box into a text string
-   * 
-   * @return The Ballot Box as a string
-   */
-  //@ also ensures 5*numberOfBallots <= \result.length();
-  public /*@ pure non_null */ String toString() {
-    final StringBuffer stringBuffer = new StringBuffer(1500);
-    stringBuffer.append(Integer.toString(numberOfBallots));
-    stringBuffer.append(" ballots ");
-    stringBuffer.append(BallotBox.PREFIX);
-    //@ loop_invariant 5*b <= stringBuffer.length();
-    for (int b = 0; b < numberOfBallots; b++) {
-      if (0 < b) {
-        stringBuffer.append(Ballot.WHITE_SPACE);
-      }
-      stringBuffer.append(BallotBox.PREFIX);
-      //@ loop_invariant 2*p <= stringBuffer.length();
-      for (int p = 0; b < ballots[b].getNumberOfPreferences(); p++) {
-        final int nextPreference = ballots[b].getPreference(p);
-        if (0 < p) {
-          stringBuffer.append(Ballot.WHITE_SPACE);
-        }
-        stringBuffer.append(Integer.toString(nextPreference));
-      }
-      stringBuffer.append(BallotBox.SUFFIX);
-    }
-    stringBuffer.append(BallotBox.SUFFIX);
-    return stringBuffer.toString();
-  }
 }

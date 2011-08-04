@@ -67,6 +67,8 @@ public final class Ballot implements Serializable {
 
   public static final char WHITE_SPACE = ' ';
   
+  //@ public ghost int NOT_APPROVED = 0;
+  
   /**
    * Maximum possible number of ballots based on maximum population size for a
    * five seat constituency i.e. at most 30,000 people per elected
@@ -90,23 +92,22 @@ public final class Ballot implements Serializable {
   public static final int NONTRANSFERABLE = 0;
   
   
-  /** Indicates that a candidate has not received any preference in the ballot */
-  public static final int NOT_APPROVED = Integer.MAX_VALUE;
+
   
   /** List of candidates in order of preference */
-  private final /*@ spec_public non_null */int[] preferenceList;
+  protected final /*@ spec_public non_null */int[] preferenceList;
   
   /** Total number of valid preferences on this ballot paper */
   //@ invariant 0 <= numberOfPreferences;
   //@ invariant numberOfPreferences <= preferenceList.length;
-  private final /*@ spec_public @*/ int numberOfPreferences;
+  protected final /*@ spec_public @*/ int numberOfPreferences;
   
   /** Position within preference list */
   //@ initially positionInList == 0;
   //@ constraint \old(positionInList) <= positionInList;
   //@ invariant 0 <= positionInList;
   //@ invariant positionInList <= numberOfPreferences;
-  private transient /*@ spec_public @*/int positionInList;
+  protected transient /*@ spec_public @*/int positionInList;
   
   /**
    * Generate an empty ballot paper for use by a voter.
@@ -241,60 +242,9 @@ public final class Ballot implements Serializable {
    *          The <code>candidateID</code> for the first preference
    * @return <code>true</code> if this is the first preference on the ballot
    */
+  //@ ensures \result <==> (candidateID == preferenceList[0]);
   public/*@ pure @*/boolean isFirstPreference(final int candidateID) {
-    if (preferenceList.length == 0) {
-      
-      return false;
-    }
-    return candidateID == preferenceList[0];
-  }
-  
-  /**
-   * Convert the ballot into a text string
-   * 
-   * @return The ballot as a string
-   */
-  //@ also ensures (2*numberOfPreferences) <= \result.length();
-  public/*@ non_null pure @*/ String toString() {
-    final StringBuffer stringBuffer = new StringBuffer("(");
-    
-    //@ loop_invariant (2*i) <= stringBuffer.length();
-    for (int i = 0; i < numberOfPreferences; i++) {
-      if (0 < i) {
-        stringBuffer.append(Ballot.WHITE_SPACE);
-      }
-      stringBuffer.append(Integer.toString(preferenceList[i]));
-    }
-    stringBuffer.append(')');
-    return stringBuffer.toString();
-  }
-  
-  /**
-   * Has the candidate received any level of preference?
-   * 
-   * <p> Some variants of PR-STV use approval based elimination, to avoid early
-   * elimination of candidates with large numbers of second or subsequent
-   * preferences.
-   * </p>
-   * 
-   * @param candidateID The identifier of the candidate
-   * @return <code>True</code> if any preference for this candidate
-   */
-  /*@ public normal_behavior
-    @ ensures \result == (\exists int i; 0 <= i && i < numberOfPreferences;
-    @   candidateID == preferenceList[i]);
-    @*/
-  public/*@ pure @*/boolean isApproved(final int candidateID) {
-    /*@ loop_invariant (0 < i) ==>
-      @   candidateID != preferenceList[i];
-      @ */
-    for (int i = 0; i < numberOfPreferences; i++) {
-      if (candidateID == preferenceList[i]) {
-        return true;
-      }
-    }
-    
-    return false;
+    return (candidateID == preferenceList[0]);
   }
   
   /**
@@ -311,36 +261,20 @@ public final class Ballot implements Serializable {
     @     candidateID != preferenceList[i]));
     @ ensures !isApproved(candidateID) ==>
     @   (NOT_APPROVED == \result);
+    @
+    @ public model pure int getRank(final int candidateID) {
+    @ loop_invariant (0<i) ==>
+    @   candidateID != preferenceList[i-1];
+    @
+    @ for (int i = 0; i < numberOfPreferences; i++) {
+    @  if (candidateID == preferenceList[i]) {
+    @    return i;
+    @  }
+    @ }
+    @ 
+    @ return NOT_APPROVED;
+    @}
     @*/
-  public/*@ pure @*/int getRank(final int candidateID) {
-    /*@ loop_invariant (0<i) ==>
-      @   candidateID != preferenceList[i-1];
-      @*/
-    for (int i = 0; i < numberOfPreferences; i++) {
-      if (candidateID == preferenceList[i]) {
-        return i;
-      }
-    }
-    
-    return NOT_APPROVED;
-  }
-
-  /**
-   * Get the full list of preferences from this ballot.
-   * 
-   * @return the preferenceList
-   */
-  /*@ ensures (\forall int i; 0 <= i && i < preferenceList.length;
-    @   \result[i] == preferenceList[i]);
-    @*/
-  public /*@ pure non_null @*/ int[] getPreferenceList() {
-    int[] preferences = new int[preferenceList.length];
-    //@ loop_invariant (0 < p) ==> (preferences[p-1] == preferenceList[p-1]);
-    for (int p = 0; p < preferenceList.length; p++) {
-      preferences[p] = preferenceList[p];
-    }
-    return preferences;
-  }
 
   /**
    * Get the length of this ballot.

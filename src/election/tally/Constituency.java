@@ -45,6 +45,7 @@ public class Constituency implements Serializable {
     this.candidates = Candidate.MAX_CANDIDATES;
     this.totalSeatsInConstituency = 1;
     this.seatsInThisElection = 1;
+    this.candidateList = null;
   }
   /** Number of candidates for election in this constituency */
   //@ public invariant 0 < candidates;
@@ -87,19 +88,18 @@ public class Constituency implements Serializable {
   //@ requires 2 <= number && number <= Candidate.MAX_CANDIDATES;
   //@ requires seatsInThisElection < number;
   //@ requires candidateDataInUse == false;
+  //@ assignable candidates, candidateList, candidateDataInUse, candidateList[*];
   //@ ensures number == this.candidates;
   //@ ensures this.candidates <= candidateList.length;
   //@ ensures candidateDataInUse == true;
   public void setNumberOfCandidates(final int number) {
-    this.candidates = number;
-    if (candidateList == null || candidateList.length < this.candidates) {
-      this.candidateList = new Candidate[this.candidates];
-      
-      //@ loop_invariant (0 < index) ==> candidateList[index-1] != null;
-      for (int index = 0; index < this.candidates; index++) {
-        this.candidateList[index] = new Candidate();
-      }
+    int [] candidateIDs = new int [number];
+    
+    //@ loop_invariant (0 < index) ==> candidateIDs[index-1] == index;
+    for (int index = 0; index < number; index++) {
+      candidateIDs[index] = 1 + index;
     }
+    load (candidateIDs);
     //@ set candidateDataInUse = true;
   }
   

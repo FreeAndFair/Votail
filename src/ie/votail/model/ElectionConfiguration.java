@@ -157,17 +157,6 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     this.numberOfCandidates = theNumberOfCandidates;
   }
   
-  /**
-   * Create a new election configuration with the same ballot box and
-   * constituency data.
-   * 
-   * @return
-   */
-  //@ ensures this.equals(\result);
-  public ElectionConfiguration copy() {
-    return new ElectionConfiguration(this.export());
-  }
-  
   //@ ensures \result == this.scenario;
   public/*@ pure @*/ElectoralScenario getScenario() {
     return this.scenario;

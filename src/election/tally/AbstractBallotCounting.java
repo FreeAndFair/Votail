@@ -194,30 +194,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   }
   
   /**
-   * How many surplus votes are available for distribution?
-   * 
-   * @return The total number of surplus votes for all candidates.
-   */
-  /*@ requires state == COUNTING;
-    @ ensures \result == 
-    @   (\sum int c; 0 <= c && c < totalNumberOfCandidates;
-    @     getSurplus(candidates[c]));
-    @ ensures 0 <= \result;
-    @*/
-  public final /*@ pure @*/ int getTotalSumOfSurpluses() {
-    int sumOfSurpluses = 0;
-    
-    /*@ loop_invariant 0 <= sumOfSurpluses &&
-      @   (sumOfSurpluses == (\sum int i; 0 <= i && i < c;
-      @     getSurplus(candidates[i])));
-      @*/
-    for (int c = 0; c < totalNumberOfCandidates; c++) {
-      sumOfSurpluses += getSurplus(candidates[c]);
-    }
-    return sumOfSurpluses;
-  }
-  
-  /**
    * Determine if the candidate has enough votes to save his or her deposit.
    * <BON>query "Has this candidate saved his or her deposit?"</BON>
    * 
@@ -502,6 +478,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *         candidate
    */
   /*@ also
+    @   requires PRECOUNT <= state;
     @   ensures \result == (\exists int i;
     @     0 <= i && i < candidateList.length;
     @     candidateID == candidateList[i].getCandidateID() &&
@@ -676,7 +653,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     requires state == COUNTING;
     @     requires isElected (fromCandidate);
     @     requires toCandidate.getStatus() == CandidateStatus.CONTINUING;
-    @     requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
+    @     requires getSurplus(fromCandidate) < 
+    @       getTotalTransferableVotes(fromCandidate);
     @     requires 0 <= getTransferShortfall (fromCandidate);
     @     requires 0 < getSurplus(fromCandidate);
     @*/
@@ -738,13 +716,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     }
     while (0 <= count);
     
-    if (firstNumberOfVotes > secondNumberOfVotes) {
-      return true;
-    }
-    else if (secondNumberOfVotes > firstNumberOfVotes) {
-      return false;
-    }
-    
     return secondCandidate.isAfter(firstCandidate);
   } 
   
@@ -803,7 +774,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   /*@ protected normal_behavior
     @   requires state == COUNTING;
     @   requires isElected (fromCandidate);
-    @   requires getSurplus(fromCandidate) < getTotalTransferableVotes(fromCandidate);
+    @   requires getSurplus(fromCandidate) < 
+    @     getTotalTransferableVotes(fromCandidate);
     @   requires 0 <= getTransferShortfall (fromCandidate);
     @   requires 0 <= getSurplus(fromCandidate);
     @*/

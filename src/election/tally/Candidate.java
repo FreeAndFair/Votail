@@ -147,25 +147,6 @@ public class Candidate extends CandidateStatus implements Serializable {
   }
   
   /**
-   * This is the default constructor method for a <code>Candidate</code>
-   */
-  /*@ assignable candidateID, votesAdded, votesRemoved, nextCandidateID;
-    @ ensures candidateID != nextCandidateID;
-    @ ensures nextCandidateID != \old(nextCandidateID);
-    @ ensures (\forall int i; 0 <= i && i < CountConfiguration.MAXCOUNT;
-    @   getVoteAtCount(i) == 0);
-    @*/
-  public Candidate() {
-    super();
-    candidateID = nextCandidateID++;
-    //@ loop_invariant (0 < i) ==> getVoteAtCount(i-1) == 0;
-    for (int i = 0; i < CountConfiguration.MAXCOUNT; i++) {
-      votesAdded[i] = 0;
-      votesRemoved[i] = 0;
-    }    
-  }
-  
-  /**
    * Create a <code>candidate</code> where the identifier is already known
    * 
    * @param theCandidateID
@@ -317,21 +298,22 @@ public class Candidate extends CandidateStatus implements Serializable {
   /*@ public normal_behavior
     @   ensures \result <==> ((other != null) &&
     @     (other.candidateID == candidateID));
+    @
+    @ public model boolean sameAs(non_null final Candidate other) {
+    @   return (other.candidateID == this.candidateID);
+    @ }
     @*/
-  public/*@ pure @*/boolean sameAs(/*@ non_null @*/final Candidate other) {
-    return (other.candidateID == this.candidateID);
-  }
   
   /**
    * How many votes have been received by this round of counting?
    * 
    * @return The total number of votes received so far
    */
-  //@ ensures \result == totalVote - removedVote;
-  public/*@ pure @*/int getTotalAtCount() {
-    
-    return totalVote - removedVote;
-  }
+  /*@ ensures \result == totalVote - removedVote;
+    @ public model int getTotalAtCount() {
+    @   return totalVote - removedVote;
+    @}
+    @*/
   
   /**
    * Has this candidate been elected?

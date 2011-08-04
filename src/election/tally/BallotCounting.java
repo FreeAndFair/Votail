@@ -508,20 +508,6 @@ public class BallotCounting extends AbstractBallotCounting {
     return buffer.toString();
   }
   
-  /**
-   * Get the number of rounds of counting so far.
-   * <p>
-   * A new round of counting happens after each transferal of votes by
-   * distribution of surpluses or elimination of lowest candidates.
-   * </p>
-   * 
-   * @return The number of rounds of counting so far.
-   */
-  //@ ensures \result == this.countNumberValue;
-  public/*@ pure @*/int getNumberOfRounds() {
-    return this.countNumberValue;
-  }
-  
   public /*@ pure @*/ Candidate getCandidate(final int index) {
     return candidates[index];
   }
