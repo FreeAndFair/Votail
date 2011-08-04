@@ -220,19 +220,11 @@ public final class Ballot implements Serializable {
     return (numberOfPreferences - positionInList);
   }
   
-  /*@ requires 0 <= index;
-    @ requires index <= numberOfPreferences;
-    @ ensures (index < numberOfPreferences) 
-    @   ==> preferenceList[index] == \result;
-    @ ensures (numberOfPreferences == index) 
-    @   ==> \result == Ballot.NONTRANSFERABLE;
+  /*@ requires 0 <= index && index < numberOfPreferences;
+    @ ensures preferenceList[index] == \result;
     @*/
   protected /*@ spec_public pure @*/int getPreference(final int index) {
-    if (index < numberOfPreferences) {
       return preferenceList[index];
-    }
-    
-    return Ballot.NONTRANSFERABLE;
   }
   
   /**
