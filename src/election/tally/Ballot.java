@@ -138,10 +138,17 @@ public final class Ballot implements Serializable {
    * 
    * @return The candidate ID to which the ballot is assigned
    */
-  /*@ ensures \result == getPreference(positionInList);
+  /*@ requires 0 <= positionInList && positionInList <= numberOfPreferences;
+    @ ensures (positionInList < numberOfPreferences) ==>
+    @   \result == getPreference(positionInList);
+    @ ensures (positionInList == numberOfPreferences) ==>
+    @   \result == NONTRANSFERABLE;
     @*/
   public /*@ pure @*/int getCandidateID() {
-    return getPreference(positionInList);
+    if (positionInList < numberOfPreferences) {
+      return getPreference(positionInList);
+    }
+    return NONTRANSFERABLE;
   }
   
   /**

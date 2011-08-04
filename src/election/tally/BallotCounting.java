@@ -88,7 +88,6 @@ public class BallotCounting extends AbstractBallotCounting {
     @   requires countStatus.getState() == 
     @     AbstractCountStatus.SURPLUS_AVAILABLE;
     @   requires isElected (candidateList[winner]);
-    @   requires \nonnullelements (candidateList);
     @   requires 0 <= winner && winner < candidateList.length;
     @*/
   public void distributeSurplus(final int winner) {

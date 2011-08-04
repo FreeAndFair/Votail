@@ -69,5 +69,7 @@ public class TransfersFromSurplusEventD extends TestCase {
     // Test that the count completes normally
     ballotCounting.count();
     assertTrue(election.getCandidate(2).isElected());
+    
+    ballotCounting.getResults();
   }
 }
