@@ -59,7 +59,8 @@ public class BallotCounting extends AbstractBallotCounting {
       this.substate = READY_TO_COUNT;
     }
     
-    protected/*@ spec_public @*/int substate; //@ represents state;
+    protected/*@ spec_public @*/int substate; 
+    //@ public represents state <- substate;
     
     /**
      * Move along the next valid transition in state.
@@ -456,7 +457,7 @@ public class BallotCounting extends AbstractBallotCounting {
       final Candidate candidate = candidates[index];
       buffer.append("(" + candidate.toString() + ") ");
       if (isDepositSaved(index)) {
-        buffer.append(" saved deposit ");
+        buffer.append(" reached threshold ");
       }
     }
     

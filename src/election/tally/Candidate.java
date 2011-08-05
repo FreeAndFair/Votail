@@ -299,7 +299,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   ensures \result <==> ((other != null) &&
     @     (other.candidateID == candidateID));
     @
-    @ public model boolean sameAs(non_null final Candidate other) {
+    @ public model pure boolean sameAs(non_null final Candidate other) {
     @   return (other.candidateID == this.candidateID);
     @ }
     @*/
@@ -310,7 +310,7 @@ public class Candidate extends CandidateStatus implements Serializable {
    * @return The total number of votes received so far
    */
   /*@ ensures \result == totalVote - removedVote;
-    @ public model int getTotalAtCount() {
+    @ public model pure int getTotalAtCount() {
     @   return totalVote - removedVote;
     @}
     @*/

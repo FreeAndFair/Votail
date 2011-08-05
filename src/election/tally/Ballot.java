@@ -247,35 +247,6 @@ public final class Ballot implements Serializable {
   }
   
   /**
-   * Get the ranking of the candidate in the list of preferences
-   * 
-   * @param candidateID The candidate to be checked
-   * @return The ranking of the candidate or else <code>NOT_APPROVED</code>
-   */
-  /*@ public normal_behavior
-    @ ensures isApproved(candidateID) ==>
-    @   ((0 <= \result && \result <= numberOfPreferences) &&
-    @   (candidateID == preferenceList[\result]) &&
-    @   (\forall int i; 0 <= i && i < \result;
-    @     candidateID != preferenceList[i]));
-    @ ensures !isApproved(candidateID) ==>
-    @   (NOT_APPROVED == \result);
-    @
-    @ public model pure int getRank(final int candidateID) {
-    @ loop_invariant (0<i) ==>
-    @   candidateID != preferenceList[i-1];
-    @
-    @ for (int i = 0; i < numberOfPreferences; i++) {
-    @  if (candidateID == preferenceList[i]) {
-    @    return i;
-    @  }
-    @ }
-    @ 
-    @ return NOT_APPROVED;
-    @}
-    @*/
-
-  /**
    * Get the length of this ballot.
    * 
    * @return the numberOfPreferences

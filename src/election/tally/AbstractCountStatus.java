@@ -25,8 +25,9 @@ public abstract class AbstractCountStatus {
 	/**
 	 * Get the current stage of counting.
 	 */
-	/*@ public model pure  int getState()
+	/*@ public model pure int getState() {
 	  @   return state;
+	  @ }
 	  @*/
 
 	/**
@@ -62,32 +63,31 @@ public abstract class AbstractCountStatus {
     @   (END_OF_COUNT == value) ||
     @   (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
     @
-    @  public model pure boolean isPossibleState(int value) 
+    @  public model pure boolean isPossibleState(int value) {
     @     return ((READY_TO_COUNT == value) || (NO_SEATS_FILLED_YET == value)
     @      || (CANDIDATES_HAVE_QUOTA == value) || (CANDIDATE_ELECTED == value)
-          || (NO_SURPLUS_AVAILABLE == value) || (SURPLUS_AVAILABLE == value)
-          || (READY_TO_ALLOCATE_SURPLUS == value)
-          || (READY_TO_MOVE_BALLOTS == value) || (CANDIDATE_EXCLUDED == value)
-          || (READY_FOR_NEXT_ROUND_OF_COUNTING == value)
-          || (LAST_SEAT_BEING_FILLED == value)
-          || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
-          || (ONE_OR_MORE_SEATS_REMAINING == value)
-          || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
-    }
-      @*/
-
-	/*
-	 * Confirm that this is a valid transition from one stage of counting to another.
-	 * 
-	 * @param fromState The current stage of counting.
-	 * @param toState The next stage if counting.
-	 */
-	/*@ requires isPossibleState(fromState);
-	  @ requires isPossibleState(toState);
-	  @
-	  @ public model pure boolean isTransition (int fromState, int toState) {
-	  @
-	  @   // Self transitions are allowed
+    @      || (NO_SURPLUS_AVAILABLE == value) || (SURPLUS_AVAILABLE == value)
+    @      || (READY_TO_ALLOCATE_SURPLUS == value)
+    @      || (READY_TO_MOVE_BALLOTS == value) || (CANDIDATE_EXCLUDED == value)
+    @      || (READY_FOR_NEXT_ROUND_OF_COUNTING == value)
+    @      || (LAST_SEAT_BEING_FILLED == value)
+    @      || (MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS == value)
+    @      || (ONE_OR_MORE_SEATS_REMAINING == value)
+    @      || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
+    @ }
+    @*/
+  /*
+   * Confirm that this is a valid transition from one stage of counting to another.
+   * 
+   * @param fromState The current stage of counting.
+   * @param toState The next stage if counting.
+   */
+  /*@ requires isPossibleState(fromState);
+    @ requires isPossibleState(toState);
+    @
+    @ public model pure boolean isTransition (int fromState, int toState) {
+    @
+    @   // Self transitions are allowed
     @   if (toState == fromState) {
     @     return true;
     @   }
