@@ -83,7 +83,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @*/
   protected /*@ spec_public*/ int removedVote = 0;
     
-  public static final int NO_CANDIDATE = 0;
+  public static final int NO_CANDIDATE = Ballot.NONTRANSFERABLE;
   
   /**
    * Next available value for candidate ID number.
@@ -299,7 +299,7 @@ public class Candidate extends CandidateStatus implements Serializable {
     @   ensures \result <==> ((other != null) &&
     @     (other.candidateID == candidateID));
     @
-    @ public model pure boolean sameAs(non_null final Candidate other) {
+    @ public model pure boolean sameAs (non_null Candidate other) {
     @   return (other.candidateID == this.candidateID);
     @ }
     @*/

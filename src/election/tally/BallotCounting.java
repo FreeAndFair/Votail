@@ -42,6 +42,8 @@ public class BallotCounting extends AbstractBallotCounting {
     super();
     countStatus = new CountStatus();
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
+    this.numberOfSeats = 0;
+    this.totalNumberOfSeats = 0;
   }
   
   /**
@@ -53,14 +55,14 @@ public class BallotCounting extends AbstractBallotCounting {
     /**
      * Inner state machine for counting of Dail election ballots.
      */
-    //@ ensures READY_TO_COUNT == this.substate;
+    //@ assignable substate;
+    //@ ensures READY_TO_COUNT == getState();
     public CountStatus() {
       super();
       this.substate = READY_TO_COUNT;
     }
     
-    protected/*@ spec_public @*/int substate; 
-    //@ public represents state <- substate;
+    
     
     /**
      * Move along the next valid transition in state.
@@ -69,7 +71,6 @@ public class BallotCounting extends AbstractBallotCounting {
      *          The next stage of counting.
      */
     //@ also assignable substate;
-    //@ ensures newState == getState();
     public void changeState(final int newState) {
       substate = newState;
     }
@@ -464,6 +465,8 @@ public class BallotCounting extends AbstractBallotCounting {
     return buffer.toString();
   }
   
+  //@ requires 0 <= index && index < candidates.length;
+  //@ ensures \result == candidates[index]; 
   public /*@ pure @*/ Candidate getCandidate(final int index) {
     return candidates[index];
   }

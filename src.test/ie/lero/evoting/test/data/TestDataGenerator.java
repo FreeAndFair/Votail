@@ -32,7 +32,6 @@ public final class TestDataGenerator {
   private static int abstractCountStatus_count = 0;
   private static int ballot_count = 0;
   private static int ballotBox_count = 0;
-  private static int ballotCounting_count = 0;
   private static int candidate_count = 0;
   private static int constituency_count = 0;
 
@@ -145,12 +144,9 @@ public final class TestDataGenerator {
 
   //@ requires 0 <= number;
   public static Ballot getBallot(final int number) {
-    if (ballot_count == 0 || number == 0) {
-      ballot_count++;
-      return new Ballot(new int[0]);
-    } else if (number < Candidate.MAX_CANDIDATES) {
-      int[] list = new int[number];
-      for (int i=0; i<number; i++) {
+    if (number < Candidate.MAX_CANDIDATES - 1) {
+      int[] list = new int[number+1];
+      for (int i=0; i<=number; i++) {
         list[i] = i;
       }
       return new Ballot(list);
@@ -262,10 +258,8 @@ public final class TestDataGenerator {
    * @param number
    * @return A Ballot Counting object
    */
-  //@ requires 0 <= n;
   public static BallotCounting getBallotCounting(final int number) {
-    if (ballotCounting_count == 0 || number == 0) {
-      ballotCounting_count++;
+    if (number == 0) {
       return new BallotCounting();
     }
     throw new java.util.NoSuchElementException();

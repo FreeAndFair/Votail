@@ -113,9 +113,7 @@ public final class Ballot implements Serializable {
    * Generate an empty ballot paper for use by a voter.
    */
   /*@ public normal_behavior
-    @   requires (\forall int i; 0 <= i && i < preferences.length;
-    @     preferences[i] != NONTRANSFERABLE &&
-    @     preferences[i] != Candidate.NO_CANDIDATE);
+    @   requires 0 < preferences.length;
     @   assignable numberOfPreferences, positionInList, preferenceList[*], 
     @     preferenceList;
     @   ensures (\forall int index; 0 <= index && index < numberOfPreferences;
