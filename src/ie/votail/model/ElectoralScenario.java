@@ -22,7 +22,7 @@ public class ElectoralScenario implements Serializable {
    * 
    */
   private static final long serialVersionUID = -5582137662901839518L;
-
+  
   // Refinement from Alloy Analyser axioms to JML invariants
   /**
    * <Alloy>
@@ -78,7 +78,7 @@ public class ElectoralScenario implements Serializable {
          b != Outcome.Loser && b != Outcome.EarlyLoser));
    */
   public static final boolean AXIOM_FOR_TYPE_OF_TIED_LOSER = true;
-
+  
   // Location of generated test data
   public static final String TESTDATA_LOCATION = "testdata/";
   public static final String PREFIX = "BallotBox";
@@ -86,7 +86,7 @@ public class ElectoralScenario implements Serializable {
   
   protected OutcomeList listOfOutcomes;
   protected Method method;
-
+  
   protected transient boolean byeElection;
   
   /**
@@ -95,18 +95,18 @@ public class ElectoralScenario implements Serializable {
   public ElectoralScenario() {
     super();
   }
-
+  
   /**
    * Create a new model scenario.
    * 
    * @param method
-   * @param byeElection 
+   * @param byeElection
    */
   public ElectoralScenario(final Method method, final boolean byeElection) {
     super();
     listOfOutcomes = new OutcomeList();
     this.method = method;
-    this.byeElection= byeElection;
+    this.byeElection = byeElection;
   }
   
   /**
@@ -115,7 +115,7 @@ public class ElectoralScenario implements Serializable {
   public/*@ pure @*/String toString() {
     final Iterator<Outcome> iterator = listOfOutcomes.getOutcomes().iterator();
     final StringBuffer stringBuffer =
-      new StringBuffer(10*getNumberOfCandidates() + 15);
+        new StringBuffer(10 * getNumberOfCandidates() + 15);
     stringBuffer.append(Integer.toString(getNumberOfCandidates()));
     stringBuffer.append(" candidates (");
     if (iterator.hasNext()) {
@@ -176,14 +176,13 @@ public class ElectoralScenario implements Serializable {
       if (indexi > 0) {
         stringBuffer.append(" and ");
       }
-      stringBuffer.append("c" + indexi + ".outcome = " + iterator.next().toString());
+      stringBuffer.append("c" + indexi + ".outcome = "
+          + iterator.next().toString());
       indexi++;
     }
-    stringBuffer
-        .append(" and Election.method = " + method);
-    stringBuffer.append(" and #Candidate = "
-        + this.getNumberOfCandidates());
-
+    stringBuffer.append(" and Election.method = " + method);
+    stringBuffer.append(" and #Candidate = " + this.getNumberOfCandidates());
+    
     return stringBuffer.toString();
   }
   
@@ -195,7 +194,8 @@ public class ElectoralScenario implements Serializable {
    */
   //@ ensures this.outcomes.size() == \result.outcomes.size();
   public ElectoralScenario canonical() {
-    final ElectoralScenario sorted = new ElectoralScenario(this.method, this.byeElection);
+    final ElectoralScenario sorted =
+        new ElectoralScenario(this.method, this.byeElection);
     // Extract each type of outcome in canonical order
     for (Outcome outcome : Outcome.values()) {
       final Iterator<Outcome> iterator = this.getOutcomes().iterator();
@@ -225,10 +225,8 @@ public class ElectoralScenario implements Serializable {
     if (this.getNumberOfCandidates() != other.getNumberOfCandidates()) {
       return false;
     }
-    final Iterator<Outcome> it1 =
-        this.canonical().getOutcomes().iterator();
-    final Iterator<Outcome> it2 =
-        other.canonical().getOutcomes().iterator();
+    final Iterator<Outcome> it1 = this.canonical().getOutcomes().iterator();
+    final Iterator<Outcome> it2 = other.canonical().getOutcomes().iterator();
     while (it1.hasNext() && it2.hasNext()) {
       if (!it1.next().equals(it2.next())) {
         return false;
@@ -237,13 +235,13 @@ public class ElectoralScenario implements Serializable {
     return true;
   }
   
-  protected /*@ pure @*/ List<Outcome> getOutcomes() {
+  protected/*@ pure @*/List<Outcome> getOutcomes() {
     if (listOfOutcomes == null) {
       listOfOutcomes = new OutcomeList();
     }
     return listOfOutcomes.getOutcomes();
   }
-
+  
   /**
    * Append an outcome to this scenario.
    * 
@@ -256,8 +254,7 @@ public class ElectoralScenario implements Serializable {
    * ensures \result.contains (outcome);
    * ensures \result.equivalentTo (this.addOutcome(outcome));
    */
-  public/*@ pure*/ElectoralScenario append(
-      final /*@ non_null*/Outcome outcome) {
+  public/*@ pure*/ElectoralScenario append(final/*@ non_null*/Outcome outcome) {
     final ElectoralScenario result = this.copy();
     result.addOutcome(outcome);
     return result;
@@ -272,7 +269,8 @@ public class ElectoralScenario implements Serializable {
    * ensures \result.equals(this);
    */
   private/*@ pure*/ElectoralScenario copy() {
-    final ElectoralScenario clone = new ElectoralScenario(this.method, this.byeElection);
+    final ElectoralScenario clone =
+        new ElectoralScenario(this.method, this.byeElection);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
       clone.addOutcome(iterator.next());
@@ -325,7 +323,7 @@ public class ElectoralScenario implements Serializable {
    * ensures 0 < \result;
    * ensures \result < this.outcomes.size();
    */
-  public /*@ pure @*/ int numberOfWinners() {
+  public/*@ pure @*/int numberOfWinners() {
     int count = 0;
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
     while (iterator.hasNext()) {
@@ -378,18 +376,18 @@ public class ElectoralScenario implements Serializable {
     @ ensures \result == (\sum int i; 1 <= i && i < numberOfOutcomes;
     @   numberOfScenarios (i, numberOfOutcomes - i));
    */
-  public static /*@Êpure **/ int totalNumberOfScenarios(final int numberOfOutcomes) {
+  public static/*@Êpure **/int totalNumberOfScenarios(
+      final int numberOfOutcomes) {
     int result = 0;
-    for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; 
-    numberOfWinners++) {
+    for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; numberOfWinners++) {
       result +=
-        numberOfScenarios(numberOfWinners, numberOfOutcomes - numberOfWinners);
+          numberOfScenarios(numberOfWinners, numberOfOutcomes - numberOfWinners);
     }
     return result;
   }
   
   //@ ensures \result == this.listOfOutcomes.outcomes.size();
-  public /*@ pure @*/ int getNumberOfCandidates() {
+  public/*@ pure @*/int getNumberOfCandidates() {
     if (this.listOfOutcomes == null) {
       this.listOfOutcomes = new OutcomeList();
       return 0;
@@ -399,22 +397,23 @@ public class ElectoralScenario implements Serializable {
       return 0;
     }
     
-    return this.listOfOutcomes.outcomes.size();  
-    }
+    return this.listOfOutcomes.outcomes.size();
+  }
   
   /**
    * Does this scenario match the election result?
    * 
-   * @param ballotCounting The results of the election count
+   * @param ballotCounting
+   *          The results of the election count
    * @return True if this scenario matches this election result
    */
   //@ requires ballotCounting.isFinished();
   public boolean check(final BallotCounting ballotCounting) {
-
+    
     final int threshold = ballotCounting.getDepositSavingThreshold();
     final int numberOfCandidates = ballotCounting.getTotalNumberOfCandidates();
     final int quota = ballotCounting.getQuota();
-
+    
     for (Outcome outcome : this.listOfOutcomes.getOutcomes()) {
       boolean matched = false;
       
@@ -430,12 +429,12 @@ public class ElectoralScenario implements Serializable {
         return false;
       }
     }
-
+    
     return true;
   }
-
+  
   //@ ensures \result == byeElection;
-  public /*@ pure @*/ boolean isByeElection() {
+  public/*@ pure @*/boolean isByeElection() {
     return byeElection;
   }
   
@@ -444,39 +443,43 @@ public class ElectoralScenario implements Serializable {
    * 
    * @return
    */
-  public boolean matchesResult (final ElectionResult result) {
+  public boolean matchesResult(final ElectionResult result) {
     
     final int numberOfCandidates = this.getNumberOfCandidates();
-
+    
     for (Outcome outcome : listOfOutcomes.getOutcomes()) {
       // Find a result to match each expected outcome
       
       boolean matched = false;
       final int threshold = result.getThreshold();
       final int quota = result.getQuota();
-
-      for (int i=0; i < numberOfCandidates; i++) {
-        if (outcome.check(result.getCandidate(i), threshold, 
-            quota)) {
-          matched = true;
+      
+      if (result.full()) { // Exact matching for Votail implementation
+        for (int i = 0; i < numberOfCandidates; i++) {
+          if (outcome.check(result.getCandidate(i), threshold, quota)) {
+            matched = true;
+          }
+          
+          if (matched == false) {
+            return false;
+          }
         }
-        
-        if (matched == false) {
-          return false;
-        }
+      }
+      else {
+        // TODO partial matching for third party implementations
       }
       
     }
     
     return true;
   }
-
+  
   /**
    * Get the Voting Scheme used in this Electoral Scenario.
    * 
    * @return The Voting Scheme
    */
-  public /*@ pure @*/ Method getMethod() {
+  public/*@ pure @*/Method getMethod() {
     return method;
   }
 }

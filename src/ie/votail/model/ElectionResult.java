@@ -92,6 +92,7 @@ public class ElectionResult {
       @*/
     public void setNumberOfCandidates(final int number) {
       this.numberOfCandidates = number;
+      this.status = new byte[number];
     }
   }
   
@@ -119,10 +120,6 @@ public class ElectionResult {
     this.setThreshold(theThreshold);
   }
   
-  public ElectionResult(final int[] outcome, final int numberOfWinners) {
-    load(outcome, numberOfWinners);
-  }
-  
   /**
    * Extract election results from Coyle Doyle format
    * 
@@ -130,7 +127,7 @@ public class ElectionResult {
    * @param numberOfWinners The number of winners
    */
   public final void load(int[] outcome, final int numberOfWinners) {
-    candidateResults.numberOfCandidates = outcome.length;
+    candidateResults.setNumberOfCandidates(outcome.length);
     
     candidateResults.setIdentifiers(outcome);
     for (int i = 0; i < candidateResults.numberOfCandidates; i++) {
@@ -208,5 +205,14 @@ public class ElectionResult {
 
   public Candidate getCandidate(int i) {
     return candidateList[i];
+  }
+
+  /**
+   * Checks if full candidate details have been provided
+   * 
+   * @return <code>true</code> if full candidate details are in the result
+   */
+  public /*@ pure @*/ boolean full() {
+    return candidateList != null;
   }
 }

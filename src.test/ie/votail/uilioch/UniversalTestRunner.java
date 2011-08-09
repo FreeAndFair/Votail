@@ -31,6 +31,114 @@ import election.tally.Constituency;
 
 public class UniversalTestRunner extends Uilioch {
   
+  /**
+   * @author Dermot Cochran
+   *
+   */
+  protected class HexMediaElectionResult extends ElectionResult {
+    
+    /**
+     * Use reflection to get HexMedia election result.
+     * 
+     * @param election
+     *          The HexMedia API
+     * @return The election result
+     */
+    @SuppressWarnings("unchecked")
+    public HexMediaElectionResult() {
+            
+      try {
+        final Field displayField =
+            com.hexmedia.prstv.Display.class.getDeclaredField("display");
+        displayField.setAccessible(true);
+        
+        final com.hexmedia.prstv.Display display = 
+          (Display) displayField.get(null);
+        
+        final Field electionField =
+            com.hexmedia.prstv.Display.class.getDeclaredField("election");
+        electionField.setAccessible(true);
+        
+        final com.hexmedia.prstv.Election election =
+            (Election) electionField.get(display);
+        
+        final Field elected = election.getClass().getDeclaredField("elected");
+        elected.setAccessible(true);
+        final List<Candidate> electedCandidates =
+            (List<Candidate>) elected.get(election);
+        
+        final Field eliminated = election.getClass().getDeclaredField("eliminated");
+        eliminated.setAccessible(true);
+        final List<Candidate> eliminatedCandidates =
+            (List<Candidate>) eliminated.get(election);
+        
+        final int numberOfWinners = electedCandidates.size();
+        final int numberOfCandidates = numberOfWinners + eliminatedCandidates.size();
+        
+        int[] outcomes = new int[numberOfCandidates];
+        int index = 0;
+        for (Candidate candidate : electedCandidates) {
+          outcomes[index] = Integer.valueOf(candidate.name());
+          index++;
+        }
+        for (Candidate candidate : eliminatedCandidates) {
+          outcomes[index] = Integer.valueOf(candidate.name());
+          index++;
+        }
+        
+        load(outcomes, numberOfWinners);
+        
+      }
+      catch (SecurityException e) {
+        logger.severe(e.getLocalizedMessage());
+      }
+      catch (NoSuchFieldException e) {
+        logger.severe(e.getLocalizedMessage());
+      }
+      catch (IllegalArgumentException e) {
+        logger.severe(e.getLocalizedMessage());
+      }
+      catch (IllegalAccessException e) {
+        logger.severe(e.getLocalizedMessage());
+      }
+    }
+    
+  }
+
+  /**
+   * @author dero
+   *
+   */
+  protected class VotailElectionResult extends ElectionResult {
+    
+    /**
+     * @param candidates
+     * @param theQuota
+     * @param theThreshold
+     */
+    public VotailElectionResult(election.tally.Candidate[] candidates,
+        int theQuota, int theThreshold) {
+      super(candidates, theQuota, theThreshold);
+    }
+    
+  }
+
+  /**
+   * @author dero
+   *
+   */
+  protected class CoyleDoyleElectionResult extends ElectionResult {
+    
+    /**
+     * @param outcome
+     * @param numberOfWinners
+     */
+    public CoyleDoyleElectionResult(int[] outcome, int numberOfWinners) {
+      load(outcome, numberOfWinners);
+    }
+    
+  }
+
   public static final String LOGFILENAME = "logs/uilioch/runner.log";
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
@@ -38,7 +146,7 @@ public class UniversalTestRunner extends Uilioch {
   public static final String TESTDATA_PREFIX = "/var/tmp/uilioch";
   public static final int GENERAL_ELECTION = 0;
   
-  public class VotailRunner extends BallotCounting {
+  protected class VotailRunner extends BallotCounting {
     /**
      * Run the whole election count.
      * 
@@ -61,7 +169,7 @@ public class UniversalTestRunner extends Uilioch {
       logger.info(ballotBox.size() + " ballots");
       logger.info(this.getTotalNumberOfCandidates() + " candidates");
       
-      return new ElectionResult(this.candidates, this.getQuota(), 
+      return new VotailElectionResult(this.candidates, this.getQuota(), 
           this.getSavingThreshold());
     }
   }
@@ -106,13 +214,18 @@ public class UniversalTestRunner extends Uilioch {
         final ElectionResult votailResult =
             runVotail(new ElectionConfiguration(testData));
         logger.info(votailResult.toString());
-        //          ElectionResult coyleDoyleResult =
-        //              runCoyleDoyle(new ElectionConfiguration(testData));
+        final ElectionResult coyleDoyleResult =
+            runCoyleDoyle(new ElectionConfiguration(testData));
+        logger.info(coyleDoyleResult.toString());
         //          ElectionResult hexMediaResult =
         //              runHexMedia(new ElectionConfiguration(testData));
         
         //          assert hexMediaResult.equals(coyleDoyleResult);
-        //          assert coyleDoyleResult.equals(votailResult);
+        if (coyleDoyleResult.equals(votailResult)) {
+          logger.info("We get the same results for this scenario:" +
+          		" " +
+              testData.getScenario().toString());
+        }
         //          assert votailResult.equals(hexMediaResult);
         
       }
@@ -176,7 +289,7 @@ public class UniversalTestRunner extends Uilioch {
    */
   public ElectionResult runCoyleDoyle(final ElectionConfiguration ballotBox) {
     
-    ElectionResult result = null;
+    CoyleDoyleElectionResult result = null;
     final Constituency constituency = ballotBox.getConstituency();
     final ElectoralScenario scenario = ballotBox.getScenario();
     
@@ -200,12 +313,14 @@ public class UniversalTestRunner extends Uilioch {
         convertBallotsIntoCoyleDoyleFormat(ballotBox);
     logger.info("CoyleDoyle ballot papers: " + ballotPapers.toString());
     
-    
+    if (!ballotPapers.isEmpty()) {
       outcome = election.election(ballotPapers); 
-      result = new ElectionResult(outcome, numberOfSeats);
-      checkResult(scenario, result);
+      if (outcome != null) {
+        result = new CoyleDoyleElectionResult(outcome, numberOfSeats);
+      }
+    }
     
-    
+    checkResult(scenario, result);
     return result;
   }
   
@@ -246,6 +361,8 @@ public class UniversalTestRunner extends Uilioch {
       voteNumber++;
       logger.info(ballotPaper.toString());
     }
+    logger.info("Number of ballots: " + voteNumber);
+    logger.info(votes.toString());
     
     return votes;
   }
@@ -276,83 +393,13 @@ public class UniversalTestRunner extends Uilioch {
       logger.severe(e.getMessage());
     }
     
-    final ElectionResult electionResult = getResult();
+    final ElectionResult electionResult = new HexMediaElectionResult();
     
     final ElectoralScenario scenario = ballotBox.getScenario();
     checkResult(scenario, electionResult);
     
     return electionResult;
     
-  }
-  
-  /**
-   * Use reflection to get HexMedia election result.
-   * 
-   * @param election
-   *          The HexMedia API
-   * @return The election result
-   */
-  @SuppressWarnings("unchecked")
-  protected ElectionResult getResult() {
-    
-    final ElectionResult result = new ElectionResult();
-    
-    try {
-      final Field displayField =
-          com.hexmedia.prstv.Display.class.getDeclaredField("display");
-      displayField.setAccessible(true);
-      
-      final com.hexmedia.prstv.Display display = 
-        (Display) displayField.get(null);
-      
-      final Field electionField =
-          com.hexmedia.prstv.Display.class.getDeclaredField("election");
-      electionField.setAccessible(true);
-      
-      final com.hexmedia.prstv.Election election =
-          (Election) electionField.get(display);
-      
-      final Field elected = election.getClass().getDeclaredField("elected");
-      elected.setAccessible(true);
-      final List<Candidate> electedCandidates =
-          (List<Candidate>) elected.get(election);
-      
-      final Field eliminated = election.getClass().getDeclaredField("eliminated");
-      eliminated.setAccessible(true);
-      final List<Candidate> eliminatedCandidates =
-          (List<Candidate>) eliminated.get(election);
-      
-      final int numberOfWinners = electedCandidates.size();
-      final int numberOfCandidates = numberOfWinners + eliminatedCandidates.size();
-      
-      int[] outcomes = new int[numberOfCandidates];
-      int index = 0;
-      for (Candidate candidate : electedCandidates) {
-        outcomes[index] = Integer.valueOf(candidate.name());
-        index++;
-      }
-      for (Candidate candidate : eliminatedCandidates) {
-        outcomes[index] = Integer.valueOf(candidate.name());
-        index++;
-      }
-      
-      result.load(outcomes, numberOfWinners);
-      
-    }
-    catch (SecurityException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    catch (NoSuchFieldException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    catch (IllegalArgumentException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    catch (IllegalAccessException e) {
-      logger.severe(e.getLocalizedMessage());
-    }
-    
-    return result;
   }
   
   /**
