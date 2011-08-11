@@ -23,11 +23,7 @@ public class BallotBoxFactoryTest extends TestCase {
     final BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
     final BallotBox ballotBox = ballotBoxFactory.extractBallots(scenario, 7);
     assertFalse(ballotBox == null);
-    assertEquals(4, ballotBox.size());
-    final BallotCounting counter = new BallotCounting();
-    counter.load(ballotBox);
-    counter.count();
-    //@ assert (counter.getStatus() == AbstractBallotCounting.FINISHED);
+    assertEquals(2, ballotBox.size());
   }
   
   @Test

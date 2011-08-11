@@ -45,12 +45,14 @@ public class ScenarioFactoryTest extends TestCase {
   }
   
   @Test
-  public void testManyCandidateScenarios() {
+  public void testFiveCandidateTwoSeatScenarios() {
     ScenarioFactory scenarioFactory = new ScenarioFactory();
-    final int numberOfCandidates = ScenarioList.MAX_PARTITIONS + 1;
+    final int numberOfCandidates = 5;
     ScenarioList candidateScenarios =
-        scenarioFactory.find(numberOfCandidates, 1, Method.STV);
-    assertEquals(5049, candidateScenarios.size());
-    assertEquals(154, candidateScenarios.getNumberOfScenarios(numberOfCandidates));
+        scenarioFactory.find(numberOfCandidates, 2, Method.STV);
+    assertEquals(1863, candidateScenarios.size());
+    assertEquals(0, candidateScenarios.getNumberOfScenarios(numberOfCandidates));
   }
+  
+  
 }
