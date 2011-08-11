@@ -139,7 +139,7 @@ public class UniversalTestRunner extends Uilioch {
     
   }
 
-  public static final String LOGFILENAME = "logs/uilioch/runner.log";
+  public static final String RUNNER_LOGFILENAME = "logs/uilioch/runner.log";
   public static final int INITIAL_SCOPE = 6;
   public static final String LOG_NAME = "Cross Testing and Validation";
   public static final String SUFFIX = ".txt";
@@ -183,7 +183,7 @@ public class UniversalTestRunner extends Uilioch {
     
     try {
       final FileHandler handler =
-          new FileHandler(UniversalTestRunner.LOGFILENAME);
+          new FileHandler(UniversalTestRunner.RUNNER_LOGFILENAME);
       logger.addHandler(handler);
     }
     catch (SecurityException e1) {
@@ -214,18 +214,18 @@ public class UniversalTestRunner extends Uilioch {
         final ElectionResult votailResult =
             runVotail(new ElectionConfiguration(testData));
         logger.info(votailResult.toString());
-        final ElectionResult coyleDoyleResult =
-            runCoyleDoyle(new ElectionConfiguration(testData));
-        logger.info(coyleDoyleResult.toString());
+//        final ElectionResult coyleDoyleResult =
+//            runCoyleDoyle(new ElectionConfiguration(testData));
+//        logger.info(coyleDoyleResult.toString());
         //          ElectionResult hexMediaResult =
         //              runHexMedia(new ElectionConfiguration(testData));
         
         //          assert hexMediaResult.equals(coyleDoyleResult);
-        if (coyleDoyleResult.equals(votailResult)) {
-          logger.info("We get the same results for this scenario:" +
-          		" " +
-              testData.getScenario().toString());
-        }
+//        if (coyleDoyleResult.equals(votailResult)) {
+//          logger.info("We get the same results for this scenario:" +
+//          		" " +
+//              testData.getScenario().toString());
+//        }
         //          assert votailResult.equals(hexMediaResult);
         
       }
