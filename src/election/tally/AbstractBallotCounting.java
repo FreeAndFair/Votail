@@ -55,7 +55,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ protected represents candidateList <- candidates;
   
   /** List of contents of each ballot paper that will be counted. */
-  protected transient/*@ spec_public @*/Ballot[] ballots = new Ballot[0];
+  protected /*@ spec_public @*/ Ballot[] ballots;
   //@ protected represents ballotsToCount <- ballots;
   //@ invariant (PRECOUNT <= state) ==> \nonnullelements (ballotsToCount);
   

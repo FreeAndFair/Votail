@@ -60,7 +60,8 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   /**
    * Create an empty Election configuration for a given scenario
    * 
-   * @param theScenario The electoral scenario 
+   * @param theScenario
+   *          The electoral scenario
    */
   public ElectionConfiguration(final ElectoralScenario theScenario) {
     super();
@@ -77,7 +78,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * @param tupleSet
    *          The Alloy tuple set
    */
-  public void extractPreferences(final /*@ non_null*/A4TupleSet tupleSet) {
+  public void extractPreferences(final/*@ non_null*/A4TupleSet tupleSet) {
     int[] preferences = new int[numberOfCandidates];
     int lengthOfBallot = 0;
     
@@ -132,7 +133,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * 
    * @return The constituency with matching candidate ID numbers
    */
-  public /*@ pure @*/ Constituency getConstituency() {
+  public/*@ pure @*/Constituency getConstituency() {
     final Constituency constituency = new Constituency();
     constituency.setNumberOfSeats(this.numberOfWinners, this.numberOfSeats);
     constituency.load(this.candidateIDs);
@@ -197,7 +198,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     @   \result[i] == this.candidatesIDs[i]);
     @*/
   public int[] getCandidateIDs() {
-    int [] theCandidateIDs = new int[this.candidateIDs.length];
+    int[] theCandidateIDs = new int[this.candidateIDs.length];
     for (int index = 0; index < this.candidateIDs.length; index++) {
       theCandidateIDs[index] = this.candidateIDs[index];
     }
@@ -210,10 +211,6 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   public int getCurrentBallotID() {
     return currentBallotID;
   }
-  
-
-  
-
   
   /**
    * @param theCandidateIDs
@@ -229,8 +226,6 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     }
   }
   
-
-  
   /**
    * Get the contents of the ballot box
    * 
@@ -245,7 +240,7 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
    * 
    * @return The minimal ballot configuration
    */
-  public /*@ pure @*/ ElectionConfiguration trim() {
+  public/*@ pure @*/ElectionConfiguration trim() {
     final ElectionConfiguration copy = new ElectionConfiguration();
     
     copy.ballots = new Ballot[this.numberOfBallots];
@@ -266,13 +261,13 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     copy.numberOfSeats = this.numberOfSeats;
     return copy;
   }
-
+  
   /**
    * Export the test data
    * 
    * @return The data needed for export
    */
-  public /*@ pure @*/ ElectionData export() {
+  public/*@ pure @*/ElectionData export() {
     final ElectionData electionData = new ElectionData();
     electionData.setScenario(scenario);
     electionData.setBallots(ballots);
@@ -283,9 +278,10 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
   /**
    * Load election data
    * 
-   * @param electionData Electoral Scenario and Ballot Data
+   * @param electionData
+   *          Electoral Scenario and Ballot Data
    */
-  public ElectionConfiguration (final ElectionData electionData) {
+  public ElectionConfiguration(final ElectionData electionData) {
     super();
     final ElectoralScenario theScenario = electionData.getScenario();
     this.scenario = theScenario.canonical();
@@ -296,26 +292,43 @@ public class ElectionConfiguration extends BallotBox implements Serializable {
     
     final Ballot[] theBallots = electionData.getBallots();
     if (theBallots != null) {
-    for (int b = 0; b < theBallots.length; b++) {
-      final Ballot ballot = theBallots[b];
-      if (ballot == null) {
-        logger.warning("Unexpected empty ballot");
-      }
-      else {
-        final int numberOfPreferences = ballot.getNumberOfPreferences();
-        final int[] preferenceList = new int[numberOfPreferences];
-        for (int p = 0; p < numberOfPreferences; p++) {
-          preferenceList[p] = ballot.getNextPreference(p);
+      for (int b = 0; b < theBallots.length; b++) {
+        final Ballot ballot = theBallots[b];
+        if (ballot == null) {
+          logger.warning("Unexpected empty ballot");
         }
+        else {
+          final int numberOfPreferences = ballot.getNumberOfPreferences();
           
-        this.accept(preferenceList);
-        // Recreate the anonymous list of candidates
-        for (int preference = 0; preference < preferenceList.length; 
-          preference++) {
-          updateCandidateIDs(preferenceList[preference]);
+          // Count the number of non-empty preferences
+          int numberOfValidPreferences = 0;
+          
+          for (int p = 0; p < numberOfPreferences; p++) {
+            int preference = ballot.getNextPreference(p);
+            if (preference != Ballot.NONTRANSFERABLE
+                && preference != Candidate.NO_CANDIDATE) {
+              numberOfValidPreferences++;
+            }
+          }
+          
+          // Ignore empty preferences
+          final int[] preferenceList = new int[numberOfValidPreferences];
+          int index = 0;
+          for (int p = 0; p < numberOfPreferences; p++) {
+            int preference = ballot.getNextPreference(p);
+            if (preference != Ballot.NONTRANSFERABLE
+                && preference != Candidate.NO_CANDIDATE) {
+              preferenceList[index++] = ballot.getNextPreference(p);
+            }
+          }
+          
+          this.accept(preferenceList);
+          // Recreate the anonymous list of candidates
+          for (int preference = 0; preference < preferenceList.length; preference++) {
+            updateCandidateIDs(preferenceList[preference]);
+          }
         }
       }
-    }
     }
   }
 }
