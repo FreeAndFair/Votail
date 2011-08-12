@@ -299,6 +299,11 @@ universal.stamp:	classes
 	java -Djava.awt.headless=true $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
+########################################################
+# Hudson build target for continuous automated testing #
+########################################################
+hudson-build: universal-rac-test escjava2
+
 universal-rac-test:	universal-rac.stamp
 
 universal-rac.stamp:	universal-test jml-junit-test escjava2
@@ -397,6 +402,3 @@ release: clean
 	mkdir -p release
 	tar cvf release/Votail0.0.1b.tar --exclude .svn src design diagrams doc requirements license.txt read.me release.notes
 	gzip release/Votail0.0.1b.tar
-
-tech_report:
-	make -C TechnicalReport
