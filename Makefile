@@ -48,7 +48,7 @@ UILIOCH ?= src.test/ie/votail/uilioch
 BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(EXTCP)
 JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
-JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):src.test/ie/votail/model/test:src.test/ie/votail/model/factory/test:$(UILIOCH)
+JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
 ESCJAVA_CLASSPATH	= $(CORECP):$(JMLCP):$(ESCJAVA2CP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP)
 UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(UILIOCH)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
@@ -96,7 +96,7 @@ escjava:	escjava2-typecheck escjava2
 
 test:	jml-junit-tests
 
-hudson-build: universal-rac-test
+hudson-build: escjava2 universal-rac-test
 
 # targets related to building software
 
@@ -173,7 +173,8 @@ escjava2.stamp:	$(javafiles)
 	export ESC_CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	export ESCTOOLS_ROOT=$(ESCPATH);\
-	export SIMPLY_DIR=$(ESCPATH);\
+	export SIMPLIFY_DIR=$(ESCJ_SIMPLIFY_DIR);\
+	export ESCTOOLS_RELEASE=$(ESCPATH);\
 	$(escjava) -suggest -loopsafe $(javapat) && \
 	$(escjava) -era $(javapat) && \
 	touch escjava2.stamp

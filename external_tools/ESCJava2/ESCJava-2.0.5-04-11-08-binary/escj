@@ -4,6 +4,7 @@
 # Copyright 2003 University of Nijmegen
 # Copyright 2003-2005 David R. Cok, P.Chalin
 # Modified 2007, Mobius Project, University College Dublin
+# Customized for Votail, 2011, Dermot Cochran, IT University of Copenhagen
 
 ############################################################################
 ## Required variables:
@@ -84,28 +85,16 @@ if [ "${SCRIPTPATH:0:1}" != "/" ]; then
   SCRIPTPATH=`pwd`/$SCRIPTPATH
 fi
 
-if [[ -e $SCRIPTPATH/.svn ]]; then
-  VCSVER=1
-else
-  VCSVER=0
-fi
 if [ -z "$ESCTOOLS_ROOT" ]; then
-  if (( $VCSVER > 0)) ; then
-    ESCTOOLS_ROOT=$SCRIPTPATH/..
-  else
     ESCTOOLS_ROOT=$SCRIPTPATH
-  fi
   warn "Guessing ESCTOOLS_ROOT=$ESCTOOLS_ROOT"
 fi
 
 ############ Setting ESCJ_SIMPLIFY_DIR, if necessary
 
 if [ -z "$ESCJ_SIMPLIFY_DIR" ]; then
- if (( $VCSVER > 0)) ; then
-    ESCJ_SIMPLIFY_DIR=$ESCTOOLS_ROOT/Escjava/release/master/bin
- else
-    ESCJ_SIMPLIFY_DIR=$ESCTOOLS_ROOT
- fi
+ 
+  ESCJ_SIMPLIFY_DIR=$ESCTOOLS_ROOT
   warn "Guessing ESCJ_SIMPLIFY_DIR=$ESCJ_SIMPLIFY_DIR"
 fi
 
