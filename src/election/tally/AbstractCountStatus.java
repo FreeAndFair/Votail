@@ -2,29 +2,30 @@ package election.tally;
 
 public abstract class AbstractCountStatus {
   
-  // States within the ballot counting machine
+  // Internal states within the ballot counting machine
   public static final int READY_TO_COUNT = 1;
   public static final int NO_SEATS_FILLED_YET = 2;
   public static final int CANDIDATES_HAVE_QUOTA = 3;
   public static final int CANDIDATE_ELECTED = 4;
   public static final int NO_SURPLUS_AVAILABLE = 5;
   public static final int SURPLUS_AVAILABLE = 6;
-  public static final int READY_TO_ALLOCATE_SURPLUS = 8;
-  public static final int READY_TO_MOVE_BALLOTS = 10;
-  public static final int CANDIDATE_EXCLUDED = 11;
-  public static final int READY_FOR_NEXT_ROUND_OF_COUNTING = 12;
-  public static final int LAST_SEAT_BEING_FILLED = 13;
-  public static final int MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS = 14;
-  public static final int ONE_OR_MORE_SEATS_REMAINING = 15;
-  public static final int ALL_SEATS_FILLED = 16;
-  public static final int END_OF_COUNT = 17;
-  public static final int ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT = 18;
+  public static final int READY_TO_ALLOCATE_SURPLUS = 7;
+  public static final int READY_TO_MOVE_BALLOTS = 8;
+  public static final int CANDIDATE_EXCLUDED = 9;
+  public static final int READY_FOR_NEXT_ROUND_OF_COUNTING = 10;
+  public static final int LAST_SEAT_BEING_FILLED = 11;
+  public static final int MORE_CONTINUING_CANDIDATES_THAN_REMAINING_SEATS = 12;
+  public static final int ONE_OR_MORE_SEATS_REMAINING = 13;
+  public static final int ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT = 14;
+  public static final int ALL_SEATS_FILLED = 15;
+  public static final int END_OF_COUNT = 16;
   
   /**
    * Get the current stage of counting.
    */
-  /*@ public model pure int getState() {
-    @   return state;
+  /*@ ensures \result == substate;
+    @ public model pure int getState() {
+    @   return substate;
     @ }
     @*/
 
@@ -36,13 +37,11 @@ public abstract class AbstractCountStatus {
    */
   //@ requires isPossibleState (newState);
   //@ requires isTransition (getState(), newState);
-  //@ assignable state;
+  //@ assignable substate;
   //@ ensures getState() == newState;
   public abstract void changeState(int newState);
   
-  //@ public model int state;
   protected/*@ spec_public @*/int substate;
-  //@ public represents state <- substate;
   
   /**
    * Confirm that this value is a valid stage of counting.
@@ -81,7 +80,8 @@ public abstract class AbstractCountStatus {
     @      || (ALL_SEATS_FILLED == value) || (END_OF_COUNT == value) || (ONE_CONTINUING_CANDIDATE_PER_REMAINING_SEAT == value));
     @ }
     @*/
-  /*
+  
+  /**
    * Confirm that this is a valid transition from one stage of counting to another.
    * 
    * @param fromState The current stage of counting.

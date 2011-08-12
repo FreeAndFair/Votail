@@ -239,8 +239,14 @@ public final class Ballot implements Serializable {
    *          The <code>candidateID</code> for the first preference
    * @return <code>true</code> if this is the first preference on the ballot
    */
-  //@ ensures \result <==> (candidateID == preferenceList[0]);
+  /*@ ensures (0 < preferenceList.length) ==>
+    @   (\result == (candidateID == preferenceList[0]));
+    @ ensures (0 == preferenceList.length) ==> (\result == false);
+    @*/
   public/*@ pure @*/boolean isFirstPreference(final int candidateID) {
+    if (preferenceList.length == 0) {
+      return false;
+    }
     return (candidateID == preferenceList[0]);
   }
   

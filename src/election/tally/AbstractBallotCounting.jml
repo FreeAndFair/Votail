@@ -31,7 +31,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * once the counting starts, there must be a ballot paper associated with 
    * each vote held by a candidate.
    */
-  /*@ public model Candidate[] candidateList;
+  /*@ public invariant (PRECOUNT < state) ==>
+    @   \nonnullelements (candidateList);
+    @ public model Candidate[] candidateList;
     @ 
     @ public invariant (PRELOAD <= state) ==>
     @   (candidateList != null) && 
@@ -354,9 +356,9 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ 
     @ public model pure int getSumOfTransfers(non_null Candidate fromCandidate) {
     @   int sum = 0;
-    @   loop_invariant sum == (\sum int j; 0 <= j && j < i;
+    @   loop_invariant (0 < i) ==> (sum == (\sum int j; 0 <= j && j < i;
     @     getPotentialTransfers (fromCandidate, 
-    @       candidateList[j].getCandidateID()));
+    @       candidateList[j].getCandidateID())));
     @   for (int i=0; i < totalCandidates; i++) {
     @     sum += getPotentialTransfers (fromCandidate,
     @       candidateList[i].getCandidateID());
@@ -401,7 +403,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * @param toCandidate Continuing candidate eligible to receive votes
    * @return Number of votes to be transfered, excluding fractional transfers
    */
-  /*@ requires (state == COUNTING);
+  /*@ requires state == COUNTING;
     @ requires isElected (fromCandidate) ||
     @   (fromCandidate.getStatus() == Candidate.ELIMINATED);
     @ requires toCandidate.getStatus() == Candidate.CONTINUING;

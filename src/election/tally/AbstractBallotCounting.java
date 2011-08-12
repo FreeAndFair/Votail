@@ -326,7 +326,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @   requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
     @     (candidates[c].getStatus() == CandidateStatus.CONTINUING) &&
     @     (candidates[c].lastCountNumber == 0));
-    @   assignable candidates;
+    @   assignable candidates, candidates[*];
     @   ensures (\forall int c; 0 <= c && c < totalNumberOfCandidates;
     @     candidates[c].getTotalVote() == 
     @     countFirstPreferences(candidates[c].getCandidateID()));
