@@ -6,29 +6,13 @@ import ie.votail.model.ElectoralScenario;
 import ie.votail.model.data.ElectionData;
 import ie.votail.uilioch.Uilioch;
 
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import junit.framework.TestCase;
-
-import com.hexmedia.prstv.Candidate;
-import com.hexmedia.prstv.Display;
-import com.hexmedia.prstv.Election;
-import com.hexmedia.prstv.Surplus;
-
-import coyle_doyle.election.BallotPaper;
-import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
 import election.tally.Constituency;
@@ -184,17 +168,6 @@ public class UniversalTestCase extends TestCase {
     
     
     return result;
-  }
-  
-  /**
-   * @param scenario
-   * @param result
-   */
-  protected void checkResult(final ElectoralScenario scenario, final ElectionResult result) {
-    if (!scenario.matchesResult(result)) {
-      logger.severe("Expected result: " + scenario.toString()
-          + " but actual result " + result.toString());
-    }
   }
 
   
