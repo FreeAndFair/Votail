@@ -41,15 +41,16 @@ JAVAFE_PATH ?= ./external_tools/ESCJava2/Javafe-2.0.11-26-04-10-binary
 BCEL_PATH ?= ./external_tools/ESCJava2/bcel-5.2
 escjava = $(ESCPATH)/escj -source $(version4) -vclimit 2500000 -warnUnsoundIncomplete
 ESCJAVA2CP ?= $(ESCPATH)/esctools2.jar:$(JAVAFE_PATH)/Javafe2.0.11.jar:$(BCEL_PATH)/bcel-5.2.jar
+UILIOCH ?= src.test/ie/votail/uilioch
 
 # Various CLASSPATH constructions
 
 BASE_CLASSPATH	= $(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(EXTCP)
 JAVAC_CLASSPATH	= $(buildpath):$(BASE_CLASSPATH)
 JMLC_CLASSPATH	= $(jmlc_path):$(BASE_CLASSPATH)
-JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):src.test/ie/votail/model/test:src.test/ie/votail/model/factory/test
+JUNIT_CLASSPATH	= $(jmlc_jmlunit_path):$(CORECP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):src.test/ie/votail/model/test:src.test/ie/votail/model/factory/test:$(UILIOCH)
 ESCJAVA_CLASSPATH	= $(CORECP):$(JMLCP):$(ESCJAVA2CP):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP)
-UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP)
+UNIT_TEST_CLASSPATH	= $(jmlc_jmlunit_path):$(testpath):$(buildpath):$(JCECP):$(FOPCP):$(MISCCP):$(JUNITCP):$(JMLCP):$(UILIOCH)
 CHECKSTYLE_CLASSPATH	= $(CORECP):$(CHECKSTYLECP)
 
 javapat	=	$(srcpath)/election/tally/*.java
@@ -72,46 +73,6 @@ generator_memory_use =  -ms1024M -mx102400M
 
 copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved"
 
-# implicit rules for paper documentation generation
-
-%.ps: %.gif
-	giftopnm $< | pnmtops -noturn > $@
-%.ps: %.fig
-	fig2dev -L ps $< > $@
-%.eps: %.fig
-	fig2dev -L eps $< > $@
-%.pdf: %.fig
-	fig2dev -L pdf $< > $@
-%.pdf: %.eps
-	epstopdf $< > $@
-.pdf_t: %.pstex_t
-	sed 's/\.pstex/\.pdf/g' $< > $@
-%.pdftex: %.tex
-	sed 's/\.pstex_t/\.pdf_t/g' $< > $@
-%.pstex: %.fig
-	fig2dev -L pstex -m $(FIGSCALE) $< > $@
-%.pstex_t: %.fig
-	fig2dev -L pstex_t -m $(FIGSCALE) -p `basename $< .fig`.pstex $< > $@
-%.ps: %.dvi
-	dvips -D600 -Ppdf $< -o $@
-
-%.aux: %.tex
-	latex $*
-
-%.dvi: %.tex
-	latex $<
-	if grep $(BIBWARN) $*.log >/dev/null; \
-	then bibtex $(BIBTEXOPT) $*; latex $<; latex $<; fi
-	RUNS=$(LATEXMAX); \
-	while [ $$RUNS -gt 0 ] ; do \
-		if grep $(REFWARN) $*.log > /dev/null; \
-		then latex $< ; else break; fi; \
-		RUNS=`expr $$RUNS - 1`; \
-	done
-
-%.pdf: %.ps
-	ps2pdf $<
-
 # identification of phony targets
 
 .PHONY: all build escjava test ps pdf spellcheck \
@@ -123,40 +84,19 @@ copyright = "Votail<br />&copy; 2006-11 Dermot Cochran <br />All Rights Reserved
 	clean_jmlcjunit clean_jmlunit \
 	clean_javadoc clean_jmldoc
 
-# targets
+# top level build targets
 
 default: classes
 
-all:	clean build test universal-rac-test escjava bonc
+all:	clean build test escjava2 universal-test
 
 build:	classes jml jmlc jmlunit_classes
 
 escjava:	escjava2-typecheck escjava2
 
-test:	jml-junit-tests universal-rac-test
+test:	jml-junit-tests
 
-# paper documentation-related
-
-ps:	$(BASE).ps
-
-$(BASE).dvi:	$(BASE).tex\
-		$(BASE).bbl
-
-$(BASE).bbl:	$(BASE).aux\
-		$(BASE).bib
-		bibtex $(BIBTEXOPT) $(BASE)
-
-$(BASE).ps:		$(BASE).dvi
-
-$(BASE).pdf:	$(BASE).ps
-		ps2pdf13 $(BASE).ps
-
-pdf:		$(BASE).pdf
-
-ps:		$(BASE).ps
-
-spellcheck:
-		aspell --lang=american --master=american -t -c $(BASE).tex
+hudson-build: universal-rac-test
 
 # targets related to building software
 
@@ -173,7 +113,7 @@ jml:	jml.stamp
 
 jml.stamp:	$(javafiles)
 	export CLASSPATH=$(JMLC_CLASSPATH);\
-	$(jml) --Quiet --source $(version) -G -A -a $(javapat) && \
+	$(jml) --Quiet --source $(version4) -G -A -a $(javapat) && \
 	touch jml.stamp
 
 jmlc:	jmlc.stamp
@@ -262,8 +202,8 @@ main: classes
 	java $(main_memory_use) -version $(version) election.tally.*
 
 main-jmlrac: jmlc
-	export CLASSPATH=$(JMLC_CLASSPATH):$(testpath);\
-	jmlrac $(rac_memory_use) election.tally.*
+	export CLASSPATH=$(JMLC_CLASSPATH):$(testpath):$(JAVAC_ClASSPATH);\
+	jmlrac $(rac_memory_use) -version $(version4) election.tally.*
 
 jml-junit-tests:	classes jmlunit_classes
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH);\
@@ -302,13 +242,13 @@ universal.stamp:	classes
 ########################################################
 # Hudson build target for continuous automated testing #
 ########################################################
-hudson-build: universal-rac-test escjava2
+hudson-build: universal-rac-test
 
 universal-rac-test:	universal-rac.stamp
 
-universal-rac.stamp:	universal-test jml-junit-test escjava2
+universal-rac.stamp:	classes jmlc_jmlunit
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
-	java -Djava.awt.headless=true $(test_memory_use) ie.votail.model.uilioch.UniversalTestRunner; \
+	java -Djava.awt.headless=true $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
 # generating source-based documentation
