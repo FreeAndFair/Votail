@@ -124,12 +124,13 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    */
   /*@ public model int totalVotes;
     @ public invariant 0 <= totalVotes;
-    @ public invariant totalVotes == ballotsToCount.length;
+    @ public invariant (LOADING < state) ==> 
+    @   (totalVotes == ballotsToCount.length);
     @ public invariant (state < LOADING) ==> totalVotes == 0;
     @ public constraint (state == LOADING) 
-    @   ==> \old (totalVotes) <= totalVotes;
+    @   ==> (\old (totalVotes) <= totalVotes);
     @ public constraint (LOADING < state) 
-    @   ==> totalVotes == \old (totalVotes);
+    @   ==> (totalVotes == \old (totalVotes));
     @*/
 
   /** Minimum number of votes needed to save deposit unless elected */
@@ -137,7 +138,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ public invariant 0 <= depositSavingThreshold;
   //@ public invariant depositSavingThreshold <= totalVotes;
   /** @see requirement 6, section 3, item 3, page 13 */
-  //@ invariant (PRECOUNT < state) ==> depositSavingThreshold == (getQuota() / 4) + 1;
+  /*@ invariant (PRECOUNT < state) ==> 
+    @   (depositSavingThreshold == ((getQuota() / 4) + 1)); */
 
   /** Number of rounds of counting so far */
   //@ public model int countNumber;
