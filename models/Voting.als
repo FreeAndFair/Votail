@@ -1,4 +1,4 @@
--- (c) 2010-2011, Dermot Cochran, IT University of Copenhagen
+-- Copyright (c) 2010-2011, Dermot Cochran, IT University of Copenhagen
 -- http://www.kindsoftware.com/about/people/dc
 -- http://www.itu.dk/people/dero
 
@@ -16,15 +16,15 @@ open util/integer
   WinnerNonTransferable: 
                     elected on first round with at least one non-transferable surplus vote (STV),
 	 SurplusWinner:		  elected on first round with at least one surplus vote (STV),
-	 Winner: 				      elected in the first round of counting either by quota or plurality,
+	 Winner: 				      elected in the first round of counting either by quota (STV),
 
   AboveQuotaWinner: elected with surplus votes after receipt of transfers (STV),
   QuotaWinnerNonTransferable:
-				                elected with at least one non-transferable surplus vote (STV),
+				                elected after transfers with at least one non-transferable surplus vote (STV),
   QuotaWinner: 		   elected with quota after transfers from another candidate (STV),
 
-	 CompromiseWinner: elected on the last round of counting without quota (STV),
-	 TiedWinner:			    elected by tie breaker,
+	 CompromiseWinner: elected on the last round of counting without quota but by plurality,
+	 TiedWinner:			    elected by tie breaker in the last round,
 
 	 TiedLoser:			     defeated only by tie breaker but reaches the threshold,
   TiedSoreLoser:		  defeated only by tie breaker but does not reach threshold,
@@ -32,7 +32,7 @@ open util/integer
   SoreLoser: 			    defeated, but does not even reach the mimimum threshold of votes
 
   EarlyLoserNonTransferable:
-                    reaches threshold bit is eliminated with some non-transferable votes (STV),
+                    reaches threshold but is eliminated with some non-transferable votes (STV),
 	 EarlyLoser:		     reaches threshold but is eliminated before last round (STV),
   EarlySoreLoser:   eliminated before last round, and below threshold (STV),
   EarlySoreLoserNonTransferable:
@@ -56,39 +56,7 @@ enum Event {SurplusWinner,
             EarlySoreLoser,
             EarlySoreLoserNonTransferable}
 
-/* 
-	Two existing real-world voting methods,
-	and one experimental method chosen for being hard to
-	manipulate and for other ideal properties.
-*/
-enum Method {Plurality, STV, Ideal}
-
-/*
-	Ideal method does not rely on randomisation either for tie breakers, or
- for redistribution of transfers. So the ordering of ballots does not matter.
-
-	Joint preferences and fractional transfers are allowed.
-	Ties are resolved with a mini-election as if all other candidates were excluded.
-
-	No wasted votes; a non-preference for a candidate indicates non-approval, 
- used when mini-elections are tied. An unresolvable tie leads to a fresh 
- bye-election for the remaining seats.
-	
- None of these steps are possible with paper-based counting; since there is only
-	one copy of the paper ballot, so fractional transfers and pairwise comparisons
-	are impossible unless digital counting of ballots is allowed.
-
-	Approvals are used to determine thresholds for funding and deposits, so that each
-	candidate needs a full quota of approvals. 
-
- Optionaly, pre-elimination could be used for candidates without a half-quota of
- approvals since by definition, those candidates would never reach a full
-	quota of ballots under any combination of transfers, although such a candidate 
- might still be elected without quota in the last round.
-
- Pre-elimination of too many candidates would also lead to a bye-election. A blank
-	spoilt vote would count as disapproval of all candidates.
-*/
+enum Method {Plurality, STV}
 
 -- An individual person standing for election
 sig Candidate {
@@ -234,12 +202,31 @@ one sig Scenario {
 	 quota: 				 Int,					      -- Minimum number of votes for a STV Winner or Quota Winner
   fullQuota:		Int					       -- Quota if all constituency seats were vacant
 } {
+		/* Mutual exclusions of outcomes:
+     see https://trac.ucd.ie/repos/software/evoting/V%C3%B3t%C3%A1il/src/ie/votail/model/factory/ScenarioFactory.java */
+  no disj a,b: Candidate | a.outcome = TiedWinner and b.outcome = CompromiseWinner and a in winners and b in winners
+  no disj a,b: Candidate | a.outcome = Loser and b.outcome = TiedSoreLoser and a in losers and b in losers
+  no disj a,b: Candidate | a.outcome = EarlyLoser and b.outcome = TiedSoreLoser and a in losers and b in losers
+  no disj a,b: Candidate | a.outcome = EarlyLoserNonTransferable and b.outcome = TiedSoreLoser and a in losers and b in losers
+  no disj a,b: Candidate | a.outcome = TiedLoser and b.outcome = TiedSoreLoser and a in losers and b in losers
+  no disj a,b: Candidate | a.outcome = TiedLoser and b.outcome = CompromiseWinner and a in losers and b in winners
+  no disj a,b: Candidate | a.outcome = TiedSoreLoser and b.outcome = CompromiseWinner and a in losers and b in winners
+
+  // Mandatory pairs of outcomes: ties between winners and losers
+  all a: Candidate | some b: Candidate | (a in losers and (a.outcome = TiedLoser or a.outcome = TiedSoreLoser)) implies 
+                                        (b in winners and b.outcome = TiedWinner)
+  all a: Candidate | some b: Candidate | (a in winners and a.outcome = TiedWinner) implies 
+                                        (b in losers and (b.outcome = TiedLoser or b.outcome = TiedSoreLoser))
+                                        
+
+  // Other Definitions
  	all c: Candidate | c in winners + losers
  	#winners = Election.seats
  	no c: Candidate | c in losers & winners
  	0 < #losers
  	all w: Candidate | all l: Candidate | l in losers and w in winners implies 
 		  (#l.votes + #l.transfers <= #w.votes + #w.transfers)
+  // Definition of Threshold for PR-STV
   Election.method = STV implies threshold = 1 + fullQuota.div[4]
 	 eliminated in losers
   // All PR-STV losers have less votes than the quota
@@ -358,6 +345,6 @@ one sig Version {
    year, month, day: Int
 } {
   year = 11
-  month = 03
-  day = 14
+  month = 08
+  day = 30
 }
