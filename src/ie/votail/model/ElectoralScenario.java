@@ -376,7 +376,7 @@ public class ElectoralScenario implements Serializable {
     @ ensures \result == (\sum int i; 1 <= i && i < numberOfOutcomes;
     @   numberOfScenarios (i, numberOfOutcomes - i));
    */
-  public static/*@Êpure **/int totalNumberOfScenarios(
+  public static /*@ pure @*/ int totalNumberOfScenarios(
       final int numberOfOutcomes) {
     int result = 0;
     for (int numberOfWinners = 1; numberOfWinners < numberOfOutcomes; numberOfWinners++) {
