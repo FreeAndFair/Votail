@@ -205,7 +205,7 @@ public class BallotBoxFactory {
       final int scope) throws Err, ErrorSyntax {
     final A4Reporter reporter = new A4Reporter();
     final A4Options options = new A4Options();
-    options.solver = A4Options.SatSolver.SAT4J;
+    options.solver = A4Options.SatSolver.MiniSatJNI;
     CompModule world;
     try {
       world = CompUtil.parseEverything_fromFile(reporter, loaded, modelName);
