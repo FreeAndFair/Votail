@@ -231,7 +231,7 @@ generate-tests: tests-generated.stamp
 
 tests-generated.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-	export LD_LIBRARY_PATH=external_libraries/alloy4.jar; \
+	export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):external_libraries/alloy4.jar; \
 	java $(generator_memory_use) ie.votail.uilioch.UniversalTestGenerator
 	touch tests-generated-stamp
 
@@ -239,7 +239,7 @@ universal-test:	 universal.stamp
 
 universal.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
-  export LD_LIBRARY_PATH=external_libraries/alloy4.jar; \
+  export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):external_libraries/alloy4.jar; \
 	java -Djava.awt.headless=true $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
