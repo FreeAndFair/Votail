@@ -205,7 +205,9 @@ public class BallotBoxFactory {
       final int scope) throws Err, ErrorSyntax {
     final A4Reporter reporter = new A4Reporter();
     final A4Options options = new A4Options();
-    options.solver = A4Options.SatSolver.MiniSatJNI;
+    // Its not clear if MiniSat is thread safe or not:
+    // see http://alloy.mit.edu/community/node/1080
+    options.solver = A4Options.SatSolver.SAT4J;
     CompModule world;
     try {
       world = CompUtil.parseEverything_fromFile(reporter, loaded, modelName);
