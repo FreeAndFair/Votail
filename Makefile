@@ -169,6 +169,7 @@ escjava2-typecheck.stamp:	$(javafiles)
 escjava2:	escjava2.stamp
 
 escjava2.stamp:	$(javafiles)
+	chmod +x $(ESCPATH)/escj
 	export PROVER_CC_LIMIT=50;\
 	export VCSVER=0;\
 	export ESC_CLASSPATH=$(ESCJAVA_CLASSPATH);\
