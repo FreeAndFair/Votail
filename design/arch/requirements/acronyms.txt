@@ -1,2 +1,0 @@
-HAWK: Highly Automated Workflow for Knowledge based testing
-TIDE: Test Inference and Distributed Execution
