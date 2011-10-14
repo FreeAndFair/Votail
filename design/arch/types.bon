@@ -2,8 +2,7 @@ cluster_chart BON_TYPES
 indexing
   authors: "Dermot Cochran", "Fintan Fairmichael", "Joe Kiniry", "Dan Zimmerman";
   created: "2008-07-10-dc";
-  revised: "2008-08-11-dc";
-  level_of_detail: "2"
+  revised: "2008-08-11-dc"
 explanation
   "Standard built-in and primitive classes reusable in all BON designs"
 class BOOLEAN description "A binary true or false value"
@@ -18,8 +17,7 @@ end
 class_chart BOOLEAN
 indexing
   author: "Dermot Cochran";
-  created: "2008-07-17-dc";
-  level_of_detail: "2";
+  created: "2008-07-17-dc"
   proposed_refinement: "java.lang.Boolean" 
 explanation
   "A binary true or false value"
@@ -29,8 +27,7 @@ end
 class_chart NATURAL_NUMBER
 indexing
   author: "Dermot Cochran", "Joe Kiniry";
-  created: "2008-07-17";
-  level_of_detail: "2"
+  created: "2008-07-17"
 explanation
   "Any non-negative whole number"
 inherit VALUE
@@ -58,4 +55,6 @@ explanation
 end
 
 class_chart STRING
+explanation 
+  "Sequence of text characters"
 end
