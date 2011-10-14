@@ -198,14 +198,14 @@ public class BallotCounting extends AbstractBallotCounting {
   /*@ also
     @   requires state == PRECOUNT || state == COUNTING;
     @   requires \nonnullelements (candidateList);
-    @		assignable countNumberValue, ballotsToCount, candidateList[*];
+    @   assignable countNumberValue, ballotsToCount, candidateList[*];
     @   assignable candidates, candidates[*];
-    @		assignable totalRemainingSeats, countStatus;
-    @		assignable savingThreshold, ballots, ballotsToCount;
-    @		assignable numberOfCandidatesElected;
-    @		assignable numberOfCandidatesEliminated;
-    @		assignable status, countStatus;
-    @		assignable remainingSeats, totalRemainingSeats;
+    @   assignable totalRemainingSeats, countStatus;
+    @   assignable savingThreshold, ballots, ballotsToCount;
+    @   assignable numberOfCandidatesElected;
+    @   assignable numberOfCandidatesEliminated;
+    @   assignable status, countStatus;
+    @   assignable remainingSeats, totalRemainingSeats;
     @   assignable candidateList;
     @   ensures state == ElectionStatus.FINISHED;
     @*/
@@ -239,7 +239,7 @@ public class BallotCounting extends AbstractBallotCounting {
     
     countStatus.changeState(AbstractCountStatus.END_OF_COUNT);
     status = ElectionStatus.FINISHED;
-  } //@ 
+  }
   
   /**
    * Elect any candidate with a quota or more of votes.
