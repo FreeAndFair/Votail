@@ -29,7 +29,7 @@ open util/integer
 	 TiedLoser:			     defeated only by tie breaker but reaches the threshold,
   TiedSoreLoser:		  defeated only by tie breaker but does not reach threshold,
 	 Loser:			 		      defeated on last round but reaches the minimum threshold of votes,
-  SoreLoser: 			    defeated, but does not even reach the mimimum threshold of votes
+  SoreLoser: 			    defeated,but does not even reach the mimimum threshold of votes
 
   EarlyLoserNonTransferable:
                     reaches threshold but is eliminated with some non-transferable votes (STV),
