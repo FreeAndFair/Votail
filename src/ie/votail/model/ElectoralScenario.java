@@ -265,10 +265,8 @@ public class ElectoralScenario implements Serializable {
    * 
    * @return An equivalent scenario
    */
-  /*@
-   * ensures \result.equals(this);
-   */
-  private/*@ pure*/ElectoralScenario copy() {
+  //@ ensures \result.equals(this);
+  protected /*@ pure @*/ ElectoralScenario copy() {
     final ElectoralScenario clone =
         new ElectoralScenario(this.method, this.byeElection);
     Iterator<Outcome> iterator = this.listOfOutcomes.getOutcomes().iterator();
