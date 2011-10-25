@@ -170,15 +170,15 @@ escjava2:	escjava2.stamp
 
 escjava2.stamp:	$(javafiles)
 	chmod +x $(ESCPATH)/escj
-	export PROVER_CC_LIMIT=50;\
+	export PROVER_CC_LIMIT=100;\
 	export VCSVER=0;\
 	export ESC_CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	export CLASSPATH=$(ESCJAVA_CLASSPATH);\
 	export ESCTOOLS_ROOT=$(ESCPATH);\
 	export SIMPLIFY_DIR=$(ESCJ_SIMPLIFY_DIR);\
 	export ESCTOOLS_RELEASE=$(ESCPATH);\
-	$(escjava) -suggest -loopsafe $(javapat) && \
-	$(escjava) -era $(javapat) && \
+	$(escjava) -loopsafe $(javapat) | grep -i Warning | sort -u && \
+	$(escjava) -era $(javapat) |Êgrep -i Warning | sort -u && \
 	touch escjava2.stamp
 
 escjava2-current:
@@ -241,7 +241,7 @@ universal-test:	 universal.stamp
 universal.stamp:	classes
 	export CLASSPATH=$(JAVAC_CLASSPATH); \
   export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH):external_libraries/alloy4.jar; \
-	java -Djava.awt.headless=true $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
+	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
 	touch universal.stamp
 
 ########################################################
@@ -253,8 +253,8 @@ universal-rac-test:	universal-rac.stamp
 
 universal-rac.stamp:	classes jmlc_jmlunit
 	export CLASSPATH=$(UNIT_TEST_CLASSPATH); \
-	java -Djava.awt.headless=true $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
-	touch universal.stamp
+	java $(test_memory_use) ie.votail.uilioch.UniversalTestRunner; \
+	touch universal-rac.stamp
 
 # generating source-based documentation
 
