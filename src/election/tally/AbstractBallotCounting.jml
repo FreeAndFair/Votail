@@ -104,7 +104,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @*/
 	
   /** Total number of seats in this constituency
-   * @design The consitution and laws of Ireland do not allow less than three or 
+   * @design The constitution and laws of Ireland do not allow less than three or 
    *   more than five seats in each Dail constituency, but this could change in 
    *   future and is not an essential part of the specification.
    */
