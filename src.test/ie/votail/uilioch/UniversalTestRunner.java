@@ -5,25 +5,11 @@ import ie.votail.model.ElectionResult;
 import ie.votail.model.ElectoralScenario;
 import ie.votail.model.data.ElectionData;
 
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.FileHandler;
 
-import com.hexmedia.prstv.Candidate;
-import com.hexmedia.prstv.Display;
-import com.hexmedia.prstv.Election;
-import com.hexmedia.prstv.Surplus;
-
-import coyle_doyle.election.BallotPaper;
 import election.tally.Ballot;
 import election.tally.BallotBox;
 import election.tally.BallotCounting;
