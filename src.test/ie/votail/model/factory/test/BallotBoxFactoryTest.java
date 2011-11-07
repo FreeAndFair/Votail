@@ -20,10 +20,10 @@ public class BallotBoxFactoryTest extends TestCase {
     final ElectoralScenario scenario = new ElectoralScenario(Method.STV, false);
     scenario.addOutcome(Outcome.Winner);
     scenario.addOutcome(Outcome.Loser);
-    final BallotBoxFactory /*@ non_null*/ballotBoxFactory = new BallotBoxFactory();
+    final BallotBoxFactory ballotBoxFactory = new BallotBoxFactory();
     final BallotBox ballotBox = ballotBoxFactory.extractBallots(scenario, 7);
     assertFalse(ballotBox == null);
-    assertEquals(2, ballotBox.size());
+    assertEquals(3, ballotBox.size());
   }
   
   @Test
