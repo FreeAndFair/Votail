@@ -28,7 +28,7 @@ public class ExclusionEventJ extends TestCase {
   //@ requires ballotCounting != null;
   public final void testExclusion() {
     
-    //@ assert ballotCounting.getStatus() == ElectionStatus.PRECOUNT);
+    //@ assert ballotCounting.getStatus() == ElectionStatus.PRECOUNT;
     ballotCounting.startCounting();
     final int lowestCandidate = ballotCounting.findLowestCandidate();
     ballotCounting.eliminateCandidate(lowestCandidate);
