@@ -38,12 +38,18 @@ public class BallotCounting extends AbstractBallotCounting {
    * Default constructor for BallotCounting. Creates and initialises the inner
    * state machine for count status.
    */
+  /*@ ensures state == ElectionStatus.EMPTY;
+    @ ensures countNumber == 0;
+    @ ensures numberElected == 0;
+    @ ensures numberEliminated == 0;
+    @ ensures totalCandidates == 0;
+    @ ensures countStatus.getState() == AbstractCountStatus.NO_SEATS_FILLED_YET;
+    @*/
   public BallotCounting() {
     super();
     countStatus = new CountStatus();
     countStatus.changeState(AbstractCountStatus.NO_SEATS_FILLED_YET);
-    this.numberOfSeats = 0;
-    this.totalNumberOfSeats = 0;
+    
   }
   
   

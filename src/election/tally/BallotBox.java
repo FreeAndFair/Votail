@@ -67,7 +67,6 @@ public class BallotBox implements Serializable {
    * The total number of ballots in this ballot box.
    */
   /*@ public invariant 0 <= numberOfBallots;
-    @ public invariant numberOfBallots <= Ballot.MAX_BALLOTS;
     @ public invariant numberOfBallots <= ballots.length;
     @ public constraint \old (numberOfBallots) <= numberOfBallots;
     @*/

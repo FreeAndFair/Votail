@@ -16,10 +16,10 @@ package election.tally;
 public class ElectionStatus extends CountConfiguration {
 
   /** Abstract State Machine */ 
-  /*@ public model byte state;
+  /*@ public model int state;
     @ public initially state == EMPTY;
     @ public constraint \old (state) <= state;
-    @ public invariant (state >= EMPTY) ||  (state <= FINISHED);
+    @ public invariant (EMPTY <= state) && (state <= FINISHED);
     @*/
 
   protected transient /*@ spec_public @*/ byte status; //@ in state;

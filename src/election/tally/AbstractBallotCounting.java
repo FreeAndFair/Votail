@@ -46,12 +46,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   public static final int NONE_FOUND_YET = -1;
   
   /** List of candidates for election */
-  /*@ public invariant (PRECOUNT <= state) ==>
-    @   ((candidates != null) && 
-    @   (\forall int i; 0 <= i && i < totalNumberOfCandidates;
-    @     candidates[i] != null));
-    @*/
-  protected transient/*@ spec_public @*/ Candidate[] candidates;
+  protected /*@ spec_public @*/ Candidate[] candidates;
   //@ protected represents candidateList <- candidates;
   
   /** List of contents of each ballot paper that will be counted. */
@@ -60,7 +55,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
   //@ invariant (PRECOUNT <= state) ==> \nonnullelements (ballotsToCount);
   
   /** Total number of candidates for election */
-  protected transient/*@ spec_public @*/int totalNumberOfCandidates;
+  protected /*@ spec_public @*/ int totalNumberOfCandidates;
   //@ public represents totalCandidates <- totalNumberOfCandidates;
   
   /** Number of candidates elected so far */
@@ -105,10 +100,12 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @     assignable state, countNumber, numberElected, numberEliminated,
     @       countNumberValue, numberOfCandidatesElected, seats, numberOfSeats,
     @       totalVotes, numberOfCandidatesEliminated, totalNumberOfVotes,
-    @       totalNumberOfCandidates;
+    @       totalNumberOfCandidates, totalNumberOfSeats;
     @     ensures state == ElectionStatus.EMPTY;
     @     ensures countNumber == 0;
     @     ensures numberElected == 0;
+    @     ensures numberEliminated == 0;
+    @     ensures totalCandidates == 0;
     @*/
   public AbstractBallotCounting() {
     super();
@@ -119,6 +116,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     totalNumberOfCandidates = 0;
     totalNumberOfVotes = 0;
     numberOfSeats = 0;
+    totalNumberOfSeats = 0;
   }
   
   /**
@@ -268,7 +266,6 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     this.totalNumberOfCandidates = constituency.getNumberOfCandidates();
     this.numberOfSeats = constituency.getNumberOfSeatsInThisElection();
     this.totalNumberOfSeats = constituency.getTotalNumberOfSeats();
-    this.status = PRELOAD;
     this.candidates = new Candidate[this.totalNumberOfCandidates];
     /*@ loop_invariant (0 < i) ==> 
       @   (this.candidates[i-1].equals(constituency.getCandidate(i-1)));
@@ -277,6 +274,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
       this.candidates[i] = constituency.getCandidate(i);
     }
     this.totalRemainingSeats = this.numberOfSeats;
+    this.status = PRELOAD;
   }
   
   /**
@@ -301,10 +299,10 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     while (ballotBox.isNextBallot()) {
       ballots[totalNumberOfVotes++] = ballotBox.getNextBallot();
     }
-    status = PRECOUNT;
     if (0 < totalNumberOfVotes) {
       allocateFirstPreferences();
     }
+    this.status = PRECOUNT;
   } 
   
   /**
@@ -320,7 +318,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * Calculate the first preference counts for each candidate.
    */
   /*@ protected normal_behavior
-    @   requires PRECOUNT <= state;
+    @   requires state == PRECOUNT || state == COUNTING;
     @   requires 0 == countNumberValue;
     @   requires getNumberContinuing() == totalNumberOfCandidates;
     @   requires (\forall int c; 0 <= c && c < totalNumberOfCandidates;
@@ -383,7 +381,7 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    *        The internal identifier of this candidate
    * @return The number of ballots in this candidate's pile
    */
-  /*@ requires PRECOUNT <= state;
+  /*@ requires state == PRECOUNT || state == COUNTING;
     @ ensures 0 <= \result;
     @ ensures \result <= ballotsToCount.length;
     @ ensures \result == (\num_of int b; 0 <= b && b < ballotsToCount.length;

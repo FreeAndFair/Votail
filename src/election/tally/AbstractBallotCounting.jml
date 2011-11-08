@@ -31,18 +31,19 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
    * once the counting starts, there must be a ballot paper associated with 
    * each vote held by a candidate.
    */
-  /*@ public invariant (PRECOUNT < state) ==>
-    @   \nonnullelements (candidateList);
-    @ public model Candidate[] candidateList;
+  /*@ public invariant (PRECOUNT <= state) ==>
+    @   \nonnullelements (candidateList); */
+  /*@ public model Candidate[] candidateList;
     @
     @ public invariant (PRELOAD <= state) ==> 
-    @   (totalCandidates == candidateList.length);
-    @ public invariant (state == PRELOAD || state == LOADING) ==>
+    @   (totalCandidates == candidateList.length);*/
+  
+  /*@ public invariant (state == PRELOAD || state == LOADING) ==>
     @   (\forall int i; 0 <= i && i < totalCandidates;
-    @     candidateList[i].getStatus() == Candidate.CONTINUING &&
-    @     candidateList[i].getTotalVote() == 0);
-    @
-    @ public invariant (state == PRELOAD || state == LOADING ||   
+    @     (candidateList[i].getStatus() == Candidate.CONTINUING) &&
+    @     (candidateList[i].getTotalVote() == 0));*/
+  
+  /*@ public invariant (state == PRELOAD || state == LOADING ||   
     @   state == PRECOUNT || state == COUNTING || state == FINISHED) ==>
     @   (\forall int i, j; 0 <= i && i < totalCandidates && 
     @     i < j && j < totalCandidates;
@@ -85,8 +86,8 @@ public abstract class AbstractBallotCounting extends ElectionStatus {
     @ public invariant (PRECOUNT <= state) ==>
     @   seats + numberEliminated <= totalCandidates;
     @ public invariant (state == COUNTING || state == FINISHED) ==> 
-    @   numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
-    @   candidateList[i].getStatus() == Candidate.ELIMINATED);
+    @   (numberEliminated == (\num_of int i; 0 <= i && i < totalCandidates;
+    @   candidateList[i].getStatus() == Candidate.ELIMINATED));
     @*/
 
   /** Number of seats to be filled in this election */
