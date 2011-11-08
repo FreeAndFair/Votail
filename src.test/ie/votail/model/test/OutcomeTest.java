@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class OutcomeTest extends TestCase {
 
-  @Test
+
   public void testIsTied() {
     
     assertTrue (Outcome.TiedSoreLoser.isTied());
