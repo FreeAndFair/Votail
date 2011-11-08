@@ -178,7 +178,7 @@ escjava2.stamp:	$(javafiles)
 	export SIMPLIFY_DIR=$(ESCJ_SIMPLIFY_DIR);\
 	export ESCTOOLS_RELEASE=$(ESCPATH);\
 	$(escjava) -loopsafe $(javapat) | grep -i Warning | sort -u && \
-	$(escjava) -era $(javapat) |Êgrep -i Warning | sort -u && \
+	$(escjava) -era $(javapat) | grep -i Warning | sort -u && \
 	touch escjava2.stamp
 
 escjava2-current:
