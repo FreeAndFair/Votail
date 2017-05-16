@@ -11,6 +11,6 @@ using Business Object Notation (BON) and the Java Modeling Language
 software.
 
 The source code is managed using git hosted at GitHub.
-  https://github.com/GaloisInc/Votail
+  https://github.com/FreeAndFair/Votail
  
 See also http://itu.dk/en/Forskning/Technical-Reports/2011/TR-2011-143
